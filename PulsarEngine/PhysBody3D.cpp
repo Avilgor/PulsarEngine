@@ -6,8 +6,6 @@
 PhysBody3D::PhysBody3D(btRigidBody* body) : body(body)
 {}
 
-PhysBody3D::PhysBody3D(btRigidBody* body, CollisionObject coll) : body(body), collType(coll)
-{}
 
 // ---------------------------------------------------------
 PhysBody3D::~PhysBody3D()

@@ -33,7 +33,7 @@ public:
 	mat4x4 transform;
 	bool axis,wire;
 	PhysBody3D* body;
-	CollisionObject collType;
+
 protected:
 	PrimitiveTypes type;
 };

@@ -392,8 +392,8 @@ void ModulePhysics3D::RectRoad(int length,int width, int x,int y,int z, RoadType
 		/*if (colorSwitch) { left->color= right->color = { 255,255,255 }; colorSwitch = false; }
 		else { left->color= right->color = { 255,0,0 }; colorSwitch = true; }*/
 
-		App->scene_intro->PrimitiveObjects.PushBack(left);
-		App->scene_intro->PrimitiveObjects.PushBack(right);
+		App->scene->PrimitiveObjects.PushBack(left);
+		App->scene->PrimitiveObjects.PushBack(right);
 
 		switch (direction)
 		{
@@ -414,12 +414,10 @@ void ModulePhysics3D::Corner(int width, int x, int y, int z, RoadTypes direction
 	Cube* rectZ = new Cube(1.0f, 2.0f, width);
 	Cube* rectX = new Cube(width, 2.0f, 1.0f);
 
-	App->scene_intro->PrimitiveObjects.PushBack(lonely);
-	App->scene_intro->PrimitiveObjects.PushBack(rectZ);
-	App->scene_intro->PrimitiveObjects.PushBack(rectX);
+	App->scene->PrimitiveObjects.PushBack(lonely);
+	App->scene->PrimitiveObjects.PushBack(rectZ);
+	App->scene->PrimitiveObjects.PushBack(rectX);
 
-	/*if (colorSwitch) { lonely->color = { 255,255,255 }; colorSwitch = false; }
-	else { lonely->color = { 255,0,0 }; colorSwitch = true; }*/
 
 	switch (direction)
 	{
@@ -450,106 +448,6 @@ void ModulePhysics3D::Corner(int width, int x, int y, int z, RoadTypes direction
 	AddBody(*rectX, 1000000.0f, WALL);
 }
 
-void ModulePhysics3D::StartZone(int width, int x, int y, int z)
-{
-	//bool colorSwitch = false;
-	Cube* Large = new Cube(width, 2.0f, 1.0f);
-	Cube* ShortLeft = new Cube(1.0f, 2.0f, width/2);
-	Cube* ShortRight = new Cube(1.0f, 2.0f, width/2);
-
-	App->scene_intro->PrimitiveObjects.PushBack(Large);
-	App->scene_intro->PrimitiveObjects.PushBack(ShortLeft);
-	App->scene_intro->PrimitiveObjects.PushBack(ShortRight);
-
-	/*if (colorSwitch) { lonely->color = { 255,255,255 }; colorSwitch = false; }
-	else { lonely->color = { 255,0,0 }; colorSwitch = true; }*/
-
-	Large->SetPos(x, y + 1, z-1);
-	ShortLeft->SetPos(x + (width / 2), y + 1, z+(width/4));
-	ShortRight->SetPos(x-(width/2), y + 1,z+(width/4));
-
-	AddBody(*Large, 1000000.0f, WALL);
-	AddBody(*ShortLeft, 1000000.0f, WALL);
-	AddBody(*ShortRight, 1000000.0f, WALL);
-}
-
-
-void ModulePhysics3D::DiagonalRoad(int length, int width, int x, int y, int z, int direction)
-{
-	bool colorSwitch = false;
-	for (int n = 0; n < length * 2; n++)
-	{
-		Cube* left = new Cube(1.0f, 2.0f, 1.0f);
-		Cube* right = new Cube(1.0f, 2.0f, 1.0f);
-
-		if (colorSwitch) { left->color = right->color = { 255,255,255 }; colorSwitch = false; }
-		else { left->color = right->color = { 255,0,0 }; colorSwitch = true; }
-
-		App->scene_intro->PrimitiveObjects.PushBack(left);
-		App->scene_intro->PrimitiveObjects.PushBack(right);
-
-		switch (direction)
-		{
-			case 0: x += 2; z -= 2; left->SetPos(x - width, y + 1, z - width); right->SetPos(x + width, y + 1, z + width); break; //Top-Left
-			case 1: x += 2; z += 2; left->SetPos(x + width, y + 1, z - width); right->SetPos(x - width, y + 1, z + width); break; //Bottom-Left
-			case 2: z -= 2; x -= 2; left->SetPos(x + width, y + 1, z - width); right->SetPos(x - width, y + 1, z + width); break; //Top-Right
-			case 3: z += 2; x -= 2; left->SetPos(x + width, y + 1, z + width); right->SetPos(x - width, y + 1, z - width); break; //Bottom-Right
-		}
-		AddBody(*left, 1000000.0f, WALL);
-		AddBody(*right, 1000000.0f, WALL);
-	}
-}
-
-void ModulePhysics3D::Ground(int length, int width, int x, int y, int z)
-{
-	Cube* ground = new Cube(length, 0.05f, width);
-
-	ground->color = Black;
-
-	App->scene_intro->PrimitiveObjects.PushBack(ground);
-
-	ground->SetPos(x,y,z);
-	//AddBody(*ground, 10000.0f);
-}
-
-void ModulePhysics3D::Enemy(int length, int width, int height, int x, int y, int z)
-{
-	Cube* enemy = new Cube(length, height, width);
-
-	enemy->color = { 178,0,255 };
-
-	App->scene_intro->PrimitiveObjects.PushBack(enemy);
-
-	enemy->SetPos(x, y, z);
-
-	AddBody(*enemy, 1000000.0f,ENEMY);
-}
-
-void ModulePhysics3D::Checkpoint(int x, int y, int z)
-{
-	Cube* checkpoint = new Cube(0.5, 1.0f, 0.5);
-
-	checkpoint->color = { 0,0,255 }; 
-
-	App->scene_intro->PrimitiveObjects.PushBack(checkpoint);
-
-	checkpoint->SetPos(x, y+0.5f, z);
-
-	AddBody(*checkpoint, 1000000.0f, CHECKPOINT,x,y,z);
-}
-
-void ModulePhysics3D::Goal(int x, int y, int z)
-{
-	Cube* finish = new Cube(15, 6, 1);
-
-	finish->color = { 0,255,0 }; 
-
-	App->scene_intro->PrimitiveObjects.PushBack(finish);
-
-	finish->SetPos(x, y+3, z);
-
-	AddBody(*finish, 100.0f, WIN);
-}
 
 // =============================================
 void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
