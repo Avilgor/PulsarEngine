@@ -2,7 +2,6 @@
 #pragma once
 #include "glmath.h"
 #include "Color.h"
-#include "PhysBody3D.h"
 
 enum PrimitiveTypes
 {
@@ -32,7 +31,6 @@ public:
 	Color color;
 	mat4x4 transform;
 	bool axis,wire;
-	PhysBody3D* body;
 
 protected:
 	PrimitiveTypes type;
@@ -85,11 +83,11 @@ public:
 };
 
 // ============================================
-class Plane : public Primitive
+class PlanePrimitive : public Primitive
 {
 public:
-	Plane();
-	Plane(float x, float y, float z, float d);
+	PlanePrimitive();
+	PlanePrimitive(float x, float y, float z, float d);
 	void InnerRender() const;
 public:
 	vec3 normal;

@@ -1,12 +1,14 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleRenderer3D.h"
+#include "Glew\include\GL\glew.h"
 #include "SDL\include\SDL_opengl.h"
 #include <gl/GL.h>
 #include <gl/GLU.h>
 
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
+#pragma comment (lib, "Glew/lib/Win32/glew32.lib") /* link Glew lib   */
 
 ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -29,7 +31,15 @@ bool ModuleRenderer3D::Init()
 		LOG("OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
-	
+
+	GLenum error = glewInit();
+
+	if (error != GL_NO_ERROR)
+	{
+		LOG("Error initializing glew library! %s", SDL_GetError());
+		ret = false;
+	}
+
 	if(ret == true)
 	{
 		//Use Vsync
@@ -65,6 +75,7 @@ bool ModuleRenderer3D::Init()
 		
 		//Initialize clear color
 		glClearColor(0.f, 0.f, 0.f, 1.f);
+		//glClear(GL_COLOR_BUFFER_BIT);
 
 		//Check for error
 		error = glGetError();

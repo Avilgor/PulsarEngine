@@ -25,7 +25,6 @@ public:
 	
 public:
 
-	btRigidBody* body;
 	float checkpointX, checkpointY, checkpointZ;
 };
 

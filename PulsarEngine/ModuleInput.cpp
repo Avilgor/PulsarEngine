@@ -1,6 +1,9 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleInput.h"
+#include "SDL/include/SDL_mouse.h"
+#include "ImGui/imgui.h"
+#include "ImGui/imgui_internal.h"
 
 #define MAX_KEYS 300
 

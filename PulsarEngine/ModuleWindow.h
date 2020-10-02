@@ -4,6 +4,8 @@
 #include "Module.h"
 #include "SDL/include/SDL.h"
 
+#include "MathGeoLib\include\MathGeoLib.h"
+
 class Application;
 
 class ModuleWindow : public Module
@@ -26,6 +28,9 @@ public:
 
 	//The surface contained by the window
 	SDL_Surface* screen_surface;
+
+	int width;
+	int height;
 };
 
 #endif // __ModuleWindow_H__
