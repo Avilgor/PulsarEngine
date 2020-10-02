@@ -23,8 +23,12 @@ public:
 	ModuleSceneIntro* scene;
 	EditorMain* editor;
 
+	float ms = 0.0f;
+	float fps = 0.0f;
+
 private:
 
+	float	fpsCap = 60.0f;
 	Timer	ms_timer;
 	float	dt;
 	std::list<Module*> modulesList;

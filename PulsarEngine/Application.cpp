@@ -17,10 +17,10 @@ Application::Application()
 	AddModule(window);
 	AddModule(camera);
 	AddModule(input);
-	AddModule(editor);
 	
 	// Scenes
-	AddModule(scene);
+	AddModule(scene); 
+	AddModule(editor);
 
 	// Renderer last!
 	AddModule(renderer3D);
@@ -65,6 +65,12 @@ void Application::PrepareUpdate()
 // ---------------------------------------------
 void Application::FinishUpdate()
 {
+	ms = ms_timer.Read();
+	if (ms > 0 && ms < (1000/ fpsCap))
+	{
+		SDL_Delay((1000/ fpsCap) - ms);
+	}
+	fps = 1000 / (float)ms_timer.Read();
 }
 
 // Call PreUpdate, Update and PostUpdate on all modules

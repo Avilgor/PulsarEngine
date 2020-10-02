@@ -21,7 +21,13 @@ public:
 	bool CleanUp();
 
 	void SetTitle(const char* title);
-
+	void SetWindowsSize(int width,int height);
+	void SetFullscreen(bool val);
+	void SetBorderless(bool val);
+	void SetMaximize(bool val);
+	void SetResizable(bool val);
+	void SetBrightness(float val);
+	void RestoreDefaultSize();
 public:
 	//The window we'll be rendering to
 	SDL_Window* window;

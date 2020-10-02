@@ -19,6 +19,16 @@ void Timer::Start()
 }
 
 // ---------------------------------------------
+void Timer::Resume()
+{
+	if (running == false)
+	{
+		running = true;
+		started_at = SDL_GetTicks() - (stopped_at - started_at);
+	}
+}
+
+// ---------------------------------------------
 void Timer::Stop()
 {
 	running = false;
@@ -38,4 +48,8 @@ Uint32 Timer::Read()
 	}
 }
 
-
+// ---------------------------------------------
+float Timer::ReadSec() const
+{
+	return float(SDL_GetTicks() - started_at) / 1000.0f;
+}

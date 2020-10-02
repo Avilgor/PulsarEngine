@@ -3,6 +3,8 @@
 
 #include "Module.h"
 #include "Globals.h"
+#include "EditorWindow.h"
+#include <vector>
 
 
 class EditorMain : public Module
@@ -16,12 +18,18 @@ public:
 
 	bool Init();
 	bool Start();
+	update_status PreUpdate(float dt);
 	update_status Update(float dt);
+	update_status PostUpdate(float dt);
 	bool CleanUp();
 
+	void ProccesInput(SDL_Event e);
+
+private:
+	std::vector<EditorWindow*> WindowsList;
 
 public:
-	SDL_Window* mainWindow;
+	SDL_Window* mainWindow;	
 };
 
 #endif // __EditorMain_H__

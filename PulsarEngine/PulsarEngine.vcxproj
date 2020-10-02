@@ -87,7 +87,9 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="ConfigWindow.h" />
     <ClInclude Include="EditorMain.h" />
+    <ClInclude Include="EditorWindow.h" />
     <ClInclude Include="glmath.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="ImGui\imconfig.h" />
@@ -113,7 +115,9 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="ConfigWindow.cpp" />
     <ClCompile Include="EditorMain.cpp" />
+    <ClCompile Include="EditorWindow.cpp" />
     <ClCompile Include="glmath.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
     <ClCompile Include="ImGui\imgui_demo.cpp" />

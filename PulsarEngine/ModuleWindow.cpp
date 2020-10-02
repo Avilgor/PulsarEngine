@@ -92,3 +92,54 @@ void ModuleWindow::SetTitle(const char* title)
 {
 	SDL_SetWindowTitle(window, title);
 }
+
+void ModuleWindow::SetWindowsSize(int w, int h)
+{
+	width = w;
+	height = h;
+	SDL_SetWindowSize(window, width,height);
+}
+
+void ModuleWindow::SetFullscreen(bool val)
+{
+	if(val) SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+	else SDL_SetWindowFullscreen(window, 0);
+	
+}
+
+void ModuleWindow::SetBorderless(bool val)
+{
+	if (val)SDL_SetWindowBordered(window, SDL_FALSE);
+	else SDL_SetWindowBordered(window, SDL_TRUE);
+}
+
+void ModuleWindow::SetMaximize(bool val)
+{
+	if (val)
+	{
+		SDL_DisplayMode DM;
+		SDL_GetDesktopDisplayMode(0, &DM);
+		width = DM.w;
+		height = DM.h;
+		SDL_MaximizeWindow(window);
+	}
+	else RestoreDefaultSize();
+}
+
+void ModuleWindow::SetResizable(bool val)
+{
+	if (val) SDL_SetWindowResizable(window,SDL_TRUE);
+	else SDL_SetWindowResizable(window,SDL_FALSE);
+}
+
+void ModuleWindow::SetBrightness(float val)
+{
+	SDL_SetWindowBrightness(window,val);
+}
+
+void ModuleWindow::RestoreDefaultSize()
+{
+	width = SCREEN_WIDTH * SCREEN_SIZE;
+	height = SCREEN_HEIGHT * SCREEN_SIZE;
+	SDL_SetWindowSize(window, width, height);
+}
