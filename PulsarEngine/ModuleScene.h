@@ -1,15 +1,15 @@
-#ifndef __ModuleSceneIntro_H__
-#define __ModuleSceneIntro_H__
+#ifndef __ModuleScene_H__
+#define __ModuleScene_H__
 
 #include "Module.h"
 #include "Primitive.h"
 
 
-class ModuleSceneIntro : public Module
+class ModuleScene : public Module
 {
 public:
-	ModuleSceneIntro(Application* app, bool start_enabled = true);
-	~ModuleSceneIntro();
+	ModuleScene(Application* app, bool start_enabled = true);
+	~ModuleScene();
 
 	bool Init();
 	bool Start();
@@ -21,7 +21,8 @@ public:
 
 public:
 	PlanePrimitive* p;
+	Cube* cube;
 	
 };
 
-#endif //__ModuleSceneIntro_H__
+#endif //__ModuleScene_H__

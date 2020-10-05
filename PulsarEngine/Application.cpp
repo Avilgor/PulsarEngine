@@ -7,7 +7,7 @@ Application::Application()
 	input = new ModuleInput(this);
 	renderer3D = new ModuleRenderer3D(this);
 	camera = new ModuleCamera3D(this);
-	scene = new ModuleSceneIntro(this);
+	scene = new ModuleScene(this);
 	editor = new EditorMain(this);
 
 	// The order of calls is very important!

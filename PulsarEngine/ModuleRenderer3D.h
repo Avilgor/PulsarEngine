@@ -19,6 +19,16 @@ public:
 
 	void OnResize(int width, int height);
 
+	//RenderOptions
+	void ToggleShaded();
+	void ToggleWireframe();
+	void ToggleLights(bool val);
+	void ToggleCullFace(bool val);
+	void ToggleDepthTest(bool val);
+	void ToggleColorMaterial(bool val);
+	void Toggle2DTextures(bool val);
+	void ResetToDefault();
+
 public:
 
 	Light lights[MAX_LIGHTS];

@@ -8,7 +8,7 @@
 #include "ModuleInput.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleCamera3D.h"
-#include "ModuleSceneIntro.h"
+#include "ModuleScene.h"
 #include "EditorMain.h"
 
 #include <list> 
@@ -21,7 +21,7 @@ public:
 	ModuleInput* input;
 	ModuleRenderer3D* renderer3D;
 	ModuleCamera3D* camera;
-	ModuleSceneIntro* scene;
+	ModuleScene* scene;
 	EditorMain* editor;
 
 	float ms = 0.0f;

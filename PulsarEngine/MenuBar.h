@@ -11,9 +11,16 @@ public:
 	virtual ~MenuBar();
 
 	void Draw();
+	void DrawRenderOptions();
+	void ToggleRenderOptions();
 
 private:
-	
+	bool renderOptions = false;
+	bool depth = false;
+	bool cullFace = true;
+	bool light = true;
+	bool colorMaterial = true;
+	bool texture2D = true;
 };
 
 #endif //__MenuBar_H__

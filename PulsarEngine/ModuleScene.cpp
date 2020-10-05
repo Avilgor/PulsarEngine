@@ -1,22 +1,22 @@
 #include "Globals.h"
 #include "Application.h"
-#include "ModuleSceneIntro.h"
+#include "ModuleScene.h"
 #include "Primitive.h"
 
 
-ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
+ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app, start_enabled)
 {}
 
-ModuleSceneIntro::~ModuleSceneIntro()
+ModuleScene::~ModuleScene()
 {}
 
-bool ModuleSceneIntro::Init()
+bool ModuleScene::Init()
 {
 	return true;
 }
 
 // Load assets
-bool ModuleSceneIntro::Start()
+bool ModuleScene::Start()
 {
 	LOG("Loading Intro assets");
 	bool ret = true;	
@@ -27,11 +27,14 @@ bool ModuleSceneIntro::Start()
 	p = new PlanePrimitive(0, 1, 0, 0);
 	p->axis = true;
 
+	cube = new Cube();
+	cube->SetPos(0,2,0);
+
 	return ret;
 }
 
 // Load assets
-bool ModuleSceneIntro::CleanUp()
+bool ModuleScene::CleanUp()
 {
 	LOG("Unloading Intro scene");
 
@@ -39,24 +42,23 @@ bool ModuleSceneIntro::CleanUp()
 }
 
 // PreUpdate
-update_status ModuleSceneIntro::PreUpdate(float dt)
+update_status ModuleScene::PreUpdate(float dt)
 {
 	
 	return UPDATE_CONTINUE;
 }
 
 // Update
-update_status ModuleSceneIntro::Update(float dt)
+update_status ModuleScene::Update(float dt)
 {
 	p->Render();
-
+	cube->Render();
 	return UPDATE_CONTINUE;
 }
 
 // PostUpdate
-update_status ModuleSceneIntro::PostUpdate(float dt)
-{
-	
+update_status ModuleScene::PostUpdate(float dt)
+{	
 
 	return UPDATE_CONTINUE;
 }

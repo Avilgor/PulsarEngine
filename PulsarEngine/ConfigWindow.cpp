@@ -52,6 +52,7 @@ void ConfigWindow::Draw()
         ImGui::PlotLines("FPS", fps, IM_ARRAYSIZE(fps), 0, NULL, 0.0f, 120.0f, ImVec2(0, 80));
         ImGui::PlotHistogram("MS", ms, IM_ARRAYSIZE(ms), 0, NULL, 0.0f, 40.0f, ImVec2(0, 80));
     }
+
     if (ImGui::CollapsingHeader("Window options"))
     {
         if(ImGui::Checkbox("Fullscreen", &fullscreen)) App->window->SetFullscreen(fullscreen);
