@@ -27,6 +27,7 @@ public:
 	void ToggleDepthTest(bool val);
 	void ToggleColorMaterial(bool val);
 	void Toggle2DTextures(bool val);
+	void ToggleBlend(bool val);
 	void ResetToDefault();
 
 public:

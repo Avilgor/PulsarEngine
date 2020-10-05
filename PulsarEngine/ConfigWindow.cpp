@@ -1,4 +1,5 @@
 #include "ConfigWindow.h"
+#include "Globals.h"
 #include "Application.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
@@ -20,8 +21,10 @@ ConfigWindow::ConfigWindow(std::string name) : EditorWindow(name)
 ConfigWindow::~ConfigWindow()
 {}
 
-void ConfigWindow::Draw()
+update_status ConfigWindow::Draw()
 {
+    update_status ret = UPDATE_CONTINUE;
+
     width = App->window->width;
     height = App->window->height;
     if (plotTimer.ReadSec() >= 1.0f)
@@ -36,6 +39,7 @@ void ConfigWindow::Draw()
         plotTimer.Start();
     }
 
+    ImGui::SetNextWindowBgAlpha(1.0f);
     ImGui::Begin(name.c_str(), &active);
     if (ImGui::CollapsingHeader("System info"))
     {        
@@ -74,4 +78,6 @@ void ConfigWindow::Draw()
     }
 
     ImGui::End();
+
+    return ret;
 }

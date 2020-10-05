@@ -2,6 +2,7 @@
 #define __ConfigWindow_H__
 
 #include "EditorWindow.h"
+#include "Globals.h"
 #include "Timer.h"
 #include <string>
 
@@ -11,8 +12,7 @@ public:
 	ConfigWindow(std::string name);
 	virtual ~ConfigWindow();
 
-	void Draw();
-	//void InfoProcessing();
+	update_status Draw();
 
 private:
 	bool fullscreen = WIN_FULLSCREEN;

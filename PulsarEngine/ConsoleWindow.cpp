@@ -1,5 +1,6 @@
 #include "ConsoleWindow.h"
 #include "Application.h"
+#include "Globals.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
 
@@ -12,8 +13,11 @@ ConsoleWindow::~ConsoleWindow()
 {}
 
 
-void ConsoleWindow::Draw()
+update_status ConsoleWindow::Draw()
 {   
+    update_status ret = UPDATE_CONTINUE;
+
+    ImGui::SetNextWindowBgAlpha(1.0f);
     ImGui::Begin(name.c_str(), &active);
     if (!App->ConsoleLogs.empty())
     {
@@ -21,7 +25,8 @@ void ConsoleWindow::Draw()
         {
             ImGui::Text(App->ConsoleLogs[i].c_str());
         }
-        //App->ConsoleLogs.clear();
     }
     ImGui::End();
+
+    return ret;
 }

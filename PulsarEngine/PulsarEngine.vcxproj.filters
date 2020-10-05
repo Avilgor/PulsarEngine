@@ -84,9 +84,6 @@
     <ClInclude Include="ImGui\imconfig.h">
       <Filter>Sources\Tools\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="ImGui\imgui_impl_opengl2.h">
-      <Filter>Sources\Tools\ImGui</Filter>
-    </ClInclude>
     <ClInclude Include="ImGui\imgui_impl_win32.h">
       <Filter>Sources\Tools\ImGui</Filter>
     </ClInclude>
@@ -107,6 +104,18 @@
     </ClInclude>
     <ClInclude Include="ModuleScene.h">
       <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneWindow.h">
+      <Filter>Sources\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectWindow.h">
+      <Filter>Sources\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="InspectorWindow.h">
+      <Filter>Sources\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="HierarchyWindow.h">
+      <Filter>Sources\Editor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -170,9 +179,6 @@
     <ClCompile Include="ImGui\imgui_draw.cpp">
       <Filter>Sources\Tools\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="ImGui\imgui_impl_opengl2.cpp">
-      <Filter>Sources\Tools\ImGui</Filter>
-    </ClCompile>
     <ClCompile Include="ImGui\imgui_impl_win32.cpp">
       <Filter>Sources\Tools\ImGui</Filter>
     </ClCompile>
@@ -187,6 +193,18 @@
     </ClCompile>
     <ClCompile Include="ModuleScene.cpp">
       <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneWindow.cpp">
+      <Filter>Sources\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectWindow.cpp">
+      <Filter>Sources\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="InspectorWindow.cpp">
+      <Filter>Sources\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="HierarchyWindow.cpp">
+      <Filter>Sources\Editor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@
 #define __MenuBar_H__
 
 #include "EditorWindow.h"
+#include "Globals.h"
 #include <string>
 
 class MenuBar : public EditorWindow
@@ -10,7 +11,7 @@ public:
 	MenuBar(std::string name);
 	virtual ~MenuBar();
 
-	void Draw();
+	update_status Draw();
 	void DrawRenderOptions();
 	void ToggleRenderOptions();
 
@@ -21,6 +22,7 @@ private:
 	bool light = true;
 	bool colorMaterial = true;
 	bool texture2D = true;
+	bool blend = true;
 };
 
 #endif //__MenuBar_H__

@@ -28,7 +28,7 @@ bool ModuleScene::Start()
 	p->axis = true;
 
 	cube = new Cube();
-	cube->SetPos(0,2,0);
+	cube->SetPos(0,1,0);
 
 	return ret;
 }

@@ -1,6 +1,7 @@
 #ifndef __EditorWindow_H__
 #define __EditorWindow_H__
 
+#include "Globals.h"
 #include "SDL/include/SDL.h"
 #include <string>
 
@@ -12,7 +13,7 @@ public:
 	EditorWindow(std::string name);
 	virtual ~EditorWindow();
 
-	virtual void Draw() {}
+	virtual update_status Draw() { return UPDATE_CONTINUE; }
 	virtual void InfoProcessing() {}
 	void SetActive(bool active);
 	bool IsActive() const { return active; }

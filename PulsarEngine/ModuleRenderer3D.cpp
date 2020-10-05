@@ -107,11 +107,11 @@ bool ModuleRenderer3D::Init()
 		GLfloat MaterialDiffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, MaterialDiffuse);
 		
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
+		glShadeModel(GL_SMOOTH);
+		glEnable(GL_LINE_SMOOTH);
+		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+
 		lights[0].Active(true);
-		glEnable(GL_LIGHTING);
-		glEnable(GL_COLOR_MATERIAL);
 	}
 
 	// Projection matrix for
@@ -182,6 +182,7 @@ void ModuleRenderer3D::ToggleShaded()
 
 void ModuleRenderer3D::ToggleWireframe()
 {
+	glLineWidth(1.0f);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
@@ -215,8 +216,17 @@ void ModuleRenderer3D::Toggle2DTextures(bool val)
 	else glDisable(GL_TEXTURE_2D);
 }
 
+void ModuleRenderer3D::ToggleBlend(bool val)
+{
+	if (val) glEnable(GL_BLEND);
+	else glDisable(GL_BLEND);
+}
+
 void ModuleRenderer3D::ResetToDefault()
 {
+	glEnable(GL_BLEND);
+	glBlendEquation(GL_FUNC_ADD);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);

@@ -13,8 +13,10 @@ MenuBar::~MenuBar()
 {}
 
 
-void MenuBar::Draw()
+update_status MenuBar::Draw()
 {
+	update_status ret = UPDATE_CONTINUE;
+
 	ImGui::BeginMainMenuBar();
 	
 	if (ImGui::BeginMenu("File"))
@@ -22,6 +24,7 @@ void MenuBar::Draw()
 		if (ImGui::MenuItem("New")) {}
 		if (ImGui::MenuItem("Open")) {}
 		if (ImGui::MenuItem("Save")) {}
+		if (ImGui::MenuItem("Exit")) { ret = UPDATE_STOP; }
 		ImGui::EndMenu();
 	}
 
@@ -47,16 +50,14 @@ void MenuBar::Draw()
 
 	if (ImGui::BeginMenu("Windows"))
 	{
-		if (ImGui::MenuItem("Hierachy"))
-		{
-		}
-		if (ImGui::MenuItem("Inspector"))
-		{
-		}
-		if (ImGui::MenuItem("Scene"))
-		{
+		if (ImGui::MenuItem("Hierarchy"))App->editor->SetWindowsActive(4, true);
 
-		}
+		if (ImGui::MenuItem("Inspector"))App->editor->SetWindowsActive(3, true);
+
+		if (ImGui::MenuItem("Scene")) App->editor->SetWindowsActive(6, true);
+
+		if (ImGui::MenuItem("Project")) App->editor->SetWindowsActive(5, true);
+		
 		if (ImGui::MenuItem("Console")) App->editor->SetWindowsActive(2, true);
 		
 		if (ImGui::MenuItem("Configuration")) App->editor->SetWindowsActive(1,true);
@@ -83,6 +84,8 @@ void MenuBar::Draw()
 	ImGui::EndMainMenuBar();
 	
 	if(renderOptions) DrawRenderOptions();
+
+	return ret;
 } 
 
 void MenuBar::ToggleRenderOptions()
@@ -99,7 +102,8 @@ void MenuBar::DrawRenderOptions()
 	if (ImGui::Checkbox("Lightning", &light)) App->renderer3D->ToggleLights(light);
 	if (ImGui::Checkbox("Color materials", &colorMaterial)) App->renderer3D->ToggleColorMaterial(colorMaterial);
 	if (ImGui::Checkbox("2D textures", &texture2D)) App->renderer3D->Toggle2DTextures(texture2D);
-	if (ImGui::Button("ResetToDefault"))
+	if (ImGui::Checkbox("Blend", &blend)) App->renderer3D->ToggleBlend(blend);
+	if (ImGui::Button("Reset To Default"))
 	{
 		depth = false;
 		cullFace = true;

@@ -4,6 +4,8 @@
 #include "Module.h"
 #include "Globals.h"
 #include "EditorWindow.h"
+#include "ImGui/imgui.h"
+
 #include <vector>
 
 
@@ -23,11 +25,15 @@ public:
 	update_status PostUpdate(float dt);
 	bool CleanUp();
 
+	update_status RenderDock();
 	void ProccesInput(SDL_Event e);
 	void SetWindowsActive(int index,bool val);
 
 private:
 	std::vector<EditorWindow*> WindowsList;
+	bool dock = true;
+	ImGuiWindowFlags dockFlags;
+	ImGuiDockNodeFlags dockspace_flags;
 
 public:
 	SDL_Window* mainWindow;	
