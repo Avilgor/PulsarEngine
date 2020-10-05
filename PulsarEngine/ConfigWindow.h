@@ -8,14 +8,13 @@
 class ConfigWindow : public EditorWindow
 {
 public:
-	ConfigWindow(std::string name, SDL_Window* window,Application* ap);
+	ConfigWindow(std::string name);
 	virtual ~ConfigWindow();
 
 	void Draw();
-	void InfoProcessing();
+	//void InfoProcessing();
 
 private:
-	int counter = 0;
 	bool fullscreen = WIN_FULLSCREEN;
 	bool borderless = WIN_BORDERLESS;
 	bool resizable = WIN_RESIZABLE;
@@ -23,7 +22,6 @@ private:
 	int width;
 	int height;
 	float brightness = 1.0f;
-	//char project[100];
 	float fps[100];
 	float ms[100];
 	Timer plotTimer;

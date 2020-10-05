@@ -9,7 +9,7 @@ class Application;
 class EditorWindow
 {
 public:
-	EditorWindow(std::string name, SDL_Window* window,Application* App);
+	EditorWindow(std::string name);
 	virtual ~EditorWindow();
 
 	virtual void Draw() {}
@@ -20,10 +20,8 @@ public:
 
 public:
 	std::string name;
-	SDL_Window* window;
 
 protected:
-	Application* App;
 	bool active = true;
 };
 

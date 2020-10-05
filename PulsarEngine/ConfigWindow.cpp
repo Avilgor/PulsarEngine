@@ -5,7 +5,7 @@
 
 #include <string>
 
-ConfigWindow::ConfigWindow(std::string name, SDL_Window* window, Application* ap) : EditorWindow(name, window,ap)
+ConfigWindow::ConfigWindow(std::string name) : EditorWindow(name)
 {
     width = App->window->width;
     height = App->window->height;
@@ -63,15 +63,14 @@ void ConfigWindow::Draw()
         if (ImGui::Button("Reset size")) App->window->RestoreDefaultSize();
         ImGui::Separator();
         if(ImGui::SliderFloat("Brightness", &brightness, 0.0f, 1.0f)) App->window->SetBrightness(brightness);
-        
+        ImGui::Separator();
+        ImGui::Text("Windows theme:");
+        if (ImGui::Button("Classic")) ImGui::StyleColorsClassic();
+        ImGui::SameLine();
+        if (ImGui::Button("Dark")) ImGui::StyleColorsDark();
+        ImGui::SameLine();
+        if (ImGui::Button("Light")) ImGui::StyleColorsLight();
     }
 
     ImGui::End();
-}
-
-void ConfigWindow::InfoProcessing()
-{
-    
-
-    
 }

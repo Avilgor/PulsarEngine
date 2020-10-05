@@ -24,6 +24,7 @@ public:
 	bool CleanUp();
 
 	void ProccesInput(SDL_Event e);
+	void SetWindowsActive(int index,bool val);
 
 private:
 	std::vector<EditorWindow*> WindowsList;

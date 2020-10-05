@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __Application_H__
+#define __Application_H__
 
 #include "Globals.h"
 #include "Timer.h"
@@ -11,7 +12,7 @@
 #include "EditorMain.h"
 
 #include <list> 
-
+#include <string>
 
 class Application
 {
@@ -25,6 +26,8 @@ public:
 
 	float ms = 0.0f;
 	float fps = 0.0f;
+
+	std::vector<std::string> ConsoleLogs;
 
 private:
 
@@ -48,3 +51,7 @@ private:
 	void PrepareUpdate();
 	void FinishUpdate();
 };
+
+extern Application* App;
+
+#endif //__Application_H__

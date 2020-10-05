@@ -102,6 +102,12 @@
     <ClInclude Include="ImGui\imstb_truetype.h">
       <Filter>Sources\Tools\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="MenuBar.h">
+      <Filter>Sources\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleWindow.h">
+      <Filter>Sources\Editor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -175,6 +181,12 @@
     </ClCompile>
     <ClCompile Include="ImGui\imgui_widgets.cpp">
       <Filter>Sources\Tools\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuBar.cpp">
+      <Filter>Sources\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="ConsoleWindow.cpp">
+      <Filter>Sources\Editor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
