@@ -39,7 +39,7 @@ bool EditorMain::Init()
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	// Setup Dear ImGui style
-	ImGui::StyleColorsLight();
+	ImGui::StyleColorsDark();
 
 	ImGui_ImplSDL2_InitForOpenGL(mainWindow, App->renderer3D->context);
     ImGui_ImplOpenGL3_Init();

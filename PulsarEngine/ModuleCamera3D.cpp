@@ -61,13 +61,29 @@ update_status ModuleCamera3D::Update(float dt)
 	Reference += newPos;*/
 
 	// Mouse motion ----------------
+	float Sensitivity = 0.25f;
 
-	if(App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
+	int dz = -App->input->GetMouseZ();
+	if (dz != 0)
+	{
+		if (Position.z < 0)	dz = -dz;
+		Position.z += dz;
+		Position = Reference + Z * length(Position);
+	}
+
+
+	/*if (App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT)
 	{
 		int dx = -App->input->GetMouseXMotion();
 		int dy = -App->input->GetMouseYMotion();
 
-		float Sensitivity = 0.25f;
+		Move(vec3(dx * 0.1, dy * 0.1,0.0f));
+	}*/
+
+	if(App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
+	{
+		int dx = -App->input->GetMouseXMotion();
+		int dy = -App->input->GetMouseYMotion();	
 
 		Position -= Reference;
 

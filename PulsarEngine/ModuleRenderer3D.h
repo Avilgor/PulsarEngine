@@ -3,6 +3,14 @@
 #include "Globals.h"
 #include "glmath.h"
 #include "Light.h"
+#include "Glew\include\GL\glew.h"
+#include "SDL\include\SDL_opengl.h"
+#include <gl/GL.h>
+#include <gl/GLU.h>
+
+#pragma comment (lib, "glu32.lib")
+#pragma comment (lib, "opengl32.lib")
+#pragma comment (lib, "Glew/lib/Win32/glew32.lib") 
 
 #define MAX_LIGHTS 8
 
@@ -18,6 +26,9 @@ public:
 	bool CleanUp();
 
 	void OnResize(int width, int height);
+	void RenderPiramyd(float x, float y, float z);
+	void RenderCube(float x, float y, float z);
+	void RenderSphere(float radius, unsigned int rings, unsigned int sectors,float x, float y, float z);
 
 	//RenderOptions
 	void ToggleShaded();
