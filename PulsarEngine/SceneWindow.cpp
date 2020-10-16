@@ -8,7 +8,7 @@
 
 SceneWindow::SceneWindow(std::string name) : EditorWindow(name)
 {
-	flags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollbar;
+	flags = /*ImGuiWindowFlags_NoBackground |*/ ImGuiWindowFlags_NoScrollbar;
 }
 
 SceneWindow::~SceneWindow()

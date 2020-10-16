@@ -9,6 +9,18 @@
 #include <vector>
 #include <string>
 
+#define LIBRARY_PATH "Library/"
+#define FOLDERS_PATH "Library/Folders/"
+#define MESHES_PATH "Library/Meshes/"
+#define MATERIALS_PATH "Library/Materials/"
+#define TEXTURES_PATH "Library/Textures/"
+#define MODELS_PATH "Library/Models/"
+#define ANIMATIONS_PATH "Library/Animations/"
+#define BONES_PATH "Library/Bones/"
+#define PARTICLES_PATH "Library/ParticleSystems/"
+#define SHADERS_PATH "Library/Shaders/"
+#define SCENES_PATH "Library/Scenes/"
+
 #define LOG(format, ...) log(__FILE__, __LINE__, format, __VA_ARGS__);
 
 void log(const char file[], int line, const char* format, ...);
@@ -20,6 +32,7 @@ void log(const char file[], int line, const char* format, ...);
 #define HAVE_M_PI
 
 typedef unsigned int uint;
+typedef unsigned __int64 uint64;
 
 enum update_status
 {
@@ -50,3 +63,23 @@ enum Buffers
 #define WIN_FULLSCREEN_DESKTOP false
 #define VSYNC true
 #define TITLE "Pulsar Engine"
+
+// Deletes a buffer
+#define RELEASE( x )\
+    {\
+       if( x != nullptr )\
+       {\
+         delete x;\
+	     x = nullptr;\
+       }\
+    }
+
+// Deletes an array of buffers
+#define RELEASE_ARRAY( x )\
+	{\
+       if( x != nullptr )\
+       {\
+           delete[] x;\
+	       x = nullptr;\
+		 }\
+	 }

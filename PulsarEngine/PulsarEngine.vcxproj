@@ -45,7 +45,7 @@
     <LibraryPath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\glut;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\libx86;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\lib\Win32;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\libx86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-	<IncludePath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\ImGui;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\include;$(IncludePath)</IncludePath>
+    <IncludePath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\ImGui;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\glut;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\libx86;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\lib\Win32;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\libx86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -92,6 +92,7 @@
     <ClInclude Include="EditorMain.h" />
     <ClInclude Include="EditorWindow.h" />
     <ClInclude Include="FBXLoaderModule.h" />
+    <ClInclude Include="FileSystemModule.h" />
     <ClInclude Include="glmath.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="HierarchyWindow.h" />
@@ -114,6 +115,7 @@
     <ClInclude Include="Module.h" />
     <ClInclude Include="ModuleInput.h" />
     <ClInclude Include="ModuleWindow.h" />
+    <ClInclude Include="PathNode.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="ProjectWindow.h" />
     <ClInclude Include="SceneWindow.h" />
@@ -127,6 +129,7 @@
     <ClCompile Include="EditorMain.cpp" />
     <ClCompile Include="EditorWindow.cpp" />
     <ClCompile Include="FBXLoaderModule.cpp" />
+    <ClCompile Include="FileSystemModule.cpp" />
     <ClCompile Include="glmath.cpp" />
     <ClCompile Include="HierarchyWindow.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />

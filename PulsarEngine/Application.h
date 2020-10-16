@@ -11,6 +11,7 @@
 #include "ModuleScene.h"
 #include "EditorMain.h"
 #include "FBXLoaderModule.h"
+#include "FileSystemModule.h"
 
 #include <list> 
 #include <string>
@@ -25,6 +26,7 @@ public:
 	ModuleScene* scene;
 	EditorMain* editor;
 	FBXLoaderModule* fbxLoader;
+	FileSystemModule* fileSystem;
 
 	float ms = 0.0f;
 	float fps = 0.0f;
@@ -37,6 +39,8 @@ private:
 	Timer	ms_timer;
 	float	dt;
 	std::list<Module*> modulesList;
+	std::string title;
+	std::string organization;
 
 public:
 
@@ -46,6 +50,9 @@ public:
 	bool Init();
 	update_status Update();
 	bool CleanUp();
+
+	const char* GetTitleName() const;
+	const char* GetOrganizationName() const;
 
 private:
 

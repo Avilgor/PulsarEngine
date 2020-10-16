@@ -126,6 +126,12 @@
     <ClInclude Include="Mesh.h">
       <Filter>Sources\Bases</Filter>
     </ClInclude>
+    <ClInclude Include="FileSystemModule.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="PathNode.h">
+      <Filter>Sources\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -220,6 +226,9 @@
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Sources\Bases</Filter>
+    </ClCompile>
+    <ClCompile Include="FileSystemModule.cpp">
+      <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

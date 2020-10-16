@@ -45,7 +45,7 @@ bool EditorMain::Init()
     ImGui_ImplOpenGL3_Init();
 
     dockFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking;
-    dockFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
+    dockFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoNavFocus /*| ImGuiWindowFlags_NoBackground*/;
 
     dockspace_flags = ImGuiDockNodeFlags_None;
 

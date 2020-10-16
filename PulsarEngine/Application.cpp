@@ -3,6 +3,9 @@
 
 Application::Application()
 {
+	title = "Sample";
+	organization = "Unknown";
+	fileSystem = new FileSystemModule(this);
 	window = new ModuleWindow(this);
 	input = new ModuleInput(this);
 	renderer3D = new ModuleRenderer3D(this);
@@ -16,6 +19,7 @@ Application::Application()
 	// They will CleanUp() in reverse order
 
 	// Main Modules
+	AddModule(fileSystem);
 	AddModule(window);
 	AddModule(camera);
 	AddModule(input);
@@ -116,4 +120,14 @@ bool Application::CleanUp()
 void Application::AddModule(Module* mod)
 {
 	modulesList.push_back(mod);
+}
+
+const char* Application::GetTitleName() const
+{
+	return title.c_str();
+}
+
+const char* Application::GetOrganizationName() const
+{
+	return organization.c_str();
 }
