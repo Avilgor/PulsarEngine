@@ -1,6 +1,6 @@
-#include "MenuBar.h"
 #include "Globals.h"
 #include "Application.h"
+#include "MenuBar.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
 

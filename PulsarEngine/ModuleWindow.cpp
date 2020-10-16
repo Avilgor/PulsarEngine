@@ -100,6 +100,11 @@ void ModuleWindow::SetWindowsSize(int w, int h)
 	SDL_SetWindowSize(window, width,height);
 }
 
+void ModuleWindow::GetWindowsSize(int& width, int& height)
+{
+	SDL_GetWindowSize(window, &width, &height);
+}
+
 void ModuleWindow::SetFullscreen(bool val)
 {
 	if(val) SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);

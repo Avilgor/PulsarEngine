@@ -1,6 +1,6 @@
-#include "InspectorWindow.h"
 #include "Globals.h"
 #include "Application.h"
+#include "InspectorWindow.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
 

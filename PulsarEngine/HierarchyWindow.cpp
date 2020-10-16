@@ -1,6 +1,6 @@
-#include "HierarchyWindow.h"
 #include "Globals.h"
 #include "Application.h"
+#include "HierarchyWindow.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
 

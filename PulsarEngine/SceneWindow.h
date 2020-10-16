@@ -16,6 +16,12 @@ public:
 
 private:
 	ImGuiWindowFlags flags;
+	ImVec2 windowsSize = { 0, 0 }; 
+	ImVec2 img_corner;
+	ImVec2 img_size;
+	ImVec2 cornerPos;
+	ImVec2 win_size;
+	ImVec2 img_offset;
 };
 
 #endif //__SceneWindow_H__

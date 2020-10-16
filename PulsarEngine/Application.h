@@ -10,6 +10,7 @@
 #include "ModuleCamera3D.h"
 #include "ModuleScene.h"
 #include "EditorMain.h"
+#include "FBXLoaderModule.h"
 
 #include <list> 
 #include <string>
@@ -23,6 +24,7 @@ public:
 	ModuleCamera3D* camera;
 	ModuleScene* scene;
 	EditorMain* editor;
+	FBXLoaderModule* fbxLoader;
 
 	float ms = 0.0f;
 	float fps = 0.0f;

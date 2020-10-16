@@ -22,6 +22,7 @@ public:
 
 	void SetTitle(const char* title);
 	void SetWindowsSize(int width,int height);
+	void GetWindowsSize(int &width,int &height);
 	void SetFullscreen(bool val);
 	void SetBorderless(bool val);
 	void SetMaximize(bool val);

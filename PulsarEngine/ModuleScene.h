@@ -2,8 +2,7 @@
 #define __ModuleScene_H__
 
 #include "Module.h"
-#include "Primitive.h"
-
+#include "Mesh.h"
 
 class ModuleScene : public Module
 {
@@ -20,9 +19,8 @@ public:
 
 
 public:
-	PlanePrimitive* p;
-	Cube* cube;
-	
+	//Mesh* cube;
+	Mesh* Warrior;
 };
 
 #endif //__ModuleScene_H__

@@ -37,6 +37,7 @@ private:
 
 public:
 	SDL_Window* mainWindow;	
+	bool mouse_in_scene = false;
 };
 
 #endif // __EditorMain_H__

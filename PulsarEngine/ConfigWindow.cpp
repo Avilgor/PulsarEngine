@@ -1,6 +1,6 @@
-#include "ConfigWindow.h"
 #include "Globals.h"
 #include "Application.h"
+#include "ConfigWindow.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
 
@@ -54,7 +54,7 @@ update_status ConfigWindow::Draw()
         ImGui::Text("Current ms: %.2f", App->ms);
         
         ImGui::PlotLines("FPS", fps, IM_ARRAYSIZE(fps), 0, NULL, 0.0f, 120.0f, ImVec2(0, 80));
-        ImGui::PlotHistogram("MS", ms, IM_ARRAYSIZE(ms), 0, NULL, 0.0f, 40.0f, ImVec2(0, 80));
+        ImGui::PlotLines("MS", ms, IM_ARRAYSIZE(ms), 0, NULL, 0.0f, 40.0f, ImVec2(0, 80));
     }
 
     if (ImGui::CollapsingHeader("Window options"))

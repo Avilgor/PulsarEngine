@@ -1,6 +1,6 @@
-#include "ProjectWindow.h"
 #include "Globals.h"
 #include "Application.h"
+#include "ProjectWindow.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
 

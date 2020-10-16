@@ -26,9 +26,7 @@ public:
 	bool CleanUp();
 
 	void OnResize(int width, int height);
-	void RenderPiramyd(float x, float y, float z);
-	void RenderCube(float x, float y, float z);
-	void RenderSphere(float radius, unsigned int rings, unsigned int sectors,float x, float y, float z);
+	void RenderGroundGrid(int size);
 
 	//RenderOptions
 	void ToggleShaded();
@@ -43,6 +41,9 @@ public:
 
 public:
 
+	uint frameBuffer = 0;
+	uint depthBuffer = 0;
+	uint renderTexture = 0;
 	Light lights[MAX_LIGHTS];
 	SDL_GLContext context;
 	mat3x3 NormalMatrix;

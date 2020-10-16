@@ -82,7 +82,7 @@ bool ModuleRenderer3D::Init()
 		
 		//Initialize clear color
 		glClearColor(0.f, 0.f, 0.f, 1.f);
-		//glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT);
 
 		//Check for error
 		error = glGetError();
@@ -124,6 +124,34 @@ bool ModuleRenderer3D::Init()
 	LOG("OpenGL version supported %s", glGetString(GL_VERSION));
 	LOG("GLSL: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
+	glGenFramebuffers(1, &frameBuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+
+	//Generating texture
+	glGenTextures(1, &renderTexture);
+	glBindTexture(GL_TEXTURE_2D, renderTexture);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, App->window->width, App->window->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	//Depth buffer
+	glGenRenderbuffers(1, &depthBuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, App->window->width, App->window->height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+	//Frame buffer
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTexture, 0);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		LOG("Error creating screen buffer");
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return ret;
 }
 
@@ -148,15 +176,24 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
+	update_status ret = UPDATE_CONTINUE;
+
+	glUseProgram(0);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+	glClearColor(0, 0, 0,0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClearColor(0,0,0,0);
+
 	SDL_GL_SwapWindow(App->window->window);
-	return UPDATE_CONTINUE;
+	return ret;
 }
 
 // Called before quitting
 bool ModuleRenderer3D::CleanUp()
 {
 	LOG("Destroying 3D Renderer");
-
 	SDL_GL_DeleteContext(context);
 	return true;
 }
@@ -164,7 +201,7 @@ bool ModuleRenderer3D::CleanUp()
 
 void ModuleRenderer3D::OnResize(int width, int height)
 {
-	glViewport(0, 0, width, height);
+	glViewport(0, 0, App->window->width, App->window->height);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -175,122 +212,39 @@ void ModuleRenderer3D::OnResize(int width, int height)
 	glLoadIdentity();
 }
 
-void ModuleRenderer3D::RenderPiramyd(float posx, float posy, float posz)
+
+void ModuleRenderer3D::RenderGroundGrid(int size)
 {
-	GLuint index[] = { 3,2,1, 3,1,0, 0,1,4, 1,2,4, 2,3,4, 3,0,4 };
-	GLfloat arrayV[] = { 0.0f + posx,0.0f + posy,0.0f + posz, 1.0f + posx,0.0f + posy,0.0f + posz, 1.0f + posx,0.0f + posy,-1.0f + posz, 0.0f + posx,0.0f + posy,-1.0f + posz, 0.5f + posx,1.0f + posy,-0.5f + posz };
-	
-	uint id = 0;
-	uint indexID = 1;
-	uint indexNum = sizeof(index) / sizeof(*index);
-	int vertices = (sizeof(arrayV) / sizeof(*arrayV)) / 3;
-	glGenBuffers(1, (GLuint*)&(id));
-	glBindBuffer(GL_ARRAY_BUFFER, id);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices * 3, arrayV, GL_STATIC_DRAW);
-	glGenBuffers(1, (GLuint*)&(indexID));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * indexNum, index, GL_STATIC_DRAW);
+	glBegin(GL_LINES);
+	int div = size /2;
+	int startDraw = -size / 2;
 
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glBindBuffer(GL_ARRAY_BUFFER, id);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexID);
-	glVertexPointer(3, GL_FLOAT, 0, NULL);
-	glDrawElements(GL_TRIANGLES, indexNum, GL_UNSIGNED_INT, NULL);
-	glDisableClientState(GL_VERTEX_ARRAY);
-}
+	for (int i = 0; i < size+1; i++)
+	{
+		//x
+		glVertex3f(-div, 0, startDraw);
+		glVertex3f(div, 0, startDraw);
 
-void ModuleRenderer3D::RenderCube(float posx, float posy, float posz)
-{
-	GLuint index[] = { 0,1,2, 0,2,3, 1,4,5, 1,5,2, 6,0,3, 6,3,7, 3,2,5, 3,5,7, 6,4,1, 6,1,0, 4,6,7, 4,7,5 };
-	GLfloat arrayV[] = { 0.0f+posx,0.0f+posy,0.0f+posz, 1.0f+posx,0.0f+posy,0.0f+posz, 1.0f+posx,1.0f+posy,0.0f+posz, 0.0f+posx,1.0f+posy,0.0f+posz, 
-		1.0f+posx,0.0f+posy,-1.0f+posz, 1.0f+posx,1.0f+posy,-1.0f+posz, 0.0f+posx,0.0f+posy,-1.0f+posz, 0.0f+posx,1.0f+posy,-1.0f+posz };
-
-	uint id = 0;
-	uint indexID = 1;
-	uint indexNum = sizeof(index) / sizeof(*index);
-	int vertices = (sizeof(arrayV) / sizeof(*arrayV)) / 3;
-	glGenBuffers(1, (GLuint*)&(id));
-	glBindBuffer(GL_ARRAY_BUFFER, id);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices * 3, arrayV, GL_STATIC_DRAW);
-	glGenBuffers(1, (GLuint*)&(indexID));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * indexNum, index, GL_STATIC_DRAW);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glBindBuffer(GL_ARRAY_BUFFER, id);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexID);
-	glVertexPointer(3, GL_FLOAT, 0, NULL);
-	glDrawElements(GL_TRIANGLES, indexNum, GL_UNSIGNED_INT, NULL);
-	glDisableClientState(GL_VERTEX_ARRAY);
-}
-
-void ModuleRenderer3D::RenderSphere(float radius, unsigned int rings, unsigned int sectors, float posx, float posy, float posz)
-{
-	std::vector<GLfloat> vertices;
-	std::vector<GLfloat> normals;
-	std::vector<GLfloat> texcoords;
-	std::vector<GLushort> indices;
-
-	float const R = 1. / (float)(rings - 1);
-	float const S = 1. / (float)(sectors - 1);
-	int r, s;
-
-	vertices.resize(rings * sectors * 3);
-	normals.resize(rings * sectors * 3);
-	texcoords.resize(rings * sectors * 2);
-	std::vector<GLfloat>::iterator v = vertices.begin();
-	std::vector<GLfloat>::iterator n = normals.begin();
-	std::vector<GLfloat>::iterator t = texcoords.begin();
-	for (r = 0; r < rings; r++) for (s = 0; s < sectors; s++) {
-		float const y = sin(-M_PI_2 + M_PI * r * R);
-		float const x = cos(2 * M_PI * s * S) * sin(M_PI * r * R);
-		float const z = sin(2 * M_PI * s * S) * sin(M_PI * r * R);
-
-		*t++ = s * S;
-		*t++ = r * R;
-
-		*v++ = x * radius;
-		*v++ = y * radius;
-		*v++ = z * radius;
-
-		*n++ = x;
-		*n++ = y;
-		*n++ = z;
+		//z
+		glVertex3f(startDraw, 0, -div);
+		glVertex3f(startDraw, 0, div);
+		startDraw++;
 	}
-
-	indices.resize(rings * sectors * 4);
-	std::vector<GLushort>::iterator i = indices.begin();
-	for (r = 0; r < rings; r++) for (s = 0; s < sectors; s++) {
-		*i++ = r * sectors + s;
-		*i++ = r * sectors + (s + 1);
-		*i++ = (r + 1) * sectors + (s + 1);
-		*i++ = (r + 1) * sectors + s;
-	}
-
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glTranslatef(posx, posy, posz);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	glVertexPointer(3, GL_FLOAT, 0, &vertices[0]);
-	glNormalPointer(GL_FLOAT, 0, &normals[0]);
-	glTexCoordPointer(2, GL_FLOAT, 0, &texcoords[0]);
-	glDrawElements(GL_QUADS, indices.size(), GL_UNSIGNED_SHORT, &indices[0]);
-	glPopMatrix();
+	glEnd();
 }
 
 void ModuleRenderer3D::ToggleShaded()
 {
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	GLenum face = GL_FRONT;
+	if (!glIsEnabled(GL_CULL_FACE_MODE)) face = GL_FRONT_AND_BACK;
+	glPolygonMode(face, GL_FILL);
 }
 
 void ModuleRenderer3D::ToggleWireframe()
 {
-	glLineWidth(1.0f);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	GLenum face = GL_FRONT;
+	if (!glIsEnabled(GL_CULL_FACE_MODE)) face = GL_FRONT_AND_BACK;
+	glPolygonMode(face, GL_LINE);
 }
 
 void ModuleRenderer3D::ToggleLights(bool val)

@@ -28,27 +28,17 @@ enum update_status
 	UPDATE_ERROR
 };
 
-enum CollisionObject
+enum Buffers
 {
-	NONE=1,
-	CAR,
-	WALL,
-	ENEMY,
-	CHECKPOINT,
-	WIN
+	BUFFIndices,
+	BUFFVertices,
+	BUFFNormals,
+	BUFFTex_coords,
+	//BUFFBone_IDs,
+	//BUFFBone_weights,
+	MAX_BUFFERS, 
 };
 
-enum RoadTypes
-{
-	FORWARD_RECT=1,
-	BACKWARD_RECT,
-	LEFT_RECT,
-	RIGHT_RECT,
-	TOP_RIGHT_CORNER,
-	TOP_LEFT_CORNER,
-	BOTTOM_RIGHT_CORNER,
-	BOTTOM_LEFT_CORNER
-};
 
 // Configuration -----------
 #define SCREEN_WIDTH 1280

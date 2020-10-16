@@ -22,6 +22,9 @@
     <Filter Include="Sources\Tools\ImGui">
       <UniqueIdentifier>{1c0b25e5-20cf-4fef-9856-f70f20f40bf1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Bases">
+      <UniqueIdentifier>{f91fa102-fa1b-46d5-92f1-3ee756f1e5f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -117,6 +120,12 @@
     <ClInclude Include="HierarchyWindow.h">
       <Filter>Sources\Editor</Filter>
     </ClInclude>
+    <ClInclude Include="FBXLoaderModule.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Sources\Bases</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -205,6 +214,12 @@
     </ClCompile>
     <ClCompile Include="HierarchyWindow.cpp">
       <Filter>Sources\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="FBXLoaderModule.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Sources\Bases</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

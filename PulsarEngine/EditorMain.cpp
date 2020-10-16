@@ -44,8 +44,8 @@ bool EditorMain::Init()
 	ImGui_ImplSDL2_InitForOpenGL(mainWindow, App->renderer3D->context);
     ImGui_ImplOpenGL3_Init();
 
-    dockFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-    dockFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoTitleBar /*| ImGuiWindowFlags_NoBackground*/;
+    dockFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking;
+    dockFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
 
     dockspace_flags = ImGuiDockNodeFlags_None;
 
@@ -64,6 +64,7 @@ bool EditorMain::Start()
     WindowsList.push_back(new HierarchyWindow("Hierarchy"));//4
     WindowsList.push_back(new ProjectWindow("Project name"));//5
     WindowsList.push_back(new SceneWindow("Scene"));//6
+
 	return ret;
 }
 
@@ -99,16 +100,7 @@ update_status EditorMain::Update(float dt)
     {
         status = RenderDock();
         if (status == UPDATE_CONTINUE)
-        {
-            for (std::vector<EditorWindow*>::const_iterator it = WindowsList.begin(); it != WindowsList.end(); ++it)
-            {
-                if (status == UPDATE_CONTINUE)
-                {
-                    if ((*it)->IsActive()) status = (*it)->Draw();
-                }
-                else break;
-            }
-
+        {           
             for (std::vector<EditorWindow*>::const_iterator it = WindowsList.begin(); it != WindowsList.end(); ++it)
             {
                 if (status == UPDATE_CONTINUE)
@@ -116,11 +108,7 @@ update_status EditorMain::Update(float dt)
                     if ((*it)->IsActive()) (*it)->InfoProcessing();
                 }
                 else break;
-            }
-
-            // rendering
-            ImGui::Render();
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            }           
         }
     }
    
@@ -130,6 +118,21 @@ update_status EditorMain::Update(float dt)
 // -----------------------------------------------------------------
 update_status EditorMain::PostUpdate(float dt)
 {
+    update_status status = UPDATE_CONTINUE;
+    if (!WindowsList.empty())
+    {
+        for (std::vector<EditorWindow*>::const_iterator it = WindowsList.begin(); it != WindowsList.end(); ++it)
+        {
+            if (status == UPDATE_CONTINUE)
+            {
+                if ((*it)->IsActive()) status = (*it)->Draw();
+            }
+            else break;
+        }
+        // rendering
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    }
     return UPDATE_CONTINUE;
 }
 

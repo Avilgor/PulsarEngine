@@ -1,6 +1,6 @@
-#include "ConsoleWindow.h"
 #include "Application.h"
 #include "Globals.h"
+#include "ConsoleWindow.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
 
