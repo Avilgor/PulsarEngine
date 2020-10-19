@@ -30,4 +30,5 @@ public:
 private:
 
 	mat4x4 ViewMatrix, ViewMatrixInverse;
+	bool mouseDrag;
 };

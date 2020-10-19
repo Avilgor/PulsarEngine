@@ -43,7 +43,6 @@ update_status ConfigWindow::Draw()
     ImGui::Begin(name.c_str(), &active);
     if (ImGui::CollapsingHeader("System info"))
     {        
-        //ImGui::InputText("Project Name", appName, 100, ImGuiInputTextFlags_EnterReturnsTrue);
         ImGui::Text("Platform:");
         ImGui::SameLine();
         ImGui::Text("%s", SDL_GetPlatform());
@@ -63,8 +62,7 @@ update_status ConfigWindow::Draw()
         if (ImGui::Checkbox("Borderless", &borderless)) App->window->SetBorderless(borderless);
         if(ImGui::Checkbox("Resizable", &resizable)) App->window->SetResizable(resizable);
         if(ImGui::Checkbox("Full desktop", &maximize)) App->window->SetMaximize(maximize);
-        if (ImGui::SliderInt("Width", &width, 800, 1920)) App->window->SetWindowsSize(width, height);
-        if(ImGui::SliderInt("Height", &height, 600, 1080)) App->window->SetWindowsSize(width, height);       
+        if (ImGui::SliderInt("Width", &width, 800, 1920) || ImGui::SliderInt("Height", &height, 600, 1080)) App->window->SetWindowsSize(width, height);    
         if (ImGui::Button("Reset size")) App->window->RestoreDefaultSize();
         ImGui::Separator();
         if(ImGui::SliderFloat("Brightness", &brightness, 0.0f, 1.0f)) App->window->SetBrightness(brightness);

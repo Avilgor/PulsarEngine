@@ -13,15 +13,18 @@ public:
 	virtual ~SceneWindow();
 
 	update_status Draw();
+	void SetNewSize(float x, float y);
 
 private:
 	ImGuiWindowFlags flags;
-	ImVec2 windowsSize = { 0, 0 }; 
-	ImVec2 img_corner;
-	ImVec2 img_size;
-	ImVec2 cornerPos;
-	ImVec2 win_size;
-	ImVec2 img_offset;
+	float lastSizeX;
+	float lastSizeY;
+	float cornerX;
+	float cornerY;
+	float windowSizeX;
+	float windowSizeY;
+	float offsetX;
+	float offsetY;
 };
 
 #endif //__SceneWindow_H__
