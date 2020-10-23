@@ -2,11 +2,11 @@
 #define __GameObject_H__
 
 #include "Component.h"
-#include "Transform.h"
 
 #include <vector>
 #include <string>
 
+class Transform;
 
 class GameObject
 {
@@ -28,6 +28,7 @@ public:
 	std::vector<GameObject*> GetAllChilds() { return Childs; }
 	Component* GetFirstComponentType(ComponentTypes type);
 	GameObject* GetFirstChilds() { return Childs[0]; }
+	GameObject* GetParent() { return parent; }
 
 public:
 	std::string name;
@@ -36,7 +37,7 @@ public:
 	Transform* transform;
 
 private:
-	GameObject* parent;
+	GameObject* parent = nullptr;
 	std::vector<Component*> Components;
 	std::vector<GameObject*> Childs;
 };

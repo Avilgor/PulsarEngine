@@ -41,12 +41,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\ImGui;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\glut;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\libx86;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\lib\Win32;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\libx86;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\Devil\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\ImGui;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\Devil\lib\x86;D:\GitHub Proyects\PulsarEngine\PulsarEngine\glut;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\libx86;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\lib\Win32;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\libx86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\ImGui;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\glut;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\libx86;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\lib\Win32;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\libx86;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\Devil\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\ImGui;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\Devil\lib\x86;D:\GitHub Proyects\PulsarEngine\PulsarEngine\glut;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\libx86;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\lib\Win32;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\libx86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -54,7 +54,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>false</ExceptionHandling>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PreprocessorDefinitions>WINDOWS_IGNORE_PACKING_MISMATCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -72,7 +72,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>false</ExceptionHandling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PreprocessorDefinitions>WINDOWS_IGNORE_PACKING_MISMATCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -119,7 +119,6 @@
     <ClInclude Include="ModuleInput.h" />
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="PathNode.h" />
-    <ClInclude Include="Primitive.h" />
     <ClInclude Include="ProjectWindow.h" />
     <ClInclude Include="SceneWindow.h" />
     <ClInclude Include="Timer.h" />
@@ -157,7 +156,6 @@
     <ClCompile Include="ModuleRenderer3D.cpp" />
     <ClCompile Include="ModuleScene.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
-    <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="ProjectWindow.cpp" />
     <ClCompile Include="SceneWindow.cpp" />
     <ClCompile Include="Timer.cpp" />

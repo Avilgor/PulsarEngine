@@ -4,7 +4,6 @@
 #include "Module.h"
 #include "SDL/include/SDL.h"
 
-#include "MathGeoLib\include\MathGeoLib.h"
 
 class Application;
 

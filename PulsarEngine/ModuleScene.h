@@ -3,7 +3,6 @@
 
 #include "Module.h"
 #include "GameObject.h"
-#include "Mesh.h"
 
 
 class ModuleScene : public Module
@@ -20,9 +19,6 @@ public:
 	bool CleanUp();
 	GameObject* GetRoot() { return root; }
 
-
-public:	
-	Mesh* Warrior;
 
 private:
 	GameObject* root;
