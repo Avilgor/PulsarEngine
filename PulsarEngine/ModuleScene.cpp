@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleScene.h"
 #include "GameObject.h"
+#include "Transform.h"
 
 
 ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -27,17 +28,17 @@ bool ModuleScene::Start()
 	root = new GameObject("Root");
 	
 
-	GameObject* warrior = new GameObject("Warrior");
+	warrior = new GameObject("Warrior");
 	warrior->AddComponent(MESH_COMP);
+	warrior->transform->SetScale(float3(0.01f,0.01f,0.01f));
+	warrior->transform->SetEulerRotation(float3(90.0f,0.0f,0));
 	root->AddChild(warrior);
 
 	Component* comp = warrior->GetFirstComponentType(MESH_COMP);
 	if (comp != nullptr)
 	{
-		LOG("Component not null");
 		if (comp->AsMesh() != nullptr)
 		{
-			LOG("Mesh not null");
 			App->fbxLoader->ImportMesh(comp->AsMesh(), "Assets/3D/warrior/warrior.FBX");
 		}
 	}
@@ -63,9 +64,11 @@ update_status ModuleScene::PreUpdate(float dt)
 update_status ModuleScene::Update(float dt)
 {
     App->renderer3D->RenderGroundGrid(10);
+	//warrior->transform->Rotate(float3(1.0f,0,0));
+
 	root->UpdateTransform();
 	root->UpdateGameObject();
-
+	
 	return UPDATE_CONTINUE;
 }
 

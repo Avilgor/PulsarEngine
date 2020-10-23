@@ -1,4 +1,6 @@
 #include "Globals.h"
+#include "GameObject.h"
+#include "Transform.h"
 #include "Mesh.h"
 #include "Glew/include/GL/glew.h"
 #include "SDL/include/SDL_opengl.h"
@@ -88,12 +90,15 @@ void Mesh::GenerateBuffers()
 
 void Mesh::Render()
 {
+	glPushMatrix();
+	glMultMatrixf((float*)&gameobject->transform->GetTransform());
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, idVertex);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idIndex);
 	glVertexPointer(3, GL_FLOAT, 0, NULL);
 	glDrawElements(GL_TRIANGLES, indexSize, GL_UNSIGNED_INT, NULL);
 	glDisableClientState(GL_VERTEX_ARRAY);
+	glPopMatrix();
 }
 
 void Mesh::CreateCube(float x, float y, float z)

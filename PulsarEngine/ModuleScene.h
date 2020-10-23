@@ -22,6 +22,7 @@ public:
 
 private:
 	GameObject* root;
+	GameObject* warrior;//temp
 };
 
 #endif //__ModuleScene_H__

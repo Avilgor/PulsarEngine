@@ -28,14 +28,13 @@ update_status SceneWindow::Draw()
 	update_status ret = UPDATE_CONTINUE;
     ImGui::Begin(name.c_str(), &active,flags);	
 	ImVec2 winSize = ImGui::GetWindowSize();	
-	if (winSize.x != lastSizeX || winSize.y != lastSizeY) SetNewSize(winSize.x, winSize.y);
-	
-	ImGui::SetCursorPos(ImVec2(offsetX, offsetY));
+	if (winSize.x != lastSizeX || winSize.y != lastSizeY) SetNewSize(winSize.x, winSize.y);	
+	ImGui::SetCursorPos(ImVec2(offsetX, offsetY));	
 	cornerX = ImGui::GetCursorScreenPos().x;
 	cornerY = ImGui::GetCursorScreenPos().y + windowSizeY;
 	cornerY = App->window->height - cornerY;
-	ImGui::Image((ImTextureID)App->renderer3D->renderTexture, winSize);
-	App->editor->mouse_in_scene = ImGui::IsItemHovered();	
+	ImGui::Image((ImTextureID)App->renderer3D->renderTexture, winSize);	
+	App->editor->mouse_in_scene = ImGui::IsItemHovered();
     ImGui::End();
 
 	return ret;

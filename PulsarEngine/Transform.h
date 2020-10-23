@@ -29,6 +29,7 @@ public:
 	float4x4 GetGlobalTransform() { return transformGlobal; }
 	float4x4 GetGlobalTransformT() { return transformTGlobal; }
 
+	void Rotate(float3 rot);
 	void SetPosition(float3 pos);
 	void SetScale(float3 scale);
 	void SetQuatRotation(Quat rot);
@@ -43,7 +44,7 @@ public:
 	bool normalsFlipped;
 
 private:
-
+	bool needUpdate;
 	float4x4 transform;
 	float4x4 transformGlobal;
 	float4x4 transformTGlobal;

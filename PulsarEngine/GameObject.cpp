@@ -82,35 +82,27 @@ void GameObject::AddComponent(ComponentTypes type)
 	{
 	case TRANSFORM_COMP:
 		transform = new Transform(this);
-		//LOG("Added transform component.");
 		break;
 	case MESH_COMP:
 		Components.push_back((new Mesh(this))->GetComponent());
-		//LOG("Added mesh component.");
 		break;
 	case MATERIAL_COMP:
 		Components.push_back((new Material(this))->GetComponent());
-		//LOG("Added material component.");
 		break;
 	default:
 		break;
 	}
-	//LOG("Components number: %d", Components.size());
 }
 
 Component* GameObject::GetFirstComponentType(ComponentTypes type)
 {
 	Component* temp = nullptr;
-	//LOG("Search type: %d",type);
 	if (!Components.empty())
 	{
-		//LOG("Components not empty: %d",Components.size());
 		for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); it++)
 		{
-			//LOG("Component type: %d", (*it)->compType);
 			if ((*it)->compType == type)
 			{
-				//LOG("Found component.");
 				temp = (*it);
 				break;
 			}
