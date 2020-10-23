@@ -33,6 +33,8 @@ public:
 
 	std::vector<std::string> ConsoleLogs;
 
+	int GoIDNum = 0;
+
 private:
 
 	float	fpsCap = 60.0f;

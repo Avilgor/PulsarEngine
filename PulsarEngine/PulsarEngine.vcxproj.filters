@@ -22,7 +22,10 @@
     <Filter Include="Sources\Tools\ImGui">
       <UniqueIdentifier>{1c0b25e5-20cf-4fef-9856-f70f20f40bf1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Bases">
+    <Filter Include="Sources\Elements">
+      <UniqueIdentifier>{d3212a99-f79e-467d-88a0-fa3fe3933c5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Components">
       <UniqueIdentifier>{f91fa102-fa1b-46d5-92f1-3ee756f1e5f7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -124,13 +127,25 @@
       <Filter>Sources\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>Sources\Bases</Filter>
+      <Filter>Sources\Components</Filter>
     </ClInclude>
     <ClInclude Include="FileSystemModule.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
     <ClInclude Include="PathNode.h">
       <Filter>Sources\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Sources\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Sources\Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Sources\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Sources\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -225,10 +240,22 @@
       <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Sources\Bases</Filter>
+      <Filter>Sources\Components</Filter>
     </ClCompile>
     <ClCompile Include="FileSystemModule.cpp">
       <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Sources\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Sources\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Sources\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Sources\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

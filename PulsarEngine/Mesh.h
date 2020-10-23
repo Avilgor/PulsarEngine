@@ -2,17 +2,20 @@
 #define __Mesh_H__
 
 #include "Globals.h"
+#include "Component.h"
 #include "MathGeoLib/include/Geometry/AABB.h"
 #include "MathGeoLib/include/Math/float4x4.h"
 #include "Glew/include/GL/glew.h"
 #include "SDL/include/SDL_opengl.h"
 
-class Mesh 
+class Mesh : public Component
 {
 public:
-	Mesh();
+	Mesh(GameObject* parent);
 	~Mesh();
 
+	void UpdateComponent();
+	void DeleteComponent();
 	bool LoadImportedMesh();
 	void Render();
 	void GenerateBuffers();

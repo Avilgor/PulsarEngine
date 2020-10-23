@@ -6,49 +6,16 @@
 #include "Assimp/include/postprocess.h"
 #include "Assimp/include/mesh.h"
 
-#include <list>
-
 #pragma comment (lib, "Assimp/libx86/assimp.lib")
 
-FBXLoaderModule::FBXLoaderModule(Application* app, bool start_enabled) : Module(app, start_enabled)
+FBXLoaderModule::FBXLoaderModule()
 {}
 
 FBXLoaderModule::~FBXLoaderModule()
 {}
 
 
-
-bool FBXLoaderModule::Start()
-{
-	bool ret = true;
-	return ret;
-}
-
-update_status FBXLoaderModule::Update(float dt)
-{
-	if (!Meshes.empty())
-	{
-		for (std::list<Mesh*>::iterator it = Meshes.begin(); it != Meshes.end(); ++it)
-		{
-			(*it)->Render();
-		}
-	}
-	return UPDATE_CONTINUE;
-}
-
-bool FBXLoaderModule::CleanUp()
-{
-	bool ret = true;
-	for (std::list<Mesh*>::iterator it = Meshes.begin(); it != Meshes.end(); ++it)
-	{
-		delete (*it);
-	}
-	Meshes.clear();
-
-	return ret;
-}
-
-bool FBXLoaderModule::ImportMesh(const char* path)
+bool FBXLoaderModule::ImportMesh(Mesh* mesh,const char* path)
 {
 	bool ret = true;
 	const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
@@ -56,7 +23,6 @@ bool FBXLoaderModule::ImportMesh(const char* path)
 	{
 		for (int i = 0; i < scene->mNumMeshes; i++)
 		{
-			Mesh* mesh = new Mesh();
 			mesh->verticesSize = scene->mMeshes[i]->mNumVertices;
 			mesh->verticesArray = new float[mesh->verticesSize * 3];
 			memcpy(mesh->verticesArray, scene->mMeshes[i]->mVertices, sizeof(float) * mesh->verticesSize * 3);
@@ -102,7 +68,6 @@ bool FBXLoaderModule::ImportMesh(const char* path)
 				}
 			}
 			mesh->LoadImportedMesh();
-			Meshes.push_back(mesh);
 		}
 		aiReleaseImport(scene);
 	}

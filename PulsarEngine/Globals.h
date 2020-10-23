@@ -34,6 +34,7 @@ void log(const char file[], int line, const char* format, ...);
 typedef unsigned int uint;
 typedef unsigned __int64 uint64;
 
+
 enum update_status
 {
 	UPDATE_CONTINUE = 1,
@@ -41,17 +42,12 @@ enum update_status
 	UPDATE_ERROR
 };
 
-enum Buffers
+enum ComponentTypes
 {
-	BUFFIndices,
-	BUFFVertices,
-	BUFFNormals,
-	BUFFTex_coords,
-	//BUFFBone_IDs,
-	//BUFFBone_weights,
-	MAX_BUFFERS, 
+	TRANSFORM_COMP = 1,
+	MESH_COMP,
+	MATERIAL_COMP,
 };
-
 
 // Configuration -----------
 #define SCREEN_WIDTH 1280

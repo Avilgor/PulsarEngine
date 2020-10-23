@@ -12,7 +12,7 @@ Application::Application()
 	camera = new ModuleCamera3D(this);
 	scene = new ModuleScene(this);
 	editor = new EditorMain(this);
-	fbxLoader = new FBXLoaderModule(this);
+	fbxLoader = new FBXLoaderModule();
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -25,10 +25,8 @@ Application::Application()
 	AddModule(input);
 	
 	// Scenes
-	AddModule(scene); 
 	AddModule(editor);
-	AddModule(fbxLoader);
-
+	AddModule(scene); 
 
 	// Renderer last!
 	AddModule(renderer3D);

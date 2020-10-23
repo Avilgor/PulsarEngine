@@ -3,7 +3,7 @@
 #include "Glew/include/GL/glew.h"
 #include "SDL/include/SDL_opengl.h"
 
-Mesh::Mesh()
+Mesh::Mesh(GameObject* parent) : Component(parent, MESH_COMP)
 {
 	VAO = 0;
 	idVertex = 0;
@@ -14,11 +14,21 @@ Mesh::Mesh()
 	normalsSize = 0;
 	verticesSize = 0;
 	textSize = 0;
+	component->mesh = this;
 }
 
 Mesh::~Mesh()
 {}
 
+void Mesh::UpdateComponent()
+{
+	Render();
+}
+
+void Mesh::DeleteComponent()
+{
+
+}
 
 bool Mesh::LoadImportedMesh()
 {
@@ -39,7 +49,7 @@ void Mesh::GenerateBuffers()
 		glBindBuffer(GL_ARRAY_BUFFER, idVertex);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * verticesSize * 3, verticesArray, GL_STATIC_DRAW);
 
-		//Indices buffer
+		//Index buffer
 		if (indexSize > 0)
 		{
 			glGenBuffers(1, (GLuint*)&(idIndex));
