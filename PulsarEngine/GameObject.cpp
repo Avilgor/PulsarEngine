@@ -188,6 +188,19 @@ void GameObject::DeleteChild(int id)
 	}			
 }	
 
+void GameObject::DeleteAllChilds()
+{
+	if (!Childs.empty())
+	{
+		std::vector<GameObject*> temp = Childs;
+		for (std::vector<GameObject*>::iterator it = temp.begin(); it != temp.end(); it++)
+		{
+			(*it)->DeleteGameobject();
+		}
+		Childs.clear();
+	}
+}
+
 void GameObject::RemoveChild(int id)
 {
 	if (!Childs.empty())
@@ -246,7 +259,7 @@ void GameObject::DeleteGameobject()
 {	
 	LOG("To delete: %s",name.c_str());
 	toDelete = true;
-	parent->SaveToDelete(this);
+	if(parent != nullptr) parent->SaveToDelete(this);
 	if (!Childs.empty())
 	{
 		std::vector<GameObject*> toDelete = Childs;

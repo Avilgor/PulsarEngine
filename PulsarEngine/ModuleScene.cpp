@@ -59,7 +59,7 @@ bool ModuleScene::Start()
 bool ModuleScene::CleanUp()
 {
 	LOG("Unloading Intro scene");
-	root->DeleteGameobject();
+	root->DeleteAllChilds();
 	return true;
 }
 
@@ -81,9 +81,12 @@ update_status ModuleScene::Update(float dt)
     App->renderer3D->RenderGroundGrid(10);
 	//warrior->transform->Rotate(float3(1.0f,0,0));
 
-	root->UpdateTransform();
-	root->UpdateGameObject();
-	
+	if (root != nullptr)
+	{
+		root->UpdateTransform();
+		root->UpdateGameObject();
+	}
+
 	return UPDATE_CONTINUE;
 }
 

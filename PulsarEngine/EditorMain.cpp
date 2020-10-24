@@ -134,6 +134,24 @@ void EditorMain::EmptySelected()
 }
 
 // -----------------------------------------------------------------
+void EditorMain::CreateSelectionChild()
+{
+    for (std::vector<GameObject*>::iterator it = selectedGameObjects.begin(); it != selectedGameObjects.end(); ++it)
+    {
+        (*it)->CreateChild();
+    }
+}
+
+// -----------------------------------------------------------------
+void EditorMain::DeleteSelectionChilds()
+{
+    for (std::vector<GameObject*>::iterator it = selectedGameObjects.begin(); it != selectedGameObjects.end(); ++it)
+    {
+        (*it)->DeleteAllChilds();
+    }
+}
+
+// -----------------------------------------------------------------
 bool EditorMain::CleanUp()
 {
 	LOG("Cleaning editor...");

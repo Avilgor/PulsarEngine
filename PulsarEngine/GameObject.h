@@ -25,6 +25,7 @@ public:
 	void CreateChild();
 	void DeleteChild(int id = 0);	
 	void RemoveChild(int id);
+	void DeleteAllChilds();
 	void DeleteGameobject();
 	bool HasChilds();
 	std::vector<Component*> GetAllComponents() { return Components; }

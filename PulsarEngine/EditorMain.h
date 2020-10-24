@@ -31,6 +31,8 @@ public:
 	void SelectOne(GameObject* go);
 	void AddSelection(GameObject* go);
 	void RemoveSelection(GameObject* go);
+	void CreateSelectionChild();
+	void DeleteSelectionChilds();
 	void DeleteSelected();
 	void EmptySelected();
 

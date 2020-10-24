@@ -33,6 +33,10 @@ update_status MenuBar::Draw()
 	{
 		if (ImGui::MenuItem("Create gameobject")) App->scene->CreateEmptyGameobject();
 
+		if (ImGui::MenuItem("Create child")) App->editor->CreateSelectionChild();
+
+		if (ImGui::MenuItem("Delete all childs")) App->editor->DeleteSelectionChilds();
+
 		if (ImGui::MenuItem("Delete selected")) App->editor->DeleteSelected();
 		ImGui::EndMenu();
 	}
