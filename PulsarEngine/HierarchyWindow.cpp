@@ -71,20 +71,18 @@ void HierarchyWindow::DrawGameObject(GameObject* go)
 
 	if (ImGui::BeginPopup(go->name.c_str()))
 	{
-		bool close = false;
 		if (ImGui::Button("Create child"))
 		{
 			go->CreateChild();
-			close = true;
+			ImGui::CloseCurrentPopup();
 		}
 
 		if (ImGui::Button("Delete"))
 		{
 			go->DeleteGameobject();
-			close = true;
+			//App->editor->DeleteSelected();
+			ImGui::CloseCurrentPopup();
 		}
-
-		if(close) ImGui::CloseCurrentPopup();
 		ImGui::EndPopup();
 	}
 
@@ -107,20 +105,19 @@ void HierarchyWindow::NodeInput(GameObject* go)
 		{
 			if (ctrl)
 			{
-				if(go->selected) go->selected = false;
-				else go->selected = true;
+				if (go->selected) App->editor->RemoveSelection(go);//go->selected = false;
+				else App->editor->AddSelection(go);//go->selected = true;
 			}
-			else go->selected = true;
+			else App->editor->SelectOne(go);
 		}
-		else
+		/*else
 		{
-			if (!ctrl) go->selected = false;
-		}		
+			if (!ctrl) App->editor->RemoveSelection(go);
+		}*/		
 	}
 
 	if (ImGui::IsItemHovered() && rightMouse == KEY_DOWN)
 	{
 		ImGui::OpenPopup(go->name.c_str());
 	}
-	
 }

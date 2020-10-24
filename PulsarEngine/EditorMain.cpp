@@ -68,6 +68,71 @@ bool EditorMain::Start()
 	return ret;
 }
 
+void EditorMain::SelectOne(GameObject* go)
+{
+    if (!selectedGameObjects.empty())
+    {
+        for (std::vector<GameObject*>::iterator it = selectedGameObjects.begin(); it != selectedGameObjects.end(); ++it)
+        {
+            (*it)->selected = false;
+        }
+        selectedGameObjects.clear();
+    }
+    selectedGameObjects.push_back(go);
+    go->selected = true;
+}
+
+void EditorMain::AddSelection(GameObject* go)
+{
+    go->selected = true;
+    selectedGameObjects.push_back(go);
+}
+
+// -----------------------------------------------------------------
+void EditorMain::RemoveSelection(GameObject* go)
+{
+    if (!selectedGameObjects.empty())
+    {
+        std::vector<GameObject*> temp = selectedGameObjects;
+        for (std::vector<GameObject*>::iterator it = selectedGameObjects.begin(); it != selectedGameObjects.end(); ++it)
+        {
+            if (go->ID != (*it)->ID) temp.push_back((*it));
+            else go->selected = false;
+        }
+        selectedGameObjects.clear();
+        selectedGameObjects = temp;
+        temp.clear();
+    }
+}
+
+// -----------------------------------------------------------------
+void EditorMain::DeleteSelected()
+{
+    if (!selectedGameObjects.empty())
+    {
+        for (std::vector<GameObject*>::iterator it = selectedGameObjects.begin(); it != selectedGameObjects.end(); ++it)
+        {
+            (*it)->selected = false;
+            (*it)->DeleteGameobject();
+        }
+        selectedGameObjects.clear();
+    }
+}
+
+
+// -----------------------------------------------------------------
+void EditorMain::EmptySelected()
+{
+    if (!selectedGameObjects.empty())
+    {
+        for (std::vector<GameObject*>::iterator it = selectedGameObjects.begin(); it != selectedGameObjects.end(); ++it)
+        {
+            (*it)->selected = false;
+        }
+        selectedGameObjects.clear();
+    }
+}
+
 // -----------------------------------------------------------------
 bool EditorMain::CleanUp()
 {
@@ -111,6 +176,8 @@ update_status EditorMain::Update(float dt)
             }           
         }
     }
+
+    if (mouse_in_scene && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) EmptySelected();
    
 	return status;
 }

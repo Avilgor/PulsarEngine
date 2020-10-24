@@ -18,6 +18,7 @@ public:
 	update_status PostUpdate(float dt);
 	bool CleanUp();
 	GameObject* GetRoot() { return root; }
+	void CreateEmptyGameobject();
 
 
 private:

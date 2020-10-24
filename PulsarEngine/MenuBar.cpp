@@ -31,9 +31,9 @@ update_status MenuBar::Draw()
 
 	if (ImGui::BeginMenu("Edit"))
 	{
-		if (ImGui::MenuItem("Create")) {}
+		if (ImGui::MenuItem("Create gameobject")) App->scene->CreateEmptyGameobject();
 
-		if (ImGui::MenuItem("Delete selection")) {}
+		if (ImGui::MenuItem("Delete selected")) App->editor->DeleteSelected();
 		ImGui::EndMenu();
 	}
 
@@ -75,8 +75,6 @@ update_status MenuBar::Draw()
 
 		if (ImGui::MenuItem("View on GitHub"))
 			ShellExecuteA(NULL, "open", "https://github.com/Avilgor/PulsarEngine", NULL, NULL, SW_SHOWNORMAL);
-
-		//if (ImGui::MenuItem("About"))
 
 		ImGui::EndMenu();
 	}

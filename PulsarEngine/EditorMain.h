@@ -28,6 +28,11 @@ public:
 	update_status RenderDock();
 	void ProccesInput(SDL_Event e);
 	void SetWindowsActive(int index,bool val);
+	void SelectOne(GameObject* go);
+	void AddSelection(GameObject* go);
+	void RemoveSelection(GameObject* go);
+	void DeleteSelected();
+	void EmptySelected();
 
 private:
 	std::vector<EditorWindow*> WindowsList;
@@ -38,6 +43,7 @@ private:
 public:
 	SDL_Window* mainWindow;	
 	bool mouse_in_scene = false;
+	std::vector<GameObject*> selectedGameObjects;
 };
 
 #endif // __EditorMain_H__

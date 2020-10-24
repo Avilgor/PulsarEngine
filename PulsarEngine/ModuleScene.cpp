@@ -55,12 +55,18 @@ bool ModuleScene::Start()
 	return ret;
 }
 
-// Load assets
+
 bool ModuleScene::CleanUp()
 {
 	LOG("Unloading Intro scene");
-
+	root->DeleteGameobject();
 	return true;
+}
+
+void ModuleScene::CreateEmptyGameobject()
+{
+	GameObject* go = new GameObject("NewGameobject");
+	root->AddChild(go);
 }
 
 // PreUpdate
