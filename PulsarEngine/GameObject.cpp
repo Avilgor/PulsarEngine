@@ -15,6 +15,7 @@ GameObject::GameObject(const char* n, GameObject* p)
 	active = true;
 	selected = false;
 	showHierarchy = false;
+	toDelete = false;
 	parent = p;
 	AddComponent(TRANSFORM_COMP);
 }
@@ -49,33 +50,52 @@ void GameObject::SetActive(bool val)
 
 void GameObject::UpdateTransform()
 {
-	if(transform != nullptr) transform->UpdateComponent();
-	if (!Childs.empty())
+	if (!toDelete)
 	{
-		for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
+		if (transform != nullptr) transform->UpdateComponent();
+		if (!Childs.empty())
 		{
-			if (transform->needUpdate) (*it)->transform->needUpdate = true;
-			(*it)->UpdateTransform();
+			for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
+			{
+				if (transform->needUpdate) (*it)->transform->needUpdate = true;
+				(*it)->UpdateTransform();
+			}
 		}
 	}
 }
 
 void GameObject::UpdateGameObject()
-{
-	//LOG("Update Gameobject: %s",name.c_str());
-	if (!Components.empty())
+{	
+	if (!toDelete)
 	{
-		for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)
+		if (!toDeleteChilds.empty())
 		{
-			if((*it)->active) (*it)->UpdateComponent();
+			for (std::vector<GameObject*>::iterator it = toDeleteChilds.begin(); it != toDeleteChilds.end(); ++it)
+			{
+				(*it)->Delete();
+			}
+			toDeleteChilds.clear();
 		}
-	}
-
-	if (!Childs.empty())
-	{
-		for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
+	
+		if (!toAddChilds.empty())
 		{
-			if ((*it)->active) (*it)->UpdateGameObject();
+			AddPendingChilds();			
+		}
+
+		if (!Components.empty())
+		{
+			for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)
+			{
+				if ((*it)->active) (*it)->UpdateComponent();
+			}
+		}
+
+		if (!Childs.empty())
+		{
+			for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
+			{
+				if ((*it)->active) (*it)->UpdateGameObject();
+			}
 		}
 	}
 }
@@ -134,13 +154,22 @@ void GameObject::DeleteGOComponent(ComponentTypes type)
 void GameObject::AddChild(GameObject* child)
 {
 	child->parent = this;
-	Childs.push_back(child);
+	toAddChilds.push_back(child);
 }
 
 void GameObject::CreateChild()
 {
 	GameObject* child = new GameObject("Child",this);
-	Childs.push_back(child);
+	toAddChilds.push_back(child);
+}
+
+void GameObject::AddPendingChilds()
+{
+	for (std::vector<GameObject*>::iterator it = toAddChilds.begin(); it != toAddChilds.end(); ++it)
+	{
+		Childs.push_back((*it));
+	}	
+	toAddChilds.clear();
 }
 
 void GameObject::DeleteChild(int id)
@@ -180,41 +209,51 @@ bool GameObject::HasChilds()
 	else return true;
 }
 
+void GameObject::Delete()
+{
+	if (!toDeleteChilds.empty())
+	{
+		std::vector<GameObject*> toDelete = toDeleteChilds;
+		for (std::vector<GameObject*>::iterator it = toDelete.begin(); it != toDelete.end(); ++it)
+		{
+			(*it)->Delete();
+		}
+		toDelete.clear();
+	}
+
+	if (!Components.empty())
+	{
+		for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)
+		{
+			(*it)->DeleteComponent();
+		}
+		Components.clear();
+	}
+
+	transform->DeleteComponent();
+	transform = nullptr;
+	LOG("Deleted Gameobject: %s", name.c_str());
+	delete this;
+}
+
+void GameObject::SaveToDelete(GameObject* trash)
+{
+	RemoveChild(trash->ID);
+	toDeleteChilds.push_back(trash);
+}
 
 void GameObject::DeleteGameobject()
 {	
-	LOG("Delete Gameobject: %s",name.c_str());
-
+	LOG("To delete: %s",name.c_str());
+	toDelete = true;
+	parent->SaveToDelete(this);
 	if (!Childs.empty())
 	{
 		std::vector<GameObject*> toDelete = Childs;
 		for (std::vector<GameObject*>::iterator it = toDelete.begin(); it != toDelete.end(); ++it)
 		{
 			(*it)->DeleteGameobject();
-			//Childs.erase(it);
-			//delete (*it);
 		}
 		toDelete.clear();
-		//Childs.clear();
 	}
-
-	if (!Components.empty())
-	{
-		//LOG("To delete components: %d",Components.size());
-		for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)
-		//for (int i = 0; i < Components.size();i++)
-		{
-			//LOG("Delete component: %d", Components[i].compType);
-			(*it)->DeleteComponent();
-			//Components[i]->DeleteComponent();
-			//Components.erase(it);
-			//delete (*it);
-		}	
-		Components.clear();
-	}	
-
-	transform->DeleteComponent();
-	transform = nullptr;
-	if(parent != nullptr) parent->RemoveChild(ID);
-	delete this;
 }
