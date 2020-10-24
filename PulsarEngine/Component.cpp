@@ -10,7 +10,8 @@ Component::Component(GameObject* parent, ComponentTypes type)
 }
 
 Component::~Component()
-{}
+{
+}
 
 void Component::SetActive(bool val)
 {

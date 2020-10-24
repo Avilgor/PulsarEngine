@@ -15,7 +15,7 @@ public:
 	~Component();
 
 	virtual void UpdateComponent() {}
-	virtual void DeleteComponent() {}
+	virtual void DeleteComponent() { delete this; }
 	void SetActive(bool val);
 	Component* GetComponent() { return component; }
 	Mesh* AsMesh() { return mesh; }

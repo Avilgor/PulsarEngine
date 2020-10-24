@@ -131,9 +131,9 @@ update_status EditorMain::PostUpdate(float dt)
         }
         // rendering
         ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());        
     }
-    return UPDATE_CONTINUE;
+    return status;
 }
 
 // -----------------------------------------------------------------

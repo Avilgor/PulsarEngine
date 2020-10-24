@@ -24,6 +24,7 @@ public:
 	void DeleteChild(int id = 0);
 	void RemoveChild(int id);
 	void DeleteGameobject();
+	bool HasChilds();
 	std::vector<Component*> GetAllComponents() { return Components; }
 	std::vector<GameObject*> GetAllChilds() { return Childs; }
 	Component* GetFirstComponentType(ComponentTypes type);
@@ -34,6 +35,8 @@ public:
 	std::string name;
 	bool active;
 	int ID;
+	bool selected;
+	bool showHierarchy;
 	Transform* transform;
 
 private:

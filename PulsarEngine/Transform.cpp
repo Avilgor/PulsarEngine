@@ -69,7 +69,7 @@ void Transform::UpdateLocal()
 
 void Transform::DeleteComponent()
 {
-
+	delete this;
 }
 
 float3 Transform::GetGlobalPosition()
@@ -97,8 +97,7 @@ void Transform::Rotate(float3 rot)
 	eulerRotation += rot;
 	float3 delta = eulerRotation * DEGTORAD;
 	Quat quaternion_rotation = Quat::FromEulerXYZ(delta.x, delta.y, delta.z);
-	quaternionRotation = /*quaternionRotation **/ quaternion_rotation;
-	//eulerRotation = degrees;
+	quaternionRotation =  quaternion_rotation;
 	UpdateLocal();
 }
 

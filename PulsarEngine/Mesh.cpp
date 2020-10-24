@@ -29,7 +29,11 @@ void Mesh::UpdateComponent()
 
 void Mesh::DeleteComponent()
 {
-
+	delete indicesArray;
+	delete verticesArray;
+	delete normalsArray;
+	delete texturesArray;
+	delete this;
 }
 
 bool Mesh::LoadImportedMesh()

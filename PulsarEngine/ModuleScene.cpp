@@ -34,6 +34,12 @@ bool ModuleScene::Start()
 	warrior->transform->SetEulerRotation(float3(90.0f,0.0f,0));
 	root->AddChild(warrior);
 
+	GameObject* go2 = new GameObject("GameObject2");
+	root->AddChild(go2);
+
+	GameObject* child1 = new GameObject("Child 1");
+	warrior->AddChild(child1);
+
 	Component* comp = warrior->GetFirstComponentType(MESH_COMP);
 	if (comp != nullptr)
 	{

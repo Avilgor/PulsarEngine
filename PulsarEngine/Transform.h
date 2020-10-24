@@ -42,9 +42,9 @@ private:
 	
 public:
 	bool normalsFlipped;
+	bool needUpdate;
 
 private:
-	bool needUpdate;
 	float4x4 transform;
 	float4x4 transformGlobal;
 	float4x4 transformTGlobal;

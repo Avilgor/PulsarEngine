@@ -12,9 +12,15 @@ public:
 	virtual ~HierarchyWindow();
 
 	update_status Draw();
-
+	void DrawSceneGameObjects();
+	void DrawGameObject(GameObject* go);
+	void NodeInput(GameObject* go);
+	void SaveInputs();
 
 private:
+	bool ctrl;
+	KEY_STATE rightMouse;
+	KEY_STATE leftMouse;
 };
 
 #endif //__HierarchyWindow_H__

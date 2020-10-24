@@ -18,5 +18,5 @@ void Material::UpdateComponent()
 
 void Material::DeleteComponent()
 {
-
+	delete this;
 }

@@ -13,6 +13,8 @@ GameObject::GameObject(const char* n, GameObject* p)
 	App->GoIDNum += 1;
 	name = n;
 	active = true;
+	selected = false;
+	showHierarchy = false;
 	parent = p;
 	AddComponent(TRANSFORM_COMP);
 }
@@ -20,7 +22,7 @@ GameObject::GameObject(const char* n, GameObject* p)
 
 GameObject::~GameObject()
 {
-	delete transform;
+	//delete transform;
 	if (!Components.empty())
 	{
 		for (std::vector<Component*>::const_iterator it = Components.begin(); it != Components.end(); ++it)
@@ -47,12 +49,13 @@ void GameObject::SetActive(bool val)
 
 void GameObject::UpdateTransform()
 {
-	transform->UpdateComponent();
+	if(transform != nullptr) transform->UpdateComponent();
 	if (!Childs.empty())
 	{
 		for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
 		{
-			if ((*it)->active) (*it)->UpdateTransform();
+			if (transform->needUpdate) (*it)->transform->needUpdate = true;
+			(*it)->UpdateTransform();
 		}
 	}
 }
@@ -121,7 +124,7 @@ void GameObject::DeleteGOComponent(ComponentTypes type)
 			{
 				(*it)->DeleteComponent();
 				Components.erase(it);
-				delete (*it);
+				//delete (*it);
 				break;
 			}
 		}
@@ -150,7 +153,7 @@ void GameObject::DeleteChild(int id)
 			{			
 				(*it)->DeleteGameobject();
 				Childs.erase(it);
-				delete (*it);				
+				//delete (*it);				
 				break;
 			}
 		}
@@ -172,14 +175,22 @@ void GameObject::RemoveChild(int id)
 	}
 }
 
+bool GameObject::HasChilds()
+{
+	if (Childs.empty()) return false;
+	else return true;
+}
+
 void GameObject::DeleteGameobject()
 {
 	transform->DeleteComponent();
+	transform = nullptr;
 	if (!Components.empty())
 	{
 		for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)
 		{
 			(*it)->DeleteComponent();
+			Components.erase(it);
 			//delete (*it);
 		}
 	}
@@ -189,7 +200,10 @@ void GameObject::DeleteGameobject()
 		for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
 		{
 			(*it)->DeleteGameobject();
+			Childs.erase(it);
 			//delete (*it);
 		}
 	}
+	parent->RemoveChild(ID);
+	delete this;
 }
