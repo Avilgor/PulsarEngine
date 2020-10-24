@@ -50,7 +50,6 @@ void HierarchyWindow::DrawSceneGameObjects()
 void HierarchyWindow::DrawGameObject(GameObject* go)
 {
 	ImGuiTreeNodeFlags nodeFlag = ImGuiTreeNodeFlags_OpenOnArrow;
-	//ImGui::PushID(go->ID);
 	if (go->HasChilds() == false)
 	{
 		nodeFlag |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
@@ -63,11 +62,8 @@ void HierarchyWindow::DrawGameObject(GameObject* go)
 		nodeFlag |= ImGuiTreeNodeFlags_Selected;
 		//ImGui::SetNextTreeNodeOpen(true);
 	}
-
-	if(go->showHierarchy) ImGui::SetNextTreeNodeOpen(true);
 	
-	go->showHierarchy = ImGui::TreeNodeEx(go->name.c_str(), nodeFlag);		
-	
+	go->showHierarchy = ImGui::TreeNodeEx(go->name.c_str(), nodeFlag);
 
 	if (go->active == false) ImGui::PopStyleColor();
 
@@ -83,17 +79,15 @@ void HierarchyWindow::DrawGameObject(GameObject* go)
 		ImGui::EndPopup();
 	}
 
-	/*if (go->showHierarchy && go->HasChilds())
+	if (go->showHierarchy && go->HasChilds())
 	{		
 		std::vector<GameObject*> goChilds = go->GetAllChilds();
 		for (std::vector<GameObject*>::iterator it = goChilds.begin(); it != goChilds.end(); ++it)
 		{
 			DrawGameObject((*it));
-			//ImGui::TreePop();
 		}
 		ImGui::TreePop();
-	}*/
-	//ImGui::PopID();
+	}
 }
 
 void HierarchyWindow::NodeInput(GameObject* go)
