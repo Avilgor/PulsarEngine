@@ -16,6 +16,7 @@ Mesh::Mesh(GameObject* parent) : Component(parent, MESH_COMP)
 	normalsSize = 0;
 	verticesSize = 0;
 	textSize = 0;
+	path = "";
 	component->mesh = this;
 }
 

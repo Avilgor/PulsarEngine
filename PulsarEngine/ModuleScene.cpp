@@ -49,6 +49,7 @@ bool ModuleScene::Start()
 		if (comp->AsMesh() != nullptr)
 		{
 			App->fbxLoader->ImportMesh(comp->AsMesh(), "Assets/3D/warrior/warrior.FBX");
+			App->fbxLoader->ImportMesh(comp->AsMesh(), "Assets/3D/warrior/warrior.FBX");
 		}
 	}
 	

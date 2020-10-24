@@ -17,10 +17,39 @@ update_status InspectorWindow::Draw()
 {
 	update_status ret = UPDATE_CONTINUE;
 
-	ImGui::SetNextWindowBgAlpha(1.0f);
-	ImGui::Begin(name.c_str(), &active);
+	if (!App->editor->selectedGameObjects.empty())
+	{
+		GameObject* go = App->editor->selectedGameObjects[0];
 
-	ImGui::End();
+		ImGui::SetNextWindowBgAlpha(1.0f);
+		ImGui::Begin(name.c_str(), &active);
+		GameObjectSection();
+
+		if (go->GetFirstComponentType(TRANSFORM_COMP)) TransformSection();
+		if (go->GetFirstComponentType(MESH_COMP)) MeshSection();
+		if (go->GetFirstComponentType(MATERIAL_COMP)) MaterialSection();
+		ImGui::End();
+	}
 
 	return ret;
+}
+
+void InspectorWindow::GameObjectSection()
+{
+
+}
+
+void InspectorWindow::TransformSection()
+{
+
+}
+
+void InspectorWindow::MeshSection()
+{
+
+}
+
+void InspectorWindow::MaterialSection()
+{
+
 }

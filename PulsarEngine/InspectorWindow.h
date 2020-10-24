@@ -14,7 +14,10 @@ public:
 	update_status Draw();
 
 private:
-
+	void GameObjectSection();
+	void TransformSection();
+	void MeshSection();
+	void MaterialSection();
 };
 
 #endif //__InspectorWindow_H__

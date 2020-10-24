@@ -69,7 +69,7 @@ void HierarchyWindow::DrawGameObject(GameObject* go)
 
 	NodeInput(go);
 
-	if (ImGui::BeginPopup(go->name.c_str()))
+	/*if (ImGui::BeginPopup(go->name.c_str()))
 	{
 		if (ImGui::Button("Create child"))
 		{
@@ -84,7 +84,7 @@ void HierarchyWindow::DrawGameObject(GameObject* go)
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::EndPopup();
-	}
+	}*/
 
 	if (go->showHierarchy && go->HasChilds())
 	{		
@@ -116,8 +116,8 @@ void HierarchyWindow::NodeInput(GameObject* go)
 		}*/		
 	}
 
-	if (ImGui::IsItemHovered() && rightMouse == KEY_DOWN)
+	/*if (ImGui::IsItemHovered() && rightMouse == KEY_DOWN)
 	{
 		ImGui::OpenPopup(go->name.c_str());
-	}
+	}*/
 }

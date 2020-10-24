@@ -46,6 +46,13 @@ GameObject::~GameObject()
 void GameObject::SetActive(bool val)
 {
 	active = val;
+	if (!Childs.empty())
+	{
+		for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
+		{
+			(*it)->SetActive(val);
+		}
+	}
 }
 
 void GameObject::UpdateTransform()
@@ -137,17 +144,20 @@ Component* GameObject::GetFirstComponentType(ComponentTypes type)
 
 void GameObject::DeleteGOComponent(ComponentTypes type)
 {
-	if (!Components.empty())
-	{		
-		std::vector<Component*> temp;
-		for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); it++)
+	if (type != TRANSFORM_COMP)
+	{
+		if (!Components.empty())
 		{
-			if ((*it)->compType == type) (*it)->DeleteComponent();			
-			else temp.push_back((*it));
+			std::vector<Component*> temp;
+			for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); it++)
+			{
+				if ((*it)->compType == type) (*it)->DeleteComponent();
+				else temp.push_back((*it));
+			}
+			Components.clear();
+			Components = temp;
+			temp.clear();
 		}
-		Components.clear();
-		Components = temp;
-		temp.clear();
 	}
 }
 

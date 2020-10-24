@@ -8,6 +8,8 @@
 #include "Glew/include/GL/glew.h"
 #include "SDL/include/SDL_opengl.h"
 
+#include <string>
+
 class Mesh : public Component
 {
 public:
@@ -35,7 +37,7 @@ public:
 	uint indexSize;
 	uint textSize;
 	uint normalsSize;
-	
+	std::string path;
 
 	uint* indicesArray = nullptr;
 	float* verticesArray = nullptr;

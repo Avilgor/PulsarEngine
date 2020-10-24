@@ -5,6 +5,7 @@
 
 
 class Mesh;
+class Material;
 
 class FBXLoaderModule 
 {
@@ -13,6 +14,9 @@ public:
 	~FBXLoaderModule();
 
 	bool ImportMesh(Mesh* mesh,const char* path);
+	bool ImportMaterial(Material* mesh, const char* path);
+	bool ImportAll(Mesh* mesh, Material* mat, const char* path);
+
 
 };
 
