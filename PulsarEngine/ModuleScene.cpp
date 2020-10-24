@@ -40,6 +40,9 @@ bool ModuleScene::Start()
 	GameObject* child1 = new GameObject("Child 1");
 	warrior->AddChild(child1);
 
+	GameObject* child2 = new GameObject("Child 2");
+	child1->AddChild(child2);
+
 	Component* comp = warrior->GetFirstComponentType(MESH_COMP);
 	if (comp != nullptr)
 	{

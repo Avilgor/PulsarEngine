@@ -71,11 +71,20 @@ void HierarchyWindow::DrawGameObject(GameObject* go)
 
 	if (ImGui::BeginPopup(go->name.c_str()))
 	{
+		bool close = false;
+		if (ImGui::Button("Create child"))
+		{
+			go->CreateChild();
+			close = true;
+		}
+
 		if (ImGui::Button("Delete"))
 		{
 			go->DeleteGameobject();
-			ImGui::CloseCurrentPopup();
+			close = true;
 		}
+
+		if(close) ImGui::CloseCurrentPopup();
 		ImGui::EndPopup();
 	}
 
