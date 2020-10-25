@@ -66,7 +66,7 @@ public:
 public:
 
 	std::string path;
-	std::string name;
+	/*std::string name;
 	uint VAO;
 	uint idVertex;
 	uint idIndex;
@@ -81,8 +81,8 @@ public:
 	float* verticesArray = nullptr;
 	float* normalsArray = nullptr;
 	float* texturesArray = nullptr;
-
-	Material* material = nullptr;
+	
+	Material* material = nullptr;*/
 
 private:
 	std::vector<MeshInfo> meshes;
