@@ -16,6 +16,7 @@ public:
 
 	void UpdateTransform();
 	void UpdateGameObject();
+	void DrawMesh();
 	void SetActive(bool val);
 	void AddComponent(ComponentTypes type);
 	void Delete();

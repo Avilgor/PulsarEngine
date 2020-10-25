@@ -14,10 +14,15 @@ public:
 	update_status Draw();
 
 private:
-	void GameObjectSection();
-	void TransformSection();
-	void MeshSection();
-	void MaterialSection();
+	void GameObjectSection(GameObject* go);
+	void TransformSection(GameObject* go);
+	void MeshSection(GameObject* go);
+	void MaterialSection(GameObject* go);
+
+public:
+
+private:
+	ImGuiInputTextFlags name_input_flags = ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue;
 };
 
 #endif //__InspectorWindow_H__

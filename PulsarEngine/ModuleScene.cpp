@@ -3,6 +3,8 @@
 #include "ModuleScene.h"
 #include "GameObject.h"
 #include "Transform.h"
+#include "Mesh.h"
+#include "Material.h"
 
 
 ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -30,9 +32,11 @@ bool ModuleScene::Start()
 
 	warrior = new GameObject("Warrior");
 	warrior->AddComponent(MESH_COMP);
+	warrior->AddComponent(MATERIAL_COMP);
+	root->AddChild(warrior);
 	warrior->transform->SetScale(float3(0.01f,0.01f,0.01f));
 	warrior->transform->SetEulerRotation(float3(90.0f,0.0f,0));
-	root->AddChild(warrior);
+	
 
 	GameObject* go2 = new GameObject("GameObject2");
 	root->AddChild(go2);
@@ -46,10 +50,16 @@ bool ModuleScene::Start()
 	Component* comp = warrior->GetFirstComponentType(MESH_COMP);
 	if (comp != nullptr)
 	{
-		if (comp->AsMesh() != nullptr)
+		if (comp->AsMesh() != nullptr) App->fbxLoader->ImportMesh(comp->AsMesh(), "Assets/3D/warrior/warrior.FBX");		
+	}
+
+	comp = warrior->GetFirstComponentType(MATERIAL_COMP);
+	if (comp != nullptr)
+	{
+		if (comp->AsMaterial() != nullptr)
 		{
-			App->fbxLoader->ImportMesh(comp->AsMesh(), "Assets/3D/warrior/warrior.FBX");
-			App->fbxLoader->ImportMesh(comp->AsMesh(), "Assets/3D/warrior/warrior.FBX");
+			App->fbxLoader->ImportMaterial(comp->AsMaterial(), "Assets/3D/warrior/warrior.FBX");
+			warrior->GetFirstComponentType(MESH_COMP)->AsMesh()->material = comp->AsMaterial();
 		}
 	}
 	
@@ -86,6 +96,8 @@ update_status ModuleScene::Update(float dt)
 	{
 		root->UpdateTransform();
 		root->UpdateGameObject();
+		//App->scene->GetRoot()->DrawMesh();
+		root->DrawMesh();
 	}
 
 	return UPDATE_CONTINUE;

@@ -93,7 +93,7 @@ void GameObject::UpdateGameObject()
 		{
 			for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)
 			{
-				if ((*it)->active) (*it)->UpdateComponent();
+				if ((*it)->active && (*it)->compType != MESH_COMP) (*it)->UpdateComponent();				
 			}
 		}
 
@@ -103,6 +103,25 @@ void GameObject::UpdateGameObject()
 			{
 				if ((*it)->active) (*it)->UpdateGameObject();
 			}
+		}
+	}
+}
+
+void GameObject::DrawMesh()
+{
+	if (!Components.empty())
+	{
+		for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)
+		{
+			if ((*it)->active && (*it)->compType == MESH_COMP) (*it)->UpdateComponent();
+		}
+	}
+
+	if (!Childs.empty())
+	{
+		for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
+		{
+			(*it)->DrawMesh();
 		}
 	}
 }

@@ -12,6 +12,12 @@ struct aiMaterial;
 
 struct MaterialInfo
 {
+	void Clean()
+	{
+		delete mat;
+		mat = nullptr;
+	}
+public:
 	aiMaterial* mat;
 	uint texturesNum;
 	uint textureID;

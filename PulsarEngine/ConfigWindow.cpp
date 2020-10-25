@@ -24,9 +24,7 @@ ConfigWindow::~ConfigWindow()
 update_status ConfigWindow::Draw()
 {
     update_status ret = UPDATE_CONTINUE;
-
-    width = App->window->width;
-    height = App->window->height;
+   
     if (plotTimer.ReadSec() >= 1.0f)
     {
         for (int i = 0; i < 99; i++)
@@ -62,7 +60,10 @@ update_status ConfigWindow::Draw()
         if (ImGui::Checkbox("Borderless", &borderless)) App->window->SetBorderless(borderless);
         if(ImGui::Checkbox("Resizable", &resizable)) App->window->SetResizable(resizable);
         if(ImGui::Checkbox("Full desktop", &maximize)) App->window->SetMaximize(maximize);
-        if (ImGui::SliderInt("Width", &width, 800, 1920) || ImGui::SliderInt("Height", &height, 600, 1080)) App->window->SetWindowsSize(width, height);    
+        if (ImGui::InputInt("Width", &width,1,100,ImGuiInputTextFlags_EnterReturnsTrue) || ImGui::InputInt("Height", &height, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue))
+        {
+            if(width >= 400 && height >= 400) App->window->SetWindowsSize(width, height);
+        }
         if (ImGui::Button("Reset size")) App->window->RestoreDefaultSize();
         ImGui::Separator();
         if(ImGui::SliderFloat("Brightness", &brightness, 0.0f, 1.0f)) App->window->SetBrightness(brightness);
@@ -76,6 +77,9 @@ update_status ConfigWindow::Draw()
     }
 
     ImGui::End();
+
+    width = App->window->width;
+    height = App->window->height;
 
     return ret;
 }

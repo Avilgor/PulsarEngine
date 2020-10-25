@@ -7,7 +7,6 @@
 #pragma comment (lib, "MathGeoLib/libx86/MathGeoLib.lib") 
 
 
-
 class Transform : public Component
 {
 public:
@@ -20,9 +19,13 @@ public:
 	void UpdateComponent();
 	void DeleteComponent();
 	void ResetTransform();
+	void UpdateEuler();
 	float4x4 GetTransform() { return transform; }
+	//float* GetTransformPointer() { return tranformPointer; }
 	float3 GetPosition() { return position; }
 	float3 GetGlobalPosition();
+	float3 GetEulerRotation() { return eulerRotation; }
+	Quat GetQuaternionRotation() { return quaternionRotation; }
 	float3 GetScale() { return scale; }
 	float3 RotationToEuler() { return eulerRotation; }
 	Quat RotationToQuaternion() { return quaternionRotation; }
@@ -52,6 +55,7 @@ private:
 	float3 scale;
 	Quat quaternionRotation;
 	float3 eulerRotation;
+	//float* tranformPointer;
 };
 
 #endif //__Transform_H__

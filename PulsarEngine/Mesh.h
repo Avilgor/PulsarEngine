@@ -9,17 +9,54 @@
 #include "SDL/include/SDL_opengl.h"
 
 #include <string>
+#include <vector>
+
+class Material;
+
+struct MeshInfo 
+{
+	void Clean()
+	{
+		delete indicesArray;
+		delete verticesArray;
+		delete normalsArray ;
+		delete texturesArray;
+
+		material = nullptr;
+	}
+	std::string name = "";
+	uint VAO = 0;
+	uint idVertex = 0;
+	uint idIndex = 0;
+	uint idText = 0;
+	uint idNormals = 0;
+	int verticesSize = 0;
+	uint indexSize = 0;
+	uint textSize = 0;
+	uint normalsSize = 0;
+
+	uint* indicesArray = nullptr;
+	float* verticesArray = nullptr;
+	float* normalsArray = nullptr;
+	float* texturesArray = nullptr;
+
+	Material* material = nullptr;
+};
 
 class Mesh : public Component
 {
 public:
 	Mesh(GameObject* parent);
 	~Mesh();
-
+	
+	void AddMesh(MeshInfo mesh);
+	void RemoveMesh(int index);
+	void ReplaceMesh(MeshInfo mesh, int index);
 	void UpdateComponent();
 	void DeleteComponent();
 	bool LoadImportedMesh();
 	void Render();
+	void SetMaterial(Material* mat) { material = mat; }
 	void GenerateBuffers();
 	void CreateCube(float x, float y, float z);
 	void CreatePyramid(float x, float y, float z);
@@ -28,6 +65,8 @@ public:
 
 public:
 
+	std::string path;
+	std::string name;
 	uint VAO;
 	uint idVertex;
 	uint idIndex;
@@ -37,12 +76,16 @@ public:
 	uint indexSize;
 	uint textSize;
 	uint normalsSize;
-	std::string path;
-
+	
 	uint* indicesArray = nullptr;
 	float* verticesArray = nullptr;
 	float* normalsArray = nullptr;
 	float* texturesArray = nullptr;
+
+	Material* material = nullptr;
+
+private:
+	std::vector<MeshInfo> meshes;
 };
 
 

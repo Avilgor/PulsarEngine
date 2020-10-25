@@ -7,20 +7,26 @@
 Transform::Transform(GameObject* parent) : Component(parent, TRANSFORM_COMP)
 {
 	transform = float4x4::FromTRS(float3::zero, Quat::identity, float3::one);
+	UpdateEuler();
 	needUpdate = true;
+	//tranformPointer = transform.ptr();
 }
 
 Transform::Transform(GameObject* parent, float3 pos, Quat rot, float3 scale) : Component(parent,TRANSFORM_COMP)
 {
 	transform = float4x4::FromTRS(pos, rot, scale);
+	UpdateEuler();
 	needUpdate = true;
+	//tranformPointer = transform.ptr();
 }
 
 Transform::Transform(GameObject* parent, float4x4 t) : Component(parent, TRANSFORM_COMP)
 {
 	transform = t;
 	transform.Decompose(position, quaternionRotation, scale);
+	UpdateEuler();
 	needUpdate = true;
+	//tranformPointer = transform.ptr();
 }
 
 Transform::~Transform()
@@ -42,8 +48,8 @@ void Transform::UpdateComponent()
 void Transform::UpdateTransform()
 {
 	transform.Decompose(position, quaternionRotation, scale);
-	eulerRotation = quaternionRotation.ToEulerXYZ();
-	eulerRotation *= RADTODEG;
+	UpdateEuler();
+	//LOG("Transform X:%f/Y:%f/Z:%f", position.x, position.y, position.z);
 	needUpdate = false;
 }
 
@@ -52,13 +58,18 @@ void Transform::ResetTransform()
 	position = float3::zero;
 	scale = float3::one;
 	quaternionRotation = Quat::identity;
-
-	eulerRotation = quaternionRotation.ToEulerXYZ();
-	eulerRotation *= RADTODEG;
+	
+	UpdateEuler();
 	UpdateLocal();
 
 	if ((scale.x * scale.y * scale.z) >= 0) normalsFlipped = false;
 	else normalsFlipped = true;
+}
+
+void Transform::UpdateEuler()
+{
+	eulerRotation = quaternionRotation.ToEulerXYZ();
+	eulerRotation *= RADTODEG;
 }
 
 void Transform::UpdateLocal()
@@ -104,8 +115,7 @@ void Transform::Rotate(float3 rot)
 void Transform::SetQuatRotation(Quat rot)
 {
 	quaternionRotation = rot;
-	eulerRotation = quaternionRotation.ToEulerXYZ();
-	eulerRotation *= RADTODEG;
+	UpdateEuler();
 	UpdateLocal();
 }
 
