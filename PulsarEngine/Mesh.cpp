@@ -145,19 +145,7 @@ void Mesh::GenerateBuffers()
 
 					glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 					glEnableVertexAttribArray(2);
-				}
-
-				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-				glGenTextures(1, &(*it).idText);
-				glBindTexture(GL_TEXTURE_2D, (*it).idText);
-
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-				glGenerateMipmap(GL_TEXTURE_2D);
-				glBindTexture(GL_TEXTURE_2D, 0);
-				glBindVertexArray(0);
+				}				
 			}
 		}
 	}
@@ -181,21 +169,24 @@ void Mesh::Render()
 				//lBindTexture(GL_TEXTURE_2D, idText);
 			//}
 
-
-
 			//glBindVertexArray(VAO);	
 			glBindBuffer(GL_ARRAY_BUFFER, (GLuint)meshes[i].idVertex);
 			glVertexPointer(3, GL_FLOAT, 0, NULL);
 
-			//glBindBuffer(GL_NORMAL_ARRAY, (GLuint)meshes[i].idNormals);
-			//glNormalPointer(GL_FLOAT, 0, NULL);
+			glBindBuffer(GL_NORMAL_ARRAY, (GLuint)meshes[i].idNormals);
+			glNormalPointer(GL_FLOAT, 0, NULL);
 
 			//Normals
 			if (meshes[i].drawVertexNormals) DrawVertexNormals(meshes[i]);
 			if (meshes[i].drawFaceNormals) DrawFaceNormals(meshes[i]);
 
-			glBindBuffer(GL_ARRAY_BUFFER, (GLuint)meshes[i].idText);
-			glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+			if (meshes[i].material != nullptr)
+			{
+				glBindBuffer(GL_ARRAY_BUFFER, (GLuint)meshes[i].idText);
+				glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+				glBindTexture(GL_TEXTURE_2D, meshes[i].material->textureID);
+			}
+			
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (GLuint)meshes[i].idIndex);
 			glDrawElements(GL_TRIANGLES, meshes[i].indexSize, GL_UNSIGNED_INT, NULL);
@@ -208,7 +199,7 @@ void Mesh::Render()
 			glBindBuffer(GL_NORMAL_ARRAY, 0);
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
-		//glDisableClientState(GL_NORMAL_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
@@ -216,7 +207,7 @@ void Mesh::Render()
 
 void Mesh::DrawVertexNormals(MeshInfo mesh)
 {
-	float length = 0.5f;
+	float length = 0.2f;
 	glBegin(GL_LINES);
 	for (size_t a = 0; a < mesh.verticesSize *3; a += 3)
 	{
@@ -234,7 +225,7 @@ void Mesh::DrawVertexNormals(MeshInfo mesh)
 
 void Mesh::DrawFaceNormals(MeshInfo mesh)
 {
-	float length = 0.5f;
+	float length = 0.2f;
 	glBegin(GL_LINES);
 	for (size_t a = 0; a < mesh.verticesSize * 3; a += 3)
 	{

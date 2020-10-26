@@ -13,6 +13,7 @@ struct aiFileIO;
 
 class Config;
 struct PathNode;
+struct MaterialInfo;
 
 
 class FileSystemModule : public Module
@@ -60,6 +61,7 @@ public:
 
 	uint64 GetLastModTime(const char* filename);
 	std::string GetUniqueName(const char* path, const char* name) const;
+	void LoadTexture(const char* path, MaterialInfo* mat);
 
 };
 

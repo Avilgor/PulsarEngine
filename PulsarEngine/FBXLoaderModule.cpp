@@ -138,20 +138,6 @@ bool FBXLoaderModule::ImportMaterial(Material* mat, const char* path)
 	bool ret = true;
 	const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
 	
-	/*
-	if (scene->HasTextures())
-	{
-		if (scene->HasTextures())
-		{
-
-		}
-		aiReleaseImport(scene);
-	}
-	else
-	{
-		LOG("Error loading textures %s", path);
-	}*/
-
 	if(scene->HasMaterials())
 	{
 		if (scene->HasMaterials())
@@ -159,13 +145,13 @@ bool FBXLoaderModule::ImportMaterial(Material* mat, const char* path)
 			for (uint i = 0; i < scene->mNumMaterials; ++i)
 			{
 				MaterialInfo matInfo;
-				aiMaterial* material = scene->mMaterials[i];
-				matInfo.mat = material;			
+				aiMaterial* material = scene->mMaterials[i];		
 				matInfo.texturesNum = material->GetTextureCount(aiTextureType_DIFFUSE);
-				aiString path;
-				material->GetTexture(aiTextureType_DIFFUSE, 0, &path);
-				matInfo.path = path.C_Str();				
-
+				aiString pathText;
+				//std::string tempPath = path;
+				material->GetTexture(aiTextureType_DIFFUSE, 0, &pathText);				
+				matInfo.path = pathText.C_Str();//tempPath.append(pathText.C_Str());
+				//LOG("Texture path %s",matInfo.path.c_str());
 				aiColor4D color;
 				material->Get(AI_MATKEY_COLOR_DIFFUSE, color);				
 				matInfo.color = Color(color.r, color.g, color.b, color.a);
@@ -177,6 +163,7 @@ bool FBXLoaderModule::ImportMaterial(Material* mat, const char* path)
 			}
 		}
 		aiReleaseImport(scene);
+		mat->GenerateBuffer();
 	}
 	else
 	{

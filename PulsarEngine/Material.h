@@ -8,14 +8,17 @@
 #include <vector>
 #include <string>
 
+typedef unsigned char GLubyte;
 struct aiMaterial;
 
 struct MaterialInfo
 {
 	void Clean()
 	{
-		delete mat;
-		mat = nullptr;
+		//delete mat;
+		//mat = nullptr;
+		delete textData;
+		textData = nullptr;
 	}
 	void ChangeColor(float r, float g, float b, float a)
 	{
@@ -29,12 +32,15 @@ struct MaterialInfo
 		color = col;
 	}
 public:
-	aiMaterial* mat;
+	//aiMaterial* mat;
+	GLubyte* textData = nullptr;
 	uint texturesNum;
 	uint textureID;
 	std::string path;
 	Color color;
 	std::string name;
+	int textWidth;
+	int textHeight;
 };
 
 class Material : public Component
@@ -46,6 +52,7 @@ public:
 
 	void UpdateComponent();
 	void DeleteComponent();
+	void GenerateBuffer();
 	void SaveMaterial(MaterialInfo mat);
 	MaterialInfo* GetMaterial(int index);
 	std::vector<MaterialInfo>* GetAllMaterials() { return &materials; }

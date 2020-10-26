@@ -2,15 +2,29 @@
 #include "Application.h"
 #include "FileSystemModule.h"
 #include "PathNode.h"
+#include "Material.h"
 #include "PhysFS/include/physfs.h"
 #include <fstream>
 #include <filesystem>
 
 #include "Assimp/include/cfileio.h"
 #include "Assimp/include/types.h"
+#include "Assimp/include/cimport.h"
+#include "Assimp/include/scene.h"
+#include "Assimp/include/postprocess.h"
+#include "Assimp/include/mesh.h"
+#include "Assimp/include/material.h"
+#include "Assimp/include/texture.h"
+#include "Devil/include/IL/ilu.h"
+#include "Devil/include/IL/ilut.h"
+
 #include <list>
 
 #pragma comment (lib, "PhysFS/libx86/physfs.lib")
+#pragma comment( lib, "Devil/lib/x86/DevIL.lib" )
+#pragma comment( lib, "Devil/lib/x86/ILU.lib" )
+#pragma comment( lib, "Devil/lib/x86/ILUT.lib" )
+#pragma comment (lib, "Assimp/libx86/assimp.lib")
 
 FileSystemModule::FileSystemModule(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -475,4 +489,49 @@ std::string FileSystemModule::GetUniqueName(const char* path, const char* name) 
 		}
 	}
 	return finalName;
+}
+
+void FileSystemModule::LoadTexture(const char* path, MaterialInfo* mat)
+{
+	//std::string tempPath = "Assets/";
+	//GetRealDir(path,tempPath);
+	uint imageID = 0;
+
+	ilGenImages(1, &imageID);
+	ilBindImage(imageID);
+
+	ilEnable(IL_ORIGIN_SET);
+	ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
+
+	if (imageID == 0)
+	{
+		LOG("Could not create a texture buffer to load: %s, %d", path, ilGetError());
+	}
+	else if (ilLoadImage(path) == IL_FALSE)
+	{
+		LOG("Error trying to load the texture from %s", path);
+	}
+	else
+	{
+		ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
+
+		mat->textureID = imageID;
+		mat->textData = ilGetData();
+		mat->textWidth = ilGetInteger(IL_IMAGE_WIDTH);
+		mat->textHeight = ilGetInteger(IL_IMAGE_HEIGHT);
+
+		ILenum error = ilGetError();
+
+		if (error != IL_NO_ERROR)
+		{
+			LOG("%d: %s", error, iluErrorString(error));
+			mat->textureID = -1;
+			mat->textData = nullptr;
+			mat->textWidth = mat->textHeight = 0;
+		}
+		else
+		{
+			LOG("Texture: %s loaded successfully");
+		}
+	}
 }
