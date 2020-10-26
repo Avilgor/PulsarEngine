@@ -165,63 +165,67 @@ void Mesh::GenerateBuffers()
 
 void Mesh::Render()
 {
-	for (int i = 0;i<meshes.size();i++)
+	if (!meshes.empty())
 	{
-		glPushMatrix();
-		glMultMatrixf((float*)&gameobject->transform->GetTransformT());
-
 		glEnableClientState(GL_VERTEX_ARRAY);
 		//glEnableClientState(GL_NORMAL_ARRAY);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		//if (meshes[i].material != nullptr)
-		//{
-			//lBindTexture(GL_TEXTURE_2D, idText);
-		//}
-		
+
+		for (int i = 0; i < meshes.size(); i++)
+		{
+			glPushMatrix();
+			glMultMatrixf((float*)&gameobject->transform->GetTransformT());
 			
-	
-		//glBindVertexArray(VAO);	
-		glBindBuffer(GL_ARRAY_BUFFER, (GLuint)meshes[i].idVertex);
-		glVertexPointer(3, GL_FLOAT, 0, NULL);
+			//if (meshes[i].material != nullptr)
+			//{
+				//lBindTexture(GL_TEXTURE_2D, idText);
+			//}
 
-		glBindBuffer(GL_NORMAL_ARRAY, (GLuint)meshes[i].idNormals);
-		glNormalPointer(GL_FLOAT, 0, NULL);
 
-		//Normals
-		if(meshes[i].drawVertexNormals) DrawVertexNormals(meshes[i]);
-		if(meshes[i].drawFaceNormals) DrawFaceNormals(meshes[i]);
 
-		glBindBuffer(GL_ARRAY_BUFFER, (GLuint)meshes[i].idText);
-		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+			//glBindVertexArray(VAO);	
+			glBindBuffer(GL_ARRAY_BUFFER, (GLuint)meshes[i].idVertex);
+			glVertexPointer(3, GL_FLOAT, 0, NULL);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (GLuint)meshes[i].idIndex);
-		glDrawElements(GL_TRIANGLES, meshes[i].indexSize, GL_UNSIGNED_INT, NULL);
-		
-		glPopMatrix();
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		
-		glBindBuffer(GL_TEXTURE_COORD_ARRAY, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_NORMAL_ARRAY, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glDisableClientState(GL_NORMAL_ARRAY);
-		glDisableClientState(GL_VERTEX_ARRAY);		
+			//glBindBuffer(GL_NORMAL_ARRAY, (GLuint)meshes[i].idNormals);
+			//glNormalPointer(GL_FLOAT, 0, NULL);
+
+			//Normals
+			if (meshes[i].drawVertexNormals) DrawVertexNormals(meshes[i]);
+			if (meshes[i].drawFaceNormals) DrawFaceNormals(meshes[i]);
+
+			glBindBuffer(GL_ARRAY_BUFFER, (GLuint)meshes[i].idText);
+			glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (GLuint)meshes[i].idIndex);
+			glDrawElements(GL_TRIANGLES, meshes[i].indexSize, GL_UNSIGNED_INT, NULL);
+
+			glPopMatrix();
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+			glBindBuffer(GL_TEXTURE_COORD_ARRAY, 0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_NORMAL_ARRAY, 0);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+		//glDisableClientState(GL_NORMAL_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 }
 
 void Mesh::DrawVertexNormals(MeshInfo mesh)
 {
-	glEnableClientState(GL_NORMAL_ARRAY);
+	float length = 0.5f;
 	glBegin(GL_LINES);
 	for (size_t a = 0; a < mesh.verticesSize *3; a += 3)
 	{
 		glColor3f(0.0f, 0.85f, 0.85f);
 		glVertex3f(mesh.verticesArray[a], mesh.verticesArray[a+1], mesh.verticesArray[a + 2]);
 
-		glVertex3f(mesh.verticesArray[a] + (mesh.normalsArray[a] * mesh.normalsSize),
-			mesh.verticesArray[a+1] + (mesh.normalsArray[a+1] * mesh.normalsSize),
-			mesh.verticesArray[a+2] + (mesh.normalsArray[a+2]) * mesh.normalsSize);
+		glVertex3f(mesh.verticesArray[a] + (mesh.normalsArray[a] * length),
+			mesh.verticesArray[a+1] + (mesh.normalsArray[a+1] * length),
+			mesh.verticesArray[a+2] + (mesh.normalsArray[a+2]) * length);
 	}
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glEnd();
@@ -230,6 +234,7 @@ void Mesh::DrawVertexNormals(MeshInfo mesh)
 
 void Mesh::DrawFaceNormals(MeshInfo mesh)
 {
+	float length = 0.5f;
 	glBegin(GL_LINES);
 	for (size_t a = 0; a < mesh.verticesSize * 3; a += 3)
 	{
@@ -244,9 +249,9 @@ void Mesh::DrawFaceNormals(MeshInfo mesh)
 
 		glVertex3f(vx, vy, vz);
 
-		glVertex3f(vx + (mesh.normalsArray[a] * mesh.normalsSize),
-			vy + (mesh.normalsArray[a + 1] * mesh.normalsSize),
-			vz + (mesh.normalsArray[a + 2]) * mesh.normalsSize);
+		glVertex3f(vx + (mesh.normalsArray[a] * length),
+			vy + (mesh.normalsArray[a + 1] * length),
+			vz + (mesh.normalsArray[a + 2]) * length);
 	}
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glEnd();

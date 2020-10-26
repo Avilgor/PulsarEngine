@@ -145,13 +145,18 @@ void InspectorWindow::MeshSection(GameObject* go)
 		int i = 0;
 		for (std::vector<MeshInfo>::iterator it = meshes->begin(); it != meshes->end(); ++it)
 		{
+			std::string labelVertex = "##nVertex";
+			std::string labelFace = "##nFace";
+			labelVertex.append(std::to_string(i));
+			labelFace.append(std::to_string(i));
+
 			ImGui::Text("Mesh %d",i);
 			ImGui::Text("Vertex normals");
 			ImGui::SameLine();
-			ImGui::Checkbox("##vNormal", &(*it).drawVertexNormals);
+			ImGui::Checkbox(labelVertex.c_str(), &(*it).drawVertexNormals);
 			ImGui::Text("Face normals");
 			ImGui::SameLine();
-			ImGui::Checkbox("##vFace", &(*it).drawFaceNormals);
+			ImGui::Checkbox(labelFace.c_str(), &(*it).drawFaceNormals);
 			ImGui::Text("Vertices: %d", (*it).verticesSize);
 			if((*it).material != nullptr) ImGui::Text("Material: %s", (*it).material->name.c_str());
 			else ImGui::Text("Material: -");
@@ -169,8 +174,19 @@ void InspectorWindow::MaterialSection(GameObject* go)
 		//ImGui::Separator();
 		std::vector<MaterialInfo>* materials = go->GetFirstComponentType(MATERIAL_COMP)->AsMaterial()->GetAllMaterials();
 		int i = 0;
+
 		for (std::vector<MaterialInfo>::iterator it = materials->begin(); it != materials->end(); ++it)
 		{
+			std::string colorR = "##colorR";
+			std::string colorG = "##colorG";
+			std::string colorB = "##colorB";
+			std::string colorA = "##colotA";
+			colorR.append(std::to_string(i));
+			colorG.append(std::to_string(i));
+			colorB.append(std::to_string(i));
+			colorA.append(std::to_string(i));
+
+
 			bool colorChange = false;
 			ImGui::Text("Material %d", i);
 			ImGui::Text("Path: %s", (*it).path.c_str());
@@ -181,27 +197,27 @@ void InspectorWindow::MaterialSection(GameObject* go)
 			ImGui::Text("R");
 			ImGui::SameLine();
 			ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.15f);
-			if (ImGui::InputFloat("##colorR", &tempColor.r, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) colorChange = true;
+			if (ImGui::InputFloat(colorR.c_str(), &tempColor.r, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) colorChange = true;
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
 
 			ImGui::Text("G");
 			ImGui::SameLine();
 			ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.15f);
-			if (ImGui::InputFloat("##colorG", &tempColor.g, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) colorChange = true;
+			if (ImGui::InputFloat(colorG.c_str(), &tempColor.g, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) colorChange = true;
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
 
 			ImGui::Text("B");
 			ImGui::SameLine();
 			ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.15f);
-			if (ImGui::InputFloat("##colorB", &tempColor.b, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) colorChange = true;
+			if (ImGui::InputFloat(colorB.c_str(), &tempColor.b, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) colorChange = true;
 			ImGui::PopItemWidth();
 
 			ImGui::Text("Alpha");
 			ImGui::SameLine();
 			ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.20f);
-			if (ImGui::InputFloat("##colorA", &tempColor.a, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) colorChange = true;
+			if (ImGui::InputFloat(colorA.c_str(), &tempColor.a, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) colorChange = true;
 			ImGui::PopItemWidth();
 			
 			ImGui::Separator();
