@@ -29,6 +29,7 @@ public:
 	void DeleteAllChilds();
 	void DeleteGameobject();
 	bool HasChilds();
+	void SetTransformUpdate(bool val) { transformUpdate = val; }
 	std::vector<Component*> GetAllComponents() { return Components; }
 	std::vector<GameObject*> GetAllChilds() { return Childs; }
 	Component* GetFirstComponentType(ComponentTypes type);
@@ -44,6 +45,7 @@ public:
 	bool selected;
 	bool showHierarchy;
 	bool toDelete;
+	bool transformUpdate;
 	Transform* transform;
 
 private:

@@ -29,23 +29,24 @@ bool ModuleScene::Start()
 
 	root = new GameObject("Root");
 	
-
-	/*warrior = new GameObject("Warrior");
+	warrior = new GameObject("Warrior");
 	warrior->AddComponent(MESH_COMP);
 	warrior->AddComponent(MATERIAL_COMP);
-	root->AddChild(warrior);
+	//root->AddChild(warrior);
 	warrior->transform->SetScale(float3(0.01f,0.01f,0.01f));
 	warrior->transform->SetEulerRotation(float3(-90.0f,0.0f,0));
-	warrior->transform->SetPosition(float3(2.0f, 0, 0));*/
+	warrior->transform->SetPosition(float3(3.0f, 0, 0));
 
-	GameObject* go2 = new GameObject("Baker House");
+	go2 = new GameObject("Baker House");
 	go2->AddComponent(MESH_COMP);
 	go2->AddComponent(MATERIAL_COMP);
+	//go2->transform->SetPosition(float3(-2.0f, 0.0f, 0.0f));
 	root->AddChild(go2);
-	//go2->transform->SetPosition(float3(-2.0f, 0, 0));
+	go2->AddChild(warrior);
+	
 
 
-	/*Component* comp = warrior->GetFirstComponentType(MESH_COMP);
+	Component* comp = warrior->GetFirstComponentType(MESH_COMP);
 	if (comp != nullptr)
 	{
 		if (comp->AsMesh() != nullptr) App->fbxLoader->ImportMesh(comp->AsMesh(), "Assets/3D/warrior/warrior.FBX");		
@@ -59,7 +60,7 @@ bool ModuleScene::Start()
 			App->fbxLoader->ImportMaterial(comp->AsMaterial(), "Assets/3D/warrior/warrior.FBX");
 			warrior->GetFirstComponentType(MESH_COMP)->AsMesh()->material = comp->AsMaterial();
 		}
-	}*/
+	}
 	
 	Component* comp2 = go2->GetFirstComponentType(MESH_COMP);
 	if (comp2 != nullptr)
@@ -67,7 +68,7 @@ bool ModuleScene::Start()
 		if (comp2->AsMesh() != nullptr) App->fbxLoader->ImportMesh(comp2->AsMesh(), "Assets/3D/Baker/BakerHouse.fbx");
 	}
 
-	/*comp2 = go2->GetFirstComponentType(MATERIAL_COMP);
+	comp2 = go2->GetFirstComponentType(MATERIAL_COMP);
 	if (comp2 != nullptr)
 	{
 		if (comp2->AsMaterial() != nullptr)
@@ -75,7 +76,7 @@ bool ModuleScene::Start()
 			App->fbxLoader->ImportMaterial(comp2->AsMaterial(), "Assets/3D/Baker/BakerHouse.FBX");
 			go2->GetFirstComponentType(MESH_COMP)->AsMesh()->SetAllMeshesMaterial(comp2->AsMaterial()->GetMaterial(0));
 		}
-	}*/
+	}
 
 	return ret;
 }
@@ -105,9 +106,17 @@ update_status ModuleScene::Update(float dt)
 {
     App->renderer3D->RenderGroundGrid(10);
 	//warrior->transform->Rotate(float3(1.0f,0,0));
-
+	//go2->transform->SetPosition(float3(-2.0f, 0, 0));
 	if (root != nullptr)
 	{
+		/*std::vector<GameObject*> childs = root->GetAllChilds();
+		if (!childs.empty())
+		{
+			for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it)
+			{
+				(*it)->UpdateTransform();
+			}
+		}*/
 		root->UpdateTransform();
 		root->UpdateGameObject();
 		root->DrawMesh();

@@ -9,8 +9,6 @@ Transform::Transform(GameObject* parent) : Component(parent, TRANSFORM_COMP)
 	transform = float4x4::FromTRS(float3::zero, Quat::identity, float3::one);
 	transformT = transform.Transposed();
 	UpdateEuler();
-	needUpdate = true;
-	//tranformPointer = transform.ptr();
 }
 
 Transform::Transform(GameObject* parent, float3 pos, Quat rot, float3 scale) : Component(parent,TRANSFORM_COMP)
@@ -18,8 +16,6 @@ Transform::Transform(GameObject* parent, float3 pos, Quat rot, float3 scale) : C
 	transform = float4x4::FromTRS(pos, rot, scale);
 	transformT = transform.Transposed();
 	UpdateEuler();
-	needUpdate = true;
-	//tranformPointer = transform.ptr();
 }
 
 Transform::Transform(GameObject* parent, float4x4 t) : Component(parent, TRANSFORM_COMP)
@@ -28,8 +24,6 @@ Transform::Transform(GameObject* parent, float4x4 t) : Component(parent, TRANSFO
 	transform.Decompose(position, quaternionRotation, scale);
 	transformT = transform.Transposed();
 	UpdateEuler();
-	needUpdate = true;
-	//tranformPointer = transform.ptr();
 }
 
 Transform::~Transform()
@@ -39,21 +33,16 @@ Transform::~Transform()
 
 void Transform::UpdateComponent()
 {
-	if (needUpdate)
-	{
-		if (gameobject->GetParent() != nullptr) transformGlobal = gameobject->GetParent()->transform->transformGlobal * transform;
-		else transformGlobal = transform;
-		transformTGlobal = transformGlobal.Transposed();
-		UpdateTransform();
-	}
+	if (gameobject->GetParent() != nullptr) transformGlobal = gameobject->GetParent()->transform->GetGlobalTransform() * transform;
+	transformTGlobal = transformGlobal.Transposed();
+	UpdateTRS();
+	//gameobject->transformUpdate = false;
 }
 
-void Transform::UpdateTransform()
+void Transform::UpdateTRS()
 {
 	transform.Decompose(position, quaternionRotation, scale);
-	transformT = transform.Transposed();
 	UpdateEuler();
-	needUpdate = false;
 }
 
 
@@ -64,10 +53,7 @@ void Transform::ResetTransform()
 	quaternionRotation = Quat::identity;
 	
 	UpdateEuler();
-	UpdateLocal();
-
-	if ((scale.x * scale.y * scale.z) >= 0) normalsFlipped = false;
-	else normalsFlipped = true;
+	//gameobject->transformUpdate = true;
 }
 
 void Transform::UpdateEuler()
@@ -80,7 +66,6 @@ void Transform::UpdateLocal()
 {
 	transform = float4x4::FromTRS(position, quaternionRotation, scale);
 	transformT = transform.Transposed();
-	needUpdate = true;
 }
 
 void Transform::DeleteComponent()
@@ -90,22 +75,21 @@ void Transform::DeleteComponent()
 
 float3 Transform::GetGlobalPosition()
 {
-	return float3(transformTGlobal[0][3], transformTGlobal[1][3], transformTGlobal[2][3]);
+	return float3(transformGlobal[0][3], transformGlobal[1][3], transformGlobal[2][3]);
 }
 
 void Transform::SetPosition(float3 pos)
 {
 	position = pos;
 	UpdateLocal();
+	//gameobject->transformUpdate = true;
 }
 
 void Transform::SetScale(float3 s)
 {
 	scale = s;
 	UpdateLocal();
-
-	if ((scale.x * scale.y * scale.z) >= 0) normalsFlipped = false;
-	else normalsFlipped = true;
+	//gameobject->transformUpdate = true;
 }
 
 void Transform::Rotate(float3 rot)
@@ -115,6 +99,7 @@ void Transform::Rotate(float3 rot)
 	Quat quaternion_rotation = Quat::FromEulerXYZ(delta.x, delta.y, delta.z);
 	quaternionRotation =  quaternion_rotation;
 	UpdateLocal();
+	//gameobject->transformUpdate = true;
 }
 
 void Transform::SetQuatRotation(Quat rot)
@@ -122,6 +107,7 @@ void Transform::SetQuatRotation(Quat rot)
 	quaternionRotation = rot;
 	UpdateEuler();
 	UpdateLocal();
+	//gameobject->transformUpdate = true;
 }
 
 void Transform::SetEulerRotation(float3 degrees)
@@ -131,15 +117,14 @@ void Transform::SetEulerRotation(float3 degrees)
 	Quat quaternion_rotation = Quat::FromEulerXYZ(delta.x, delta.y, delta.z);
 	quaternionRotation = quaternion_rotation;
 	UpdateLocal();
+	//gameobject->transformUpdate = true;
 }
 
-void Transform::SetTransform(float4x4 t)
+void Transform::SetGlobalTransform(float4x4 t)
 {
-	float4x4 localTransform;
-	if (gameobject->GetParent() != nullptr) localTransform = gameobject->GetParent()->transform->transformGlobal.Inverted() * t;
-	else localTransform = t;
+	if (gameobject->GetParent() != nullptr) transform = gameobject->GetParent()->transform->GetGlobalTransform().Inverted() * t;
+	else transform = t;
 
-	transform = localTransform;
 	transformGlobal = t;
 	transformTGlobal = transformGlobal.Transposed();
 }

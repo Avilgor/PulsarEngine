@@ -22,7 +22,6 @@ public:
 	void UpdateEuler();
 	float4x4 GetTransform() { return transform; }
 	float4x4 GetTransformT() { return transformT; }
-	//float* GetTransformPointer() { return tranformPointer; }
 	float3 GetPosition() { return position; }
 	float3 GetGlobalPosition();
 	float3 GetEulerRotation() { return eulerRotation; }
@@ -38,15 +37,12 @@ public:
 	void SetScale(float3 scale);
 	void SetQuatRotation(Quat rot);
 	void SetEulerRotation(float3 degrees);
-	void SetTransform(float4x4 transform);
+	void SetGlobalTransform(float4x4 transform);
 
 private:
-	void UpdateTransform();
+	void UpdateTRS();
 	void UpdateLocal();
 	
-public:
-	bool normalsFlipped;
-	bool needUpdate;
 
 private:
 	float4x4 transform;
@@ -57,7 +53,6 @@ private:
 	float3 scale;
 	Quat quaternionRotation;
 	float3 eulerRotation;
-	//float* tranformPointer;
 };
 
 #endif //__Transform_H__

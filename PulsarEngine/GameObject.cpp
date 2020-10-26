@@ -17,6 +17,7 @@ GameObject::GameObject(const char* n, GameObject* p)
 	showHierarchy = false;
 	toDelete = false;
 	parent = p;
+	transformUpdate = false;
 	AddComponent(TRANSFORM_COMP);
 }
 
@@ -59,12 +60,17 @@ void GameObject::UpdateTransform()
 {
 	if (!toDelete)
 	{
-		if (transform != nullptr) transform->UpdateComponent();
+		//if (transform != nullptr && transformUpdate)
+		//{
+			//LOG("Update transform: %s", name.c_str());
+			transform->UpdateComponent();			
+		//}
+
 		if (!Childs.empty())
 		{
 			for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
 			{
-				if (transform->needUpdate) (*it)->transform->needUpdate = true;
+				//if (transformUpdate) (*it)->SetTransformUpdate(true);
 				(*it)->UpdateTransform();
 			}
 		}

@@ -39,88 +39,65 @@ bool ModuleCamera3D::CleanUp()
 // -----------------------------------------------------------------
 update_status ModuleCamera3D::Update(float dt)
 {
-	// Implement a debug camera with keys and mouse
-	// Now we can make this movememnt frame rate independant!
-
-	/*vec3 newPos(0,0,0);
-	float speed = 3.0f * dt;
-	if(App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT)
-		speed = 8.0f * dt;
-
-	if(App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT) newPos.y += speed;
-	if(App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT) newPos.y -= speed;
-
-	if(App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos -= Z * speed;
-	if(App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos += Z * speed;
-
-
-	if(App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= X * speed;
-	if(App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += X * speed;
-
-	Position += newPos;
-	Reference += newPos;*/
-
-	
-	// Mouse motion ----------------
-	float Sensitivity = 0.25f;
-
-	int dz = -App->input->GetMouseZ();
-	if (dz != 0 && App->editor->mouse_in_scene)
+	if (App->editor->mouse_in_scene)
 	{
-		if (Position.z < 0)	dz = -dz;
-		Position.z += dz;
-		Position = Reference + Z * length(Position);
-	}
-	
-	/*if (App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT)
-	{
-		int dx = -App->input->GetMouseXMotion();
-		int dy = -App->input->GetMouseYMotion();
+		vec3 newPos(0, 0, 0);
+		float speed = 3.0f * dt;
+		if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) speed = 6.0f * dt;
 
-		Move(vec3(dx * 0.1, dy * 0.1,0.0f));
-	}*/
+		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT) newPos.y += speed;
+		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT) newPos.y -= speed;
 
-	if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_DOWN && App->editor->mouse_in_scene) mouseDrag = true;
-	
-	if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_UP) mouseDrag = false;
-	
+		if (App->input->GetMouseZ() < 0)  newPos += Z * speed * 5;
+		else if (App->input->GetMouseZ() > 0)  newPos -= Z * speed * 5;
 
-	if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT && mouseDrag)
-	{
-		int dx = -App->input->GetMouseXMotion();
-		int dy = -App->input->GetMouseYMotion();
+		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) newPos -= X * speed;
+		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) newPos += X * speed;	
+		
+		Position += newPos;
+		Reference += newPos;
 
-		Position -= Reference;
+		float Sensitivity = 0.25f;
 
-		if (dx != 0)
+		if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_DOWN && App->editor->mouse_in_scene) mouseDrag = true;
+
+		if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_UP) mouseDrag = false;
+
+
+		if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT && mouseDrag)
 		{
-			float DeltaX = (float)dx * Sensitivity;
+			int dx = -App->input->GetMouseXMotion();
+			int dy = -App->input->GetMouseYMotion();
 
-			X = rotate(X, DeltaX, vec3(0.0f, 1.0f, 0.0f));
-			Y = rotate(Y, DeltaX, vec3(0.0f, 1.0f, 0.0f));
-			Z = rotate(Z, DeltaX, vec3(0.0f, 1.0f, 0.0f));
-		}
+			Position -= Reference;
 
-		if (dy != 0)
-		{
-			float DeltaY = (float)dy * Sensitivity;
-
-			Y = rotate(Y, DeltaY, X);
-			Z = rotate(Z, DeltaY, X);
-
-			if (Y.y < 0.0f)
+			if (dx != 0)
 			{
-				Z = vec3(0.0f, Z.y > 0.0f ? 1.0f : -1.0f, 0.0f);
-				Y = cross(Z, X);
+				float DeltaX = (float)dx * Sensitivity;
+
+				X = rotate(X, DeltaX, vec3(0.0f, 1.0f, 0.0f));
+				Y = rotate(Y, DeltaX, vec3(0.0f, 1.0f, 0.0f));
+				Z = rotate(Z, DeltaX, vec3(0.0f, 1.0f, 0.0f));
 			}
+
+			if (dy != 0)
+			{
+				float DeltaY = (float)dy * Sensitivity;
+
+				Y = rotate(Y, DeltaY, X);
+				Z = rotate(Z, DeltaY, X);
+
+				if (Y.y < 0.0f)
+				{
+					Z = vec3(0.0f, Z.y > 0.0f ? 1.0f : -1.0f, 0.0f);
+					Y = cross(Z, X);
+				}
+			}
+
+			Position = Reference + Z * length(Position);
 		}
-
-		Position = Reference + Z * length(Position);
+		CalculateViewMatrix();
 	}
-	
-	// Recalculate matrix -------------
-	CalculateViewMatrix();
-
 	return UPDATE_CONTINUE;
 }
 
