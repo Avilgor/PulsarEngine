@@ -42,7 +42,7 @@ public:
 private:
 	void UpdateTRS();
 	void UpdateLocal();
-	
+	bool updateTransform;
 
 private:
 	float4x4 transform;

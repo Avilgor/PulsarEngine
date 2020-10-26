@@ -60,17 +60,12 @@ void GameObject::UpdateTransform()
 {
 	if (!toDelete)
 	{
-		//if (transform != nullptr && transformUpdate)
-		//{
-			//LOG("Update transform: %s", name.c_str());
-			transform->UpdateComponent();			
-		//}
+		transform->UpdateComponent();			
 
 		if (!Childs.empty())
 		{
 			for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
 			{
-				//if (transformUpdate) (*it)->SetTransformUpdate(true);
 				(*it)->UpdateTransform();
 			}
 		}
