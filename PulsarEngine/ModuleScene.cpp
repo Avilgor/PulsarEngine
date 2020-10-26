@@ -77,7 +77,7 @@ bool ModuleScene::Start()
 		if (comp2->AsMaterial() != nullptr)
 		{
 			App->fbxLoader->ImportMaterial(comp2->AsMaterial(), "Assets/3D/Baker/BakerHouse.FBX");
-			go2->GetFirstComponentType(MESH_COMP)->AsMesh()->material = comp2->AsMaterial();
+			go2->GetFirstComponentType(MESH_COMP)->AsMesh()->SetAllMeshesMaterial(comp2->AsMaterial()->GetMaterial(0));
 		}
 	}
 	

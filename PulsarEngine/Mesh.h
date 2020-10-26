@@ -12,6 +12,7 @@
 #include <vector>
 
 class Material;
+struct MaterialInfo;
 
 struct MeshInfo 
 {
@@ -23,6 +24,10 @@ struct MeshInfo
 		delete texturesArray;
 
 		material = nullptr;
+	}
+	void SetMaterial(MaterialInfo* mat)
+	{
+		material = mat;
 	}
 	std::string name = "";
 	uint VAO = 0;
@@ -40,7 +45,10 @@ struct MeshInfo
 	float* normalsArray = nullptr;
 	float* texturesArray = nullptr;
 
-	Material* material = nullptr;
+	bool drawVertexNormals = false;
+	bool drawFaceNormals = false;
+
+	MaterialInfo* material = nullptr;
 };
 
 class Mesh : public Component
@@ -55,6 +63,10 @@ public:
 	void UpdateComponent();
 	void DeleteComponent();
 	bool LoadImportedMesh();
+	void DrawVertexNormals(MeshInfo mesh);
+	void DrawFaceNormals(MeshInfo mesh);
+	void SetAllMeshesMaterial(MaterialInfo* mat);
+	MeshInfo* GetMesh(int index);
 	std::vector<MeshInfo>* GetMeshes() { return &meshes; }
 	void Render();
 	void SetMaterial(Material* mat) { material = mat; }

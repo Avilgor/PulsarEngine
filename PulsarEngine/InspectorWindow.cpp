@@ -146,10 +146,15 @@ void InspectorWindow::MeshSection(GameObject* go)
 		for (std::vector<MeshInfo>::iterator it = meshes->begin(); it != meshes->end(); ++it)
 		{
 			ImGui::Text("Mesh %d",i);
-			//ImGui::Text("Name: ");
-			//ImGui::SameLine();
-			//ImGui::Text((*it).name.c_str());
+			ImGui::Text("Vertex normals");
+			ImGui::SameLine();
+			ImGui::Checkbox("##vNormal", &(*it).drawVertexNormals);
+			ImGui::Text("Face normals");
+			ImGui::SameLine();
+			ImGui::Checkbox("##vFace", &(*it).drawFaceNormals);
 			ImGui::Text("Vertices: %d", (*it).verticesSize);
+			if((*it).material != nullptr) ImGui::Text("Material: %s", (*it).material->name.c_str());
+			else ImGui::Text("Material: -");
 			ImGui::Separator();
 			i++;
 		}

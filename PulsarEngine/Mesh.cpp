@@ -77,6 +77,27 @@ void Mesh::ReplaceMesh(MeshInfo mesh, int index)
 	}
 }
 
+MeshInfo* Mesh::GetMesh(int index)
+{
+	MeshInfo* ret = nullptr;
+	if (!meshes.empty() && index < meshes.size())
+	{
+		ret = &meshes[index];
+	}
+	return ret;
+}
+
+void Mesh::SetAllMeshesMaterial(MaterialInfo* mat)
+{
+	if (!meshes.empty())
+	{
+		for (std::vector<MeshInfo>::iterator it = meshes.begin(); it != meshes.end(); ++it)
+		{
+			(*it).SetMaterial(mat);
+		}
+	}
+}
+
 void Mesh::GenerateBuffers()
 {
 	if (!meshes.empty())
@@ -126,6 +147,16 @@ void Mesh::GenerateBuffers()
 					glEnableVertexAttribArray(2);
 				}
 
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+				glGenTextures(1, &(*it).idText);
+				glBindTexture(GL_TEXTURE_2D, (*it).idText);
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glGenerateMipmap(GL_TEXTURE_2D);
+				glBindTexture(GL_TEXTURE_2D, 0);
 				glBindVertexArray(0);
 			}
 		}
@@ -136,39 +167,89 @@ void Mesh::Render()
 {
 	for (int i = 0;i<meshes.size();i++)
 	{
-		/*glPushMatrix();
-		glMultMatrixf((float*)&gameobject->transform->GetTransform());
+		glPushMatrix();
+		glMultMatrixf((float*)&gameobject->transform->GetTransformT());
+
 		glEnableClientState(GL_VERTEX_ARRAY);
-		glBindBuffer(GL_ARRAY_BUFFER, idVertex);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idIndex);
-		glVertexPointer(3, GL_FLOAT, 0, NULL);
-		glDrawElements(GL_TRIANGLES, indexSize, GL_UNSIGNED_INT, NULL);
-		glDisableClientState(GL_VERTEX_ARRAY);
-		glPopMatrix();*/
+		//glEnableClientState(GL_NORMAL_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		//if (meshes[i].material != nullptr)
 		//{
 			//lBindTexture(GL_TEXTURE_2D, idText);
 		//}
-		glPushMatrix();
-		//glMatrixMode(GL_MODELVIEW);
-		glMultMatrixf((float*)&gameobject->transform->GetTransformT());
-		//glUniformMatrix4fv(0, 1, GL_FALSE, gameobject->transform->GetTransform().ptr());
-		glEnableClientState(GL_VERTEX_ARRAY);
-
+		
+			
 	
 		//glBindVertexArray(VAO);	
-		glBindBuffer(GL_ARRAY_BUFFER, meshes[i].idVertex);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[i].idIndex);
+		glBindBuffer(GL_ARRAY_BUFFER, (GLuint)meshes[i].idVertex);
 		glVertexPointer(3, GL_FLOAT, 0, NULL);
+
+		glBindBuffer(GL_NORMAL_ARRAY, (GLuint)meshes[i].idNormals);
+		glNormalPointer(GL_FLOAT, 0, NULL);
+
+		//Normals
+		if(meshes[i].drawVertexNormals) DrawVertexNormals(meshes[i]);
+		if(meshes[i].drawFaceNormals) DrawFaceNormals(meshes[i]);
+
+		glBindBuffer(GL_ARRAY_BUFFER, (GLuint)meshes[i].idText);
+		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (GLuint)meshes[i].idIndex);
 		glDrawElements(GL_TRIANGLES, meshes[i].indexSize, GL_UNSIGNED_INT, NULL);
-	
-	
-		//glUseProgram(0);
-		//glFrontFace(GL_CCW);
-		//glBindVertexArray(0);
-		glDisableClientState(GL_VERTEX_ARRAY);
+		
 		glPopMatrix();
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		
+		glBindBuffer(GL_TEXTURE_COORD_ARRAY, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_NORMAL_ARRAY, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisableClientState(GL_NORMAL_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);		
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
+}
+
+void Mesh::DrawVertexNormals(MeshInfo mesh)
+{
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glBegin(GL_LINES);
+	for (size_t a = 0; a < mesh.verticesSize *3; a += 3)
+	{
+		glColor3f(0.0f, 0.85f, 0.85f);
+		glVertex3f(mesh.verticesArray[a], mesh.verticesArray[a+1], mesh.verticesArray[a + 2]);
+
+		glVertex3f(mesh.verticesArray[a] + (mesh.normalsArray[a] * mesh.normalsSize),
+			mesh.verticesArray[a+1] + (mesh.normalsArray[a+1] * mesh.normalsSize),
+			mesh.verticesArray[a+2] + (mesh.normalsArray[a+2]) * mesh.normalsSize);
+	}
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glEnd();
+
+}
+
+void Mesh::DrawFaceNormals(MeshInfo mesh)
+{
+	glBegin(GL_LINES);
+	for (size_t a = 0; a < mesh.verticesSize * 3; a += 3)
+	{
+		glColor3f(1.0f, 0.85f, 0.0f);
+		float vx = (mesh.verticesArray[a] + mesh.verticesArray[a + 3] + mesh.verticesArray[a + 6]) / 3;
+		float vy = (mesh.verticesArray[a + 1] + mesh.verticesArray[a + 4] + mesh.verticesArray[a + 7]) / 3;
+		float vz = (mesh.verticesArray[a + 2] + mesh.verticesArray[a + 5] + mesh.verticesArray[a + 8]) / 3;
+
+		float nx = (mesh.normalsArray[a] + mesh.normalsArray[a + 3] + mesh.normalsArray[a + 6]) / 3;
+		float ny = (mesh.normalsArray[a + 1] + mesh.normalsArray[a + 4] + mesh.normalsArray[a + 7]) / 3;
+		float nz = (mesh.normalsArray[a + 2] + mesh.normalsArray[a + 5] + mesh.normalsArray[a + 8]) / 3;
+
+		glVertex3f(vx, vy, vz);
+
+		glVertex3f(vx + (mesh.normalsArray[a] * mesh.normalsSize),
+			vy + (mesh.normalsArray[a + 1] * mesh.normalsSize),
+			vz + (mesh.normalsArray[a + 2]) * mesh.normalsSize);
+	}
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glEnd();
 }
 
 void Mesh::CreateCube(float x, float y, float z)

@@ -27,6 +27,16 @@ void Material::UpdateComponent()
 {
 }
 
+MaterialInfo* Material::GetMaterial(int index)
+{
+	MaterialInfo* ret = nullptr;
+	if (!materials.empty() && index < materials.size())
+	{
+		ret = &materials[index];
+	}
+	return ret;
+}
+
 void Material::DeleteComponent()
 {
 	if (!materials.empty())

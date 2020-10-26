@@ -47,6 +47,7 @@ public:
 	void UpdateComponent();
 	void DeleteComponent();
 	void SaveMaterial(MaterialInfo mat);
+	MaterialInfo* GetMaterial(int index);
 	std::vector<MaterialInfo>* GetAllMaterials() { return &materials; }
 	void ChangeMaterial(MaterialInfo mat, int index);
 	void RemoveMaterial(int index);
