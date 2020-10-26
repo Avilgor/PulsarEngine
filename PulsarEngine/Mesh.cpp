@@ -4,7 +4,7 @@
 #include "Mesh.h"
 #include "Glew/include/GL/glew.h"
 #include "SDL/include/SDL_opengl.h"
-
+#include "Material.h"
 #include <vector>
 
 Mesh::Mesh(GameObject* parent) : Component(parent, MESH_COMP)
@@ -145,10 +145,13 @@ void Mesh::Render()
 		glDrawElements(GL_TRIANGLES, indexSize, GL_UNSIGNED_INT, NULL);
 		glDisableClientState(GL_VERTEX_ARRAY);
 		glPopMatrix();*/
-
+		//if (meshes[i].material != nullptr)
+		//{
+			//lBindTexture(GL_TEXTURE_2D, idText);
+		//}
 		glPushMatrix();
 		//glMatrixMode(GL_MODELVIEW);
-		glMultMatrixf((float*)&gameobject->transform->GetTransform());
+		glMultMatrixf((float*)&gameobject->transform->GetTransformT());
 		//glUniformMatrix4fv(0, 1, GL_FALSE, gameobject->transform->GetTransform().ptr());
 		glEnableClientState(GL_VERTEX_ARRAY);
 

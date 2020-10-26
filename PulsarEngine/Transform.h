@@ -21,6 +21,7 @@ public:
 	void ResetTransform();
 	void UpdateEuler();
 	float4x4 GetTransform() { return transform; }
+	float4x4 GetTransformT() { return transformT; }
 	//float* GetTransformPointer() { return tranformPointer; }
 	float3 GetPosition() { return position; }
 	float3 GetGlobalPosition();
@@ -49,6 +50,7 @@ public:
 
 private:
 	float4x4 transform;
+	float4x4 transformT;
 	float4x4 transformGlobal;
 	float4x4 transformTGlobal;
 	float3 position;

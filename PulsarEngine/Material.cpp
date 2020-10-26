@@ -2,12 +2,9 @@
 #include "Material.h"
 #include "Assimp/include/material.h"
 #include "Assimp/include/texture.h"
-#include "Devil/include/IL/ilu.h"
-#include "Devil/include/IL/ilut.h"
+#include "Glew/include/GL/glew.h"
+#include "SDL/include/SDL_opengl.h"
 
-#pragma comment( lib, "Devil/lib/x86/DevIL.lib" )
-#pragma comment( lib, "Devil/lib/x86/ILU.lib" )
-#pragma comment( lib, "Devil/lib/x86/ILUT.lib" )
 
 Material::Material(GameObject* parent) : Component(parent, MATERIAL_COMP)
 {
@@ -28,7 +25,6 @@ Material::~Material()
 
 void Material::UpdateComponent()
 {
-
 }
 
 void Material::DeleteComponent()

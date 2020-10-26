@@ -77,7 +77,7 @@ void InspectorWindow::TransformSection(GameObject* go)
 		ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.20f);
 		if (ImGui::InputFloat("##posz", &pos.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) newPos = true;
 		ImGui::PopItemWidth();
-		//if (newPos) go->transform->SetPosition(pos);	
+		if (newPos) go->transform->SetPosition(pos);	
 
 		//Rotation
 		float3 rot = tr->GetEulerRotation();

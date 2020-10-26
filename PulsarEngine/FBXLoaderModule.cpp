@@ -6,11 +6,23 @@
 #include "Assimp/include/scene.h"
 #include "Assimp/include/postprocess.h"
 #include "Assimp/include/mesh.h"
+#include "Assimp/include/material.h"
+#include "Assimp/include/texture.h"
+#include "Devil/include/IL/ilu.h"
+#include "Devil/include/IL/ilut.h"
 
+#pragma comment( lib, "Devil/lib/x86/DevIL.lib" )
+#pragma comment( lib, "Devil/lib/x86/ILU.lib" )
+#pragma comment( lib, "Devil/lib/x86/ILUT.lib" )
 #pragma comment (lib, "Assimp/libx86/assimp.lib")
 
 FBXLoaderModule::FBXLoaderModule()
-{}
+{
+	ilInit();
+	iluInit();
+	ilutInit();
+	ilutRenderer(ILUT_OPENGL);
+}
 
 FBXLoaderModule::~FBXLoaderModule()
 {}

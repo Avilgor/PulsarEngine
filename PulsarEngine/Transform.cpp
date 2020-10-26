@@ -7,6 +7,7 @@
 Transform::Transform(GameObject* parent) : Component(parent, TRANSFORM_COMP)
 {
 	transform = float4x4::FromTRS(float3::zero, Quat::identity, float3::one);
+	transformT = transform.Transposed();
 	UpdateEuler();
 	needUpdate = true;
 	//tranformPointer = transform.ptr();
@@ -15,6 +16,7 @@ Transform::Transform(GameObject* parent) : Component(parent, TRANSFORM_COMP)
 Transform::Transform(GameObject* parent, float3 pos, Quat rot, float3 scale) : Component(parent,TRANSFORM_COMP)
 {
 	transform = float4x4::FromTRS(pos, rot, scale);
+	transformT = transform.Transposed();
 	UpdateEuler();
 	needUpdate = true;
 	//tranformPointer = transform.ptr();
@@ -24,6 +26,7 @@ Transform::Transform(GameObject* parent, float4x4 t) : Component(parent, TRANSFO
 {
 	transform = t;
 	transform.Decompose(position, quaternionRotation, scale);
+	transformT = transform.Transposed();
 	UpdateEuler();
 	needUpdate = true;
 	//tranformPointer = transform.ptr();
@@ -48,10 +51,11 @@ void Transform::UpdateComponent()
 void Transform::UpdateTransform()
 {
 	transform.Decompose(position, quaternionRotation, scale);
+	transformT = transform.Transposed();
 	UpdateEuler();
-	//LOG("Transform X:%f/Y:%f/Z:%f", position.x, position.y, position.z);
 	needUpdate = false;
 }
+
 
 void Transform::ResetTransform()
 {
@@ -75,6 +79,7 @@ void Transform::UpdateEuler()
 void Transform::UpdateLocal()
 {
 	transform = float4x4::FromTRS(position, quaternionRotation, scale);
+	transformT = transform.Transposed();
 	needUpdate = true;
 }
 

@@ -10,7 +10,9 @@ ConsoleWindow::ConsoleWindow(std::string name) : EditorWindow(name)
 {}
 
 ConsoleWindow::~ConsoleWindow()
-{}
+{
+    App->ConsoleLogs.clear();
+}
 
 
 update_status ConsoleWindow::Draw()
