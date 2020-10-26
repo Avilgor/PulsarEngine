@@ -1,5 +1,7 @@
 #include "Globals.h"
+#include "Application.h"
 #include "FBXLoaderModule.h"
+#include "FileSystemModule.h"
 #include "Mesh.h"
 #include "Material.h"
 #include "Assimp/include/cimport.h"
@@ -124,29 +126,30 @@ bool FBXLoaderModule::ImportMaterial(Material* mat, const char* path)
 	const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
 	
 	if(scene->HasMaterials())
-	{
-		if (scene->HasMaterials())
+	{		
+		for (uint i = 0; i < scene->mNumMaterials; ++i)
 		{
-			for (uint i = 0; i < scene->mNumMaterials; ++i)
-			{
-				MaterialInfo matInfo;
-				aiMaterial* material = scene->mMaterials[i];		
-				matInfo.texturesNum = material->GetTextureCount(aiTextureType_DIFFUSE);
-				aiString pathText;
-				//std::string tempPath = path;
-				material->GetTexture(aiTextureType_DIFFUSE, 0, &pathText);				
-				matInfo.path = pathText.C_Str();//tempPath.append(pathText.C_Str());
-				//LOG("Texture path %s",matInfo.path.c_str());
-				aiColor4D color;
-				material->Get(AI_MATKEY_COLOR_DIFFUSE, color);				
-				matInfo.color = Color(color.r, color.g, color.b, color.a);
+			MaterialInfo matInfo;
+			aiMaterial* material = scene->mMaterials[i];		
+			matInfo.texturesNum = material->GetTextureCount(aiTextureType_DIFFUSE);
+			std::string extension;
+			std::string filename;
+			std::string dir;
+			App->fileSystem->SplitFilePath(path,&dir,&filename,&extension);
+			aiString tempPath;
+			material->GetTexture(aiTextureType_DIFFUSE, 0, &tempPath);
+			matInfo.path = dir.append(tempPath.C_Str());//tempPath.append(pathText.C_Str());
+			//LOG("Texture path %s",matInfo.path.c_str());
+			aiColor4D color;
+			material->Get(AI_MATKEY_COLOR_DIFFUSE, color);				
+			matInfo.color = Color(color.r, color.g, color.b, color.a);
 
-				aiString matName;
-				material->Get(AI_MATKEY_NAME, matName);
-				matInfo.name = matName.C_Str();
-				mat->SaveMaterial(matInfo);
-			}
+			aiString matName;
+			material->Get(AI_MATKEY_NAME, matName);
+			matInfo.name = matName.C_Str();
+			mat->SaveMaterial(matInfo);
 		}
+		
 		aiReleaseImport(scene);
 		mat->GenerateBuffer();
 	}

@@ -492,8 +492,6 @@ std::string FileSystemModule::GetUniqueName(const char* path, const char* name) 
 
 void FileSystemModule::LoadTexture(const char* path, MaterialInfo* mat)
 {
-	//std::string tempPath = "Assets/";
-	//GetRealDir(path,tempPath);
 	uint imageID = 0;
 
 	ilGenImages(1, &imageID);

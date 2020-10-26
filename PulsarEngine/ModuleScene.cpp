@@ -52,7 +52,7 @@ bool ModuleScene::Start()
 		if (comp->AsMesh() != nullptr) App->fbxLoader->ImportMesh(comp->AsMesh(), "Assets/3D/warrior/warrior.FBX");		
 	}
 
-	comp = warrior->GetFirstComponentType(MATERIAL_COMP);
+	/*comp = warrior->GetFirstComponentType(MATERIAL_COMP);
 	if (comp != nullptr)
 	{
 		if (comp->AsMaterial() != nullptr)
@@ -60,7 +60,7 @@ bool ModuleScene::Start()
 			App->fbxLoader->ImportMaterial(comp->AsMaterial(), "Assets/3D/warrior/warrior.FBX");
 			warrior->GetFirstComponentType(MESH_COMP)->AsMesh()->material = comp->AsMaterial();
 		}
-	}
+	}*/
 	
 	Component* comp2 = go2->GetFirstComponentType(MESH_COMP);
 	if (comp2 != nullptr)
