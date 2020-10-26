@@ -6,6 +6,8 @@
 
 class Mesh;
 class Material;
+struct aiScene;
+struct MeshInfo;
 
 class FBXLoaderModule 
 {
@@ -18,7 +20,7 @@ public:
 	bool ImportAll(Mesh* mesh, Material* mat, const char* path);
 	void Save();
 	void Load();
-
+	MeshInfo LoadMesh(int num, const aiScene* scene);
 
 };
 

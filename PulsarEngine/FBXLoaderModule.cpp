@@ -48,73 +48,9 @@ bool FBXLoaderModule::ImportMesh(Mesh* mesh,const char* path)
 
 		for (int i = 0; i < scene->mNumMeshes; i++)
 		{
-			//mesh->name = scene->mMeshes[i]->mName.C_Str();
-			MeshInfo newMesh;
-			//newMesh.name = scene->mMeshes[i]->mName.C_Str();
-			//LOG("Name %s", scene->mMeshes[i]->mName.C_Str());
-			newMesh.verticesSize = scene->mMeshes[i]->mNumVertices;
-			newMesh.verticesArray = new float[newMesh.verticesSize * 3];
-			memcpy(newMesh.verticesArray, scene->mMeshes[i]->mVertices, sizeof(float) * newMesh.verticesSize * 3);
-			LOG("Vertices = %d", newMesh.verticesSize);
-			/*mesh->verticesSize = scene->mMeshes[i]->mNumVertices;
-			mesh->verticesArray = new float[mesh->verticesSize * 3];
-			memcpy(mesh->verticesArray, scene->mMeshes[i]->mVertices, sizeof(float) * mesh->verticesSize * 3);
-			LOG("Vertices = %d", mesh->verticesSize);*/
-
-			//Indices
-			if (scene->mMeshes[i]->HasFaces())
-			{
-				newMesh.indexSize = scene->mMeshes[i]->mNumFaces * 3;
-				newMesh.indicesArray = new uint[newMesh.indexSize];
-				//mesh->indexSize = scene->mMeshes[i]->mNumFaces * 3;
-				//mesh->indicesArray = new uint[mesh->indexSize];
-
-				for (uint a = 0; a < scene->mMeshes[i]->mNumFaces; a++)
-				{
-					if (scene->mMeshes[i]->mFaces[a].mNumIndices != 3)
-					{
-						LOG("Geometry face with != 3 indices!");
-					}
-					else
-					{
-						//memcpy(&mesh->indicesArray[a * 3], scene->mMeshes[i]->mFaces[a].mIndices, 3 * sizeof(uint));
-						memcpy(&newMesh.indicesArray[a * 3], scene->mMeshes[i]->mFaces[a].mIndices, 3 * sizeof(uint));
-					}
-				}
-			}
-
-			//Normals
-			if (scene->mMeshes[i]->HasNormals())
-			{
-				/*mesh->normalsSize = mesh->verticesSize;
-				mesh->normalsArray = new float[mesh->normalsSize * 3];
-				memcpy(mesh->normalsArray, scene->mMeshes[i]->mNormals, sizeof(float) * mesh->normalsSize * 3);*/
-				newMesh.normalsSize = newMesh.verticesSize;
-				newMesh.normalsArray = new float[newMesh.normalsSize * 3];
-				memcpy(newMesh.normalsArray, scene->mMeshes[i]->mNormals, sizeof(float) * newMesh.normalsSize * 3);
-			}
-
-			//Texture coords
-			if (scene->mMeshes[i]->HasTextureCoords(0))
-			{
-				//mesh->textSize = mesh->verticesSize;
-				//mesh->texturesArray = new float[mesh->verticesSize * 2];
-				newMesh.textSize = newMesh.verticesSize;
-				newMesh.texturesArray = new float[newMesh.verticesSize * 2];
-
-				//for (int a = 0; a < mesh->textSize; a++)
-				for (int a = 0; a < newMesh.textSize; a++)
-				{
-					//mesh->texturesArray[a * 2] = scene->mMeshes[i]->mTextureCoords[0][a].x;
-					//mesh->texturesArray[a * 2 + 1] = scene->mMeshes[i]->mTextureCoords[0][a].y;
-					newMesh.texturesArray[a * 2] = scene->mMeshes[i]->mTextureCoords[0][a].x;
-					newMesh.texturesArray[a * 2 + 1] = scene->mMeshes[i]->mTextureCoords[0][a].y;
-				}
-			}
-			mesh->AddMesh(newMesh);
+			mesh->AddMesh(LoadMesh(i, scene));
 		}
 		aiReleaseImport(scene);
-		mesh->GenerateBuffers();
 	}
 	else
 	{
@@ -123,6 +59,55 @@ bool FBXLoaderModule::ImportMesh(Mesh* mesh,const char* path)
 	
 	return ret;
 }
+
+MeshInfo FBXLoaderModule::LoadMesh(int num, const aiScene* scene)
+{
+	MeshInfo newMesh;
+	newMesh.name = scene->mMeshes[num]->mName.C_Str();
+	newMesh.verticesSize = scene->mMeshes[num]->mNumVertices;
+	newMesh.verticesArray = new float[newMesh.verticesSize * 3];
+	memcpy(newMesh.verticesArray, scene->mMeshes[num]->mVertices, sizeof(float) * newMesh.verticesSize * 3);
+
+	//Indices
+	if (scene->mMeshes[num]->HasFaces())
+	{
+		newMesh.indexSize = scene->mMeshes[num]->mNumFaces * 3;
+		newMesh.indicesArray = new uint[newMesh.indexSize];
+
+		for (uint a = 0; a < scene->mMeshes[num]->mNumFaces; a++)
+		{
+			if (scene->mMeshes[num]->mFaces[a].mNumIndices != 3)
+			{
+				LOG("Geometry face with != 3 indices!");
+			}
+			else memcpy(&newMesh.indicesArray[a * 3], scene->mMeshes[num]->mFaces[a].mIndices, 3 * sizeof(uint));
+			
+		}
+	}
+
+	//Normals
+	if (scene->mMeshes[num]->HasNormals())
+	{
+		newMesh.normalsSize = newMesh.verticesSize;
+		newMesh.normalsArray = new float[newMesh.normalsSize * 3];
+		memcpy(newMesh.normalsArray, scene->mMeshes[num]->mNormals, sizeof(float) * newMesh.normalsSize * 3);
+	}
+
+	//Texture coords
+	if (scene->mMeshes[num]->HasTextureCoords(0))
+	{
+		newMesh.textSize = newMesh.verticesSize;
+		newMesh.texturesArray = new float[newMesh.verticesSize * 2];
+
+		for (int a = 0; a < newMesh.textSize; a++)
+		{
+			newMesh.texturesArray[a * 2] = scene->mMeshes[num]->mTextureCoords[0][a].x;
+			newMesh.texturesArray[a * 2 + 1] = scene->mMeshes[num]->mTextureCoords[0][a].y;
+		}
+	}
+	return newMesh;
+}
+
 
 bool FBXLoaderModule::ImportAll(Mesh* mesh, Material* mat, const char* path)
 {

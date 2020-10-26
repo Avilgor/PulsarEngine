@@ -25,6 +25,7 @@ struct MeshInfo
 
 		material = nullptr;
 	}
+
 	void SetMaterial(MaterialInfo* mat)
 	{
 		material = mat;
@@ -70,7 +71,7 @@ public:
 	std::vector<MeshInfo>* GetMeshes() { return &meshes; }
 	void Render();
 	void SetMaterial(Material* mat) { material = mat; }
-	void GenerateBuffers();
+	void GenerateBuffers(MeshInfo* mesh);
 	void CreateCube(float x, float y, float z);
 	void CreatePyramid(float x, float y, float z);
 	void CreateSphere(float radius, int rings, int sectors, float x, float y, float z);
@@ -96,9 +97,10 @@ public:
 	float* texturesArray = nullptr;
 	
 	Material* material = nullptr;*/
-
+	
 private:
 	std::vector<MeshInfo> meshes;
+	
 };
 
 

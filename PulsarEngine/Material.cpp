@@ -35,8 +35,10 @@ void Material::GenerateBuffer()
 	{
 		for (std::vector<MaterialInfo>::iterator it = materials.begin(); it != materials.end(); ++it)
 		{
-			std::string trick = "Assets/3D/Baker/";
-			trick.append((*it).path.c_str());
+			std::string trick = "";//(*it).path.c_str(); 
+			//trick = App->fileSystem->GetPathRelativeToAssets((*it).path.c_str());
+			//LOG("Text path: %s",trick);
+			//trick.append((*it).path.c_str());
 			App->fileSystem->LoadTexture(trick.c_str(),&(*it));
 			if ((*it).textureID != -1)
 			{

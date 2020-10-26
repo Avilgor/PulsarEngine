@@ -50,13 +50,14 @@ void Mesh::DeleteComponent()
 bool Mesh::LoadImportedMesh()
 {
 	bool ret = true;
-	GenerateBuffers();
+	//GenerateBuffers();
 	return ret;
 }
 
 void Mesh::AddMesh(MeshInfo mesh)
 {
 	meshes.push_back(mesh);
+	GenerateBuffers(&meshes.back());
 }
 
 void Mesh::RemoveMesh(int index)
@@ -98,82 +99,120 @@ void Mesh::SetAllMeshesMaterial(MaterialInfo* mat)
 	}
 }
 
-void Mesh::GenerateBuffers()
+void Mesh::GenerateBuffers(MeshInfo* mesh)
 {
-	if (!meshes.empty())
-	{
-		for (std::vector<MeshInfo>::iterator it = meshes.begin(); it != meshes.end(); ++it)
+
+		/*for (std::vector<MeshInfo>::iterator it = meshes.begin(); it != meshes.end(); ++it)
 		{
 			if ((*it).verticesSize > 0)
 			{
-				glGenVertexArrays(1, &(*it).VAO);
-				glBindVertexArray((*it).VAO);
+				glGenVertexArrays(1, &mesh->VAO);
+				glBindVertexArray(mesh->VAO);
 
 				//VertexBuffer
-				glGenBuffers(1, (GLuint*)&((*it).idVertex));
-				glBindBuffer(GL_ARRAY_BUFFER, (*it).idVertex);
-				glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (*it).verticesSize * 3, (*it).verticesArray, GL_STATIC_DRAW);
+				glGenBuffers(1, (GLuint*)&(mesh->idVertex));
+				glBindBuffer(GL_ARRAY_BUFFER, mesh->idVertex);
+				glBufferData(GL_ARRAY_BUFFER, sizeof(float) * mesh->verticesSize * 3, mesh->verticesArray, GL_STATIC_DRAW);
 
 				//Index buffer
-				if ((*it).indexSize > 0)
+				if (mesh->indexSize > 0)
 				{
-					glGenBuffers(1, (GLuint*)&((*it).idIndex));
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*it).idIndex);
-					glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * (*it).indexSize, (*it).indicesArray, GL_STATIC_DRAW);
+					glGenBuffers(1, &(mesh->idIndex));
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->idIndex);
+					glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * mesh->indexSize, mesh->indicesArray, GL_STATIC_DRAW);
+					glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+					glEnableVertexAttribArray(0);
 				}
 
-				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-				glEnableVertexAttribArray(0);
+				
 
 				//Textures buffer
-				if ((*it).textSize > 0)
+				if (mesh->textSize > 0)
 				{
-					glGenBuffers(1, &(*it).idText);
-					glBindBuffer(GL_ARRAY_BUFFER, (*it).idText);
-					glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (*it).textSize * 2, (*it).texturesArray, GL_STATIC_DRAW);
+					glGenBuffers(1, &mesh->idNormals);
+					glBindBuffer(GL_ARRAY_BUFFER, mesh->idNormals);
+					glBufferData(GL_ARRAY_BUFFER, sizeof(float) * mesh->textSize * 2, mesh->texturesArray, GL_STATIC_DRAW);
 
 					glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 					glEnableVertexAttribArray(1);
 				}
 
 				//Normals buffer
-				if ((*it).normalsSize > 0)
+				if (mesh->normalsSize > 0)
 				{
-					glGenBuffers(1, &(*it).idNormals);
-					glBindBuffer(GL_ARRAY_BUFFER, (*it).idNormals);
-					glBufferData(GL_ARRAY_BUFFER, sizeof(float) * (*it).normalsSize * 3, (*it).normalsArray, GL_STATIC_DRAW);
-
+					glGenBuffers(1, (GLuint*)&mesh->idNormals);
+					glBindBuffer(GL_NORMAL_ARRAY, mesh->idNormals);
+					glBufferData(GL_NORMAL_ARRAY, sizeof(float) * mesh->verticesSize * 3, mesh->normalsArray, GL_STATIC_DRAW);
 					glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 					glEnableVertexAttribArray(2);
-				}				
+				}
+				glBindVertexArray(0);
 			}
+		}*/
+
+	if (meshes[0].verticesSize > 0)
+	{
+		glGenVertexArrays(1, &mesh->VAO);
+		glBindVertexArray(mesh->VAO);
+
+		//VertexBuffer
+		glGenBuffers(1, (GLuint*)&(mesh->idVertex));
+		glBindBuffer(GL_ARRAY_BUFFER, mesh->idVertex);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * mesh->verticesSize * 3, mesh->verticesArray, GL_STATIC_DRAW);
+
+		//Index buffer
+		if (mesh->indexSize > 0)
+		{
+			glGenBuffers(1, &(mesh->idIndex));
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->idIndex);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * mesh->indexSize, mesh->indicesArray, GL_STATIC_DRAW);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(0);
+		}				
+
+		//Textures buffer
+		if (mesh->textSize > 0)
+		{
+			glGenBuffers(1, &mesh->idText);
+			glBindBuffer(GL_ARRAY_BUFFER, mesh->idText);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * mesh->textSize * 2, mesh->texturesArray, GL_STATIC_DRAW);
+
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(1);
 		}
+
+		//Normals buffer
+		if (mesh->normalsSize > 0)
+		{
+			glGenBuffers(1, (GLuint*)&mesh->idNormals);
+			glBindBuffer(GL_NORMAL_ARRAY, mesh->idNormals);
+			glBufferData(GL_NORMAL_ARRAY, sizeof(float) * mesh->verticesSize * 3, mesh->normalsArray, GL_STATIC_DRAW);
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(2);
+		}
+		glBindVertexArray(0);
 	}
 }
 
 void Mesh::Render()
-{
-	if (!meshes.empty())
-	{
-		glEnableClientState(GL_VERTEX_ARRAY);
-		//glEnableClientState(GL_NORMAL_ARRAY);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+{	
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
+	for (std::vector<MeshInfo>::iterator it = meshes.begin(); it != meshes.end(); ++it)
+	{
+		
 		for (int i = 0; i < meshes.size(); i++)
 		{
 			glPushMatrix();
 			glMultMatrixf((float*)&gameobject->transform->GetTransformT());
-			
-			//if (meshes[i].material != nullptr)
-			//{
-				//lBindTexture(GL_TEXTURE_2D, idText);
-			//}
 
 			//glBindVertexArray(VAO);	
-			glBindBuffer(GL_ARRAY_BUFFER, (GLuint)meshes[i].idVertex);
+			glBindBuffer(GL_ARRAY_BUFFER, meshes[i].idVertex);
 			glVertexPointer(3, GL_FLOAT, 0, NULL);
 
-			glBindBuffer(GL_NORMAL_ARRAY, (GLuint)meshes[i].idNormals);
+			glBindBuffer(GL_NORMAL_ARRAY, meshes[i].idNormals);
 			glNormalPointer(GL_FLOAT, 0, NULL);
 
 			//Normals
@@ -182,13 +221,13 @@ void Mesh::Render()
 
 			if (meshes[i].material != nullptr)
 			{
-				glBindBuffer(GL_ARRAY_BUFFER, (GLuint)meshes[i].idText);
+				glBindBuffer(GL_ARRAY_BUFFER, meshes[i].idText);
 				glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 				glBindTexture(GL_TEXTURE_2D, meshes[i].material->textureID);
 			}
-			
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (GLuint)meshes[i].idIndex);
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[i].idIndex);
 			glDrawElements(GL_TRIANGLES, meshes[i].indexSize, GL_UNSIGNED_INT, NULL);
 
 			glPopMatrix();
@@ -199,10 +238,11 @@ void Mesh::Render()
 			glBindBuffer(GL_NORMAL_ARRAY, 0);
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
-		glDisableClientState(GL_NORMAL_ARRAY);
-		glDisableClientState(GL_VERTEX_ARRAY);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		
 	}
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void Mesh::DrawVertexNormals(MeshInfo mesh)
@@ -264,8 +304,7 @@ void Mesh::CreateCube(float x, float y, float z)
 	mesh.indicesArray = new uint[mesh.indexSize];
 	memcpy(mesh.indicesArray, index, sizeof(uint) * mesh.indexSize);
 	meshes.push_back(mesh);
-	GenerateBuffers();
-	
+	GenerateBuffers(&meshes.back());	
 }
 
 void Mesh::CreatePyramid(float x, float y, float z)
@@ -282,7 +321,7 @@ void Mesh::CreatePyramid(float x, float y, float z)
 	mesh.indicesArray = new uint[mesh.indexSize];
 	memcpy(mesh.indicesArray, index, sizeof(uint) * mesh.indexSize);
 	meshes.push_back(mesh);
-	GenerateBuffers();
+	GenerateBuffers(&meshes.back());
 }
 
 void Mesh::CreateSphere(float radius, int rings, int sectors, float x, float y, float z)
@@ -341,5 +380,5 @@ void Mesh::CreatePlane(float size,float x, float y, float z)
 	mesh.indicesArray = new uint[mesh.indexSize];
 	memcpy(mesh.indicesArray, index, sizeof(uint) * mesh.indexSize);
 	meshes.push_back(mesh);
-	GenerateBuffers();
+	GenerateBuffers(&meshes.back());
 }

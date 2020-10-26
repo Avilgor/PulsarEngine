@@ -118,6 +118,7 @@ void GameObject::DrawMesh()
 				if ((*it)->active && (*it)->compType == MESH_COMP) (*it)->UpdateComponent();
 			}
 		}
+
 		if (!Childs.empty())
 		{
 			for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)

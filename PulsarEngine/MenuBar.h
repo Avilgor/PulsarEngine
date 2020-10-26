@@ -18,7 +18,7 @@ public:
 private:
 	bool renderOptions = false;
 	bool depth = false;
-	bool cullFace = true;
+	bool cullFace = false;
 	bool light = true;
 	bool colorMaterial = true;
 	bool texture2D = true;

@@ -170,8 +170,6 @@ void InspectorWindow::MaterialSection(GameObject* go)
 {
 	if (ImGui::CollapsingHeader("Materials", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		//ImGui::Text("Path: %s", go->GetFirstComponentType(MATERIAL_COMP)->AsMaterial()->path);
-		//ImGui::Separator();
 		std::vector<MaterialInfo>* materials = go->GetFirstComponentType(MATERIAL_COMP)->AsMaterial()->GetAllMaterials();
 		int i = 0;
 
@@ -188,9 +186,9 @@ void InspectorWindow::MaterialSection(GameObject* go)
 
 
 			bool colorChange = false;
-			ImGui::Text("Material %d", i);
-			ImGui::Text("Path: %s", (*it).path.c_str());
+			ImGui::Text("Material %d", i);		
 			ImGui::Text("Name: %s", (*it).name.c_str());
+			ImGui::Text("Path: %s", (*it).path.c_str());
 
 			Color tempColor = (*it).color;
 			ImGui::Text("Color");

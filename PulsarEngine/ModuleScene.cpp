@@ -30,24 +30,20 @@ bool ModuleScene::Start()
 	root = new GameObject("Root");
 	
 
-	warrior = new GameObject("Warrior");
-	//warrior->AddComponent(MESH_COMP);
-	//warrior->AddComponent(MATERIAL_COMP);
+	/*warrior = new GameObject("Warrior");
+	warrior->AddComponent(MESH_COMP);
+	warrior->AddComponent(MATERIAL_COMP);
 	root->AddChild(warrior);
 	warrior->transform->SetScale(float3(0.01f,0.01f,0.01f));
-	warrior->transform->SetEulerRotation(float3(90.0f,0.0f,0));
-	
+	warrior->transform->SetEulerRotation(float3(-90.0f,0.0f,0));
+	warrior->transform->SetPosition(float3(2.0f, 0, 0));*/
 
 	GameObject* go2 = new GameObject("Baker House");
 	go2->AddComponent(MESH_COMP);
 	go2->AddComponent(MATERIAL_COMP);
 	root->AddChild(go2);
+	//go2->transform->SetPosition(float3(-2.0f, 0, 0));
 
-	GameObject* child1 = new GameObject("Child 1");
-	warrior->AddChild(child1);
-
-	GameObject* child2 = new GameObject("Child 2");
-	child1->AddChild(child2);
 
 	/*Component* comp = warrior->GetFirstComponentType(MESH_COMP);
 	if (comp != nullptr)
@@ -64,14 +60,14 @@ bool ModuleScene::Start()
 			warrior->GetFirstComponentType(MESH_COMP)->AsMesh()->material = comp->AsMaterial();
 		}
 	}*/
-
+	
 	Component* comp2 = go2->GetFirstComponentType(MESH_COMP);
 	if (comp2 != nullptr)
 	{
-		if (comp2->AsMesh() != nullptr) App->fbxLoader->ImportMesh(comp2->AsMesh(), "Assets/3D/Baker/BakerHouse.FBX");
+		if (comp2->AsMesh() != nullptr) App->fbxLoader->ImportMesh(comp2->AsMesh(), "Assets/3D/Baker/BakerHouse.fbx");
 	}
 
-	comp2 = go2->GetFirstComponentType(MATERIAL_COMP);
+	/*comp2 = go2->GetFirstComponentType(MATERIAL_COMP);
 	if (comp2 != nullptr)
 	{
 		if (comp2->AsMaterial() != nullptr)
@@ -79,8 +75,8 @@ bool ModuleScene::Start()
 			App->fbxLoader->ImportMaterial(comp2->AsMaterial(), "Assets/3D/Baker/BakerHouse.FBX");
 			go2->GetFirstComponentType(MESH_COMP)->AsMesh()->SetAllMeshesMaterial(comp2->AsMaterial()->GetMaterial(0));
 		}
-	}
-	
+	}*/
+
 	return ret;
 }
 
@@ -114,7 +110,6 @@ update_status ModuleScene::Update(float dt)
 	{
 		root->UpdateTransform();
 		root->UpdateGameObject();
-		//App->scene->GetRoot()->DrawMesh();
 		root->DrawMesh();
 	}
 
@@ -124,5 +119,6 @@ update_status ModuleScene::Update(float dt)
 // PostUpdate
 update_status ModuleScene::PostUpdate(float dt)
 {	
+		
 	return UPDATE_CONTINUE;
 }

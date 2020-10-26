@@ -108,7 +108,7 @@ void MenuBar::DrawRenderOptions()
 	if (ImGui::Button("Reset To Default"))
 	{
 		depth = false;
-		cullFace = true;
+		cullFace = false;
 		light = true;
 		colorMaterial = true;
 		texture2D = true;
