@@ -107,7 +107,7 @@ void MenuBar::DrawRenderOptions()
 	if (ImGui::Checkbox("Blend", &blend)) App->renderer3D->ToggleBlend(blend);
 	if (ImGui::Button("Reset To Default"))
 	{
-		depth = false;
+		depth = true;
 		cullFace = false;
 		light = true;
 		colorMaterial = true;
