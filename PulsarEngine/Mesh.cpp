@@ -289,13 +289,13 @@ void Mesh::DrawFaceNormals(MeshInfo mesh)
 	glEnd();
 }
 
-void Mesh::CreateCube(float x, float y, float z)
+void Mesh::CreateCube()
 {
 	MeshInfo mesh;
 	mesh.name = "Cube mesh";
 	GLuint index[] = { 0,1,2, 0,2,3, 1,4,5, 1,5,2, 6,0,3, 6,3,7, 3,2,5, 3,5,7, 6,4,1, 6,1,0, 4,6,7, 4,7,5 };
-	GLfloat vertices[] = { 0.0f + x,0.0f + y,0.0f + z, 1.0f + x,0.0f + y,0.0f + z, 1.0f + x,1.0f + y,0.0f + z, 0.0f + x,1.0f + y,0.0f + z,
-		1.0f + x,0.0f + y,-1.0f + z, 1.0f + x,1.0f + y,-1.0f + z, 0.0f + x,0.0f + y,-1.0f + z, 0.0f + x,1.0f + y,-1.0f + z };
+	GLfloat vertices[] = { 0.0f,0.0f,0.0f, 1.0f,0.0f,0.0f, 1.0f,1.0f,0.0f, 0.0f,1.0f,0.0f,
+		1.0f,0.0f,-1.0f, 1.0f,1.0f,-1.0f, 0.0f,0.0f,-1.0f, 0.0f,1.0f,-1.0f };
 
 	mesh.verticesSize = (sizeof(vertices) / sizeof(*vertices)) / 3;
 	mesh.verticesArray = new float[mesh.verticesSize * 3];
@@ -308,12 +308,12 @@ void Mesh::CreateCube(float x, float y, float z)
 	GenerateBuffers(&meshes.back());	
 }
 
-void Mesh::CreatePyramid(float x, float y, float z)
+void Mesh::CreatePyramid()
 {
 	MeshInfo mesh;
 	mesh.name = "Piramid mesh";
 	GLuint index[] = { 3,2,1, 3,1,0, 0,1,4, 1,2,4, 2,3,4, 3,0,4 };
-	GLfloat vertices[] = { 0.0f + x,0.0f + y,0.0f + z, 1.0f + x,0.0f + y,0.0f + z, 1.0f + x,0.0f + y,-1.0f + z, 0.0f + x,0.0f + y,-1.0f + z, 0.5f + x,1.0f + y,-0.5f + z };
+	GLfloat vertices[] = { 0.0f,0.0f,0.0f, 1.0f,0.0f,0.0f, 1.0f,0.0f,-1.0f, 0.0f,0.0f,-1.0f, 0.5f,1.0f,-0.5f };
 	mesh.verticesSize = (sizeof(vertices) / sizeof(*vertices)) / 3;
 	mesh.verticesArray = new float[mesh.verticesSize * 3];
 	memcpy(mesh.verticesArray, vertices, sizeof(float) * mesh.verticesSize * 3);
@@ -325,54 +325,12 @@ void Mesh::CreatePyramid(float x, float y, float z)
 	GenerateBuffers(&meshes.back());
 }
 
-void Mesh::CreateSphere(float radius, int rings, int sectors, float x, float y, float z)
-{
-	/*float radius = 1;
-	int rings = 12;
-	int sectors = 24;
-
-	float const R = 1.0f / (float)(rings - 1);
-	float const S = 1.0f / (float)(sectors - 1);
-	int r, s;
-
-	vertices.resize(rings * sectors * 3);
-	std::vector<GLfloat>::iterator v = vertices.begin();
-
-	for (r = 0; r < rings; r++)
-	{
-		for (s = 0; s < sectors; s++)
-		{
-			float const y = sin(-M_PI * 0.5f + M_PI * r * R);
-			float const x = cos(2 * M_PI * s * S) * sin(M_PI * r * R);
-			float const z = sin(2 * M_PI * s * S) * sin(M_PI * r * R);
-
-			*v++ = x * radius;
-			*v++ = y * radius;
-			*v++ = z * radius;
-		}
-	}
-
-	indices.resize(rings * sectors * 4);
-	std::vector<GLushort>::iterator i = indices.begin();
-
-	for (r = 0; r < rings - 1; r++)
-	{
-		for (s = 0; s < sectors - 1; s++)
-		{
-			*i++ = (r + 1) * sectors + s;
-			*i++ = (r + 1) * sectors + (s + 1);
-			*i++ = r * sectors + (s + 1);
-			*i++ = r * sectors + s;
-		}
-	}*/
-}
-
-void Mesh::CreatePlane(float size,float x, float y, float z)
+void Mesh::CreatePlane(float size)
 {
 	MeshInfo mesh;
 	mesh.name = "Plane mesh";
 	GLuint index[] = { 0,1,2,	0,2,3 };
-	GLfloat vertices[] = { (size/2) + x,0.0f + y,(size/2) + z,	(size/2) + x,0.0f + y,(size/2) + z, (size/2) + x,0.0f + y,(-size/2) + z,	(-size/2) + x,0.0f + y,(-size/2)+ z };
+	GLfloat vertices[] = { 0.0f,0.0f,0.0f,  size,0.0f,0.0f, size,0.0f,size,  0.0f,0.0f,size };
 	mesh.verticesSize = (sizeof(vertices) / sizeof(*vertices)) / 3;
 	mesh.verticesArray = new float[mesh.verticesSize * 3];
 	memcpy(mesh.verticesArray, vertices, sizeof(float) * mesh.verticesSize * 3);

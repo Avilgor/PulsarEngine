@@ -131,3 +131,39 @@ update_status ModuleScene::PostUpdate(float dt)
 		
 	return UPDATE_CONTINUE;
 }
+
+void ModuleScene::CreateCube()
+{
+	GameObject* go = new GameObject("Cube");
+	go->AddComponent(MESH_COMP);
+	root->AddChild(go);
+	Component* comp = go->GetFirstComponentType(MESH_COMP);
+	if (comp != nullptr)
+	{
+		if (comp->AsMesh() != nullptr) comp->AsMesh()->CreateCube();
+	}
+}
+
+void ModuleScene::CreatePyramid()
+{
+	GameObject* go = new GameObject("Pyramid");
+	go->AddComponent(MESH_COMP);
+	root->AddChild(go);
+	Component* comp = go->GetFirstComponentType(MESH_COMP);
+	if (comp != nullptr)
+	{
+		if (comp->AsMesh() != nullptr) comp->AsMesh()->CreatePyramid();
+	}
+}
+
+void ModuleScene::CreatePlane()
+{
+	GameObject* go = new GameObject("Plane");
+	go->AddComponent(MESH_COMP);
+	root->AddChild(go);
+	Component* comp = go->GetFirstComponentType(MESH_COMP);
+	if (comp != nullptr)
+	{
+		if (comp->AsMesh() != nullptr) comp->AsMesh()->CreatePlane(5);
+	}
+}

@@ -19,6 +19,9 @@ public:
 	bool CleanUp();
 	GameObject* GetRoot() { return root; }
 	void CreateEmptyGameobject();
+	void CreateCube();
+	void CreatePyramid();
+	void CreatePlane();
 
 
 private:

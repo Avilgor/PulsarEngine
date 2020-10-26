@@ -72,10 +72,9 @@ public:
 	void Render();
 	void SetMaterial(Material* mat) { material = mat; }
 	void GenerateBuffers(MeshInfo* mesh);
-	void CreateCube(float x, float y, float z);
-	void CreatePyramid(float x, float y, float z);
-	void CreateSphere(float radius, int rings, int sectors, float x, float y, float z);
-	void CreatePlane(float size,float x, float y, float z);
+	void CreateCube();
+	void CreatePyramid();
+	void CreatePlane(float size);
 
 public:
 
