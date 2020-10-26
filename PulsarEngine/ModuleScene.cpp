@@ -31,14 +31,16 @@ bool ModuleScene::Start()
 	
 
 	warrior = new GameObject("Warrior");
-	warrior->AddComponent(MESH_COMP);
-	warrior->AddComponent(MATERIAL_COMP);
+	//warrior->AddComponent(MESH_COMP);
+	//warrior->AddComponent(MATERIAL_COMP);
 	root->AddChild(warrior);
 	warrior->transform->SetScale(float3(0.01f,0.01f,0.01f));
 	warrior->transform->SetEulerRotation(float3(90.0f,0.0f,0));
 	
 
-	GameObject* go2 = new GameObject("GameObject2");
+	GameObject* go2 = new GameObject("Baker House");
+	go2->AddComponent(MESH_COMP);
+	go2->AddComponent(MATERIAL_COMP);
 	root->AddChild(go2);
 
 	GameObject* child1 = new GameObject("Child 1");
@@ -47,7 +49,7 @@ bool ModuleScene::Start()
 	GameObject* child2 = new GameObject("Child 2");
 	child1->AddChild(child2);
 
-	Component* comp = warrior->GetFirstComponentType(MESH_COMP);
+	/*Component* comp = warrior->GetFirstComponentType(MESH_COMP);
 	if (comp != nullptr)
 	{
 		if (comp->AsMesh() != nullptr) App->fbxLoader->ImportMesh(comp->AsMesh(), "Assets/3D/warrior/warrior.FBX");		
@@ -60,6 +62,22 @@ bool ModuleScene::Start()
 		{
 			App->fbxLoader->ImportMaterial(comp->AsMaterial(), "Assets/3D/warrior/warrior.FBX");
 			warrior->GetFirstComponentType(MESH_COMP)->AsMesh()->material = comp->AsMaterial();
+		}
+	}*/
+
+	Component* comp2 = go2->GetFirstComponentType(MESH_COMP);
+	if (comp2 != nullptr)
+	{
+		if (comp2->AsMesh() != nullptr) App->fbxLoader->ImportMesh(comp2->AsMesh(), "Assets/3D/Baker/BakerHouse.FBX");
+	}
+
+	comp2 = go2->GetFirstComponentType(MATERIAL_COMP);
+	if (comp2 != nullptr)
+	{
+		if (comp2->AsMaterial() != nullptr)
+		{
+			App->fbxLoader->ImportMaterial(comp2->AsMaterial(), "Assets/3D/Baker/BakerHouse.FBX");
+			go2->GetFirstComponentType(MESH_COMP)->AsMesh()->material = comp2->AsMaterial();
 		}
 	}
 	

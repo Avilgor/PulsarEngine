@@ -16,6 +16,8 @@ public:
 	bool ImportMesh(Mesh* mesh,const char* path);
 	bool ImportMaterial(Material* mesh, const char* path);
 	bool ImportAll(Mesh* mesh, Material* mat, const char* path);
+	void Save();
+	void Load();
 
 
 };

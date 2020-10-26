@@ -55,6 +55,7 @@ public:
 	void UpdateComponent();
 	void DeleteComponent();
 	bool LoadImportedMesh();
+	std::vector<MeshInfo>* GetMeshes() { return &meshes; }
 	void Render();
 	void SetMaterial(Material* mat) { material = mat; }
 	void GenerateBuffers();

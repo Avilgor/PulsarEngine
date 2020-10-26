@@ -109,21 +109,23 @@ void GameObject::UpdateGameObject()
 
 void GameObject::DrawMesh()
 {
-	if (!Components.empty())
+	if (active)
 	{
-		for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)
+		if (!Components.empty())
 		{
-			if ((*it)->active && (*it)->compType == MESH_COMP) (*it)->UpdateComponent();
+			for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)
+			{
+				if ((*it)->active && (*it)->compType == MESH_COMP) (*it)->UpdateComponent();
+			}
 		}
-	}
-
-	if (!Childs.empty())
-	{
-		for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
+		if (!Childs.empty())
 		{
-			(*it)->DrawMesh();
+			for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
+			{
+				if ((*it)->active) (*it)->DrawMesh();
+			}
 		}
-	}
+	}	
 }
 
 void GameObject::AddComponent(ComponentTypes type)

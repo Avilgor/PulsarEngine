@@ -15,6 +15,15 @@ FBXLoaderModule::FBXLoaderModule()
 FBXLoaderModule::~FBXLoaderModule()
 {}
 
+void FBXLoaderModule::Save()
+{
+
+}
+
+void FBXLoaderModule::Load()
+{
+
+}
 
 bool FBXLoaderModule::ImportMesh(Mesh* mesh,const char* path)
 {
@@ -29,7 +38,8 @@ bool FBXLoaderModule::ImportMesh(Mesh* mesh,const char* path)
 		{
 			//mesh->name = scene->mMeshes[i]->mName.C_Str();
 			MeshInfo newMesh;
-			newMesh.name = scene->mMeshes[i]->mName.C_Str();
+			//newMesh.name = scene->mMeshes[i]->mName.C_Str();
+			//LOG("Name %s", scene->mMeshes[i]->mName.C_Str());
 			newMesh.verticesSize = scene->mMeshes[i]->mNumVertices;
 			newMesh.verticesArray = new float[newMesh.verticesSize * 3];
 			memcpy(newMesh.verticesArray, scene->mMeshes[i]->mVertices, sizeof(float) * newMesh.verticesSize * 3);

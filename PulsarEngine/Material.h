@@ -17,6 +17,17 @@ struct MaterialInfo
 		delete mat;
 		mat = nullptr;
 	}
+	void ChangeColor(float r, float g, float b, float a)
+	{
+		color.r = r;
+		color.g = g;
+		color.b = b;
+		color.a = a;
+	}
+	void ChangeColor(Color col)
+	{
+		color = col;
+	}
 public:
 	aiMaterial* mat;
 	uint texturesNum;
@@ -36,7 +47,7 @@ public:
 	void UpdateComponent();
 	void DeleteComponent();
 	void SaveMaterial(MaterialInfo mat);
-	std::vector<MaterialInfo> GetAllMaterials() { return materials; }
+	std::vector<MaterialInfo>* GetAllMaterials() { return &materials; }
 	void ChangeMaterial(MaterialInfo mat, int index);
 	void RemoveMaterial(int index);
 	void DeleteMaterials();
