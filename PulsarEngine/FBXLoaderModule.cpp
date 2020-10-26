@@ -138,8 +138,7 @@ bool FBXLoaderModule::ImportMaterial(Material* mat, const char* path)
 			App->fileSystem->SplitFilePath(path,&dir,&filename,&extension);
 			aiString tempPath;
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &tempPath);
-			matInfo.path = dir.append(tempPath.C_Str());//tempPath.append(pathText.C_Str());
-			//LOG("Texture path %s",matInfo.path.c_str());
+			matInfo.path = dir.append(tempPath.C_Str());
 			aiColor4D color;
 			material->Get(AI_MATKEY_COLOR_DIFFUSE, color);				
 			matInfo.color = Color(color.r, color.g, color.b, color.a);

@@ -28,11 +28,21 @@ update_status MenuBar::Draw()
 		ImGui::EndMenu();
 	}
 
+	if (ImGui::BeginMenu("Create"))
+	{
+		if (ImGui::MenuItem("Gameobject")) App->scene->CreateEmptyGameobject();
+
+		if (ImGui::MenuItem("Cube")) App->scene->CreateEmptyGameobject();
+
+		if (ImGui::MenuItem("Pyramid")) App->scene->CreateEmptyGameobject();
+
+		if (ImGui::MenuItem("Plane")) App->scene->CreateEmptyGameobject();
+
+		ImGui::EndMenu();
+	}
 
 	if (ImGui::BeginMenu("Edit"))
 	{
-		if (ImGui::MenuItem("Create gameobject")) App->scene->CreateEmptyGameobject();
-
 		if (ImGui::MenuItem("Create child")) App->editor->CreateSelectionChild();
 
 		if (ImGui::MenuItem("Delete all childs")) App->editor->DeleteSelectionChilds();

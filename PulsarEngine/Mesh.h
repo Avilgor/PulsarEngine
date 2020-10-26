@@ -40,7 +40,7 @@ struct MeshInfo
 	uint indexSize = 0;
 	uint textSize = 0;
 	uint normalsSize = 0;
-
+	bool drawText = true;
 	uint* indicesArray = nullptr;
 	float* verticesArray = nullptr;
 	float* normalsArray = nullptr;
@@ -80,6 +80,7 @@ public:
 public:
 
 	std::string path;
+	bool drawTexture = true;
 	/*std::string name;
 	uint VAO;
 	uint idVertex;

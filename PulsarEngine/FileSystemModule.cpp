@@ -528,7 +528,7 @@ void FileSystemModule::LoadTexture(const char* path, MaterialInfo* mat)
 		}
 		else
 		{
-			LOG("Texture: %s loaded successfully");
+			LOG("Texture: %s loaded successfully",path);
 		}
 	}
 }

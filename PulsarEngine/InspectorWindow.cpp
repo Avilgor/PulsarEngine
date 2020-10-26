@@ -139,18 +139,32 @@ void InspectorWindow::MeshSection(GameObject* go)
 {
 	if (ImGui::CollapsingHeader("Mesh", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		ImGui::Text("Path: %s", go->GetFirstComponentType(MESH_COMP)->AsMesh()->path);
+		Mesh* mesh = go->GetFirstComponentType(MESH_COMP)->AsMesh();
+		ImGui::Text("Active");
+		ImGui::SameLine();
+		ImGui::Checkbox("##meshActive", &mesh->active);
+
+		ImGui::Text("Texture");
+		ImGui::SameLine();
+		ImGui::Checkbox("##textActive", &mesh->drawTexture);
+
+		ImGui::Text("Path: %s", mesh->path);
 		ImGui::Separator();
-		std::vector<MeshInfo>* meshes = go->GetFirstComponentType(MESH_COMP)->AsMesh()->GetMeshes();
+		std::vector<MeshInfo>* meshes = mesh->GetMeshes();
 		int i = 0;
 		for (std::vector<MeshInfo>::iterator it = meshes->begin(); it != meshes->end(); ++it)
 		{
 			std::string labelVertex = "##nVertex";
 			std::string labelFace = "##nFace";
+			std::string labelText = "##textMesh";
 			labelVertex.append(std::to_string(i));
 			labelFace.append(std::to_string(i));
+			labelText.append(std::to_string(i));
 
 			ImGui::Text("Mesh %d",i);
+			ImGui::Text("Draw textures");
+			ImGui::SameLine();
+			ImGui::Checkbox(labelText.c_str(), &(*it).drawText);
 			ImGui::Text("Vertex normals");
 			ImGui::SameLine();
 			ImGui::Checkbox(labelVertex.c_str(), &(*it).drawVertexNormals);
@@ -170,7 +184,9 @@ void InspectorWindow::MaterialSection(GameObject* go)
 {
 	if (ImGui::CollapsingHeader("Materials", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		std::vector<MaterialInfo>* materials = go->GetFirstComponentType(MATERIAL_COMP)->AsMaterial()->GetAllMaterials();
+		Material* material = go->GetFirstComponentType(MATERIAL_COMP)->AsMaterial();
+
+		std::vector<MaterialInfo>* materials = material->GetAllMaterials();
 		int i = 0;
 
 		for (std::vector<MaterialInfo>::iterator it = materials->begin(); it != materials->end(); ++it)
@@ -189,6 +205,12 @@ void InspectorWindow::MaterialSection(GameObject* go)
 			ImGui::Text("Material %d", i);		
 			ImGui::Text("Name: %s", (*it).name.c_str());
 			ImGui::Text("Path: %s", (*it).path.c_str());
+
+			ImGui::Separator();
+
+			ImGui::Text("Width: %d", (*it).textWidth);
+			//ImGui::SameLine();
+			ImGui::Text("Height: %d", (*it).textHeight);
 
 			Color tempColor = (*it).color;
 			ImGui::Text("Color");
@@ -220,6 +242,8 @@ void InspectorWindow::MaterialSection(GameObject* go)
 			
 			ImGui::Separator();
 
+			ImGui::Spacing();
+			ImGui::Image((ImTextureID)(*it).textureID, ImVec2(200, 200), ImVec2(0, 1), ImVec2(1, 0));
 			if (colorChange) (*it).ChangeColor(tempColor);
 			
 			i++;

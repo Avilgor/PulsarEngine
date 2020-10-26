@@ -20,6 +20,7 @@ Mesh::Mesh(GameObject* parent) : Component(parent, MESH_COMP)
 	textSize = 0;*/
 	path = "";
 	component->mesh = this;
+	drawTexture = true;
 }
 
 Mesh::~Mesh()
@@ -219,7 +220,7 @@ void Mesh::Render()
 			if (meshes[i].drawVertexNormals) DrawVertexNormals(meshes[i]);
 			if (meshes[i].drawFaceNormals) DrawFaceNormals(meshes[i]);
 
-			if (meshes[i].material != nullptr)
+			if (meshes[i].material != nullptr && drawTexture && meshes[i].drawText)
 			{
 				glBindBuffer(GL_ARRAY_BUFFER, meshes[i].idText);
 				glTexCoordPointer(2, GL_FLOAT, 0, NULL);
