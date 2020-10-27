@@ -2,9 +2,11 @@
 #include "Application.h"
 #include "FileSystemModule.h"
 #include "PathNode.h"
+#include "Mesh.h"
 #include "Material.h"
 #include "PhysFS/include/physfs.h"
 #include "RES_Material.h"
+#include "RES_Mesh.h"
 #include <fstream>
 #include <filesystem>
 
@@ -572,6 +574,37 @@ void FileSystemModule::GetDroppedFile(const char* path)
 	else if (HasExtension(path, "png"))//Texture
 	{
 		//Set texture to selected gameobjects
-
+		if (App->editor->HasSelection())
+		{
+			std::vector<GameObject*> selected = App->editor->selectedGameObjects;
+			for (std::vector<GameObject*>::iterator it = selected.begin(); it != selected.end(); ++it)
+			{
+				Component* comp = (*it)->GetFirstComponentType(MATERIAL_COMP);
+				if (comp != nullptr)//Has material -> replace texture
+				{ 
+					if (comp->AsMaterial() != nullptr)
+					{
+						comp->AsMaterial()->ChangeMaterialTexture(path,0);
+					}
+				}
+				else //Create material and add texture
+				{
+					(*it)->AddComponent(MATERIAL_COMP);
+					comp = (*it)->GetFirstComponentType(MATERIAL_COMP);
+					if (comp != nullptr)
+					{
+						if (comp->AsMaterial() != nullptr)
+						{
+							comp->AsMaterial()->LoadTextureNewMaterial(path);
+							Component* comp2 = (*it)->GetFirstComponentType(MESH_COMP);
+							if (comp2 != nullptr)//If has mesh, add material to mesh
+							{
+								(*it)->GetFirstComponentType(MESH_COMP)->AsMesh()->SetAllMeshesMaterial(comp->AsMaterial()->GetMaterial(0));
+							}							
+						}
+					}
+				}
+			}
+		}
 	}
 }

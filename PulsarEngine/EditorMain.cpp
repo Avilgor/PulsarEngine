@@ -259,3 +259,9 @@ update_status EditorMain::RenderDock()
 
     return status;
 }
+
+bool EditorMain::HasSelection()
+{
+    if (selectedGameObjects.empty()) return false;
+    else return true;
+}

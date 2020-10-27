@@ -79,7 +79,7 @@ void Material::GenerateBuffer(RES_Material* mat)
 	}
 }
 
-void Material::LoadTextureMaterial(std::string pathtext)
+void Material::LoadTextureNewMaterial(std::string pathtext)
 {
 	RES_Material* mat = new RES_Material();
 	mat->name = "Material texture";
@@ -160,4 +160,36 @@ void Material::DeleteMaterials()
 		}
 		materials.clear();
 	}
+}
+
+void Material::ChangeMaterialTexture(const char* path, int index)
+{
+	if (!materials.empty() && index < materials.size())
+	{
+		materials[0]->Clean();
+		materials[0]->name = "Material texture";
+		materials[0]->path = path;
+		materials[0]->texturesNum = 1;
+		LoadMaterial(materials[0]);
+	}
+}
+
+void Material::ChangeAllMaterialsTextures(const char* path)
+{
+	if (!materials.empty())
+	{
+		for (std::vector<RES_Material*>::iterator it = materials.begin(); it != materials.end(); ++it)
+		{
+			(*it)->Clean();
+			(*it)->name = "Material texture";
+			(*it)->path = path;
+			(*it)->texturesNum = 1;
+			LoadMaterial((*it));
+		}		
+	}
+}
+
+void Material::LoadMaterial(RES_Material* mat)
+{	
+	GenerateBuffer(mat);
 }

@@ -35,6 +35,7 @@ public:
 	void DeleteSelectionChilds();
 	void DeleteSelected();
 	void EmptySelected();
+	bool HasSelection();
 
 private:
 	std::vector<EditorWindow*> WindowsList;

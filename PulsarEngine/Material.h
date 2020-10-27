@@ -21,13 +21,16 @@ public:
 	void GenerateBuffers();
 	void GenerateBuffer(RES_Material* mat);
 	void SaveMaterial(RES_Material* mat);
-	void LoadTextureMaterial(std::string path);
+	void LoadTextureNewMaterial(std::string path);
+	void LoadMaterial(RES_Material* mat);
 	RES_Material* GetMaterial(int index);
 	RES_Material* GetLastMaterial();
 	std::vector<RES_Material*> GetAllMaterials() { return materials; }
 	void ChangeMaterial(RES_Material* mat, int index);
 	void RemoveMaterial(int index);
 	void DeleteMaterials();
+	void ChangeMaterialTexture(const char* path,int index);
+	void ChangeAllMaterialsTextures(const char* path);
 
 public:
 	

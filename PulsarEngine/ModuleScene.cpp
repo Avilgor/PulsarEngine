@@ -61,7 +61,7 @@ bool ModuleScene::Start()
 	{
 		if (comp->AsMaterial() != nullptr)
 		{
-			comp->AsMaterial()->LoadTextureMaterial("Assets/3D/Trump/tumpLPcolors.png");
+			comp->AsMaterial()->LoadTextureNewMaterial("Assets/3D/Trump/tumpLPcolors.png");
 			trump->GetFirstComponentType(MESH_COMP)->AsMesh()->SetAllMeshesMaterial(comp->AsMaterial()->GetMaterial(0));
 		}
 	}
@@ -77,7 +77,7 @@ bool ModuleScene::Start()
 	{
 		if (comp2->AsMaterial() != nullptr)
 		{
-			comp2->AsMaterial()->LoadTextureMaterial("Assets/3D/Baker/Baker_house.png");
+			comp2->AsMaterial()->LoadTextureNewMaterial("Assets/3D/Baker/Baker_house.png");
 			go2->GetFirstComponentType(MESH_COMP)->AsMesh()->SetAllMeshesMaterial(comp2->AsMaterial()->GetMaterial(0));
 		}
 	}
@@ -96,7 +96,7 @@ bool ModuleScene::Start()
 		{
 			Mesh* meshComp = go3->GetFirstComponentType(MESH_COMP)->AsMesh();
 			RES_Material* tempMat = nullptr;
-			comp3->AsMaterial()->LoadTextureMaterial("Assets/3D/Chiken/textures/rooster_color.png");
+			comp3->AsMaterial()->LoadTextureNewMaterial("Assets/3D/Chiken/textures/rooster_color.png");
 			tempMat = comp3->AsMaterial()->GetLastMaterial();
 			if (tempMat != nullptr) meshComp->SetMeshMaterial(tempMat,0);
 				
