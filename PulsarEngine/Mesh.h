@@ -12,56 +12,7 @@
 #include <vector>
 
 class RES_Material;
-
-struct MeshInfo 
-{
-	void Clean()
-	{
-		delete indicesArray;
-		delete verticesArray;
-		delete normalsArray ;
-		delete texturesArray;
-
-		name = "";
-		VAO = 0;
-		idVertex = 0;
-		idIndex = 0;
-		idText = 0;
-		idNormals = 0;
-		verticesSize = 0;
-		indexSize = 0;
-		textSize = 0;
-		normalsSize = 0;
-		drawText = true;
-		material = nullptr;
-		drawVertexNormals = false;
-		drawFaceNormals = false;
-	}
-
-	void SetMaterial(RES_Material* mat)
-	{
-		material = mat;
-	}
-	std::string name = "";
-	uint VAO = 0;
-	uint idVertex = 0;
-	uint idIndex = 0;
-	uint idText = 0;
-	uint idNormals = 0;
-	int verticesSize = 0;
-	uint indexSize = 0;
-	uint textSize = 0;
-	uint normalsSize = 0;
-	bool drawText = true;
-	uint* indicesArray = nullptr;
-	float* verticesArray = nullptr;
-	float* normalsArray = nullptr;
-	float* texturesArray = nullptr;
-
-	bool drawVertexNormals = false;
-	bool drawFaceNormals = false;
-	RES_Material* material = nullptr;
-};
+class RES_Mesh;
 
 class Mesh : public Component
 {
@@ -69,20 +20,20 @@ public:
 	Mesh(GameObject* parent);
 	~Mesh();
 	
-	void AddMesh(MeshInfo mesh);
+	void AddMesh(RES_Mesh* mesh);
 	void RemoveMesh(int index);
-	void ReplaceMesh(MeshInfo mesh, int index);
+	void ReplaceMesh(RES_Mesh* mesh, int index);
 	void UpdateComponent();
 	void DeleteComponent();
 	bool LoadImportedMesh();
-	void DrawVertexNormals(MeshInfo mesh);
-	void DrawFaceNormals(MeshInfo mesh);
+	void DrawVertexNormals(RES_Mesh* mesh);
+	void DrawFaceNormals(RES_Mesh* mesh);
 	void SetAllMeshesMaterial(RES_Material* mat);
-	MeshInfo* GetMesh(int index);
-	std::vector<MeshInfo>* GetMeshes() { return &meshes; }
+	RES_Mesh* GetMesh(int index);
+	std::vector<RES_Mesh*> GetMeshes() { return meshes; }
 	void Render();
 	void SetMeshMaterial(RES_Material* mat,int index);
-	void GenerateBuffers(MeshInfo* mesh);
+	void GenerateBuffers(RES_Mesh* mesh);
 	void CreateCube();
 	void CreatePyramid();
 	void CreatePlane(float size);
@@ -110,7 +61,7 @@ public:
 	Material* material = nullptr;*/
 	
 private:
-	std::vector<MeshInfo> meshes;
+	std::vector<RES_Mesh*> meshes;
 	
 };
 

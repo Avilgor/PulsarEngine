@@ -44,7 +44,7 @@ bool ModuleScene::Start()
 	root->AddChild(go2);
 
 
-	GameObject* go3 = new GameObject("Character", float3(-4.0f, 0.0f, 0.0f), float3::zero, float3::one);
+	GameObject* go3 = new GameObject("Chiken", float3(-4.0f, 0.0f, 0.0f), float3::zero, float3(0.01f,0.01f,0.01f));
 	go3->AddComponent(MESH_COMP);
 	go3->AddComponent(MATERIAL_COMP);
 	root->AddChild(go3);
@@ -85,7 +85,7 @@ bool ModuleScene::Start()
 	Component* comp3 = go3->GetFirstComponentType(MESH_COMP);
 	if (comp3 != nullptr)
 	{
-		if (comp3->AsMesh() != nullptr) App->fbxLoader->ImportMesh(comp3->AsMesh(), "Assets/3D/Character/Character_full.fbx");
+		if (comp3->AsMesh() != nullptr) App->fbxLoader->ImportMesh(comp3->AsMesh(), "Assets/3D/Chiken/cock.fbx");
 	}
 
 	comp3 = go3->GetFirstComponentType(MATERIAL_COMP);
@@ -96,21 +96,10 @@ bool ModuleScene::Start()
 		{
 			Mesh* meshComp = go3->GetFirstComponentType(MESH_COMP)->AsMesh();
 			RES_Material* tempMat = nullptr;
-			comp3->AsMaterial()->LoadTextureMaterial("Assets/3D/Character/textures/Body_BaseColor.png");
+			comp3->AsMaterial()->LoadTextureMaterial("Assets/3D/Chiken/textures/rooster_color.png");
 			tempMat = comp3->AsMaterial()->GetLastMaterial();
 			if (tempMat != nullptr) meshComp->SetMeshMaterial(tempMat,0);
 				
-			comp3->AsMaterial()->LoadTextureMaterial("Assets/3D/Character/textures/Clothing_BaseColor.png");
-			tempMat = comp3->AsMaterial()->GetLastMaterial();
-			if (tempMat != nullptr) meshComp->SetMeshMaterial(tempMat, 1);
-				
-			comp3->AsMaterial()->LoadTextureMaterial("Assets/3D/Character/textures/Props_BaseColor.png");
-			tempMat = comp3->AsMaterial()->GetLastMaterial();
-			if (tempMat != nullptr) meshComp->SetMeshMaterial(tempMat, 2);
-
-			comp3->AsMaterial()->LoadTextureMaterial("Assets/3D/Character/textures/Hair_cards.png");			
-			tempMat = comp3->AsMaterial()->GetLastMaterial();
-			if (tempMat != nullptr) meshComp->SetMeshMaterial(tempMat,3);
 		}
 	}
 

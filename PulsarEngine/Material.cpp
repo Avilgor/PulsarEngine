@@ -105,8 +105,6 @@ RES_Material* Material::GetLastMaterial()
 	if (!materials.empty())
 	{
 		ret = materials[materials.size() - 1];
-		LOG("Name: %s",ret->name);
-		LOG("Path: %s", ret->path);
 	}
 	return ret;
 }

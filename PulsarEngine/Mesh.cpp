@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Transform.h"
 #include "Mesh.h"
+#include "RES_Mesh.h"
 #include "Glew/include/GL/glew.h"
 #include "SDL/include/SDL_opengl.h"
 #include "Material.h"
@@ -9,15 +10,6 @@
 
 Mesh::Mesh(GameObject* parent) : Component(parent, MESH_COMP)
 {
-	/*VAO = 0;
-	idVertex = 0;
-	idIndex = 0;
-	idText = 0;
-	idNormals = 0;
-	indexSize = 0;
-	normalsSize = 0;
-	verticesSize = 0;
-	textSize = 0;*/
 	path = "";
 	component->mesh = this;
 	drawTexture = true;
@@ -35,16 +27,13 @@ void Mesh::DeleteComponent()
 {
 	if (!meshes.empty())
 	{
-		for (std::vector<MeshInfo>::iterator it = meshes.begin(); it != meshes.end(); ++it)
+		for (std::vector<RES_Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it)
 		{
-			(*it).Clean();
+			(*it)->Clean();
+			delete (*it);
 		}
 		meshes.clear();
 	}
-	/*delete indicesArray;
-	delete verticesArray;
-	delete normalsArray;
-	delete texturesArray;*/
 	delete this;
 }
 
@@ -55,36 +44,38 @@ bool Mesh::LoadImportedMesh()
 	return ret;
 }
 
-void Mesh::AddMesh(MeshInfo mesh)
+void Mesh::AddMesh(RES_Mesh* mesh)
 {
 	meshes.push_back(mesh);
-	GenerateBuffers(&meshes.back());
+	GenerateBuffers(meshes.back());
 }
 
 void Mesh::RemoveMesh(int index)
 {
 	if (!meshes.empty() && index < meshes.size())
 	{
-		meshes[index].Clean();
+		meshes[index]->Clean();
+		delete meshes[index];
 		meshes.erase(meshes.begin() + index);
 	}
 }
 
-void Mesh::ReplaceMesh(MeshInfo mesh, int index)
+void Mesh::ReplaceMesh(RES_Mesh* mesh, int index)
 {
 	if (!meshes.empty() && index < meshes.size())
 	{
-		meshes[index].Clean();
+		meshes[index]->Clean();
+		delete meshes[index];
 		meshes[index] = mesh;
 	}
 }
 
-MeshInfo* Mesh::GetMesh(int index)
+RES_Mesh* Mesh::GetMesh(int index)
 {
-	MeshInfo* ret = nullptr;
+	RES_Mesh* ret = new RES_Mesh();
 	if (!meshes.empty() && index < meshes.size())
 	{
-		ret = &meshes[index];
+		ret = meshes[index];
 	}
 	return ret;
 }
@@ -94,9 +85,9 @@ void Mesh::SetMeshMaterial(RES_Material* mat, int index)
 	if (!meshes.empty())
 	{
 		int i = 0;
-		for (std::vector<MeshInfo>::iterator it = meshes.begin(); it != meshes.end(); ++it)
+		for (std::vector<RES_Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it)
 		{
-			if(i == index) (*it).SetMaterial(mat);
+			if(i == index) (*it)->SetMaterial(mat);
 			i++;
 		}
 	}
@@ -106,14 +97,14 @@ void Mesh::SetAllMeshesMaterial(RES_Material* mat)
 {
 	if (!meshes.empty())
 	{
-		for (std::vector<MeshInfo>::iterator it = meshes.begin(); it != meshes.end(); ++it)
+		for (std::vector<RES_Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it)
 		{
-			(*it).SetMaterial(mat);
+			(*it)->SetMaterial(mat);
 		}
 	}
 }
 
-void Mesh::GenerateBuffers(MeshInfo* mesh)
+void Mesh::GenerateBuffers(RES_Mesh* mesh)
 {
 
 		/*for (std::vector<MeshInfo>::iterator it = meshes.begin(); it != meshes.end(); ++it)
@@ -164,7 +155,7 @@ void Mesh::GenerateBuffers(MeshInfo* mesh)
 			}
 		}*/
 
-	if (meshes[0].verticesSize > 0)
+	if (mesh->verticesSize > 0)
 	{
 		glGenVertexArrays(1, &mesh->VAO);
 		glBindVertexArray(mesh->VAO);
@@ -214,7 +205,7 @@ void Mesh::Render()
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	for (std::vector<MeshInfo>::iterator it = meshes.begin(); it != meshes.end(); ++it)
+	for (std::vector<RES_Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it)
 	{
 		
 		for (int i = 0; i < meshes.size(); i++)
@@ -223,26 +214,26 @@ void Mesh::Render()
 			glMultMatrixf((float*)&gameobject->transform->GetTransformT());
 
 			//glBindVertexArray(VAO);	
-			glBindBuffer(GL_ARRAY_BUFFER, meshes[i].idVertex);
+			glBindBuffer(GL_ARRAY_BUFFER, meshes[i]->idVertex);
 			glVertexPointer(3, GL_FLOAT, 0, NULL);
 
-			glBindBuffer(GL_NORMAL_ARRAY, meshes[i].idNormals);
+			glBindBuffer(GL_NORMAL_ARRAY, meshes[i]->idNormals);
 			glNormalPointer(GL_FLOAT, 0, NULL);
 
 			//Normals
-			if (meshes[i].drawVertexNormals) DrawVertexNormals(meshes[i]);
-			if (meshes[i].drawFaceNormals) DrawFaceNormals(meshes[i]);
+			if (meshes[i]->drawVertexNormals) DrawVertexNormals(meshes[i]);
+			if (meshes[i]->drawFaceNormals) DrawFaceNormals(meshes[i]);
 
-			if (meshes[i].material != nullptr && drawTexture && meshes[i].drawText)
+			if (meshes[i]->material != nullptr && drawTexture && meshes[i]->drawText)
 			{
-				glBindBuffer(GL_ARRAY_BUFFER, meshes[i].idText);
+				glBindBuffer(GL_ARRAY_BUFFER, meshes[i]->idText);
 				glTexCoordPointer(2, GL_FLOAT, 0, NULL);
-				glBindTexture(GL_TEXTURE_2D, meshes[i].material->textureID);
+				glBindTexture(GL_TEXTURE_2D, meshes[i]->material->textureID);
 			}
 
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[i].idIndex);
-			glDrawElements(GL_TRIANGLES, meshes[i].indexSize, GL_UNSIGNED_INT, NULL);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[i]->idIndex);
+			glDrawElements(GL_TRIANGLES, meshes[i]->indexSize, GL_UNSIGNED_INT, NULL);
 
 			glPopMatrix();
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -259,44 +250,44 @@ void Mesh::Render()
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
-void Mesh::DrawVertexNormals(MeshInfo mesh)
+void Mesh::DrawVertexNormals(RES_Mesh* mesh)
 {
 	float length = 0.2f;
 	glBegin(GL_LINES);
-	for (size_t a = 0; a < mesh.verticesSize *3; a += 3)
+	for (size_t a = 0; a < mesh->verticesSize *3; a += 3)
 	{
 		glColor3f(0.0f, 0.85f, 0.85f);
-		glVertex3f(mesh.verticesArray[a], mesh.verticesArray[a+1], mesh.verticesArray[a + 2]);
+		glVertex3f(mesh->verticesArray[a], mesh->verticesArray[a+1], mesh->verticesArray[a + 2]);
 
-		glVertex3f(mesh.verticesArray[a] + (mesh.normalsArray[a] * length),
-			mesh.verticesArray[a+1] + (mesh.normalsArray[a+1] * length),
-			mesh.verticesArray[a+2] + (mesh.normalsArray[a+2]) * length);
+		glVertex3f(mesh->verticesArray[a] + (mesh->normalsArray[a] * length),
+			mesh->verticesArray[a+1] + (mesh->normalsArray[a+1] * length),
+			mesh->verticesArray[a+2] + (mesh->normalsArray[a+2]) * length);
 	}
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glEnd();
 
 }
 
-void Mesh::DrawFaceNormals(MeshInfo mesh)
+void Mesh::DrawFaceNormals(RES_Mesh* mesh)
 {
 	float length = 0.2f;
 	glBegin(GL_LINES);
-	for (size_t a = 0; a < mesh.verticesSize * 3; a += 3)
+	for (size_t a = 0; a < mesh->verticesSize * 3; a += 3)
 	{
 		glColor3f(1.0f, 0.85f, 0.0f);
-		float vx = (mesh.verticesArray[a] + mesh.verticesArray[a + 3] + mesh.verticesArray[a + 6]) / 3;
-		float vy = (mesh.verticesArray[a + 1] + mesh.verticesArray[a + 4] + mesh.verticesArray[a + 7]) / 3;
-		float vz = (mesh.verticesArray[a + 2] + mesh.verticesArray[a + 5] + mesh.verticesArray[a + 8]) / 3;
+		float vx = (mesh->verticesArray[a] + mesh->verticesArray[a + 3] + mesh->verticesArray[a + 6]) / 3;
+		float vy = (mesh->verticesArray[a + 1] + mesh->verticesArray[a + 4] + mesh->verticesArray[a + 7]) / 3;
+		float vz = (mesh->verticesArray[a + 2] + mesh->verticesArray[a + 5] + mesh->verticesArray[a + 8]) / 3;
 
-		float nx = (mesh.normalsArray[a] + mesh.normalsArray[a + 3] + mesh.normalsArray[a + 6]) / 3;
-		float ny = (mesh.normalsArray[a + 1] + mesh.normalsArray[a + 4] + mesh.normalsArray[a + 7]) / 3;
-		float nz = (mesh.normalsArray[a + 2] + mesh.normalsArray[a + 5] + mesh.normalsArray[a + 8]) / 3;
+		float nx = (mesh->normalsArray[a] + mesh->normalsArray[a + 3] + mesh->normalsArray[a + 6]) / 3;
+		float ny = (mesh->normalsArray[a + 1] + mesh->normalsArray[a + 4] + mesh->normalsArray[a + 7]) / 3;
+		float nz = (mesh->normalsArray[a + 2] + mesh->normalsArray[a + 5] + mesh->normalsArray[a + 8]) / 3;
 
 		glVertex3f(vx, vy, vz);
 
-		glVertex3f(vx + (mesh.normalsArray[a] * length),
-			vy + (mesh.normalsArray[a + 1] * length),
-			vz + (mesh.normalsArray[a + 2]) * length);
+		glVertex3f(vx + (mesh->normalsArray[a] * length),
+			vy + (mesh->normalsArray[a + 1] * length),
+			vz + (mesh->normalsArray[a + 2]) * length);
 	}
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glEnd();
@@ -304,53 +295,53 @@ void Mesh::DrawFaceNormals(MeshInfo mesh)
 
 void Mesh::CreateCube()
 {
-	MeshInfo mesh;
-	mesh.name = "Cube mesh";
+	RES_Mesh* mesh = new RES_Mesh();
+	mesh->name = "Cube mesh";
 	GLuint index[] = { 0,1,2, 0,2,3, 1,4,5, 1,5,2, 6,0,3, 6,3,7, 3,2,5, 3,5,7, 6,4,1, 6,1,0, 4,6,7, 4,7,5 };
 	GLfloat vertices[] = { 0.0f,0.0f,0.0f, 1.0f,0.0f,0.0f, 1.0f,1.0f,0.0f, 0.0f,1.0f,0.0f,
 		1.0f,0.0f,-1.0f, 1.0f,1.0f,-1.0f, 0.0f,0.0f,-1.0f, 0.0f,1.0f,-1.0f };
 
-	mesh.verticesSize = (sizeof(vertices) / sizeof(*vertices)) / 3;
-	mesh.verticesArray = new float[mesh.verticesSize * 3];
-	memcpy(mesh.verticesArray, vertices, sizeof(float) * mesh.verticesSize * 3);
+	mesh->verticesSize = (sizeof(vertices) / sizeof(*vertices)) / 3;
+	mesh->verticesArray = new float[mesh->verticesSize * 3];
+	memcpy(mesh->verticesArray, vertices, sizeof(float) * mesh->verticesSize * 3);
 
-	mesh.indexSize = sizeof(index) / sizeof(*index);
-	mesh.indicesArray = new uint[mesh.indexSize];
-	memcpy(mesh.indicesArray, index, sizeof(uint) * mesh.indexSize);
+	mesh->indexSize = sizeof(index) / sizeof(*index);
+	mesh->indicesArray = new uint[mesh->indexSize];
+	memcpy(mesh->indicesArray, index, sizeof(uint) * mesh->indexSize);
 	meshes.push_back(mesh);
-	GenerateBuffers(&meshes.back());	
+	GenerateBuffers(meshes.back());
 }
 
 void Mesh::CreatePyramid()
 {
-	MeshInfo mesh;
-	mesh.name = "Piramid mesh";
+	RES_Mesh* mesh = new RES_Mesh();
+	mesh->name = "Piramid mesh";
 	GLuint index[] = { 3,2,1, 3,1,0, 0,1,4, 1,2,4, 2,3,4, 3,0,4 };
 	GLfloat vertices[] = { 0.0f,0.0f,0.0f, 1.0f,0.0f,0.0f, 1.0f,0.0f,-1.0f, 0.0f,0.0f,-1.0f, 0.5f,1.0f,-0.5f };
-	mesh.verticesSize = (sizeof(vertices) / sizeof(*vertices)) / 3;
-	mesh.verticesArray = new float[mesh.verticesSize * 3];
-	memcpy(mesh.verticesArray, vertices, sizeof(float) * mesh.verticesSize * 3);
+	mesh->verticesSize = (sizeof(vertices) / sizeof(*vertices)) / 3;
+	mesh->verticesArray = new float[mesh->verticesSize * 3];
+	memcpy(mesh->verticesArray, vertices, sizeof(float) * mesh->verticesSize * 3);
 
-	mesh.indexSize = sizeof(index) / sizeof(*index);
-	mesh.indicesArray = new uint[mesh.indexSize];
-	memcpy(mesh.indicesArray, index, sizeof(uint) * mesh.indexSize);
+	mesh->indexSize = sizeof(index) / sizeof(*index);
+	mesh->indicesArray = new uint[mesh->indexSize];
+	memcpy(mesh->indicesArray, index, sizeof(uint) * mesh->indexSize);
 	meshes.push_back(mesh);
-	GenerateBuffers(&meshes.back());
+	GenerateBuffers(meshes.back());
 }
 
 void Mesh::CreatePlane(float size)
 {
-	MeshInfo mesh;
-	mesh.name = "Plane mesh";
+	RES_Mesh* mesh = new RES_Mesh();
+	mesh->name = "Plane mesh";
 	GLuint index[] = { 0,1,2,	0,2,3 };
 	GLfloat vertices[] = { 0.0f,0.0f,0.0f,  size,0.0f,0.0f, size,0.0f,size,  0.0f,0.0f,size };
-	mesh.verticesSize = (sizeof(vertices) / sizeof(*vertices)) / 3;
-	mesh.verticesArray = new float[mesh.verticesSize * 3];
-	memcpy(mesh.verticesArray, vertices, sizeof(float) * mesh.verticesSize * 3);
+	mesh->verticesSize = (sizeof(vertices) / sizeof(*vertices)) / 3;
+	mesh->verticesArray = new float[mesh->verticesSize * 3];
+	memcpy(mesh->verticesArray, vertices, sizeof(float) * mesh->verticesSize * 3);
 
-	mesh.indexSize = sizeof(index) / sizeof(*index);
-	mesh.indicesArray = new uint[mesh.indexSize];
-	memcpy(mesh.indicesArray, index, sizeof(uint) * mesh.indexSize);
+	mesh->indexSize = sizeof(index) / sizeof(*index);
+	mesh->indicesArray = new uint[mesh->indexSize];
+	memcpy(mesh->indicesArray, index, sizeof(uint) * mesh->indexSize);
 	meshes.push_back(mesh);
-	GenerateBuffers(&meshes.back());
+	GenerateBuffers(meshes.back());
 }

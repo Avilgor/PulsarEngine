@@ -5,6 +5,8 @@
 #include "Transform.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "RES_Mesh.h"
+#include "RES_Material.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
 
@@ -150,9 +152,9 @@ void InspectorWindow::MeshSection(GameObject* go)
 		
 		ImGui::Text("Path: %s", mesh->path);
 		ImGui::Separator();
-		std::vector<MeshInfo>* meshes = mesh->GetMeshes();
+		std::vector<RES_Mesh*> meshes = mesh->GetMeshes();
 		int i = 0;
-		for (std::vector<MeshInfo>::iterator it = meshes->begin(); it != meshes->end(); ++it)
+		for (std::vector<RES_Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it)
 		{
 			std::string labelVertex = "##nVertex";
 			std::string labelFace = "##nFace";
@@ -162,18 +164,18 @@ void InspectorWindow::MeshSection(GameObject* go)
 			labelText.append(std::to_string(i));
 
 			ImGui::Text("Mesh %d",i);
-			ImGui::Text("Name: %s", (*it).name.c_str());
+			ImGui::Text("Name: %s", (*it)->name.c_str());
 			ImGui::Text("Draw textures");
 			ImGui::SameLine();
-			ImGui::Checkbox(labelText.c_str(), &(*it).drawText);
+			ImGui::Checkbox(labelText.c_str(), &(*it)->drawText);
 			ImGui::Text("Vertex normals");
 			ImGui::SameLine();
-			ImGui::Checkbox(labelVertex.c_str(), &(*it).drawVertexNormals);
+			ImGui::Checkbox(labelVertex.c_str(), &(*it)->drawVertexNormals);
 			ImGui::Text("Face normals");
 			ImGui::SameLine();
-			ImGui::Checkbox(labelFace.c_str(), &(*it).drawFaceNormals);
-			ImGui::Text("Vertices: %d", (*it).verticesSize);
-			if((*it).material != nullptr) ImGui::Text("Material: %s", (*it).material->name.c_str());
+			ImGui::Checkbox(labelFace.c_str(), &(*it)->drawFaceNormals);
+			ImGui::Text("Vertices: %d", (*it)->verticesSize);
+			if((*it)->material != nullptr) ImGui::Text("Material: %s", (*it)->material->name.c_str());
 			else ImGui::Text("Material: -");
 			ImGui::Separator();
 			i++;

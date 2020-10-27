@@ -4,6 +4,7 @@
 #include "FileSystemModule.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "RES_Mesh.h"
 #include "Assimp/include/cimport.h"
 #include "Assimp/include/scene.h"
 #include "Assimp/include/postprocess.h"
@@ -62,19 +63,19 @@ bool FBXLoaderModule::ImportMesh(Mesh* mesh,const char* path)
 	return ret;
 }
 
-MeshInfo FBXLoaderModule::LoadMesh(int num, const aiScene* scene)
+RES_Mesh* FBXLoaderModule::LoadMesh(int num, const aiScene* scene)
 {
-	MeshInfo newMesh;
-	newMesh.name = scene->mMeshes[num]->mName.C_Str();
-	newMesh.verticesSize = scene->mMeshes[num]->mNumVertices;
-	newMesh.verticesArray = new float[newMesh.verticesSize * 3];
-	memcpy(newMesh.verticesArray, scene->mMeshes[num]->mVertices, sizeof(float) * newMesh.verticesSize * 3);
+	RES_Mesh* newMesh = new RES_Mesh();
+	newMesh->name = scene->mMeshes[num]->mName.C_Str();
+	newMesh->verticesSize = scene->mMeshes[num]->mNumVertices;
+	newMesh->verticesArray = new float[newMesh->verticesSize * 3];
+	memcpy(newMesh->verticesArray, scene->mMeshes[num]->mVertices, sizeof(float) * newMesh->verticesSize * 3);
 
 	//Indices
 	if (scene->mMeshes[num]->HasFaces())
 	{
-		newMesh.indexSize = scene->mMeshes[num]->mNumFaces * 3;
-		newMesh.indicesArray = new uint[newMesh.indexSize];
+		newMesh->indexSize = scene->mMeshes[num]->mNumFaces * 3;
+		newMesh->indicesArray = new uint[newMesh->indexSize];
 
 		for (uint a = 0; a < scene->mMeshes[num]->mNumFaces; a++)
 		{
@@ -82,7 +83,7 @@ MeshInfo FBXLoaderModule::LoadMesh(int num, const aiScene* scene)
 			{
 				LOG("Geometry face with != 3 indices!");
 			}
-			else memcpy(&newMesh.indicesArray[a * 3], scene->mMeshes[num]->mFaces[a].mIndices, 3 * sizeof(uint));
+			else memcpy(&newMesh->indicesArray[a * 3], scene->mMeshes[num]->mFaces[a].mIndices, 3 * sizeof(uint));
 			
 		}
 	}
@@ -90,21 +91,21 @@ MeshInfo FBXLoaderModule::LoadMesh(int num, const aiScene* scene)
 	//Normals
 	if (scene->mMeshes[num]->HasNormals())
 	{
-		newMesh.normalsSize = newMesh.verticesSize;
-		newMesh.normalsArray = new float[newMesh.normalsSize * 3];
-		memcpy(newMesh.normalsArray, scene->mMeshes[num]->mNormals, sizeof(float) * newMesh.normalsSize * 3);
+		newMesh->normalsSize = newMesh->verticesSize;
+		newMesh->normalsArray = new float[newMesh->normalsSize * 3];
+		memcpy(newMesh->normalsArray, scene->mMeshes[num]->mNormals, sizeof(float) * newMesh->normalsSize * 3);
 	}
 
 	//Texture coords
 	if (scene->mMeshes[num]->HasTextureCoords(0))
 	{
-		newMesh.textSize = newMesh.verticesSize;
-		newMesh.texturesArray = new float[newMesh.verticesSize * 2];
+		newMesh->textSize = newMesh->verticesSize;
+		newMesh->texturesArray = new float[newMesh->verticesSize * 2];
 
-		for (int a = 0; a < newMesh.textSize; a++)
+		for (int a = 0; a < newMesh->textSize; a++)
 		{
-			newMesh.texturesArray[a * 2] = scene->mMeshes[num]->mTextureCoords[0][a].x;
-			newMesh.texturesArray[a * 2 + 1] = scene->mMeshes[num]->mTextureCoords[0][a].y;
+			newMesh->texturesArray[a * 2] = scene->mMeshes[num]->mTextureCoords[0][a].x;
+			newMesh->texturesArray[a * 2 + 1] = scene->mMeshes[num]->mTextureCoords[0][a].y;
 		}
 	}
 	return newMesh;
