@@ -17,7 +17,7 @@ public:
 
 private:
 	bool renderOptions = false;
-	bool depth = false;
+	bool depth = true;
 	bool cullFace = false;
 	bool light = true;
 	bool colorMaterial = true;

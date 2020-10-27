@@ -5,6 +5,9 @@
 #include "Transform.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "RES_Material.h"
+
+struct MaterialInfo;
 
 
 ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -32,14 +35,20 @@ bool ModuleScene::Start()
 	GameObject* trump = new GameObject("Trump",float3(3.0f,0.0f,0.0f),float3(-90.0f,0.0f,0.0f),float3(0.02f,0.02f,0.02f));
 	trump->AddComponent(MESH_COMP);
 	trump->AddComponent(MATERIAL_COMP);
-	//root->AddChild(warrior);
+	root->AddChild(trump);
 
 
 	GameObject* go2 = new GameObject("Baker House",float3(-1.0f,0.0f,0.0f),float3::zero,float3::one);
 	go2->AddComponent(MESH_COMP);
 	go2->AddComponent(MATERIAL_COMP);
 	root->AddChild(go2);
-	go2->AddChild(trump);
+
+
+	GameObject* go3 = new GameObject("Character", float3(-4.0f, 0.0f, 0.0f), float3::zero, float3::one);
+	go3->AddComponent(MESH_COMP);
+	go3->AddComponent(MATERIAL_COMP);
+	root->AddChild(go3);
+
 
 	Component* comp = trump->GetFirstComponentType(MESH_COMP);
 	if (comp != nullptr)
@@ -70,6 +79,38 @@ bool ModuleScene::Start()
 		{
 			comp2->AsMaterial()->LoadTextureMaterial("Assets/3D/Baker/Baker_house.png");
 			go2->GetFirstComponentType(MESH_COMP)->AsMesh()->SetAllMeshesMaterial(comp2->AsMaterial()->GetMaterial(0));
+		}
+	}
+
+	Component* comp3 = go3->GetFirstComponentType(MESH_COMP);
+	if (comp3 != nullptr)
+	{
+		if (comp3->AsMesh() != nullptr) App->fbxLoader->ImportMesh(comp3->AsMesh(), "Assets/3D/Character/Character_full.fbx");
+	}
+
+	comp3 = go3->GetFirstComponentType(MATERIAL_COMP);
+	if (comp3 != nullptr)
+	{
+		comp3 = comp3->AsMaterial();
+		if (comp3 != nullptr)
+		{
+			Mesh* meshComp = go3->GetFirstComponentType(MESH_COMP)->AsMesh();
+			RES_Material* tempMat = nullptr;
+			comp3->AsMaterial()->LoadTextureMaterial("Assets/3D/Character/textures/Body_BaseColor.png");
+			tempMat = comp3->AsMaterial()->GetLastMaterial();
+			if (tempMat != nullptr) meshComp->SetMeshMaterial(tempMat,0);
+				
+			comp3->AsMaterial()->LoadTextureMaterial("Assets/3D/Character/textures/Clothing_BaseColor.png");
+			tempMat = comp3->AsMaterial()->GetLastMaterial();
+			if (tempMat != nullptr) meshComp->SetMeshMaterial(tempMat, 1);
+				
+			comp3->AsMaterial()->LoadTextureMaterial("Assets/3D/Character/textures/Props_BaseColor.png");
+			tempMat = comp3->AsMaterial()->GetLastMaterial();
+			if (tempMat != nullptr) meshComp->SetMeshMaterial(tempMat, 2);
+
+			comp3->AsMaterial()->LoadTextureMaterial("Assets/3D/Character/textures/Hair_cards.png");			
+			tempMat = comp3->AsMaterial()->GetLastMaterial();
+			if (tempMat != nullptr) meshComp->SetMeshMaterial(tempMat,3);
 		}
 	}
 

@@ -28,6 +28,9 @@
     <Filter Include="Sources\Components">
       <UniqueIdentifier>{f91fa102-fa1b-46d5-92f1-3ee756f1e5f7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Res">
+      <UniqueIdentifier>{f19f78b2-8271-4464-80dd-26ea9e9ed67e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -144,6 +147,12 @@
     <ClInclude Include="Material.h">
       <Filter>Sources\Components</Filter>
     </ClInclude>
+    <ClInclude Include="RES_Material.h">
+      <Filter>Sources\Res</Filter>
+    </ClInclude>
+    <ClInclude Include="RES_Mesh.h">
+      <Filter>Sources\Res</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -250,6 +259,12 @@
     </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Sources\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="RES_Material.cpp">
+      <Filter>Sources\Res</Filter>
+    </ClCompile>
+    <ClCompile Include="RES_Mesh.cpp">
+      <Filter>Sources\Res</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

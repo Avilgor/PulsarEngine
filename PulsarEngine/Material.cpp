@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "FileSystemModule.h"
 #include "Material.h"
+#include "RES_Material.h"
 #include "Assimp/include/material.h"
 #include "Assimp/include/texture.h"
 #include "Glew/include/GL/glew.h"
@@ -17,9 +18,10 @@ Material::~Material()
 {
 	if (!materials.empty())
 	{
-		for (std::vector<MaterialInfo>::iterator it = materials.begin(); it != materials.end(); ++it)
+		for (std::vector<RES_Material*>::iterator it = materials.begin(); it != materials.end(); ++it)
 		{
-			(*it).Clean();
+			(*it)->Clean();
+			delete (*it);
 		}
 		materials.clear();
 	}
@@ -29,49 +31,82 @@ void Material::UpdateComponent()
 {
 }
 
-void Material::GenerateBuffer()
+void Material::GenerateBuffers()
 {
 	if (!materials.empty())
 	{
-		for (std::vector<MaterialInfo>::iterator it = materials.begin(); it != materials.end(); ++it)
+		for (std::vector<RES_Material*>::iterator it = materials.begin(); it != materials.end(); ++it)
 		{
-			App->fileSystem->LoadTexture((*it).path.c_str(), &(*it));
-			if ((*it).textureID != -1)
+			App->fileSystem->LoadTexture((*it)->path.c_str(), (*it));
+			if ((*it)->textureID != -1)
 			{
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-				glGenTextures(1, &(*it).textureID);
-				glBindTexture(GL_TEXTURE_2D, (*it).textureID);
+				glGenTextures(1, &(*it)->textureID);
+				glBindTexture(GL_TEXTURE_2D, (*it)->textureID);
 
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (*it).textWidth, (*it).textHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, (*it).textData);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (*it)->textWidth, (*it)->textHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, (*it)->textData);
 				glGenerateMipmap(GL_TEXTURE_2D);
 				glBindTexture(GL_TEXTURE_2D, 0);
 			}
 		}
 	}
-	
+
+}
+
+void Material::GenerateBuffer(RES_Material* mat)
+{
+	if (mat != nullptr)
+	{
+		App->fileSystem->LoadTexture(mat->path.c_str(), mat);
+		if (mat->textureID != -1)
+		{
+			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+			glGenTextures(1, &mat->textureID);
+			glBindTexture(GL_TEXTURE_2D, mat->textureID);
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mat->textWidth, mat->textHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, mat->textData);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+	}
 }
 
 void Material::LoadTextureMaterial(std::string pathtext)
 {
-	MaterialInfo mat;
-	mat.name = "Material texture";
-	mat.path = pathtext;
-	mat.texturesNum = 1;
+	RES_Material* mat = new RES_Material();
+	mat->name = "Material texture";
+	mat->path = pathtext;
+	mat->texturesNum = 1;	
+	GenerateBuffer(mat);
 	materials.push_back(mat);
-	//App->fileSystem->LoadTexture(pathtext.c_str(),&mat);
-	GenerateBuffer();
 }
 
-MaterialInfo* Material::GetMaterial(int index)
+RES_Material* Material::GetMaterial(int index)
 {
-	MaterialInfo* ret = nullptr;
+	RES_Material* ret = nullptr;
 	if (!materials.empty() && index < materials.size())
 	{
-		ret = &materials[index];
+		ret = materials[index];
+	}
+	return ret;
+}
+
+RES_Material* Material::GetLastMaterial()
+{
+	RES_Material* ret = nullptr;
+	if (!materials.empty())
+	{
+		ret = materials[materials.size() - 1];
+		LOG("Name: %s",ret->name);
+		LOG("Path: %s", ret->path);
 	}
 	return ret;
 }
@@ -80,26 +115,28 @@ void Material::DeleteComponent()
 {
 	if (!materials.empty())
 	{
-		for (std::vector<MaterialInfo>::iterator it = materials.begin(); it != materials.end(); ++it)
+		for (std::vector<RES_Material*>::iterator it = materials.begin(); it != materials.end(); ++it)
 		{
-			(*it).Clean();
+			(*it)->Clean();
+			delete(*it);
 		}
 		materials.clear();
 	}
 	delete this;
 }
 
-void Material::SaveMaterial(MaterialInfo mat)
+void Material::SaveMaterial(RES_Material* mat)
 {
 	materials.push_back(mat);
 }
 
 
-void Material::ChangeMaterial(MaterialInfo mat, int index)
+void Material::ChangeMaterial(RES_Material* mat, int index)
 {
 	if (materials.size() > index)
 	{
-		materials[index].Clean();
+		materials[index]->Clean();
+		delete materials[index];
 		materials[index] = mat;
 	}
 }
@@ -108,7 +145,8 @@ void Material::RemoveMaterial(int index)
 {
 	if (materials.size() > index)
 	{
-		materials[index].Clean();
+		materials[index]->Clean();
+		delete materials[index];
 		materials.erase(materials.begin() + index);
 	}
 }
@@ -117,9 +155,10 @@ void Material::DeleteMaterials()
 {
 	if (!materials.empty())
 	{
-		for (std::vector<MaterialInfo>::iterator it = materials.begin(); it != materials.end(); ++it)
+		for (std::vector<RES_Material*>::iterator it = materials.begin(); it != materials.end(); ++it)
 		{
-			(*it).Clean();
+			(*it)->Clean();
+			delete (*it);
 		}
 		materials.clear();
 	}

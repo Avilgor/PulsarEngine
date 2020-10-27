@@ -89,7 +89,20 @@ MeshInfo* Mesh::GetMesh(int index)
 	return ret;
 }
 
-void Mesh::SetAllMeshesMaterial(MaterialInfo* mat)
+void Mesh::SetMeshMaterial(RES_Material* mat, int index)
+{
+	if (!meshes.empty())
+	{
+		int i = 0;
+		for (std::vector<MeshInfo>::iterator it = meshes.begin(); it != meshes.end(); ++it)
+		{
+			if(i == index) (*it).SetMaterial(mat);
+			i++;
+		}
+	}
+}
+
+void Mesh::SetAllMeshesMaterial(RES_Material* mat)
 {
 	if (!meshes.empty())
 	{

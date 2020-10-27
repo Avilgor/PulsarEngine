@@ -11,8 +11,7 @@
 #include <string>
 #include <vector>
 
-class Material;
-struct MaterialInfo;
+class RES_Material;
 
 struct MeshInfo 
 {
@@ -23,10 +22,23 @@ struct MeshInfo
 		delete normalsArray ;
 		delete texturesArray;
 
+		name = "";
+		VAO = 0;
+		idVertex = 0;
+		idIndex = 0;
+		idText = 0;
+		idNormals = 0;
+		verticesSize = 0;
+		indexSize = 0;
+		textSize = 0;
+		normalsSize = 0;
+		drawText = true;
 		material = nullptr;
+		drawVertexNormals = false;
+		drawFaceNormals = false;
 	}
 
-	void SetMaterial(MaterialInfo* mat)
+	void SetMaterial(RES_Material* mat)
 	{
 		material = mat;
 	}
@@ -48,8 +60,7 @@ struct MeshInfo
 
 	bool drawVertexNormals = false;
 	bool drawFaceNormals = false;
-
-	MaterialInfo* material = nullptr;
+	RES_Material* material = nullptr;
 };
 
 class Mesh : public Component
@@ -66,11 +77,11 @@ public:
 	bool LoadImportedMesh();
 	void DrawVertexNormals(MeshInfo mesh);
 	void DrawFaceNormals(MeshInfo mesh);
-	void SetAllMeshesMaterial(MaterialInfo* mat);
+	void SetAllMeshesMaterial(RES_Material* mat);
 	MeshInfo* GetMesh(int index);
 	std::vector<MeshInfo>* GetMeshes() { return &meshes; }
 	void Render();
-	void SetMaterial(Material* mat) { material = mat; }
+	void SetMeshMaterial(RES_Material* mat,int index);
 	void GenerateBuffers(MeshInfo* mesh);
 	void CreateCube();
 	void CreatePyramid();

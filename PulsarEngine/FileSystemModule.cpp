@@ -4,6 +4,7 @@
 #include "PathNode.h"
 #include "Material.h"
 #include "PhysFS/include/physfs.h"
+#include "RES_Material.h"
 #include <fstream>
 #include <filesystem>
 
@@ -54,7 +55,10 @@ bool FileSystemModule::Init(Config& config)
 
 	// Ask SDL for a write dir
 	char* write_path = SDL_GetPrefPath(App->GetOrganizationName(), App->GetTitleName());
-
+	ilInit();
+	iluInit();
+	ilutInit();
+	ilutRenderer(ILUT_OPENGL);
 	SDL_free(write_path);
 
 	return ret;
@@ -490,8 +494,12 @@ std::string FileSystemModule::GetUniqueName(const char* path, const char* name) 
 	return finalName;
 }
 
-void FileSystemModule::LoadTexture(const char* path, MaterialInfo* mat)
+void FileSystemModule::LoadTexture(const char* path, RES_Material* mat)
 {
+	/*
+	* There is an error when a texture load failed,
+	* making that any later load can't open texture file
+	*/
 	uint imageID = 0;
 	ilGenImages(1, &imageID);
 	ilBindImage(imageID);
@@ -510,15 +518,15 @@ void FileSystemModule::LoadTexture(const char* path, MaterialInfo* mat)
 	else
 	{
 		ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
-		LOG("Image converted");
+		//LOG("Image converted");
 		mat->textureID = imageID;
-		LOG("Image id: %d",imageID);
+		//LOG("Image id: %d",imageID);
 		mat->textData = ilGetData();
-		LOG("Image data");
+		//LOG("Image data");
 		mat->textWidth = ilGetInteger(IL_IMAGE_WIDTH);
-		LOG("Image width");
+		//LOG("Image width");
 		mat->textHeight = ilGetInteger(IL_IMAGE_HEIGHT);
-		LOG("Image height");
+		//LOG("Image height");
 
 		ILenum error = ilGetError();
 
@@ -528,10 +536,12 @@ void FileSystemModule::LoadTexture(const char* path, MaterialInfo* mat)
 			mat->textureID = -1;
 			mat->textData = nullptr;
 			mat->textWidth = mat->textHeight = 0;
+			do error = ilGetError();
+			while (error != IL_NO_ERROR);
 		}
 		else
 		{
 			LOG("Texture: %s loaded successfully",path);
-		}
+		}		
 	}
 }

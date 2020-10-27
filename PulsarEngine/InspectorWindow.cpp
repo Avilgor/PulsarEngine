@@ -147,7 +147,7 @@ void InspectorWindow::MeshSection(GameObject* go)
 		ImGui::Text("Texture");
 		ImGui::SameLine();
 		ImGui::Checkbox("##textActive", &mesh->drawTexture);
-
+		
 		ImGui::Text("Path: %s", mesh->path);
 		ImGui::Separator();
 		std::vector<MeshInfo>* meshes = mesh->GetMeshes();
@@ -162,6 +162,7 @@ void InspectorWindow::MeshSection(GameObject* go)
 			labelText.append(std::to_string(i));
 
 			ImGui::Text("Mesh %d",i);
+			ImGui::Text("Name: %s", (*it).name.c_str());
 			ImGui::Text("Draw textures");
 			ImGui::SameLine();
 			ImGui::Checkbox(labelText.c_str(), &(*it).drawText);
@@ -186,10 +187,10 @@ void InspectorWindow::MaterialSection(GameObject* go)
 	{
 		Material* material = go->GetFirstComponentType(MATERIAL_COMP)->AsMaterial();
 
-		std::vector<MaterialInfo>* materials = material->GetAllMaterials();
+		std::vector<RES_Material*> materials = material->GetAllMaterials();
 		int i = 0;
 
-		for (std::vector<MaterialInfo>::iterator it = materials->begin(); it != materials->end(); ++it)
+		for (std::vector<RES_Material*>::iterator it = materials.begin(); it != materials.end(); ++it)
 		{
 			std::string colorR = "##colorR";
 			std::string colorG = "##colorG";
@@ -203,16 +204,16 @@ void InspectorWindow::MaterialSection(GameObject* go)
 
 			bool colorChange = false;
 			ImGui::Text("Material %d", i);		
-			ImGui::Text("Name: %s", (*it).name.c_str());
-			ImGui::Text("Path: %s", (*it).path.c_str());
+			ImGui::Text("Name: %s", (*it)->name.c_str());
+			ImGui::Text("Path: %s", (*it)->path.c_str());
 
 			ImGui::Separator();
 
-			ImGui::Text("Width: %d", (*it).textWidth);
+			ImGui::Text("Width: %d", (*it)->textWidth);
 			//ImGui::SameLine();
-			ImGui::Text("Height: %d", (*it).textHeight);
+			ImGui::Text("Height: %d", (*it)->textHeight);
 
-			Color tempColor = (*it).color;
+			Color tempColor = (*it)->color;
 			ImGui::Text("Color");
 			ImGui::Text("R");
 			ImGui::SameLine();
@@ -243,9 +244,10 @@ void InspectorWindow::MaterialSection(GameObject* go)
 			ImGui::Separator();
 
 			ImGui::Spacing();
-			ImGui::Image((ImTextureID)(*it).textureID, ImVec2(200, 200), ImVec2(0, 1), ImVec2(1, 0));
-			if (colorChange) (*it).ChangeColor(tempColor);
-			
+			ImGui::Image((ImTextureID)(*it)->textureID, ImVec2(200, 200), ImVec2(0, 1), ImVec2(1, 0));
+			if (colorChange) (*it)->ChangeColor(tempColor);
+			ImGui::Separator();
+			ImGui::Spacing();
 			i++;
 		}
 	}

@@ -130,9 +130,9 @@ bool FBXLoaderModule::ImportMaterialFBX(Material* mat, const char* path)
 	{		
 		for (uint i = 0; i < scene->mNumMaterials; ++i)
 		{
-			MaterialInfo matInfo;
+			RES_Material* matInfo = new RES_Material();
 			aiMaterial* material = scene->mMaterials[i];		
-			matInfo.texturesNum = material->GetTextureCount(aiTextureType_DIFFUSE);
+			matInfo->texturesNum = material->GetTextureCount(aiTextureType_DIFFUSE);
 			std::string extension;
 			std::string filename;
 			std::string dir;
@@ -140,20 +140,20 @@ bool FBXLoaderModule::ImportMaterialFBX(Material* mat, const char* path)
 			aiString tempPath;
 
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &tempPath);
-			LOG("Texture base path: %s", tempPath.C_Str());
-			matInfo.path = dir.append(tempPath.C_Str());
+			//LOG("Texture base path: %s", tempPath.C_Str());
+			matInfo->path = dir.append(tempPath.C_Str());
 			aiColor4D color;
 			material->Get(AI_MATKEY_COLOR_DIFFUSE, color);				
-			matInfo.color = Color(color.r, color.g, color.b, color.a);
+			matInfo->color = Color(color.r, color.g, color.b, color.a);
 
 			aiString matName;
 			material->Get(AI_MATKEY_NAME, matName);
-			matInfo.name = matName.C_Str();
+			matInfo->name = matName.C_Str();
 			mat->SaveMaterial(matInfo);
 		}
 		
 		aiReleaseImport(scene);
-		mat->GenerateBuffer();
+		mat->GenerateBuffers();
 	}
 	else
 	{
@@ -172,22 +172,22 @@ bool FBXLoaderModule::ImportMaterialFBX(Material* mat, const char* pathfbx, cons
 	{
 		for (uint i = 0; i < scene->mNumMaterials; ++i)
 		{
-			MaterialInfo matInfo;
+			RES_Material* matInfo = new RES_Material();
 			aiMaterial* material = scene->mMaterials[i];
-			matInfo.texturesNum = material->GetTextureCount(aiTextureType_DIFFUSE);
-			matInfo.path = pathtext;
+			matInfo->texturesNum = material->GetTextureCount(aiTextureType_DIFFUSE);
+			matInfo->path = pathtext;
 			aiColor4D color;
 			material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-			matInfo.color = Color(color.r, color.g, color.b, color.a);
+			matInfo->color = Color(color.r, color.g, color.b, color.a);
 
 			aiString matName;
 			material->Get(AI_MATKEY_NAME, matName);
-			matInfo.name = matName.C_Str();
+			matInfo->name = matName.C_Str();
 			mat->SaveMaterial(matInfo);
 		}
 
 		aiReleaseImport(scene);
-		mat->GenerateBuffer();
+		mat->GenerateBuffers();
 	}
 	else
 	{
