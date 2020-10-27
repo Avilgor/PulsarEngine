@@ -62,7 +62,8 @@ public:
 	uint64 GetLastModTime(const char* filename);
 	std::string GetUniqueName(const char* path, const char* name) const;
 	void LoadTexture(const char* path, RES_Material* mat);
-
+	void GetDroppedFile(const char* path);
+	std::string GetFileExtension(const char* path);
 };
 
 #endif //__FileSystemModule_H__

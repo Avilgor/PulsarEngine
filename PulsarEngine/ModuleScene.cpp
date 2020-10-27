@@ -114,10 +114,18 @@ bool ModuleScene::CleanUp()
 	return true;
 }
 
-void ModuleScene::CreateEmptyGameobject()
+GameObject* ModuleScene::CreateEmptyGameobject()
 {
 	GameObject* go = new GameObject("NewGameobject");
 	root->AddChild(go);
+	return go;
+}
+
+GameObject* ModuleScene::CreateEmptyGameobject(const char* name)
+{
+	GameObject* go = new GameObject(name);
+	root->AddChild(go);
+	return go;
 }
 
 // PreUpdate

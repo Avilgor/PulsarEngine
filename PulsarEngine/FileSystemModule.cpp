@@ -545,3 +545,33 @@ void FileSystemModule::LoadTexture(const char* path, RES_Material* mat)
 		}		
 	}
 }
+
+std::string FileSystemModule::GetFileExtension(const char* p)
+{
+	std::string path = "";
+	std::string name = "";
+	std::string extension = "";
+	SplitFilePath(p,&path,&name,&extension);
+	return extension;
+}
+
+void FileSystemModule::GetDroppedFile(const char* path)
+{
+	//LOG("DropPath %s",path);
+	if (HasExtension(path, "fbx"))//Mesh
+	{
+		//Create gameobject
+		GameObject* go = App->scene->CreateEmptyGameobject();
+		go->AddComponent(MESH_COMP);
+		Component* comp = go->GetFirstComponentType(MESH_COMP);
+		if (comp != nullptr)
+		{
+			if (comp->AsMesh() != nullptr) App->fbxLoader->ImportMesh(comp->AsMesh(), path);
+		}
+	}
+	else if (HasExtension(path, "png"))//Texture
+	{
+		//Set texture to selected gameobjects
+
+	}
+}

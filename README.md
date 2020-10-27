@@ -18,6 +18,10 @@ Game engine
 
 ## Controls
 
+### Selection
+* While pressing control you can select multiple objects
+* Delete key deletes all selected gameobjects
+
 ### Camera
 * Mouse wheel: camera zoom
 * Direction arrows: camera movement

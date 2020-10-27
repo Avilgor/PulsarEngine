@@ -10,7 +10,10 @@
 #include <string>
 
 HierarchyWindow::HierarchyWindow(std::string name) : EditorWindow(name)
-{}
+{
+	//delKey = false;
+	ctrl = false;
+}
 
 HierarchyWindow::~HierarchyWindow()
 {}
@@ -33,6 +36,9 @@ void HierarchyWindow::SaveInputs()
 {
 	if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT || App->input->GetKey(SDL_SCANCODE_RCTRL)) ctrl = true;
 	else ctrl = false;
+
+	if ((App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN)) App->editor->DeleteSelected();
+	//else delKey = false;
 
 	leftMouse = App->input->GetMouseButton(SDL_BUTTON_LEFT);
 	rightMouse = App->input->GetMouseButton(SDL_BUTTON_RIGHT);

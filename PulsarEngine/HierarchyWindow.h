@@ -21,6 +21,7 @@ private:
 	bool ctrl;
 	KEY_STATE rightMouse;
 	KEY_STATE leftMouse;
+	//bool delKey;
 };
 
 #endif //__HierarchyWindow_H__

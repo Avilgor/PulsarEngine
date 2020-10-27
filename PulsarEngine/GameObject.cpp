@@ -233,7 +233,7 @@ void GameObject::DeleteGOComponent(ComponentTypes type)
 
 void GameObject::AddChild(GameObject* child)
 {
-	child->parent = this;
+	child->SetParent(this);
 	toAddChilds.push_back(child);
 }
 
@@ -300,6 +300,17 @@ bool GameObject::HasChilds()
 {
 	if (Childs.empty()) return false;
 	else return true;
+}
+
+void GameObject::SetParent(GameObject* p)
+{
+	if (parent != nullptr && p->ID != parent->ID)
+	{
+		parent->RemoveChild(ID);
+		parent = p;
+		parent->AddChild(this);
+	}
+	else parent = p;
 }
 
 void GameObject::Delete()
