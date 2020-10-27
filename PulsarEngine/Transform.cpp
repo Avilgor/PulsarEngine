@@ -8,16 +8,28 @@ Transform::Transform(GameObject* parent) : Component(parent, TRANSFORM_COMP)
 {
 	transform = float4x4::FromTRS(float3::zero, Quat::identity, float3::one);
 	transformT = transform.Transposed();
+	UpdateTRS();
 	UpdateEuler();
-	updateTransform = true;
+	UpdateComponent();
 }
 
 Transform::Transform(GameObject* parent, float3 pos, Quat rot, float3 scale) : Component(parent,TRANSFORM_COMP)
 {
 	transform = float4x4::FromTRS(pos, rot, scale);
 	transformT = transform.Transposed();
+	UpdateTRS();
 	UpdateEuler();
-	updateTransform = true;
+	UpdateComponent();
+}
+
+Transform::Transform(GameObject* parent, float3 position, float3 rotation, float3 scale) : Component(parent, TRANSFORM_COMP)
+{
+	eulerRotation = rotation;
+	UpdateQuaternion();
+	transform = float4x4::FromTRS(position, quaternionRotation, scale);
+	transformT = transform.Transposed();
+	UpdateTRS();
+	UpdateComponent();
 }
 
 Transform::Transform(GameObject* parent, float4x4 t) : Component(parent, TRANSFORM_COMP)
@@ -25,8 +37,9 @@ Transform::Transform(GameObject* parent, float4x4 t) : Component(parent, TRANSFO
 	transform = t;
 	transform.Decompose(position, quaternionRotation, scale);
 	transformT = transform.Transposed();
+	UpdateTRS();
 	UpdateEuler();
-	updateTransform = true;
+	UpdateComponent();
 }
 
 Transform::~Transform()
@@ -38,9 +51,23 @@ void Transform::UpdateComponent()
 {
 	if (updateTransform)
 	{
-		if (gameobject->GetParent() != nullptr) transformGlobal = gameobject->GetParent()->transform->GetGlobalTransform() * transform;
-		transformTGlobal = transformGlobal.Transposed();
-		UpdateTRS();
+		//Not working global, messing up all transform
+		/*if (gameobject->GetParent() != nullptr) transformGlobal = gameobject->GetParent()->transform->GetGlobalTransform() * transform;
+		transformTGlobal = transformGlobal.Transposed();*/
+
+		/*if (gameobject->GetParent() != nullptr)
+		{
+			GameObject* parent = gameobject->GetParent();
+			float3 pos = parent->transform->GetPosition();
+			float3 euler = parent->transform->GetEulerRotation();
+			float3 scal = parent->transform->GetScale();
+
+			position += pos;
+			eulerRotation += euler;
+			scale += scal;
+			UpdateQuaternion();
+		}*/
+		UpdateLocal();
 		updateTransform = false;
 	}
 }
@@ -101,9 +128,7 @@ void Transform::SetScale(float3 s)
 void Transform::Rotate(float3 rot)
 {
 	eulerRotation += rot;
-	float3 delta = eulerRotation * DEGTORAD;
-	Quat quaternion_rotation = Quat::FromEulerXYZ(delta.x, delta.y, delta.z);
-	quaternionRotation =  quaternion_rotation;
+	UpdateQuaternion();
 	UpdateLocal();
 	updateTransform = true;
 }
@@ -116,12 +141,17 @@ void Transform::SetQuatRotation(Quat rot)
 	updateTransform = true;
 }
 
-void Transform::SetEulerRotation(float3 degrees)
+void Transform::UpdateQuaternion()
 {
-	eulerRotation = degrees;
 	float3 delta = eulerRotation * DEGTORAD;
 	Quat quaternion_rotation = Quat::FromEulerXYZ(delta.x, delta.y, delta.z);
 	quaternionRotation = quaternion_rotation;
+}
+
+void Transform::SetEulerRotation(float3 degrees)
+{
+	eulerRotation = degrees;
+	UpdateQuaternion();
 	UpdateLocal();
 	updateTransform = true;
 }

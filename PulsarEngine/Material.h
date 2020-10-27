@@ -54,6 +54,7 @@ public:
 	void DeleteComponent();
 	void GenerateBuffer();
 	void SaveMaterial(MaterialInfo mat);
+	void LoadTextureMaterial(std::string path);
 	MaterialInfo* GetMaterial(int index);
 	std::vector<MaterialInfo>* GetAllMaterials() { return &materials; }
 	void ChangeMaterial(MaterialInfo mat, int index);

@@ -55,6 +55,17 @@ void Material::GenerateBuffer()
 	
 }
 
+void Material::LoadTextureMaterial(std::string pathtext)
+{
+	MaterialInfo mat;
+	mat.name = "Material texture";
+	mat.path = pathtext;
+	mat.texturesNum = 1;
+	materials.push_back(mat);
+	//App->fileSystem->LoadTexture(pathtext.c_str(),&mat);
+	GenerateBuffer();
+}
+
 MaterialInfo* Material::GetMaterial(int index)
 {
 	MaterialInfo* ret = nullptr;

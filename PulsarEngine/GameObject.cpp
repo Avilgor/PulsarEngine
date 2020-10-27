@@ -5,6 +5,7 @@
 #include "Transform.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "MathGeoLib/include/MathGeoLib.h"
 
 
 GameObject::GameObject(const char* n, GameObject* p)
@@ -18,9 +19,39 @@ GameObject::GameObject(const char* n, GameObject* p)
 	toDelete = false;
 	parent = p;
 	transformUpdate = false;
-	AddComponent(TRANSFORM_COMP);
+	CreateTransform();
+	//AddComponent(TRANSFORM_COMP);
 }
 
+GameObject::GameObject(const char* n, float3 pos, Quat rotation, float3 scale, GameObject* p)
+{
+	ID = App->GoIDNum;
+	App->GoIDNum += 1;
+	name = n;
+	active = true;
+	selected = false;
+	showHierarchy = false;
+	toDelete = false;
+	parent = p;
+	transformUpdate = false;
+	CreateTransform(pos,rotation,scale);
+	//AddComponent(TRANSFORM_COMP);
+}
+
+GameObject::GameObject(const char* n, float3 pos, float3 rotation, float3 scale, GameObject* p)
+{
+	ID = App->GoIDNum;
+	App->GoIDNum += 1;
+	name = n;
+	active = true;
+	selected = false;
+	showHierarchy = false;
+	toDelete = false;
+	parent = p;
+	transformUpdate = false;
+	CreateTransform(pos, rotation, scale);
+	//AddComponent(TRANSFORM_COMP);
+}
 
 GameObject::~GameObject()
 {
@@ -130,13 +161,29 @@ void GameObject::DrawMesh()
 	}	
 }
 
+void GameObject::CreateTransform()
+{
+	transform = new Transform(this);
+}
+
+void GameObject::CreateTransform(float3 pos, Quat rot, float3 scale)
+{
+	transform = new Transform(this,pos,rot,scale);
+}
+
+void GameObject::CreateTransform(float3 pos, float3 rot, float3 scale)
+{
+	transform = new Transform(this, pos, rot, scale);
+}
+
+
 void GameObject::AddComponent(ComponentTypes type)
 {
 	switch (type)
 	{
-	case TRANSFORM_COMP:
+	/*case TRANSFORM_COMP:
 		transform = new Transform(this);
-		break;
+		break;*/
 	case MESH_COMP:
 		Components.push_back((new Mesh(this))->GetComponent());
 		break;

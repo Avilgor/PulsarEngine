@@ -29,35 +29,34 @@ bool ModuleScene::Start()
 
 	root = new GameObject("Root");
 	
-	GameObject* warrior = new GameObject("Warrior");
-	warrior->AddComponent(MESH_COMP);
-	warrior->AddComponent(MATERIAL_COMP);
-	root->AddChild(warrior);
+	GameObject* trump = new GameObject("Trump",float3(3.0f,0.0f,0.0f),float3(-90.0f,0.0f,0.0f),float3(0.02f,0.02f,0.02f));
+	trump->AddComponent(MESH_COMP);
+	trump->AddComponent(MATERIAL_COMP);
+	//root->AddChild(warrior);
 
 
-	GameObject* go2 = new GameObject("Baker House");
+	GameObject* go2 = new GameObject("Baker House",float3(-1.0f,0.0f,0.0f),float3::zero,float3::one);
 	go2->AddComponent(MESH_COMP);
 	go2->AddComponent(MATERIAL_COMP);
 	root->AddChild(go2);
-	
+	go2->AddChild(trump);
 
-
-	Component* comp = warrior->GetFirstComponentType(MESH_COMP);
+	Component* comp = trump->GetFirstComponentType(MESH_COMP);
 	if (comp != nullptr)
 	{
-		if (comp->AsMesh() != nullptr) App->fbxLoader->ImportMesh(comp->AsMesh(), "Assets/3D/warrior/warrior.FBX");		
+		if (comp->AsMesh() != nullptr) App->fbxLoader->ImportMesh(comp->AsMesh(), "Assets/3D/Trump/trump.FBX");
 	}
 
-	comp = warrior->GetFirstComponentType(MATERIAL_COMP);
+	comp = trump->GetFirstComponentType(MATERIAL_COMP);
 	if (comp != nullptr)
 	{
 		if (comp->AsMaterial() != nullptr)
 		{
-			App->fbxLoader->ImportMaterial(comp->AsMaterial(), "Assets/3D/warrior/warrior.FBX");
-			warrior->GetFirstComponentType(MESH_COMP)->AsMesh()->material = comp->AsMaterial();
+			comp->AsMaterial()->LoadTextureMaterial("Assets/3D/Trump/tumpLPcolors.png");
+			trump->GetFirstComponentType(MESH_COMP)->AsMesh()->SetAllMeshesMaterial(comp->AsMaterial()->GetMaterial(0));
 		}
 	}
-	
+
 	Component* comp2 = go2->GetFirstComponentType(MESH_COMP);
 	if (comp2 != nullptr)
 	{
@@ -69,7 +68,7 @@ bool ModuleScene::Start()
 	{
 		if (comp2->AsMaterial() != nullptr)
 		{
-			App->fbxLoader->ImportMaterial(comp2->AsMaterial(), "Assets/3D/Baker/BakerHouse.FBX");
+			comp2->AsMaterial()->LoadTextureMaterial("Assets/3D/Baker/Baker_house.png");
 			go2->GetFirstComponentType(MESH_COMP)->AsMesh()->SetAllMeshesMaterial(comp2->AsMaterial()->GetMaterial(0));
 		}
 	}

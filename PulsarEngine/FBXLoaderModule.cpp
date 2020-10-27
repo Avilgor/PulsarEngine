@@ -115,17 +115,18 @@ bool FBXLoaderModule::ImportAll(Mesh* mesh, Material* mat, const char* path)
 {
 	bool ret = true;
 	ret = ImportMesh( mesh, path);
-	if(ret) ImportMaterial(mat, path);
+	if(ret) ImportMaterialFBX(mat, path);
 
 	return ret;
 }
 
-bool FBXLoaderModule::ImportMaterial(Material* mat, const char* path)
+
+bool FBXLoaderModule::ImportMaterialFBX(Material* mat, const char* path)
 {
 	bool ret = true;
 	const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
 	
-	if(scene->HasMaterials())
+	if(scene != nullptr && scene->HasMaterials())
 	{		
 		for (uint i = 0; i < scene->mNumMaterials; ++i)
 		{
@@ -137,7 +138,9 @@ bool FBXLoaderModule::ImportMaterial(Material* mat, const char* path)
 			std::string dir;
 			App->fileSystem->SplitFilePath(path,&dir,&filename,&extension);
 			aiString tempPath;
+
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &tempPath);
+			LOG("Texture base path: %s", tempPath.C_Str());
 			matInfo.path = dir.append(tempPath.C_Str());
 			aiColor4D color;
 			material->Get(AI_MATKEY_COLOR_DIFFUSE, color);				
@@ -149,6 +152,40 @@ bool FBXLoaderModule::ImportMaterial(Material* mat, const char* path)
 			mat->SaveMaterial(matInfo);
 		}
 		
+		aiReleaseImport(scene);
+		mat->GenerateBuffer();
+	}
+	else
+	{
+		LOG("Materials not found.");
+	}
+
+	return ret;
+}
+
+bool FBXLoaderModule::ImportMaterialFBX(Material* mat, const char* pathfbx, const char* pathtext)
+{
+	bool ret = true;
+	const aiScene* scene = aiImportFile(pathfbx, aiProcessPreset_TargetRealtime_MaxQuality);
+
+	if (scene != nullptr && scene->HasMaterials())
+	{
+		for (uint i = 0; i < scene->mNumMaterials; ++i)
+		{
+			MaterialInfo matInfo;
+			aiMaterial* material = scene->mMaterials[i];
+			matInfo.texturesNum = material->GetTextureCount(aiTextureType_DIFFUSE);
+			matInfo.path = pathtext;
+			aiColor4D color;
+			material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+			matInfo.color = Color(color.r, color.g, color.b, color.a);
+
+			aiString matName;
+			material->Get(AI_MATKEY_NAME, matName);
+			matInfo.name = matName.C_Str();
+			mat->SaveMaterial(matInfo);
+		}
+
 		aiReleaseImport(scene);
 		mat->GenerateBuffer();
 	}

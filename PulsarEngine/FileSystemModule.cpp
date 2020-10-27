@@ -493,7 +493,6 @@ std::string FileSystemModule::GetUniqueName(const char* path, const char* name) 
 void FileSystemModule::LoadTexture(const char* path, MaterialInfo* mat)
 {
 	uint imageID = 0;
-
 	ilGenImages(1, &imageID);
 	ilBindImage(imageID);
 
@@ -511,11 +510,15 @@ void FileSystemModule::LoadTexture(const char* path, MaterialInfo* mat)
 	else
 	{
 		ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
-
+		LOG("Image converted");
 		mat->textureID = imageID;
+		LOG("Image id: %d",imageID);
 		mat->textData = ilGetData();
+		LOG("Image data");
 		mat->textWidth = ilGetInteger(IL_IMAGE_WIDTH);
+		LOG("Image width");
 		mat->textHeight = ilGetInteger(IL_IMAGE_HEIGHT);
+		LOG("Image height");
 
 		ILenum error = ilGetError();
 

@@ -2,6 +2,7 @@
 #define __GameObject_H__
 
 #include "Component.h"
+#include "MathGeoLib/include/MathGeoLib.h"
 
 #include <vector>
 #include <string>
@@ -12,6 +13,8 @@ class GameObject
 {
 public:
 	GameObject(const char* name = "Unknown", GameObject* parent = nullptr);
+	GameObject(const char* name, float3 pos, Quat rotation = Quat::identity, float3 scale = float3::one,GameObject* parent = nullptr);
+	GameObject(const char* name, float3 pos, float3 rotation = float3::zero, float3 scale = float3::one, GameObject* parent = nullptr);
 	~GameObject();
 
 	void UpdateTransform();
@@ -38,6 +41,9 @@ public:
 
 private:
 	void AddPendingChilds();
+	void CreateTransform();
+	void CreateTransform(float3 pos, Quat rotation = Quat::identity, float3 scale = float3::one);
+	void CreateTransform(float3 pos, float3 rotation = float3::zero, float3 scale = float3::one);
 public:
 	std::string name;
 	bool active;

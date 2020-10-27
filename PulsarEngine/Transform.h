@@ -13,6 +13,7 @@ public:
 
 	Transform(GameObject* parent);
 	Transform(GameObject* parent, float3 position, Quat rotation = Quat::identity, float3 scale = float3::one);
+	Transform(GameObject* parent, float3 position, float3 rotation, float3 scale);
 	Transform(GameObject* parent, float4x4 transform);
 	~Transform();
 
@@ -43,6 +44,7 @@ private:
 	void UpdateTRS();
 	void UpdateLocal();
 	bool updateTransform;
+	void UpdateQuaternion();
 
 private:
 	float4x4 transform;

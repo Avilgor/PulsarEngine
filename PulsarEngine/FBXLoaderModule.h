@@ -16,7 +16,8 @@ public:
 	~FBXLoaderModule();
 
 	bool ImportMesh(Mesh* mesh,const char* path);
-	bool ImportMaterial(Material* mesh, const char* path);
+	bool ImportMaterialFBX(Material* mesh, const char* path);
+	bool ImportMaterialFBX(Material* mesh, const char* pathfbx, const char* pathtext);
 	bool ImportAll(Mesh* mesh, Material* mat, const char* path);
 	void Save();
 	void Load();
