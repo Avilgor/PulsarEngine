@@ -1,8 +1,7 @@
 # PulsarEngine
-Game engine
-
-## Done by
-* Adrià Avila: [Avilgor](https://github.com/Avilgor)
+Game Engine developed as a project for CITM-UPC. 
+[Pulsar engine](https://github.com/Avilgor/PulsarEngine)
+Last release [here](https://github.com/Avilgor/PulsarEngine/releases)
 
 ## Features
 
@@ -15,6 +14,8 @@ Game engine
   * Open editor windows
 * Config panel to adjust window settings and see hardware specs
 * In editor log console
+* Drag and drop fbx mesh load
+* Drag and drop png texture to gameobjects
 
 ## Controls
 
@@ -26,3 +27,7 @@ Game engine
 * Mouse wheel: camera zoom
 * Direction arrows: camera movement
 * Left shift: fast movement
+
+## Done by
+* Adrià Avila: [Avilgor](https://github.com/Avilgor)
+
