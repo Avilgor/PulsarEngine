@@ -30,7 +30,7 @@ Last release [here](https://github.com/Avilgor/PulsarEngine/releases)
 * F: focus the current or first selected gameobject
 * Left-Alt: fixed camera orbit to the selected gameobject while pressed
 
-# Tips: 
+## Tips: 
 * By default camera rotation orbits the current point, so it's not needed to press alt key continously.
 * Zoom and camera movement change orbit reference, to avoid keeping alt key pressed just press F key again to re-center.
 
