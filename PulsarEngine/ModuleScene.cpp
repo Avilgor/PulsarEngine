@@ -110,7 +110,8 @@ bool ModuleScene::Start()
 bool ModuleScene::CleanUp()
 {
 	LOG("Unloading Intro scene");
-	root->DeleteAllChilds();
+	App->editor->EmptySelected();
+	root->DeleteAllChilds();	
 	return true;
 }
 

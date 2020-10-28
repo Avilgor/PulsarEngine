@@ -1,7 +1,7 @@
 #include "Globals.h"
 #include "Application.h"
-#include "PhysBody3D.h"
 #include "ModuleCamera3D.h"
+#include "Transform.h"
 
 
 ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -55,7 +55,7 @@ update_status ModuleCamera3D::Update(float dt)
 		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) newPos += X * speed;	
 		
 		Position += newPos;
-		Reference += newPos;
+		Reference += newPos;		
 
 		float Sensitivity = 0.25f;
 

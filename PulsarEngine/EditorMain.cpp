@@ -8,6 +8,7 @@
 #include "SceneWindow.h"
 #include "InspectorWindow.h"
 #include "HierarchyWindow.h"
+#include "Transform.h"
 #include "SDL/include/SDL.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
@@ -196,6 +197,23 @@ update_status EditorMain::Update(float dt)
     }
 
     if (mouse_in_scene && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) EmptySelected();
+    if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT)
+    {
+        if (!selectedGameObjects.empty())
+        {
+            float3 pos = selectedGameObjects[0]->transform->GetPosition();
+            App->camera->LookAt(vec3(pos.x, pos.y, pos.z));
+        }
+    }
+
+    if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
+    {
+        if (!selectedGameObjects.empty())
+        {
+            float3 pos = selectedGameObjects[0]->transform->GetPosition();
+            App->camera->LookAt(vec3(pos.x, pos.y, pos.z));
+        }
+    }
    
 	return status;
 }
