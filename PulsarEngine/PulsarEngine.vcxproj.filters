@@ -153,6 +153,12 @@
     <ClInclude Include="RES_Mesh.h">
       <Filter>Sources\Res</Filter>
     </ClInclude>
+    <ClInclude Include="JSonHandler.h">
+      <Filter>Sources\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="parson\parson.h">
+      <Filter>Sources\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -265,6 +271,12 @@
     </ClCompile>
     <ClCompile Include="RES_Mesh.cpp">
       <Filter>Sources\Res</Filter>
+    </ClCompile>
+    <ClCompile Include="JSonHandler.cpp">
+      <Filter>Sources\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="parson\parson.c">
+      <Filter>Sources\Tools</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

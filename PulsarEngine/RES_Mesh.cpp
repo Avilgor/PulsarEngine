@@ -1,4 +1,6 @@
 #include "RES_Mesh.h"
+#include "Glew/include/GL/glew.h"
+#include "SDL/include/SDL_opengl.h"
 
 RES_Mesh::RES_Mesh()
 {
@@ -30,6 +32,11 @@ RES_Mesh::~RES_Mesh()
 
 void RES_Mesh::Clean()
 {
+	glDeleteBuffers(1, &(GLuint)idIndex);
+	glDeleteBuffers(1, &(GLuint)idNormals);
+	glDeleteBuffers(1, &(GLuint)idVertex);
+	glDeleteBuffers(1, &(GLuint)idText);
+
 	delete indicesArray;
 	delete verticesArray;
 	delete normalsArray;

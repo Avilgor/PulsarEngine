@@ -28,7 +28,7 @@ void Mesh::DeleteComponent()
 	if (!meshes.empty())
 	{
 		for (std::vector<RES_Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it)
-		{
+		{			
 			(*it)->Clean();
 			delete (*it);
 		}

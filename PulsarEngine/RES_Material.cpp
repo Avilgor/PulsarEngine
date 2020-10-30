@@ -1,6 +1,8 @@
 #include "Globals.h"
 #include "Color.h"
 #include "RES_Material.h"
+#include "Glew/include/GL/glew.h"
+#include "SDL/include/SDL_opengl.h"
 
 RES_Material::RES_Material()
 {
@@ -19,6 +21,7 @@ RES_Material::~RES_Material()
 
 void RES_Material::Clean()
 {
+	//glDeleteBuffers(1, &(GLuint)textureID);
 	delete textData;
 	textData = nullptr;
 	texturesNum = 0;

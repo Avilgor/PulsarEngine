@@ -41,11 +41,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\Devil\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\ImGui;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\include;$(IncludePath)</IncludePath>
+    <IncludePath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\parson;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Devil\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\ImGui;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\Devil\lib\x86;D:\GitHub Proyects\PulsarEngine\PulsarEngine\glut;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\libx86;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\lib\Win32;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\libx86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\Devil\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\ImGui;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\include;$(IncludePath)</IncludePath>
+    <IncludePath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\parson;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Devil\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\ImGui;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\Devil\lib\x86;D:\GitHub Proyects\PulsarEngine\PulsarEngine\glut;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\libx86;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\lib\Win32;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\libx86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -108,6 +108,7 @@
     <ClInclude Include="ImGui\imstb_textedit.h" />
     <ClInclude Include="ImGui\imstb_truetype.h" />
     <ClInclude Include="InspectorWindow.h" />
+    <ClInclude Include="JSonHandler.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MenuBar.h" />
@@ -118,6 +119,7 @@
     <ClInclude Include="Module.h" />
     <ClInclude Include="ModuleInput.h" />
     <ClInclude Include="ModuleWindow.h" />
+    <ClInclude Include="parson\parson.h" />
     <ClInclude Include="PathNode.h" />
     <ClInclude Include="ProjectWindow.h" />
     <ClInclude Include="RES_Material.h" />
@@ -147,6 +149,7 @@
     <ClCompile Include="ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
     <ClCompile Include="InspectorWindow.cpp" />
+    <ClCompile Include="JSonHandler.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="log.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -158,6 +161,7 @@
     <ClCompile Include="ModuleRenderer3D.cpp" />
     <ClCompile Include="ModuleScene.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
+    <ClCompile Include="parson\parson.c" />
     <ClCompile Include="ProjectWindow.cpp" />
     <ClCompile Include="RES_Material.cpp" />
     <ClCompile Include="RES_Mesh.cpp" />

@@ -20,7 +20,9 @@ SceneWindow::SceneWindow(std::string name) : EditorWindow(name)
 }
 
 SceneWindow::~SceneWindow()
-{}
+{
+	LOG("Delete scene");
+}
 
 
 update_status SceneWindow::Draw()
