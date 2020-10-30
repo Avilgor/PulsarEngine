@@ -20,6 +20,8 @@ public:
 	Component* GetComponent() { return component; }
 	Mesh* AsMesh() { return mesh; }
 	Material* AsMaterial() { return material; }
+	virtual void OnSave() {}
+	virtual void OnLoad() {}
 
 
 public:

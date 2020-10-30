@@ -15,6 +15,12 @@ class Config;
 struct PathNode;
 class RES_Material;
 
+struct json_array_t;
+typedef json_array_t JSON_Array;
+struct json_value_t;
+typedef json_value_t JSON_Value;
+struct json_object_t;
+typedef json_object_t JSON_Object;
 
 class FileSystemModule : public Module
 {
@@ -64,6 +70,8 @@ public:
 	void LoadTexture(const char* path, RES_Material* mat);
 	void GetDroppedFile(const char* path);
 	std::string GetFileExtension(const char* path);
+	JSON_Array* LoadJSon();
+	void SaveJSon();
 };
 
 #endif //__FileSystemModule_H__

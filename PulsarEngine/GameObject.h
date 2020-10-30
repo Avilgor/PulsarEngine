@@ -27,8 +27,8 @@ public:
 	void DeleteGOComponent(ComponentTypes type);
 	void AddChild(GameObject* child);
 	void CreateChild();
-	void DeleteChild(int id = 0);	
-	void RemoveChild(int id);
+	void DeleteChild(std::string id);
+	void RemoveChild(std::string id);
 	void DeleteAllChilds();
 	void DeleteGameobject();
 	bool HasChilds();
@@ -48,7 +48,7 @@ private:
 public:
 	std::string name;
 	bool active;
-	int ID;
+	std::string UUID;
 	bool selected;
 	bool showHierarchy;
 	bool toDelete;

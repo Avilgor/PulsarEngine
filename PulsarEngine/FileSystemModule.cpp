@@ -10,6 +10,7 @@
 #include <fstream>
 #include <filesystem>
 
+#include "parson/parson.h"
 #include "Assimp/include/cfileio.h"
 #include "Assimp/include/types.h"
 #include "Assimp/include/cimport.h"

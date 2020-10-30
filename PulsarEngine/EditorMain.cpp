@@ -97,7 +97,7 @@ void EditorMain::RemoveSelection(GameObject* go)
         std::vector<GameObject*> temp = selectedGameObjects;
         for (std::vector<GameObject*>::iterator it = selectedGameObjects.begin(); it != selectedGameObjects.end(); ++it)
         {
-            if (go->ID != (*it)->ID) temp.push_back((*it));
+            if (go->UUID.compare((*it)->UUID) != 0) temp.push_back((*it));
             else go->selected = false;
         }
         selectedGameObjects.clear();

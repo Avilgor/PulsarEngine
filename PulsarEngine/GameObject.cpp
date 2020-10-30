@@ -10,8 +10,8 @@
 
 GameObject::GameObject(const char* n, GameObject* p)
 {
-	ID = App->GoIDNum;
-	App->GoIDNum += 1;
+	UUID = App->GenerateUUID_V4();
+	//App->GoIDNum += 1;
 	name = n;
 	active = true;
 	selected = false;
@@ -20,13 +20,14 @@ GameObject::GameObject(const char* n, GameObject* p)
 	parent = p;
 	transformUpdate = false;
 	CreateTransform();
+	//LOG("ID: %s",UUID.c_str());
 	//AddComponent(TRANSFORM_COMP);
 }
 
 GameObject::GameObject(const char* n, float3 pos, Quat rotation, float3 scale, GameObject* p)
 {
-	ID = App->GoIDNum;
-	App->GoIDNum += 1;
+	UUID = App->GenerateUUID_V4();
+	//App->GoIDNum += 1;
 	name = n;
 	active = true;
 	selected = false;
@@ -35,13 +36,14 @@ GameObject::GameObject(const char* n, float3 pos, Quat rotation, float3 scale, G
 	parent = p;
 	transformUpdate = false;
 	CreateTransform(pos,rotation,scale);
+	//LOG("ID: %s", UUID.c_str());
 	//AddComponent(TRANSFORM_COMP);
 }
 
 GameObject::GameObject(const char* n, float3 pos, float3 rotation, float3 scale, GameObject* p)
 {
-	ID = App->GoIDNum;
-	App->GoIDNum += 1;
+	UUID = App->GenerateUUID_V4();
+	//App->GoIDNum += 1;
 	name = n;
 	active = true;
 	selected = false;
@@ -50,6 +52,7 @@ GameObject::GameObject(const char* n, float3 pos, float3 rotation, float3 scale,
 	parent = p;
 	transformUpdate = false;
 	CreateTransform(pos, rotation, scale);
+	//LOG("ID: %s", UUID.c_str());
 	//AddComponent(TRANSFORM_COMP);
 }
 
@@ -252,14 +255,14 @@ void GameObject::AddPendingChilds()
 	toAddChilds.clear();
 }
 
-void GameObject::DeleteChild(int id)
+void GameObject::DeleteChild(std::string id)
 {
 	if (!Childs.empty())
 	{		
 		std::vector<GameObject*> temp;
 		for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); it++)
 		{
-			if ((*it)->ID == id) (*it)->DeleteGameobject();
+			if ((*it)->UUID.compare(id) == 0) (*it)->DeleteGameobject();
 			else temp.push_back((*it));
 		}
 		Childs.clear();
@@ -281,14 +284,14 @@ void GameObject::DeleteAllChilds()
 	}
 }
 
-void GameObject::RemoveChild(int id)
+void GameObject::RemoveChild(std::string id)
 {
 	if (!Childs.empty())
 	{
 		std::vector<GameObject*> temp;
 		for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); it++)
 		{
-			if ((*it)->ID != id) temp.push_back((*it));			
+			if ((*it)->UUID.compare(id) != 0) temp.push_back((*it));			
 		}
 		Childs.clear();
 		Childs = temp;
@@ -304,9 +307,9 @@ bool GameObject::HasChilds()
 
 void GameObject::SetParent(GameObject* p)
 {
-	if (parent != nullptr && p->ID != parent->ID)
+	if (parent != nullptr && p->UUID.compare(parent->UUID) != 0)
 	{
-		parent->RemoveChild(ID);
+		parent->RemoveChild(UUID);
 		parent = p;
 		parent->AddChild(this);
 	}
@@ -342,7 +345,7 @@ void GameObject::Delete()
 
 void GameObject::SaveToDelete(GameObject* trash)
 {
-	RemoveChild(trash->ID);
+	RemoveChild(trash->UUID);
 	toDeleteChilds.push_back(trash);
 }
 

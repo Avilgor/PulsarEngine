@@ -16,6 +16,7 @@
 #include <list> 
 #include <string>
 
+
 class Application
 {
 public:
@@ -33,7 +34,7 @@ public:
 
 	std::vector<std::string> ConsoleLogs;
 
-	int GoIDNum = 0;
+	//int GoIDNum = 0;
 
 private:
 
@@ -55,6 +56,7 @@ public:
 
 	const char* GetTitleName() const;
 	const char* GetOrganizationName() const;
+	std::string GenerateUUID_V4();
 
 private:
 
