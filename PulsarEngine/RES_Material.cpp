@@ -22,7 +22,7 @@ RES_Material::~RES_Material()
 void RES_Material::Clean()
 {
 	//glDeleteBuffers(1, &(GLuint)textureID);
-	delete textData;
+	//delete textData;
 	textData = nullptr;
 	texturesNum = 0;
 	textureID = 0;

@@ -21,19 +21,23 @@ class JSonHandler
 {
 public:
 	JSonHandler();
+	JSonHandler(const char* buffer);
+	JSonHandler(JSON_Object* obj);
 	~JSonHandler();
 
-	//Getters
-	bool GetBool();
-	int GetInt();
-	float GetFloat();
-	std::string GetString();
- 
-	//Setters
-	void SaveBool(bool val);
-	void SaveInt(int val);
-	void SaveFloat(float val);
-	void SaveString(std::string val);
+	void SetArray(JSON_Array* arrayJ);
+
+	//Getters Node
+	bool GetBool(const char* name);
+	double GetNum(const char* name);
+	std::string GetString(const char* name);
+	JSonHandler GetNode(const char* name);
+
+	//Setters Node
+	void SaveBool(const char* name, bool val);
+	void SaveInt(const char* name,int val);
+	void SaveFloat(const char* name,float val);
+	void SaveString(const char* name, const char* val);
 
 private:
 
