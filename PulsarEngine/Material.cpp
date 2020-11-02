@@ -61,7 +61,10 @@ void Material::GenerateBuffer(RES_Material* mat)
 {
 	if (mat != nullptr)
 	{
-		App->fileSystem->LoadTexture(mat->path.c_str(), mat);
+		char* buffer = nullptr;
+		//App->fileSystem->LoadTexture(mat->path.c_str(), mat);
+		uint size = App->fileSystem->Load(mat->path.c_str(), &buffer);
+		App->fileSystem->LoadMaterial(mat,&buffer,size);
 		if (mat->textureID != -1)
 		{
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -82,9 +85,12 @@ void Material::GenerateBuffer(RES_Material* mat)
 void Material::LoadTextureNewMaterial(std::string pathtext)
 {
 	RES_Material* mat = new RES_Material();
-	mat->name = "Material texture";
-	mat->path = pathtext;
+	//mat->name = "Material texture";
 	mat->texturesNum = 1;	
+	App->fileSystem->LoadTexture(pathtext.c_str(),mat);
+	char* buffer = nullptr;
+	App->fileSystem->Load(mat->path.c_str(), &buffer);
+	App->fileSystem->LoadMaterial(mat, &buffer,mat->bufferSize);
 	GenerateBuffer(mat);
 	materials.push_back(mat);
 }

@@ -150,7 +150,7 @@ void InspectorWindow::MeshSection(GameObject* go)
 		ImGui::SameLine();
 		ImGui::Checkbox("##textActive", &mesh->drawTexture);
 		
-		ImGui::Text("Path: %s", mesh->path);
+		//ImGui::Text("Path: %s", mesh->path.c_str());
 		ImGui::Separator();
 		std::vector<RES_Mesh*> meshes = mesh->GetMeshes();
 		int i = 0;

@@ -40,6 +40,11 @@ FileSystemModule::FileSystemModule(Application* app, bool start_enabled) : Modul
 	if (PHYSFS_setWriteDir(".") == 0)
 		LOG("File System error while creating write dir: %s\n", PHYSFS_getLastError());
 
+	ilInit();
+	iluInit();
+	ilutInit();
+	ilutRenderer(ILUT_OPENGL);
+
 	AddPath("."); //Adding ProjectFolder (working directory)
 	AddPath("Assets");
 	CreateLibraryDirectories();
@@ -58,10 +63,7 @@ bool FileSystemModule::Init(Config& config)
 
 	// Ask SDL for a write dir
 	char* write_path = SDL_GetPrefPath(App->GetOrganizationName(), App->GetTitleName());
-	ilInit();
-	iluInit();
-	ilutInit();
-	ilutRenderer(ILUT_OPENGL);
+	
 	SDL_free(write_path);
 	App->LoadSettings();
 	return ret;
@@ -216,8 +218,9 @@ void FileSystemModule::GetRealDir(const char* path, std::string& output) const
 	std::string searchPath = *PHYSFS_getSearchPath();
 	std::string realDir = PHYSFS_getRealDir(path);
 
-	output.append(*PHYSFS_getSearchPath()).append("/");
-	output.append(PHYSFS_getRealDir(path)).append("/").append(path);
+	//output.append(*PHYSFS_getSearchPath()).append("/");
+	//output.append(PHYSFS_getRealDir(path)).append("/").append(path);
+	output.append(path);
 }
 
 std::string FileSystemModule::GetPathRelativeToAssets(const char* originalPath) const
@@ -312,7 +315,8 @@ unsigned int FileSystemModule::Load(const char* path, const char* file, char** b
 uint FileSystemModule::Load(const char* file, char** buffer) const
 {
 	uint ret = 0;
-
+	//std::string path = NormalizePath(file);
+	//LOG("File: %s", path.c_str());
 	PHYSFS_file* fs_file = PHYSFS_openRead(file);
 
 	if (fs_file != nullptr)
@@ -497,23 +501,6 @@ std::string FileSystemModule::GetUniqueName(const char* path, const char* name) 
 	return finalName;
 }
 
-int FileSystemModule::SaveTexture(char* buffer)
-{
-	ILuint size;
-	ILubyte* data;
-	ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);
-	size = ilSaveL(IL_DDS, nullptr, 0);
-
-	if (size > 0) 
-	{
-		data = new ILubyte[size]; 
-		if (ilSaveL(IL_DDS, data, size) > 0) buffer = (char*)data;
-					
-		RELEASE_ARRAY(data);
-	}
-	return (int)size;
-}
-
 void FileSystemModule::LoadTexture(const char* path, RES_Material* mat)
 {
 	/*
@@ -538,15 +525,10 @@ void FileSystemModule::LoadTexture(const char* path, RES_Material* mat)
 	else
 	{
 		ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
-		//LOG("Image converted");
 		mat->textureID = imageID;
-		//LOG("Image id: %d",imageID);
 		mat->textData = ilGetData();
-		//LOG("Image data");
 		mat->textWidth = ilGetInteger(IL_IMAGE_WIDTH);
-		//LOG("Image width");
 		mat->textHeight = ilGetInteger(IL_IMAGE_HEIGHT);
-		//LOG("Image height");
 
 		ILenum error = ilGetError();
 
@@ -561,6 +543,8 @@ void FileSystemModule::LoadTexture(const char* path, RES_Material* mat)
 		}
 		else
 		{
+			mat->name = GetFileName(path);
+			SaveMaterial(mat);
 			LOG("Texture: %s loaded successfully",path);
 		}		
 	}
@@ -580,12 +564,23 @@ std::string FileSystemModule::GetFileName(const char* p)
 	std::string path = "";
 	std::string name = "";
 	std::string extension = "";
+	SplitFilePath(p, &path, &name, &extension);
+	return name;
+}
+
+std::string FileSystemModule::GetFileAndExtension(const char* p)
+{
+	std::string path = "";
+	std::string name = "";
+	std::string extension = "";
+	SplitFilePath(p, &path, &name, &extension);
+	name += ".";
+	name = name.append(extension);
 	return name;
 }
 
 void FileSystemModule::GetDroppedFile(const char* path)
 {
-	//LOG("DropPath %s",path);
 	if (HasExtension(path, "fbx"))//Mesh
 	{
 		//Create gameobject
@@ -635,7 +630,7 @@ void FileSystemModule::GetDroppedFile(const char* path)
 	}
 }
 
-uint FileSystemModule::SaveMesh(RES_Mesh* mesh, char** fileBuffer)
+void FileSystemModule::SaveMesh(RES_Mesh* mesh)
 {
 	uint ranges[4] = { mesh->indexSize, mesh->verticesSize, mesh->normalsSize, mesh->textSize };
 
@@ -644,7 +639,7 @@ uint FileSystemModule::SaveMesh(RES_Mesh* mesh, char** fileBuffer)
 
 	char* buffer = new char[size];
 	char* cursor = buffer;
-	LOG("Mesh buffered");
+	//LOG("Creating mesh save buffer...");
 	
 	//Store ranges
 	uint bytes = sizeof(ranges);
@@ -676,7 +671,15 @@ uint FileSystemModule::SaveMesh(RES_Mesh* mesh, char** fileBuffer)
 		cursor += bytes;
 	}
 
-	return size;
+	if (size > 0)
+	{
+		std::string pathfile = MESHES_PATH;
+		pathfile.append(mesh->name.c_str());
+		//pathfile += ".meta";
+		App->fileSystem->Save(pathfile.c_str(), buffer, size);
+		mesh->path = pathfile;
+		RELEASE_ARRAY(buffer);
+	}
 }
 
 
@@ -705,20 +708,61 @@ void FileSystemModule::LoadMesh(RES_Mesh* mesh, char* buffer)
 
 	//load vertices
 	bytes = sizeof(float) * mesh->verticesSize * 3;
+	mesh->verticesArray = new float[mesh->verticesSize*3];
 	memcpy(mesh->verticesArray, cursor, bytes);
 	cursor += bytes;
 
 	//load normals
 	bytes = sizeof(float) * mesh->normalsSize * 3;
+	mesh->normalsArray = new float[mesh->normalsSize *3];
 	memcpy(mesh->normalsArray, cursor, bytes);
 	cursor += bytes;
 
 	//load texcoords
-	bytes = sizeof(float) * mesh->textSize * 3;
+	bytes = sizeof(float) * mesh->textSize * 2;
+	mesh->texturesArray = new float[mesh->textSize * 2];
 	memcpy(mesh->texturesArray, cursor, bytes);
 	cursor += bytes;
 
-	LOG("%s loaded in %.3f s", mesh->name, timer.ReadSec());
+	LOG("%s loaded in %.3f s", mesh->name.c_str(), timer.ReadSec());
+}
+
+void FileSystemModule::SaveMaterial(RES_Material* mat)
+{
+	char* buffer = nullptr;
+	ILuint size;
+	ILubyte* data;
+	ilEnable(IL_FILE_OVERWRITE);
+	ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);
+	size = ilSaveL(IL_DDS, nullptr, 0);
+
+	if (size > 0)
+	{
+		data = new ILubyte[size];
+		if (ilSaveL(IL_DDS, data, size) > 0) buffer = (char*)data;		
+
+		
+		std::string pathfile = MATERIALS_PATH;
+		pathfile.append(mat->name.c_str());
+		//pathfile += ".meta";
+		App->fileSystem->Save(pathfile.c_str(), buffer, size);
+		mat->path = pathfile;
+		mat->bufferSize = int(size);
+		RELEASE_ARRAY(data);
+		//RELEASE_ARRAY(buffer);
+	}
+}
+
+void FileSystemModule::LoadMaterial(RES_Material* mat, char** buffer, uint size)
+{
+	ILuint ImageName;
+	ilGenImages(1, &ImageName);
+	ilBindImage(ImageName);
+
+	ilLoadL(IL_TYPE_UNKNOWN, (const void*)buffer, size);
+	mat->textureID = ilutGLBindTexImage();
+
+	ilDeleteImages(1, &ImageName);
 }
 
 bool FileSystemModule::ImportMesh(Mesh* mesh, const char* path)
@@ -728,16 +772,14 @@ bool FileSystemModule::ImportMesh(Mesh* mesh, const char* path)
 
 	if (scene != nullptr && scene->HasMeshes())
 	{
-		mesh->path = path;
+		//mesh->path = path;		
 		mesh->name = App->fileSystem->GetFileName(path);
 
 		for (int i = 0; i < scene->mNumMeshes; i++)
 		{
 			RES_Mesh* newMesh = new RES_Mesh();
-			newMesh->name = mesh->name;
-			newMesh->name.append(std::to_string(i));
+			newMesh->name = mesh->name.append(std::to_string(i));
 			
-			newMesh->name = scene->mMeshes[i]->mName.C_Str();
 			newMesh->verticesSize = scene->mMeshes[i]->mNumVertices;
 			newMesh->verticesArray = new float[newMesh->verticesSize * 3];
 			memcpy(newMesh->verticesArray, scene->mMeshes[i]->mVertices, sizeof(float) * newMesh->verticesSize * 3);
@@ -777,21 +819,8 @@ bool FileSystemModule::ImportMesh(Mesh* mesh, const char* path)
 					newMesh->texturesArray[a * 2 + 1] = scene->mMeshes[i]->mTextureCoords[0][a].y;
 				}
 			}
-
-			char* buffer = nullptr;
-			uint size = 0;
-			size = SaveMesh(newMesh, &buffer);
-			//LOG("Size: %d", size);
-			if (size > 0)
-			{
-				std::string pathfile = "Library/Meshes/";
-				pathfile.append(newMesh->name.c_str());
-				LOG("Path: %s", pathfile.c_str());
-				App->fileSystem->Save(pathfile.c_str(), buffer, size);
-				RELEASE_ARRAY(buffer);
-			}		
-			LOG("End save");
-			mesh->AddMesh(/*LoadMesh(i, scene,mesh->name.c_str())*/newMesh);
+			SaveMesh(newMesh);
+			mesh->AddMesh(newMesh);
 		}
 		aiReleaseImport(scene);
 	}
@@ -802,14 +831,7 @@ bool FileSystemModule::ImportMesh(Mesh* mesh, const char* path)
 
 	return ret;
 }
-/*
-RES_Mesh* FileSystemModule::LoadMesh(int num, const aiScene* scene,const char* name)
-{
 
-
-	return newMesh;
-}
-*/
 
 bool FileSystemModule::ImportAll(Mesh* mesh, Material* mat, const char* path)
 {

@@ -71,11 +71,11 @@ public:
 
 	uint64 GetLastModTime(const char* filename);
 	std::string GetUniqueName(const char* path, const char* name) const;
-	int SaveTexture(char* buffer);
 	void LoadTexture(const char* path, RES_Material* mat);
 	void GetDroppedFile(const char* path);
 	std::string GetFileExtension(const char* path);
 	std::string GetFileName(const char* path);
+	std::string GetFileAndExtension(const char* path);
 	//JSON_Array* LoadJSon();
 	//void SaveJSon();
 
@@ -84,8 +84,10 @@ public:
 	bool ImportMaterialFBX(Material* mesh, const char* path);
 	bool ImportMaterialFBX(Material* mesh, const char* pathfbx, const char* pathtext);
 	bool ImportAll(Mesh* mesh, Material* mat, const char* path);
-	uint SaveMesh(RES_Mesh* mesh, char** fileBuffer);
+	void SaveMesh(RES_Mesh* mesh/*, char** fileBuffer*/);
 	void LoadMesh(RES_Mesh* mesh, char* fileBuffer);
+	void SaveMaterial(RES_Material* mat);
+	void LoadMaterial(RES_Material* mat, char** buffer,uint size);
 };
 
 #endif //__FileSystemModule_H__

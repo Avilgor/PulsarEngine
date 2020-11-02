@@ -16,11 +16,9 @@ public:
 	void SetMaterial(RES_Material* mat);
 	void UpdateAABB();
 
-	//uint SaveMesh(char** buffer);
-	//void LoadMesh();
-
 public:
 	std::string name;
+	std::string path;
 	uint VAO;
 	uint idVertex;
 	uint idIndex;

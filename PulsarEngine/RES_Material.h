@@ -26,6 +26,7 @@ public:
 	std::string path = "";
 	Color color = Color(1.0f, 1.0f, 1.0f);
 	std::string name = "None";
+	int bufferSize = 0;
 	int textWidth = 0;
 	int textHeight = 0;
 };

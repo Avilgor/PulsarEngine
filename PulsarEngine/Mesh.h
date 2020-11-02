@@ -42,8 +42,8 @@ public:
 
 public:
 
-	std::string path;
-	std::string name;
+	std::string path = "";
+	std::string name = "";
 	bool drawTexture = true;
 	/*std::string name;
 	uint VAO;

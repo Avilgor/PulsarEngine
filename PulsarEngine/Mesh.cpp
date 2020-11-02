@@ -48,6 +48,12 @@ bool Mesh::LoadImportedMesh()
 void Mesh::AddMesh(RES_Mesh* mesh)
 {
 	meshes.push_back(mesh);
+	char* buffer = nullptr;
+	std::string path = MESHES_PATH;
+	path.append(mesh->name);
+	mesh->path = path;
+	App->fileSystem->Load(path.c_str(),&buffer);
+	App->fileSystem->LoadMesh(mesh, buffer);
 	GenerateBuffers(meshes.back());
 }
 
@@ -158,8 +164,7 @@ void Mesh::Render()
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	for (std::vector<RES_Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it)
-	{
-		
+	{		
 		for (int i = 0; i < meshes.size(); i++)
 		{
 			glPushMatrix();
@@ -209,10 +214,7 @@ void Mesh::OnSave()
 
 void Mesh::OnLoad()
 {
-	/*for (std::vector<RES_Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it)
-	{
-		(*it)->LoadMesh();
-	}*/
+
 }
 
 void Mesh::DrawVertexNormals(RES_Mesh* mesh)
