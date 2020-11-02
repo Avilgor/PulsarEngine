@@ -39,6 +39,8 @@ public:
 	void SetQuatRotation(Quat rot);
 	void SetEulerRotation(float3 degrees);
 	void SetGlobalTransform(float4x4 transform);
+	void OnSave();
+	void OnLoad();
 
 private:
 	void UpdateTRS();

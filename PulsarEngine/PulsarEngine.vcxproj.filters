@@ -123,9 +123,6 @@
     <ClInclude Include="HierarchyWindow.h">
       <Filter>Sources\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="FBXLoaderModule.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Sources\Components</Filter>
     </ClInclude>
@@ -244,9 +241,6 @@
     </ClCompile>
     <ClCompile Include="HierarchyWindow.cpp">
       <Filter>Sources\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="FBXLoaderModule.cpp">
-      <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Sources\Components</Filter>

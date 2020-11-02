@@ -32,17 +32,17 @@ bool ModuleScene::Start()
 
 	root = new GameObject("Root");
 	
-	GameObject* trump = new GameObject("Trump",float3(3.0f,0.0f,0.0f),float3(-90.0f,0.0f,0.0f),float3(0.02f,0.02f,0.02f));
+	/*GameObject* trump = new GameObject("Trump",float3(3.0f,0.0f,0.0f),float3(-90.0f,0.0f,0.0f),float3(0.02f,0.02f,0.02f));
 	trump->AddComponent(MESH_COMP);
 	trump->AddComponent(MATERIAL_COMP);
 	root->AddChild(trump);
-
-
+	*/
+	/*
 	GameObject* go2 = new GameObject("Baker House",float3(-1.0f,0.0f,0.0f),float3::zero,float3::one);
 	go2->AddComponent(MESH_COMP);
 	go2->AddComponent(MATERIAL_COMP);
 	root->AddChild(go2);
-
+	*/
 
 	GameObject* go3 = new GameObject("Chiken", float3(-4.0f, 0.0f, 0.0f), float3::zero, float3(0.01f,0.01f,0.01f));
 	go3->AddComponent(MESH_COMP);
@@ -50,10 +50,10 @@ bool ModuleScene::Start()
 	root->AddChild(go3);
 
 
-	Component* comp = trump->GetFirstComponentType(MESH_COMP);
+	/*Component* comp = trump->GetFirstComponentType(MESH_COMP);
 	if (comp != nullptr)
 	{
-		if (comp->AsMesh() != nullptr) App->fbxLoader->ImportMesh(comp->AsMesh(), "Assets/3D/Trump/trump.FBX");
+		if (comp->AsMesh() != nullptr) App->fileSystem->ImportMesh(comp->AsMesh(), "Assets/3D/Trump/trump.FBX");
 	}
 
 	comp = trump->GetFirstComponentType(MATERIAL_COMP);
@@ -64,12 +64,12 @@ bool ModuleScene::Start()
 			comp->AsMaterial()->LoadTextureNewMaterial("Assets/3D/Trump/tumpLPcolors.png");
 			trump->GetFirstComponentType(MESH_COMP)->AsMesh()->SetAllMeshesMaterial(comp->AsMaterial()->GetMaterial(0));
 		}
-	}
-
+	}*/
+	/*
 	Component* comp2 = go2->GetFirstComponentType(MESH_COMP);
 	if (comp2 != nullptr)
 	{
-		if (comp2->AsMesh() != nullptr) App->fbxLoader->ImportMesh(comp2->AsMesh(), "Assets/3D/Baker/BakerHouse.fbx");
+		if (comp2->AsMesh() != nullptr) App->fileSystem->ImportMesh(comp2->AsMesh(), "Assets/3D/Baker/BakerHouse.fbx");
 	}
 
 	comp2 = go2->GetFirstComponentType(MATERIAL_COMP);
@@ -81,11 +81,11 @@ bool ModuleScene::Start()
 			go2->GetFirstComponentType(MESH_COMP)->AsMesh()->SetAllMeshesMaterial(comp2->AsMaterial()->GetMaterial(0));
 		}
 	}
-
+	*/
 	Component* comp3 = go3->GetFirstComponentType(MESH_COMP);
 	if (comp3 != nullptr)
 	{
-		if (comp3->AsMesh() != nullptr) App->fbxLoader->ImportMesh(comp3->AsMesh(), "Assets/3D/Chiken/cock.fbx");
+		if (comp3->AsMesh() != nullptr) App->fileSystem->ImportMesh(comp3->AsMesh(), "Assets/3D/Chiken/cock.fbx");
 	}
 
 	comp3 = go3->GetFirstComponentType(MATERIAL_COMP);

@@ -10,7 +10,7 @@
 #include "ModuleCamera3D.h"
 #include "ModuleScene.h"
 #include "EditorMain.h"
-#include "FBXLoaderModule.h"
+//#include "FBXLoaderModule.h"
 #include "FileSystemModule.h"
 
 #include <list> 
@@ -26,7 +26,7 @@ public:
 	ModuleCamera3D* camera;
 	ModuleScene* scene;
 	EditorMain* editor;
-	FBXLoaderModule* fbxLoader;
+	//FBXLoaderModule* fbxLoader;
 	FileSystemModule* fileSystem;
 
 	float ms = 0.0f;

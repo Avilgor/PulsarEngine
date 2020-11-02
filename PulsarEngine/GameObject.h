@@ -40,6 +40,8 @@ public:
 	Component* GetFirstComponentType(ComponentTypes type);
 	GameObject* GetFirstChild() { return Childs[0]; }
 	GameObject* GetParent() { return parent; }
+	void SaveGameobject();
+	void LoadGameObject();
 
 private:
 	void AddPendingChilds();
@@ -55,6 +57,8 @@ public:
 	bool toDelete;
 	bool transformUpdate;
 	Transform* transform;
+	AABB aabb;
+	AABB oobb;
 
 private:
 	GameObject* parent = nullptr;

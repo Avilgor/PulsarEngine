@@ -68,6 +68,16 @@ void RES_Mesh::UpdateAABB()
 
 }
 
+/*uint RES_Mesh::SaveMesh(char** buffer)
+{
+	
+}
+
+void RES_Mesh::LoadMesh()
+{
+
+}*/
+
 void RES_Mesh::SetMaterial(RES_Material* mat)
 {
 	material = mat;

@@ -16,6 +16,9 @@ public:
 	void SetMaterial(RES_Material* mat);
 	void UpdateAABB();
 
+	//uint SaveMesh(char** buffer);
+	//void LoadMesh();
+
 public:
 	std::string name;
 	uint VAO;
@@ -23,7 +26,7 @@ public:
 	uint idIndex;
 	uint idText;
 	uint idNormals;
-	int verticesSize;
+	uint verticesSize;
 	uint indexSize;
 	uint textSize;
 	uint normalsSize;

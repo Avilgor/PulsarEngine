@@ -1,4 +1,5 @@
 #include "Globals.h"
+#include "Application.h"
 #include "GameObject.h"
 #include "Transform.h"
 #include "MathGeoLib/include/MathGeoLib.h"
@@ -164,4 +165,21 @@ void Transform::SetGlobalTransform(float4x4 t)
 	transformGlobal = t;
 	transformTGlobal = transformGlobal.Transposed();
 	updateTransform = true;
+}
+
+void Transform::OnSave()
+{
+	/*char* buffer = nullptr;
+	uint size = 0;
+
+	if (size > 0)
+	{
+		App->fileSystem->Save("", buffer, size);
+		RELEASE_ARRAY(buffer);
+	}*/
+}
+
+void Transform::OnLoad()
+{
+
 }

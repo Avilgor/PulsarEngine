@@ -1,5 +1,5 @@
-#pragma once
-
+#ifndef __GLOBALS_H__
+#define __GLOBALS_H__
 // Warning disabled ---
 #pragma warning( disable : 4577 ) // Warning that exceptions are disabled
 #pragma warning( disable : 4530 )
@@ -79,3 +79,5 @@ enum ComponentTypes
 	       x = nullptr;\
 		 }\
 	 }
+
+#endif

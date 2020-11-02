@@ -14,6 +14,10 @@ struct aiFileIO;
 class Config;
 struct PathNode;
 class RES_Material;
+class Mesh;
+class Material;
+struct aiScene;
+class RES_Mesh;
 
 struct json_array_t;
 typedef json_array_t JSON_Array;
@@ -67,11 +71,21 @@ public:
 
 	uint64 GetLastModTime(const char* filename);
 	std::string GetUniqueName(const char* path, const char* name) const;
+	int SaveTexture(char* buffer);
 	void LoadTexture(const char* path, RES_Material* mat);
 	void GetDroppedFile(const char* path);
 	std::string GetFileExtension(const char* path);
-	JSON_Array* LoadJSon();
-	void SaveJSon();
+	std::string GetFileName(const char* path);
+	//JSON_Array* LoadJSon();
+	//void SaveJSon();
+
+
+	bool ImportMesh(Mesh* mesh, const char* path);
+	bool ImportMaterialFBX(Material* mesh, const char* path);
+	bool ImportMaterialFBX(Material* mesh, const char* pathfbx, const char* pathtext);
+	bool ImportAll(Mesh* mesh, Material* mat, const char* path);
+	uint SaveMesh(RES_Mesh* mesh, char** fileBuffer);
+	void LoadMesh(RES_Mesh* mesh, char* fileBuffer);
 };
 
 #endif //__FileSystemModule_H__

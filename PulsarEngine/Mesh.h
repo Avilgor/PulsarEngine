@@ -37,10 +37,13 @@ public:
 	void CreateCube();
 	void CreatePyramid();
 	void CreatePlane(float size);
+	void OnSave();
+	void OnLoad();
 
 public:
 
 	std::string path;
+	std::string name;
 	bool drawTexture = true;
 	/*std::string name;
 	uint VAO;

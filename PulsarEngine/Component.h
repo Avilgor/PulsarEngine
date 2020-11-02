@@ -20,7 +20,7 @@ public:
 	Component* GetComponent() { return component; }
 	Mesh* AsMesh() { return mesh; }
 	Material* AsMaterial() { return material; }
-	virtual void OnSave() {}
+	virtual uint OnSave(char** buffer) { return 0; }
 	virtual void OnLoad() {}
 
 

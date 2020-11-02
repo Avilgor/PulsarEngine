@@ -19,9 +19,10 @@ public:
 	bool ImportMaterialFBX(Material* mesh, const char* path);
 	bool ImportMaterialFBX(Material* mesh, const char* pathfbx, const char* pathtext);
 	bool ImportAll(Mesh* mesh, Material* mat, const char* path);
-	void Save();
-	void Load();
-	RES_Mesh* LoadMesh(int num, const aiScene* scene);
+	uint SaveMesh(RES_Mesh* mesh,char** fileBuffer);
+	void SaveTexture(char* fileBuffer);
+	void LoadMesh(RES_Mesh* mesh,char* fileBuffer);
+	//RES_Mesh* LoadMesh(int num, const aiScene* scene,const char* name);
 
 };
 
