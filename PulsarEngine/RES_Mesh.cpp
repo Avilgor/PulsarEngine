@@ -15,6 +15,7 @@ RES_Mesh::RES_Mesh()
 	textSize = 0;
 	normalsSize = 0;
 	drawText = true;
+	aabb.SetNegativeInfinity();
 	indicesArray = nullptr;
 	verticesArray = nullptr;
 	normalsArray = nullptr;
@@ -62,6 +63,10 @@ void RES_Mesh::Clean()
 	drawFaceNormals = false;
 }
 
+void RES_Mesh::UpdateAABB()
+{
+
+}
 
 void RES_Mesh::SetMaterial(RES_Material* mat)
 {

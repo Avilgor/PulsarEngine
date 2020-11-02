@@ -27,11 +27,23 @@ JSonHandler::~JSonHandler()
 	if (root) json_value_free(root);	
 }
 
-void SetArray(JSON_Array* arrayJ)
+bool JSonHandler::NodeExist()
+{
+	if (root != nullptr) return true;
+	else return false;
+}
+/*
+void JSonHandler::SetArray(JSON_Array* arrayJ)
 {
 
 }
 
+JSON_Array* JSonHandler::GetArray(const char* name)
+{
+	if (json_object_has_value_of_type(node, name, JSONArray))
+		return JSON_Array(json_object_get_array(node, name));
+}
+*/
 //Getters
 bool JSonHandler::GetBool(const char* name)
 {
@@ -79,4 +91,19 @@ void JSonHandler::SaveFloat(const char* name, float val)
 void JSonHandler::SaveString(const char* name, const char* val)
 {
 	json_object_set_string(node, name, val);
+}
+
+JSonHandler JSonHandler::SetNode(const char* name)
+{
+	json_object_set_value(node, name, json_value_init_object());
+	return JSonHandler(json_object_get_object(node, name));
+}
+///
+
+uint JSonHandler::Serialize(char** buffer)
+{
+	size_t size = json_serialization_size_pretty(root);
+	*buffer = new char[size];
+	json_serialize_to_buffer_pretty(root, *buffer, size);
+	return size;
 }

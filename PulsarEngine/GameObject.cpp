@@ -142,6 +142,11 @@ void GameObject::UpdateGameObject()
 	}
 }
 
+void GameObject::UpdateAABB()
+{
+
+}
+
 void GameObject::DrawMesh()
 {
 	if (active)

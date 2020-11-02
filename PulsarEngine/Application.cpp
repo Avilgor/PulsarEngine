@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "JSonHandler.h"
 
 #include <random>
 #include <sstream>
@@ -51,7 +52,6 @@ Application::~Application()
 bool Application::Init()
 {
 	bool ret = true;
-
 	// Call Init() in all modules
 	for (std::list<Module*>::const_iterator it = modulesList.begin(); it != modulesList.end(); ++it)
 	{
@@ -115,6 +115,7 @@ update_status Application::Update()
 bool Application::CleanUp()
 {
 	bool ret = true;
+	SaveSettings();
 	for (std::list<Module*>::const_iterator it = modulesList.begin(); it != modulesList.end(); ++it)
 	{ 
 		if (ret) ret = (*it)->CleanUp();
@@ -137,6 +138,45 @@ const char* Application::GetOrganizationName() const
 {
 	return organization.c_str();
 }
+
+void Application::SaveSettings()
+{
+	LOG("Saving settings...");
+	JSonHandler settings;
+	JSonHandler node = settings.SetNode("EngineSettings");
+	for (std::list<Module*>::const_iterator it = modulesList.begin(); it != modulesList.end(); ++it)
+	{
+		(*it)->SaveSettings(node.SetNode((*it)->name.c_str()));
+	}
+
+	char* buffer = nullptr;
+	uint size = settings.Serialize(&buffer);
+
+	fileSystem->Save("Settings.JSON", buffer, size);
+	RELEASE_ARRAY(buffer);
+}
+
+void Application::LoadSettings()
+{
+	LOG("Loading settings...");
+	char* buffer = nullptr;
+	uint size = fileSystem->Load("Settings.JSON", &buffer);
+
+	if (size > 0)
+	{
+		JSonHandler file(buffer);
+		JSonHandler settings = file.GetNode("EngineSettings");
+
+		if (settings.NodeExist())
+		{
+			for (std::list<Module*>::const_iterator it = modulesList.begin(); it != modulesList.end(); ++it)
+			{
+				(*it)->LoadSettings(settings.GetNode((*it)->name.c_str()));
+			}
+		}
+	}
+}
+
 
 std::string Application::GenerateUUID_V4()
 {

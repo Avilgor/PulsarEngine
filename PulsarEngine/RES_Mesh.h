@@ -2,6 +2,7 @@
 #define __RES_Mesh_H__
 
 #include "Globals.h"
+#include "MathGeoLib/include/MathGeoLib.h"
 #include <string>
 
 class RES_Material;
@@ -13,6 +14,7 @@ public:
 	~RES_Mesh();
 	void Clean();
 	void SetMaterial(RES_Material* mat);
+	void UpdateAABB();
 
 public:
 	std::string name;
@@ -30,6 +32,7 @@ public:
 	float* verticesArray;
 	float* normalsArray;
 	float* texturesArray;
+	AABB aabb;
 
 	bool drawVertexNormals;
 	bool drawFaceNormals;

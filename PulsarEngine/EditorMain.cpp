@@ -18,7 +18,7 @@
 #include <vector>
 #include <string>
 
-EditorMain::EditorMain(Application* app, bool start_enabled) : Module(app, start_enabled)
+EditorMain::EditorMain(Application* app, bool start_enabled) : Module(app,"Editor",start_enabled)
 {
 
 }

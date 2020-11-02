@@ -25,19 +25,23 @@ public:
 	JSonHandler(JSON_Object* obj);
 	~JSonHandler();
 
-	void SetArray(JSON_Array* arrayJ);
+	//void SetArray(JSON_Array* arrayJ);
+	uint Serialize(char** buffer);
+	bool NodeExist();
 
 	//Getters Node
 	bool GetBool(const char* name);
 	double GetNum(const char* name);
 	std::string GetString(const char* name);
 	JSonHandler GetNode(const char* name);
+	//JSON_Array GetArray(const char* name);
 
 	//Setters Node
 	void SaveBool(const char* name, bool val);
 	void SaveInt(const char* name,int val);
 	void SaveFloat(const char* name,float val);
 	void SaveString(const char* name, const char* val);
+	JSonHandler SetNode(const char* name);
 
 private:
 

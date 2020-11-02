@@ -4,7 +4,7 @@
 #include "Transform.h"
 
 
-ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(app, start_enabled)
+ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(app,"Camera",start_enabled)
 {
 	CalculateViewMatrix();
 

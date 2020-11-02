@@ -57,6 +57,8 @@ public:
 	const char* GetTitleName() const;
 	const char* GetOrganizationName() const;
 	std::string GenerateUUID_V4();
+	void SaveSettings();
+	void LoadSettings();
 
 private:
 

@@ -1,5 +1,8 @@
 #pragma once
 
+#include "JSonHandler.h"
+#include <string>
+
 class Application;
 
 class Module
@@ -9,8 +12,9 @@ private :
 
 public:
 	Application* App;
+	std::string name;
 
-	Module(Application* parent, bool start_enabled = true) : App(parent)
+	Module(Application* parent, const char* n, bool start_enabled = true) : App(parent), name(n)
 	{}
 
 	virtual ~Module()
@@ -45,4 +49,10 @@ public:
 	{ 
 		return true; 
 	}
+
+	virtual void SaveSettings(JSonHandler node)
+	{}
+
+	virtual void LoadSettings(JSonHandler node)
+	{}
 };

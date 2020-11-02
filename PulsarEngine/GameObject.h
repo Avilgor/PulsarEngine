@@ -34,6 +34,7 @@ public:
 	bool HasChilds();
 	void SetTransformUpdate(bool val) { transformUpdate = val; }
 	void SetParent(GameObject* parent);
+	void UpdateAABB();
 	std::vector<Component*> GetAllComponents() { return Components; }
 	std::vector<GameObject*> GetAllChilds() { return Childs; }
 	Component* GetFirstComponentType(ComponentTypes type);
@@ -61,6 +62,7 @@ private:
 	std::vector<GameObject*> Childs;
 	std::vector<GameObject*> toDeleteChilds;
 	std::vector<GameObject*> toAddChilds;
+
 };
 
 #endif //__GameObject_H__

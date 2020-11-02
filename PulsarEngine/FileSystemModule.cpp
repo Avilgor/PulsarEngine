@@ -30,7 +30,7 @@
 #pragma comment( lib, "Devil/lib/x86/ILUT.lib" )
 #pragma comment (lib, "Assimp/libx86/assimp.lib")
 
-FileSystemModule::FileSystemModule(Application* app, bool start_enabled) : Module(app, start_enabled)
+FileSystemModule::FileSystemModule(Application* app, bool start_enabled) : Module(app,"FileSystem" ,start_enabled)
 {
 	char* base_path = SDL_GetBasePath();
 	PHYSFS_init(nullptr);
@@ -63,7 +63,7 @@ bool FileSystemModule::Init(Config& config)
 	ilutInit();
 	ilutRenderer(ILUT_OPENGL);
 	SDL_free(write_path);
-
+	App->LoadSettings();
 	return ret;
 }
 
