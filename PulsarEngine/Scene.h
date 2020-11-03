@@ -31,7 +31,7 @@ public:
 
 public:
 	GameObject* root = nullptr;
-	std::string name;
+	std::string name = "UnknowScene";
 };
 
 #endif //__Scene_H__

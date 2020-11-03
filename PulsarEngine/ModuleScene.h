@@ -20,6 +20,7 @@ public:
 	Scene* GetActiveScene();
 	void SaveCurrentScene();
 	void LoadNewScene();
+	void CreateNewScene();
 
 
 private:

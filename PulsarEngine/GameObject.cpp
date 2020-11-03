@@ -5,6 +5,7 @@
 #include "Transform.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "JSonHandler.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
 
@@ -18,9 +19,9 @@ GameObject::GameObject(const char* n, GameObject* p)
 	showHierarchy = false;
 	toDelete = false;
 	parent = p;
+	if(p != nullptr) parentUUID = p->UUID;
 	transformUpdate = false;
 	CreateTransform();
-	//LOG("ID: %s",UUID.c_str());
 	//AddComponent(TRANSFORM_COMP);
 }
 
@@ -34,6 +35,7 @@ GameObject::GameObject(const char* n, float3 pos, Quat rotation, float3 scale, G
 	showHierarchy = false;
 	toDelete = false;
 	parent = p;
+	if (p != nullptr) parentUUID = p->UUID;
 	transformUpdate = false;
 	CreateTransform(pos,rotation,scale);
 	//LOG("ID: %s", UUID.c_str());
@@ -50,6 +52,7 @@ GameObject::GameObject(const char* n, float3 pos, float3 rotation, float3 scale,
 	showHierarchy = false;
 	toDelete = false;
 	parent = p;
+	if (p != nullptr) parentUUID = p->UUID;
 	transformUpdate = false;
 	CreateTransform(pos, rotation, scale);
 	//LOG("ID: %s", UUID.c_str());
@@ -88,6 +91,11 @@ void GameObject::SetActive(bool val)
 			(*it)->SetActive(val);
 		}
 	}
+}
+
+void GameObject::SetUUID(const char* id)
+{
+	UUID = id;
 }
 
 void GameObject::UpdateTransform()
@@ -147,12 +155,21 @@ void GameObject::UpdateAABB()
 
 }
 
-void GameObject::SaveGameobject()
+void GameObject::SaveGameobject(JSonHandler* file, const char* label)
 {
+	JSonHandler node = file->InsertNodeArray(label);
+	node.SaveString("UUID",UUID.c_str());
 
+	if (!Childs.empty())
+	{
+		for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
+		{
+			(*it)->SaveGameobject(file,label);
+		}
+	}
 }
 
-void GameObject::LoadGameObject()
+void GameObject::LoadGameObject(JSonHandler* file, const char* label)
 {
 
 }
@@ -326,6 +343,7 @@ void GameObject::SetParent(GameObject* p)
 	{
 		parent->RemoveChild(UUID);
 		parent = p;
+		parentUUID = p->UUID;
 		parent->AddChild(this);
 	}
 	else parent = p;

@@ -7,16 +7,19 @@
 #include "RES_Mesh.h"
 #include "Material.h"
 #include "RES_Material.h"
+#include "JSonHandler.h"
 
 Scene::Scene()
 {
 	root = new GameObject("Root");
+	//Camera gameobject
 }
 
 Scene::Scene(const char* n)
 {
 	name = n;
 	root = new GameObject("Root");
+	root->SetUUID("0");
 }
 
 Scene::~Scene()
@@ -130,13 +133,33 @@ void Scene::CleanScene()
 	root->DeleteAllChilds();
 	root->Delete();
 	root = nullptr;
+	delete this;
 }
 
 
 void Scene::SaveScene()
 {
+	JSonHandler* saveFile = new JSonHandler();
+	
+	//Save gameobjects hierarchy
+	JSonHandler settings;
+	std::string label = "Gameobjets";
+	settings.CreateArray(label.c_str());
+	root->SaveGameobject(&settings,label.c_str());
 
-	LOG("Scene %s saved!", name.c_str());
+	//Save gameobjects stats and components
+
+
+	//Write to file
+	char* buffer = nullptr;
+	uint size = settings.Serialize(&buffer);
+	std::string fileName = SCENES_PATH;
+	fileName.append(name);
+	fileName.append(".JSON");
+	App->fileSystem->Save(fileName.c_str(), buffer, size);
+	RELEASE_ARRAY(buffer);
+
+ 	LOG("Scene %s saved!", name.c_str());
 }
 
 void Scene::LoadScene()

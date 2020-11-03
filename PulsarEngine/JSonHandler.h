@@ -6,7 +6,7 @@
 #include "MathGeoLib\include\MathGeoLib.h"
 
 #include <string>
-#include <vector>
+#include <map>
 
 struct json_object_t;
 typedef struct json_object_t JSON_Object;
@@ -17,6 +17,18 @@ typedef struct json_value_t  JSON_Value;
 struct json_array_t;
 typedef struct json_array_t  JSON_Array;
 
+
+struct JSonArrayData
+{
+public:
+	void Clean()
+	{
+		delete dataArray;
+	}
+	JSON_Array* dataArray = nullptr;
+	int size = 0;
+};
+
 class JSonHandler
 {
 public:
@@ -25,30 +37,39 @@ public:
 	JSonHandler(JSON_Object* obj);
 	~JSonHandler();
 
-	//void SetArray(JSON_Array* arrayJ);
 	uint Serialize(char** buffer);
 	bool NodeExist();
+	void CreateArray(const char* name);
+	JSonHandler CreateNode(const char* name);
 
 	//Getters Node
+	int GetNodeItemsCount();
 	bool GetBool(const char* name);
 	double GetNum(const char* name);
 	std::string GetString(const char* name);
 	JSonHandler GetNode(const char* name);
-	//JSON_Array GetArray(const char* name);
+	double GetNumArray(const char* arName, uint index);
+	std::string GetStringArray(const char* arName, uint index);
+	bool GetBoolArray(const char* arName,uint index);	
+	JSonHandler GetNodeArray(const char* arName,uint index);
+	int GetArrayCount(const char* arName);
 
-	//Setters Node
+	//Setters Node	
 	void SaveBool(const char* name, bool val);
 	void SaveInt(const char* name,int val);
 	void SaveFloat(const char* name,float val);
 	void SaveString(const char* name, const char* val);
-	JSonHandler SetNode(const char* name);
+	void InsertBoolArray(const char* arName, bool val);
+	void InsertNumArray(const char* arName, double val);
+	void InsertStringArray(const char* arName, const char* val);
+	JSonHandler InsertNodeArray(const char* arName);
+	
 
 private:
 
 	JSON_Value* root = nullptr; 
 	JSON_Object* node = nullptr;
-	JSON_Array* arrayJSon = nullptr;
-	int size = 0;
+	std::map<std::string, JSonArrayData> nodeArrays;
 };
 
 #endif //__JSonHandler_H__

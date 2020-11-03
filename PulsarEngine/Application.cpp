@@ -143,10 +143,13 @@ void Application::SaveSettings()
 {
 	LOG("Saving settings...");
 	JSonHandler settings;
-	JSonHandler node = settings.SetNode("EngineSettings");
+	JSonHandler node = settings.CreateNode("EngineSettings");
+	/*JSonHandler sampleNode = node.CreateNode("Sample node");
+	sampleNode.SaveString("Sample","node value");
+	LOG("Get result: %s", sampleNode.GetString("Sample").c_str());*/
 	for (std::list<Module*>::const_iterator it = modulesList.begin(); it != modulesList.end(); ++it)
 	{
-		(*it)->SaveSettings(node.SetNode((*it)->name.c_str()));
+		(*it)->SaveSettings(node.CreateNode((*it)->name.c_str()));
 	}
 
 	char* buffer = nullptr;

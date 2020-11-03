@@ -22,9 +22,9 @@ update_status MenuBar::Draw()
 	
 	if (ImGui::BeginMenu("File"))
 	{
-		if (ImGui::MenuItem("New")) {}
+		if (ImGui::MenuItem("New")) { App->scene->CreateNewScene(); }
 		if (ImGui::MenuItem("Open")) {}
-		if (ImGui::MenuItem("Save")) {}
+		if (ImGui::MenuItem("Save")) { App->scene->GetActiveScene()->SaveScene(); }
 		if (ImGui::MenuItem("Exit")) { ret = UPDATE_STOP; }
 		ImGui::EndMenu();
 	}

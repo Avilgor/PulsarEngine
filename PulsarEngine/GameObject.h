@@ -19,6 +19,7 @@ public:
 
 	void UpdateTransform();
 	void UpdateGameObject();
+	void SetUUID(const char* id);
 	void DrawMesh();
 	void SetActive(bool val);
 	void AddComponent(ComponentTypes type);
@@ -40,8 +41,8 @@ public:
 	Component* GetFirstComponentType(ComponentTypes type);
 	GameObject* GetFirstChild() { return Childs[0]; }
 	GameObject* GetParent() { return parent; }
-	void SaveGameobject();
-	void LoadGameObject();
+	void SaveGameobject(JSonHandler* file, const char* label);
+	void LoadGameObject(JSonHandler* file, const char* label);
 
 private:
 	void AddPendingChilds();
@@ -49,14 +50,15 @@ private:
 	void CreateTransform(float3 pos, Quat rotation = Quat::identity, float3 scale = float3::one);
 	void CreateTransform(float3 pos, float3 rotation = float3::zero, float3 scale = float3::one);
 public:
-	std::string name;
-	bool active;
-	std::string UUID;
-	bool selected;
-	bool showHierarchy;
-	bool toDelete;
-	bool transformUpdate;
-	Transform* transform;
+	std::string name = "";
+	bool active = true;
+	std::string UUID = "";
+	std::string parentUUID = "";
+	bool selected = false;
+	bool showHierarchy = false;
+	bool toDelete = false;
+	bool transformUpdate = true;
+	Transform* transform = nullptr;
 	AABB aabb;
 	AABB oobb;
 

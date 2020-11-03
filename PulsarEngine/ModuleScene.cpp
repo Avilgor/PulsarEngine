@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "GameObject.h"
 
+
 ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app,"Scene",start_enabled)
 {}
 
@@ -29,6 +30,7 @@ bool ModuleScene::Start()
 bool ModuleScene::CleanUp()
 {
 	LOG("Unloading current scene...");
+	activeScene->SaveScene();
 	activeScene->CleanScene();
 	return true;
 }
@@ -49,6 +51,13 @@ void ModuleScene::LoadNewScene()
 	activeScene->LoadScene();
 }
 
+void ModuleScene::CreateNewScene()
+{
+	activeScene->SaveScene();
+	activeScene->CleanScene();
+	Scene* scenenew = new Scene("NewScene");
+	activeScene = scenenew;
+}
 
 // PreUpdate
 update_status ModuleScene::PreUpdate(float dt)
