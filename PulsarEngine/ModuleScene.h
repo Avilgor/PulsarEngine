@@ -2,8 +2,8 @@
 #define __ModuleScene_H__
 
 #include "Module.h"
-#include "GameObject.h"
 
+class Scene;
 
 class ModuleScene : public Module
 {
@@ -17,16 +17,13 @@ public:
 	update_status Update(float dt);
 	update_status PostUpdate(float dt);
 	bool CleanUp();
-	GameObject* GetRoot() { return root; }
-	GameObject* CreateEmptyGameobject();
-	GameObject* CreateEmptyGameobject(const char* name);
-	void CreateCube();
-	void CreatePyramid();
-	void CreatePlane();
+	Scene* GetActiveScene();
+	void SaveCurrentScene();
+	void LoadNewScene();
 
 
 private:
-	GameObject* root;
+	Scene* activeScene;
 };
 
 #endif //__ModuleScene_H__

@@ -156,6 +156,9 @@
     <ClInclude Include="parson\parson.h">
       <Filter>Sources\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Sources\Elements</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -271,6 +274,9 @@
     </ClCompile>
     <ClCompile Include="parson\parson.c">
       <Filter>Sources\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Sources\Elements</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

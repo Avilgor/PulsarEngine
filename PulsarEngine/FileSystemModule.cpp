@@ -2,14 +2,18 @@
 #include "Application.h"
 #include "FileSystemModule.h"
 #include "PathNode.h"
+#include "Scene.h"
+#include "GameObject.h"
 #include "Mesh.h"
 #include "Material.h"
-#include "PhysFS/include/physfs.h"
 #include "RES_Material.h"
 #include "RES_Mesh.h"
+
+
 #include <fstream>
 #include <filesystem>
 
+#include "PhysFS/include/physfs.h"
 #include "parson/parson.h"
 #include "Assimp/include/cfileio.h"
 #include "Assimp/include/types.h"
@@ -584,7 +588,7 @@ void FileSystemModule::GetDroppedFile(const char* path)
 	if (HasExtension(path, "fbx"))//Mesh
 	{
 		//Create gameobject
-		GameObject* go = App->scene->CreateEmptyGameobject();
+		GameObject* go = App->scene->GetActiveScene()->CreateEmptyGameobject();
 		go->AddComponent(MESH_COMP);
 		Component* comp = go->GetFirstComponentType(MESH_COMP);
 		if (comp != nullptr)

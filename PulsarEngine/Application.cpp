@@ -4,8 +4,8 @@
 #include <random>
 #include <sstream>
 
-static std::random_device              rd;
-static std::mt19937                    gen(rd());
+static std::random_device rd;
+static std::mt19937 gen(rd());
 static std::uniform_int_distribution<> dis(0, 15);
 static std::uniform_int_distribution<> dis2(8, 11);
 
@@ -34,9 +34,9 @@ Application::Application()
 	AddModule(input);
 	
 	// Scenes
+	AddModule(scene);
 	AddModule(editor);
-	AddModule(scene); 
-
+	
 	// Renderer last!
 	AddModule(renderer3D);
 }

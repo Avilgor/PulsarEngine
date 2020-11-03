@@ -1,5 +1,6 @@
 #include "Globals.h"
 #include "Application.h"
+#include "GameObject.h"
 #include "EditorMain.h"
 #include "ConfigWindow.h"
 #include "ConsoleWindow.h"

@@ -1,6 +1,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "MenuBar.h"
+#include "Scene.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
 
@@ -30,13 +31,13 @@ update_status MenuBar::Draw()
 
 	if (ImGui::BeginMenu("Create"))
 	{
-		if (ImGui::MenuItem("Gameobject")) App->scene->CreateEmptyGameobject();
+		if (ImGui::MenuItem("Gameobject")) App->scene->GetActiveScene()->CreateEmptyGameobject();
 
-		if (ImGui::MenuItem("Cube")) App->scene->CreateCube();
+		if (ImGui::MenuItem("Cube")) App->scene->GetActiveScene()->CreateCube();
 
-		if (ImGui::MenuItem("Pyramid")) App->scene->CreatePyramid();
+		if (ImGui::MenuItem("Pyramid")) App->scene->GetActiveScene()->CreatePyramid();
 
-		if (ImGui::MenuItem("Plane")) App->scene->CreatePlane();
+		if (ImGui::MenuItem("Plane")) App->scene->GetActiveScene()->CreatePlane();
 
 		ImGui::EndMenu();
 	}

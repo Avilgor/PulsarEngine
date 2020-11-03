@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "HierarchyWindow.h"
 #include "GameObject.h"
+#include "Scene.h"
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "ImGui/imgui.h"
@@ -46,7 +47,7 @@ void HierarchyWindow::SaveInputs()
 
 void HierarchyWindow::DrawSceneGameObjects()
 {
-	std::vector<GameObject*> sceneObjects = App->scene->GetRoot()->GetAllChilds();
+	std::vector<GameObject*> sceneObjects = App->scene->GetActiveScene()->GetRoot()->GetAllChilds();
 	for (std::vector<GameObject*>::iterator it = sceneObjects.begin(); it != sceneObjects.end(); ++it)
 	{
 		DrawGameObject((*it));

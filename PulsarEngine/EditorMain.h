@@ -3,6 +3,7 @@
 
 #include "Module.h"
 #include "Globals.h"
+#include "GameObject.h"
 #include "EditorWindow.h"
 #include "ImGui/imgui.h"
 
