@@ -6,7 +6,10 @@
 
 
 ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app,"Scene",start_enabled)
-{}
+{
+	save = true;
+	load = false;
+}
 
 ModuleScene::~ModuleScene()
 {}
@@ -40,15 +43,30 @@ Scene* ModuleScene::GetActiveScene()
 	return activeScene;
 }
 
-void ModuleScene::SaveCurrentScene()
+void ModuleScene::RequestSave()
 {
-	activeScene->SaveScene();
+	save = true;
 }
 
-void ModuleScene::LoadNewScene()
+void ModuleScene::RequestLoad()
+{
+	load = true;
+}
+
+void ModuleScene::SaveScene()
+{
+	activeScene->SaveScene();
+	save = false;
+}
+
+void ModuleScene::LoadScene()
 {
 	LOG("Loading new scene...");
-	activeScene->LoadScene();
+	activeScene->SaveScene();
+	activeScene->CleanScene();
+	//Set new active scene
+	//activeScene->LoadScene();
+	load = false;
 }
 
 void ModuleScene::CreateNewScene()
@@ -70,6 +88,9 @@ update_status ModuleScene::Update(float dt)
 {
 	update_status ret = UPDATE_CONTINUE;
 	ret = activeScene->UpdateScene();
+	if (save) SaveScene();
+	if (load) LoadScene();
+		
 	return ret;
 }
 

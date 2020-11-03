@@ -4,6 +4,7 @@
 #include "Transform.h"
 #include "Mesh.h"
 #include "RES_Mesh.h"
+#include "JSonHandler.h"
 #include "Glew/include/GL/glew.h"
 #include "SDL/include/SDL_opengl.h"
 #include "Material.h"
@@ -207,16 +208,6 @@ void Mesh::Render()
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
-void Mesh::OnSave()
-{
-	
-}
-
-void Mesh::OnLoad()
-{
-
-}
-
 void Mesh::DrawVertexNormals(RES_Mesh* mesh)
 {
 	float length = 0.2f;
@@ -311,4 +302,14 @@ void Mesh::CreatePlane(float size)
 	memcpy(mesh->indicesArray, index, sizeof(uint) * mesh->indexSize);
 	meshes.push_back(mesh);
 	GenerateBuffers(meshes.back());
+}
+
+void Mesh::SaveComponent(JSonHandler* file)
+{
+	JSonHandler node = file->CreateNode("Mesh");
+}
+
+void Mesh::LoadComponent(JSonHandler* file, const char* label)
+{
+
 }

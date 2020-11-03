@@ -319,8 +319,6 @@ unsigned int FileSystemModule::Load(const char* path, const char* file, char** b
 uint FileSystemModule::Load(const char* file, char** buffer) const
 {
 	uint ret = 0;
-	//std::string path = NormalizePath(file);
-	//LOG("File: %s", path.c_str());
 	PHYSFS_file* fs_file = PHYSFS_openRead(file);
 
 	if (fs_file != nullptr)
@@ -643,7 +641,6 @@ void FileSystemModule::SaveMesh(RES_Mesh* mesh)
 
 	char* buffer = new char[size];
 	char* cursor = buffer;
-	//LOG("Creating mesh save buffer...");
 	
 	//Store ranges
 	uint bytes = sizeof(ranges);
@@ -746,19 +743,21 @@ void FileSystemModule::SaveMaterial(RES_Material* mat)
 		if (ilSaveL(IL_DDS, data, size) > 0) buffer = (char*)data;		
 
 		
-		std::string pathfile = MATERIALS_PATH;
+		std::string pathfile = TEXTURES_PATH;
 		pathfile.append(mat->name.c_str());
-		//pathfile += ".meta";
+		pathfile += ".dds";
 		App->fileSystem->Save(pathfile.c_str(), buffer, size);
 		mat->path = pathfile;
 		mat->bufferSize = int(size);
 		RELEASE_ARRAY(data);
-		//RELEASE_ARRAY(buffer);
 	}
 }
 
 void FileSystemModule::LoadMaterial(RES_Material* mat, char** buffer, uint size)
 {
+	Timer timer;
+	timer.Start();
+
 	ILuint ImageName;
 	ilGenImages(1, &ImageName);
 	ilBindImage(ImageName);
@@ -767,6 +766,8 @@ void FileSystemModule::LoadMaterial(RES_Material* mat, char** buffer, uint size)
 	mat->textureID = ilutGLBindTexImage();
 
 	ilDeleteImages(1, &ImageName);
+
+	LOG("Texture material %s loaded in %.3f s", mat->name.c_str(), timer.ReadSec());
 }
 
 bool FileSystemModule::ImportMesh(Mesh* mesh, const char* path)

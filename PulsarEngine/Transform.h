@@ -6,6 +6,7 @@
 
 #pragma comment (lib, "MathGeoLib/libx86/MathGeoLib.lib") 
 
+class JSonHandler;
 
 class Transform : public Component
 {
@@ -39,13 +40,12 @@ public:
 	void SetQuatRotation(Quat rot);
 	void SetEulerRotation(float3 degrees);
 	void SetGlobalTransform(float4x4 transform);
-	void OnSave();
-	void OnLoad();
+	void SaveComponent(JSonHandler* file);
+	void LoadComponent(JSonHandler* file, const char* label);
 
 private:
 	void UpdateTRS();
-	void UpdateLocal();
-	bool updateTransform;
+	void UpdateLocal();	
 	void UpdateQuaternion();
 
 private:
@@ -57,6 +57,7 @@ private:
 	float3 scale;
 	Quat quaternionRotation;
 	float3 eulerRotation;
+	bool updateTransform;
 };
 
 #endif //__Transform_H__

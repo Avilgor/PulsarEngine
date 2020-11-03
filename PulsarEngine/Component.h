@@ -6,6 +6,7 @@
 class GameObject;
 class Mesh;
 class Material;
+class JSonHandler;
 
 class Component
 {
@@ -20,8 +21,8 @@ public:
 	Component* GetComponent() { return component; }
 	Mesh* AsMesh() { return mesh; }
 	Material* AsMaterial() { return material; }
-	virtual uint OnSave(char** buffer) { return 0; }
-	virtual void OnLoad() {}
+	virtual void SaveComponent(JSonHandler* file) {}
+	virtual void LoadComponent(JSonHandler* file, const char* label) {}
 
 
 public:

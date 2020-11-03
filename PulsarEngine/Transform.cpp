@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "GameObject.h"
 #include "Transform.h"
+#include "JSonHandler.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
 
@@ -167,19 +168,27 @@ void Transform::SetGlobalTransform(float4x4 t)
 	updateTransform = true;
 }
 
-void Transform::OnSave()
+void Transform::SaveComponent(JSonHandler* file)
 {
-	/*char* buffer = nullptr;
-	uint size = 0;
-
-	if (size > 0)
-	{
-		App->fileSystem->Save("", buffer, size);
-		RELEASE_ARRAY(buffer);
-	}*/
+	JSonHandler node = file->CreateNode("Transform");
+	//Position
+	node.CreateArray("Position");
+	node.InsertNumArray("Position",position.x);
+	node.InsertNumArray("Position", position.y);
+	node.InsertNumArray("Position", position.z);
+	//Rotation
+	node.CreateArray("Rotation");
+	node.InsertNumArray("Rotation", eulerRotation.x);
+	node.InsertNumArray("Rotation", eulerRotation.y);
+	node.InsertNumArray("Rotation", eulerRotation.z);
+	//Size
+	node.CreateArray("Scale");
+	node.InsertNumArray("Scale", scale.x);
+	node.InsertNumArray("Scale", scale.y);
+	node.InsertNumArray("Scale", scale.z);
 }
 
-void Transform::OnLoad()
+void Transform::LoadComponent(JSonHandler* file, const char* label)
 {
 
 }

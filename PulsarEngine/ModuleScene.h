@@ -18,12 +18,17 @@ public:
 	update_status PostUpdate(float dt);
 	bool CleanUp();
 	Scene* GetActiveScene();
-	void SaveCurrentScene();
-	void LoadNewScene();
+	void RequestSave();
+	void RequestLoad();
 	void CreateNewScene();
 
+private:
+	void SaveScene();
+	void LoadScene();
 
 private:
+	bool save;
+	bool load;
 	Scene* activeScene;
 };
 

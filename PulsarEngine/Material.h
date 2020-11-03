@@ -8,6 +8,7 @@
 
 #include <vector>
 
+class JSonHandler;
 
 class Material : public Component
 {
@@ -31,6 +32,8 @@ public:
 	void DeleteMaterials();
 	void ChangeMaterialTexture(const char* path,int index);
 	void ChangeAllMaterialsTextures(const char* path);
+	void SaveComponent(JSonHandler* file);
+	void LoadComponent(JSonHandler* file, const char* label);
 
 public:
 	

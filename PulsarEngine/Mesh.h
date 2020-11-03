@@ -13,6 +13,7 @@
 
 class RES_Material;
 class RES_Mesh;
+class JSonHandler;
 
 class Mesh : public Component
 {
@@ -37,8 +38,8 @@ public:
 	void CreateCube();
 	void CreatePyramid();
 	void CreatePlane(float size);
-	void OnSave();
-	void OnLoad();
+	void SaveComponent(JSonHandler* file);
+	void LoadComponent(JSonHandler* file, const char* label);
 
 public:
 

@@ -3,6 +3,7 @@
 #include "FileSystemModule.h"
 #include "Material.h"
 #include "RES_Material.h"
+#include "JSonHandler.h"
 #include "Assimp/include/material.h"
 #include "Assimp/include/texture.h"
 #include "Glew/include/GL/glew.h"
@@ -88,9 +89,9 @@ void Material::LoadTextureNewMaterial(std::string pathtext)
 	//mat->name = "Material texture";
 	mat->texturesNum = 1;	
 	App->fileSystem->LoadTexture(pathtext.c_str(),mat);
-	char* buffer = nullptr;
-	App->fileSystem->Load(mat->path.c_str(), &buffer);
-	App->fileSystem->LoadMaterial(mat, &buffer,mat->bufferSize);
+	//char* buffer = nullptr;
+	//App->fileSystem->Load(mat->path.c_str(), &buffer);
+	//App->fileSystem->LoadMaterial(mat, &buffer,mat->bufferSize);
 	GenerateBuffer(mat);
 	materials.push_back(mat);
 }
@@ -198,4 +199,14 @@ void Material::ChangeAllMaterialsTextures(const char* path)
 void Material::LoadMaterial(RES_Material* mat)
 {	
 	GenerateBuffer(mat);
+}
+
+void Material::SaveComponent(JSonHandler* file)
+{
+	JSonHandler node = file->CreateNode("Material");
+}
+
+void Material::LoadComponent(JSonHandler* file, const char* label)
+{
+
 }

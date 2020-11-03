@@ -158,13 +158,42 @@ void GameObject::UpdateAABB()
 void GameObject::SaveGameobject(JSonHandler* file, const char* label)
 {
 	JSonHandler node = file->InsertNodeArray(label);
-	node.SaveString("UUID",UUID.c_str());
 
+	//Gameobject stats
+	node.SaveString("UUID",UUID.c_str());
+	node.SaveString("Parent_UUID", parentUUID.c_str());
+	node.SaveString("name", name.c_str());
+	node.SaveBool("active", active);
+
+	//Save childs UUID
+	node.CreateArray("Childs");	
 	if (!Childs.empty())
 	{
 		for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
 		{
-			(*it)->SaveGameobject(file,label);
+			node.InsertStringArray("Childs", (*it)->UUID.c_str());
+			//(*it)->SaveGameobject(file,label);
+		}
+	}
+
+	//Save components	
+	JSonHandler comp = node.CreateNode("Components");
+	if(transform != nullptr) transform->SaveComponent(&comp);
+	if (!Components.empty())
+	{
+		for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)
+		{
+			(*it)->SaveComponent(&comp);
+		}
+	}
+
+	//Call all childs save method
+	if (!Childs.empty())
+	{
+		for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
+		{
+			//node.InsertStringArray("Childs", (*it)->UUID.c_str());
+			(*it)->SaveGameobject(file, label);
 		}
 	}
 }
@@ -346,7 +375,11 @@ void GameObject::SetParent(GameObject* p)
 		parentUUID = p->UUID;
 		parent->AddChild(this);
 	}
-	else parent = p;
+	else
+	{
+		parentUUID = p->UUID;
+		parent = p;
+	}
 }
 
 void GameObject::Delete()

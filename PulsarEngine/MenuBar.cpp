@@ -24,7 +24,7 @@ update_status MenuBar::Draw()
 	{
 		if (ImGui::MenuItem("New")) { App->scene->CreateNewScene(); }
 		if (ImGui::MenuItem("Open")) {}
-		if (ImGui::MenuItem("Save")) { App->scene->GetActiveScene()->SaveScene(); }
+		if (ImGui::MenuItem("Save")) { App->scene->RequestSave(); }
 		if (ImGui::MenuItem("Exit")) { ret = UPDATE_STOP; }
 		ImGui::EndMenu();
 	}
