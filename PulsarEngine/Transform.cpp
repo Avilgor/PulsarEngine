@@ -197,17 +197,17 @@ void Transform::LoadComponent(JSonHandler* file)
 	file->LoadArray("Position");
 	file->LoadArray("Rotation");
 	file->LoadArray("Scale");
-	float3 pos((float)file->GetNumArray("Position", 1), (float)file->GetNumArray("Position", 2), (float)file->GetNumArray("Position", 3));
+	float3 pos((float)file->GetNumArray("Position", 0), (float)file->GetNumArray("Position", 1), (float)file->GetNumArray("Position", 2));
 	SetPosition(pos);
 	/*position.x = ;
 	position.y = ;
 	position.z = ;*/
-	float3 rot((float)file->GetNumArray("Rotation", 1), (float)file->GetNumArray("Rotation", 2),(float)file->GetNumArray("Rotation", 3));
+	float3 rot((float)file->GetNumArray("Rotation", 0), (float)file->GetNumArray("Rotation", 1),(float)file->GetNumArray("Rotation", 2));
 	SetEulerRotation(rot);
 	/*eulerRotation.x = ;
 	eulerRotation.y = ;
 	eulerRotation.z = ;*/
-	float3 s((float)file->GetNumArray("Scale", 1),(float)file->GetNumArray("Scale", 2),(float)file->GetNumArray("Scale", 3));
+	float3 s((float)file->GetNumArray("Scale", 0),(float)file->GetNumArray("Scale", 1),(float)file->GetNumArray("Scale", 2));
 	SetScale(s);
 	/*scale.x = ;
 	scale.y = ;
