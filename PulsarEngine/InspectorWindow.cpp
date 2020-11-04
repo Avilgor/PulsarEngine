@@ -207,7 +207,7 @@ void InspectorWindow::MaterialSection(GameObject* go)
 			bool colorChange = false;
 			ImGui::Text("Material %d", i);		
 			ImGui::Text("Name: %s", (*it)->name.c_str());
-			ImGui::Text("Path: %s", (*it)->path.c_str());
+			ImGui::Text("Path: %s", (*it)->texturePath.c_str());
 
 			ImGui::Separator();
 

@@ -119,7 +119,6 @@ JSON_Object * json_object_get_object (const JSON_Object *object, const char *nam
 JSON_Array  * json_object_get_array  (const JSON_Object *object, const char *name);
 double        json_object_get_number (const JSON_Object *object, const char *name); /* returns 0 on fail */
 int           json_object_get_boolean(const JSON_Object *object, const char *name); /* returns -1 on fail */
-JSON_Object * json_object_in_array_by_name(const char* name, JSON_Array* modules_array);
 
 /* dotget functions enable addressing values with dot notation in nested objects,
  just like in structs or c++/java/c# objects (e.g. objectA.objectB.value).
@@ -181,7 +180,6 @@ JSON_Value  * json_array_get_value  (const JSON_Array *array, size_t index);
 const char  * json_array_get_string (const JSON_Array *array, size_t index);
 size_t        json_array_get_string_len(const JSON_Array *array, size_t index); /* doesn't account for last null character */
 JSON_Object * json_array_get_object (const JSON_Array *array, size_t index);
-JSON_Object*  json_array_get_object_by_name(const JSON_Array* array, const char* name);
 JSON_Array  * json_array_get_array  (const JSON_Array *array, size_t index);
 double        json_array_get_number (const JSON_Array *array, size_t index); /* returns 0 on fail */
 int           json_array_get_boolean(const JSON_Array *array, size_t index); /* returns -1 on fail */

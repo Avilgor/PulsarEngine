@@ -12,7 +12,6 @@
 GameObject::GameObject(const char* n, GameObject* p)
 {
 	UUID = App->GenerateUUID_V4();
-	//App->GoIDNum += 1;
 	name = n;
 	active = true;
 	selected = false;
@@ -177,13 +176,14 @@ void GameObject::SaveGameobject(JSonHandler* file, const char* label)
 	}
 
 	//Save components	
-	JSonHandler comp = node.CreateNode("Components");
-	if(transform != nullptr) transform->SaveComponent(&comp);
+	//JSonHandler comp = node.CreateNode("Components");
+	node.CreateArray("Components");
+	if(transform != nullptr) transform->SaveComponent(&node);
 	if (!Components.empty())
 	{
 		for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)
 		{
-			(*it)->SaveComponent(&comp);
+			(*it)->SaveComponent(&node);
 		}
 	}
 
@@ -198,9 +198,46 @@ void GameObject::SaveGameobject(JSonHandler* file, const char* label)
 	}
 }
 
-void GameObject::LoadGameObject(JSonHandler* file, const char* label)
+void GameObject::LoadGameObject(JSonHandler* file)
 {
+	//Gameobject stats
+	UUID = file->GetString("UUID");
+	parentUUID = file->GetString("Parent_UUID");
+	name = file->GetString("name");
+	active = file->GetBool("active");
 
+	//LOG("Loading %s gameobject components...",name.c_str());
+	//Load components	
+	file->LoadArray("Components");
+	int num = file->GetArrayCount("Components");
+	if (num > 0)
+	{
+		Component* comp = nullptr;
+		for (int i = 0; i < num; i++)
+		{
+			JSonHandler json = file->GetNodeArray("Components", i);
+			//int num = json.GetNum("CompType");
+			//LOG("Comp type: %d",num);
+			//ComponentTypes t = (ComponentTypes)num;
+			switch ((int)json.GetNum("CompType"))
+			{
+			case TRANSFORM_COMP:
+				//LOG("Load transform");
+				transform->LoadComponent(&json);
+				break;
+			case MESH_COMP:
+				//LOG("Load mesh");
+				comp = AddComponent(MESH_COMP);
+				if (comp != nullptr) comp->AsMesh()->LoadComponent(&json);
+				break;
+			case MATERIAL_COMP:
+				//LOG("Load material");
+				comp = AddComponent(MATERIAL_COMP);
+				if (comp != nullptr) comp->AsMaterial()->LoadComponent(&json);
+				break;
+			}	
+		}
+	}
 }
 
 void GameObject::DrawMesh()
@@ -241,20 +278,28 @@ void GameObject::CreateTransform(float3 pos, float3 rot, float3 scale)
 }
 
 
-void GameObject::AddComponent(ComponentTypes type)
+Component* GameObject::AddComponent(ComponentTypes type)
 {
+	Component* comp = nullptr;
+	Mesh* mesh = nullptr;
+	Material* mat = nullptr;
 	switch (type)
 	{
 	/*case TRANSFORM_COMP:
 		transform = new Transform(this);
 		break;*/
 	case MESH_COMP:
-		Components.push_back((new Mesh(this))->GetComponent());
+		mesh = new Mesh(this);
+		Components.push_back(mesh->component);
+		return mesh->component;
 		break;
 	case MATERIAL_COMP:
-		Components.push_back((new Material(this))->GetComponent());
+		mat = new Material(this);
+		Components.push_back(mat->component);
+		return mat->component;
 		break;
 	default:
+		return comp;
 		break;
 	}
 }
@@ -296,9 +341,9 @@ void GameObject::DeleteGOComponent(ComponentTypes type)
 }
 
 void GameObject::AddChild(GameObject* child)
-{
-	child->SetParent(this);
+{	
 	toAddChilds.push_back(child);
+	child->SetParent(this);
 }
 
 void GameObject::CreateChild()
@@ -368,12 +413,12 @@ bool GameObject::HasChilds()
 
 void GameObject::SetParent(GameObject* p)
 {
-	if (parent != nullptr && p->UUID.compare(parent->UUID) != 0)
+	if (parent != nullptr /*&& p->UUID.compare(parent->UUID) != 0*/)
 	{
 		parent->RemoveChild(UUID);
 		parent = p;
 		parentUUID = p->UUID;
-		parent->AddChild(this);
+		//parent->AddChild(this);
 	}
 	else
 	{

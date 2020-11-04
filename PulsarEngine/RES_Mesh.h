@@ -6,6 +6,7 @@
 #include <string>
 
 class RES_Material;
+class JSonHandler;
 
 class RES_Mesh
 {
@@ -15,10 +16,12 @@ public:
 	void Clean();
 	void SetMaterial(RES_Material* mat);
 	void UpdateAABB();
+	void SaveMesh(JSonHandler* file, const char* label);
+	void LoadMesh(JSonHandler* file);
 
 public:
-	std::string name;
-	std::string path;
+	std::string name="";
+	std::string path="";
 	uint VAO;
 	uint idVertex;
 	uint idIndex;
@@ -34,7 +37,8 @@ public:
 	float* normalsArray;
 	float* texturesArray;
 	AABB aabb;
-
+	std::string UUID="";
+	std::string materialUUID = "";
 	bool drawVertexNormals;
 	bool drawFaceNormals;
 	RES_Material* material;

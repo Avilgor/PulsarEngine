@@ -32,8 +32,9 @@ public:
 	void DeleteMaterials();
 	void ChangeMaterialTexture(const char* path,int index);
 	void ChangeAllMaterialsTextures(const char* path);
+	RES_Material* CreateMaterial(JSonHandler* file);
 	void SaveComponent(JSonHandler* file);
-	void LoadComponent(JSonHandler* file, const char* label);
+	void LoadComponent(JSonHandler* file);
 
 public:
 	

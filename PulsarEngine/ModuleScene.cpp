@@ -7,7 +7,7 @@
 
 ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app,"Scene",start_enabled)
 {
-	save = true;
+	save = false;
 	load = false;
 }
 
@@ -26,6 +26,7 @@ bool ModuleScene::Start()
 	LOG("Starting module scene...");
 	bool ret = true;	
 	activeScene->StartScene();
+	LoadScene();
 	return ret;
 }
 
@@ -33,7 +34,7 @@ bool ModuleScene::Start()
 bool ModuleScene::CleanUp()
 {
 	LOG("Unloading current scene...");
-	activeScene->SaveScene();
+	//activeScene->SaveScene();
 	activeScene->CleanScene();
 	return true;
 }
@@ -62,11 +63,26 @@ void ModuleScene::SaveScene()
 void ModuleScene::LoadScene()
 {
 	LOG("Loading new scene...");
-	activeScene->SaveScene();
-	activeScene->CleanScene();
-	//Set new active scene
-	//activeScene->LoadScene();
-	load = false;
+
+	Scene* scene = new Scene();
+	char* buffer = nullptr;
+	std::string path = SCENES_PATH;
+	path.append("SampleScene.JSON");
+	uint size = App->fileSystem->Load(path.c_str(), &buffer);
+	if (size > 0)
+	{
+		//activeScene->SaveScene();
+		activeScene->CleanScene();
+
+		JSonHandler* node = new JSonHandler(buffer);
+		activeScene = scene;
+		activeScene->LoadScene(node);
+		load = false;
+
+		delete node;
+		RELEASE_ARRAY(buffer);
+	}
+	else LOG("Error loading scene.");
 }
 
 void ModuleScene::CreateNewScene()

@@ -594,7 +594,7 @@ void FileSystemModule::GetDroppedFile(const char* path)
 			if (comp->AsMesh() != nullptr) ImportMesh(comp->AsMesh(), path);
 		}
 	}
-	else if (HasExtension(path, "png"))//Texture
+	else if (HasExtension(path, "png") || HasExtension(path, "dds"))//Texture
 	{
 		//Set texture to selected gameobjects
 		if (App->editor->HasSelection())
@@ -747,7 +747,7 @@ void FileSystemModule::SaveMaterial(RES_Material* mat)
 		pathfile.append(mat->name.c_str());
 		pathfile += ".dds";
 		App->fileSystem->Save(pathfile.c_str(), buffer, size);
-		mat->path = pathfile;
+		mat->texturePath = pathfile;
 		mat->bufferSize = int(size);
 		RELEASE_ARRAY(data);
 	}
@@ -755,19 +755,61 @@ void FileSystemModule::SaveMaterial(RES_Material* mat)
 
 void FileSystemModule::LoadMaterial(RES_Material* mat, char** buffer, uint size)
 {
-	Timer timer;
-	timer.Start();
+	if (mat != nullptr)
+	{
+		Timer timer;
+		timer.Start();
 
-	ILuint ImageName;
-	ilGenImages(1, &ImageName);
-	ilBindImage(ImageName);
+		ILuint ImageName;
+		ilGenImages(1, &ImageName);
+		ilBindImage(ImageName);
 
-	ilLoadL(IL_TYPE_UNKNOWN, (const void*)buffer, size);
-	mat->textureID = ilutGLBindTexImage();
+		ilEnable(IL_ORIGIN_SET);
+		ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
 
-	ilDeleteImages(1, &ImageName);
+		if (ilLoadImage(mat->texturePath.c_str()) == IL_FALSE)
+		{
+			LOG("Error trying to load the texture from %s", mat->texturePath.c_str());
+		}
+		else
+		{
+			ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
+			mat->textureID = ImageName;
+			mat->textData = ilGetData();
+			mat->textWidth = ilGetInteger(IL_IMAGE_WIDTH);
+			mat->textHeight = ilGetInteger(IL_IMAGE_HEIGHT);
+		}
+		/*if (ilLoadL(IL_TYPE_UNKNOWN, (const void*)buffer, size) == IL_FALSE)
+		{		
+			LOG("Failed loading texture from buffer %s", mat->texturePath.c_str());
+			//ilBindImage(0);
+			ilDeleteImages(1, &ImageName);
+			ilGenImages(1, &ImageName);
+			ilBindImage(ImageName);
+			RELEASE_ARRAY(buffer);
+			
+		}
+		else
+		{
+			ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
+			mat->textureID = ImageName;
+			mat->textData = ilGetData();
+			mat->textWidth = ilGetInteger(IL_IMAGE_WIDTH);
+			mat->textHeight = ilGetInteger(IL_IMAGE_HEIGHT); 
+			LOG("Texture material %s loaded in %.3f s", mat->name.c_str(), timer.ReadSec());
+		}*/
 
-	LOG("Texture material %s loaded in %.3f s", mat->name.c_str(), timer.ReadSec());
+		/*mat->textureID = ilutGLBindTexImage();
+		/// This is not working
+		mat->textData = ilGetData();
+		mat->textWidth = ilGetInteger(IL_IMAGE_WIDTH);
+		mat->textHeight = ilGetInteger(IL_IMAGE_HEIGHT);
+		/// 
+		ilBindImage(0);
+		//ilDeleteImages(1, &ImageName);*/
+		
+	}
+	else LOG("Error loading texture to material.");
 }
 
 bool FileSystemModule::ImportMesh(Mesh* mesh, const char* path)
@@ -777,7 +819,7 @@ bool FileSystemModule::ImportMesh(Mesh* mesh, const char* path)
 
 	if (scene != nullptr && scene->HasMeshes())
 	{
-		//mesh->path = path;		
+		mesh->pathFBX = path;		
 		mesh->name = App->fileSystem->GetFileName(path);
 
 		for (int i = 0; i < scene->mNumMeshes; i++)
@@ -837,6 +879,11 @@ bool FileSystemModule::ImportMesh(Mesh* mesh, const char* path)
 	return ret;
 }
 
+void FileSystemModule::UnloadTexure(uint id)
+{
+	ilDeleteImages(1, &id);
+}
+/*
 
 bool FileSystemModule::ImportAll(Mesh* mesh, Material* mat, const char* path)
 {
@@ -868,7 +915,7 @@ bool FileSystemModule::ImportMaterialFBX(Material* mat, const char* path)
 
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &tempPath);
 			//LOG("Texture base path: %s", tempPath.C_Str());
-			matInfo->path = dir.append(tempPath.C_Str());
+			matInfo->texturePath = dir.append(tempPath.C_Str());
 			aiColor4D color;
 			material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
 			matInfo->color = Color(color.r, color.g, color.b, color.a);
@@ -902,7 +949,7 @@ bool FileSystemModule::ImportMaterialFBX(Material* mat, const char* pathfbx, con
 			RES_Material* matInfo = new RES_Material();
 			aiMaterial* material = scene->mMaterials[i];
 			matInfo->texturesNum = material->GetTextureCount(aiTextureType_DIFFUSE);
-			matInfo->path = pathtext;
+			matInfo->texturePath = pathtext;
 			aiColor4D color;
 			material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
 			matInfo->color = Color(color.r, color.g, color.b, color.a);
@@ -922,4 +969,4 @@ bool FileSystemModule::ImportMaterialFBX(Material* mat, const char* pathfbx, con
 	}
 
 	return ret;
-}
+}*/

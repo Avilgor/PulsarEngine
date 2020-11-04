@@ -9,9 +9,12 @@
 #include "RES_Material.h"
 #include "JSonHandler.h"
 
+#include <map>
+
 Scene::Scene()
 {
 	root = new GameObject("Root");
+	root->SetUUID("0");
 	//Camera gameobject
 }
 
@@ -37,9 +40,8 @@ void Scene::StartScene()
 
 	App->camera->Move(vec3(1.0f, 1.0f, 0.0f));
 	App->camera->LookAt(vec3(0, 0, 0));
-
-
-	GameObject* trump = new GameObject("Trump", float3(3.0f, 0.0f, 0.0f), float3(-90.0f, 0.0f, 0.0f), float3(0.02f, 0.02f, 0.02f));
+	
+	/*GameObject* trump = new GameObject("Trump", float3(3.0f, 0.0f, 0.0f), float3(-90.0f, 0.0f, 0.0f), float3(0.02f, 0.02f, 0.02f));
 	trump->AddComponent(MESH_COMP);
 	trump->AddComponent(MATERIAL_COMP);
 	root->AddChild(trump);
@@ -107,21 +109,23 @@ void Scene::StartScene()
 			tempMat = comp3->AsMaterial()->GetLastMaterial();
 			if (tempMat != nullptr) meshComp->SetMeshMaterial(tempMat, 0);
 		}
-	}
-
+	}*/
 }
 
 update_status Scene::UpdateScene()
 {
 	update_status ret = UPDATE_CONTINUE;
-
+	//LOG("Scene update");
 	App->renderer3D->RenderGroundGrid(10);
 
 	if (root != nullptr)
 	{
 		root->UpdateTransform();
+		//LOG("Transforms update");
 		root->UpdateGameObject();
+		//LOG("Gameobjects update");
 		root->DrawMesh();
+		//LOG("Draw mesh update");
 	}
 
 	return ret;
@@ -143,7 +147,8 @@ void Scene::SaveScene()
 	
 	//Save gameobjects hierarchy
 	JSonHandler settings;
-	std::string label = "Gameobjets";
+	settings.SaveString("Name",name.c_str());
+	std::string label = "Gameobjects";
 	settings.CreateArray(label.c_str());
 	root->SaveGameobject(&settings,label.c_str());
 
@@ -162,9 +167,38 @@ void Scene::SaveScene()
  	LOG("Scene %s saved!", name.c_str());
 }
 
-void Scene::LoadScene()
+void Scene::LoadScene(JSonHandler* file)
 {
+	std::map <std::string, GameObject*> gameobjectsLoaded;
+	name = file->GetString("Name");
+	file->LoadArray("Gameobjects");
+	int num = file->GetArrayCount("Gameobjects");
+	gameobjectsLoaded.emplace(root->UUID,root);
 
+	if (num > 1)//Start with 1 to avoid root
+	{
+		//Load all gameobjects
+		for (int a = 1; a < num; a++)
+		{
+			GameObject* go = new GameObject();
+			JSonHandler temp = file->GetNodeArray("Gameobjects",a);
+			go->LoadGameObject(&temp);
+			gameobjectsLoaded.emplace(go->UUID, go);
+		}
+		LOG("Scene gameobjects loaded...");
+		
+		//Set gameobjects hierarchy
+		for (std::map<std::string,GameObject*>::iterator it = gameobjectsLoaded.begin(); it != gameobjectsLoaded.end(); it++)
+		{
+			if ((*it).second->UUID.compare("0") != 0)
+			{
+				gameobjectsLoaded[(*it).second->parentUUID]->AddChild((*it).second);
+				(*it).second->SetParent(gameobjectsLoaded[(*it).second->parentUUID]);
+			}
+		}
+		LOG("Gameobjects childs set");
+	}
+	gameobjectsLoaded.clear();
 	LOG("Scene %s loaded!", name.c_str());
 }
 

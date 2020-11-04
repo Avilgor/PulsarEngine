@@ -7,6 +7,7 @@
 class GameObject;
 class Mesh;
 class Material;
+class JSonHandler;
 
 class Scene
 {
@@ -20,7 +21,7 @@ public:
 	update_status UpdateScene();
 	void CleanScene();
 	void SaveScene();
-	void LoadScene();
+	void LoadScene(JSonHandler* file);
 	GameObject* GetRoot() { return root; }
 	GameObject* CreateEmptyGameobject();
 	GameObject* CreateEmptyGameobject(const char* name);

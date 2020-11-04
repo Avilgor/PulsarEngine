@@ -6,7 +6,7 @@
 
 #include <string>
 
-
+class JSonHandler;
 typedef unsigned char GLubyte;
 
 class RES_Material
@@ -18,12 +18,15 @@ public:
 	void Clean();
 	void ChangeColor(float r, float g, float b, float a);
 	void ChangeColor(Color col);
+	void SaveMaterial(JSonHandler* file, const char* label);
+	void LoadMaterial(JSonHandler* file);
 
 public:
 	GLubyte* textData = nullptr;
 	uint texturesNum = 0;
 	uint textureID = 0;
-	std::string path = "";
+	std::string UUID;
+	std::string texturePath = "";
 	Color color = Color(1.0f, 1.0f, 1.0f);
 	std::string name = "None";
 	int bufferSize = 0;

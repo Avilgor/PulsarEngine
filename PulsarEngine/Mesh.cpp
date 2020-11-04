@@ -12,7 +12,7 @@
 
 Mesh::Mesh(GameObject* parent) : Component(parent, MESH_COMP)
 {
-	path = "";
+	pathFBX = "";
 	component->mesh = this;
 	drawTexture = true;
 }
@@ -39,23 +39,33 @@ void Mesh::DeleteComponent()
 	delete this;
 }
 
-bool Mesh::LoadImportedMesh()
+void Mesh::SetMaterialByUUID(RES_Material* mat)
 {
-	bool ret = true;
-	//GenerateBuffers();
-	return ret;
+//	LOG("Setting meshes materials");
+	if (!meshes.empty())
+	{
+		for (std::vector<RES_Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it)
+		{
+			if ((*it)->materialUUID.compare(mat->UUID) == 0) (*it)->SetMaterial(mat);
+		}
+	}
 }
 
-void Mesh::AddMesh(RES_Mesh* mesh)
+void Mesh::LoadMesh(RES_Mesh* mesh)
 {
-	meshes.push_back(mesh);
 	char* buffer = nullptr;
 	std::string path = MESHES_PATH;
 	path.append(mesh->name);
 	mesh->path = path;
-	App->fileSystem->Load(path.c_str(),&buffer);
+	App->fileSystem->Load(path.c_str(), &buffer);
 	App->fileSystem->LoadMesh(mesh, buffer);
-	GenerateBuffers(meshes.back());
+	GenerateBuffers(mesh);
+}
+
+void Mesh::AddMesh(RES_Mesh* mesh)
+{
+	meshes.push_back(mesh);	
+	LoadMesh(mesh);
 }
 
 void Mesh::RemoveMesh(int index)
@@ -304,12 +314,45 @@ void Mesh::CreatePlane(float size)
 	GenerateBuffers(meshes.back());
 }
 
-void Mesh::SaveComponent(JSonHandler* file)
+RES_Mesh* Mesh::CreateMesh(JSonHandler* file)
 {
-	JSonHandler node = file->CreateNode("Mesh");
+	RES_Mesh* mesh = new RES_Mesh();
+	mesh->LoadMesh(file);
+	meshes.push_back(mesh);
+	return mesh;
 }
 
-void Mesh::LoadComponent(JSonHandler* file, const char* label)
+void Mesh::SaveComponent(JSonHandler* file)
 {
+	JSonHandler node = file->InsertNodeArray("Components");
+	node.SaveNum("CompType", (double)compType);
+	//node.SaveString("UUID", UUID.c_str());
+	node.SaveBool("Active",active);
+	node.SaveBool("DrawTexture",drawTexture);
+	node.SaveString("FBX_Path", pathFBX.c_str());
+	node.CreateArray("Meshes");
+	for (std::vector<RES_Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it)
+	{
+		(*it)->SaveMesh(&node,"Meshes");
+	}
+}
 
+void Mesh::LoadComponent(JSonHandler* file)
+{
+	//JSonHandler node = file->GetNode("Mesh");
+	UUID = file->GetString("UUID");
+	active = file->GetBool("Active");
+	drawTexture = file->GetBool("DrawTexture");
+	pathFBX = file->GetString("FBX_Path");
+	file->LoadArray("Meshes");
+	int i = file->GetArrayCount("Meshes");
+	if (i > 0)
+	{
+		for (int a = 0;a < i;a++)
+		{
+			JSonHandler tempnode = file->GetNodeArray("Meshes",a);
+			RES_Mesh* temp = CreateMesh(&tempnode);
+			LoadMesh(temp);
+		}
+	}
 }

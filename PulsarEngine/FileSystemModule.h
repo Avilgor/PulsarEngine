@@ -81,13 +81,14 @@ public:
 
 
 	bool ImportMesh(Mesh* mesh, const char* path);
-	bool ImportMaterialFBX(Material* mesh, const char* path);
-	bool ImportMaterialFBX(Material* mesh, const char* pathfbx, const char* pathtext);
-	bool ImportAll(Mesh* mesh, Material* mat, const char* path);
+	//bool ImportMaterialFBX(Material* mesh, const char* path);
+	//bool ImportMaterialFBX(Material* mesh, const char* pathfbx, const char* pathtext);
+	//bool ImportAll(Mesh* mesh, Material* mat, const char* path);
 	void SaveMesh(RES_Mesh* mesh/*, char** fileBuffer*/);
 	void LoadMesh(RES_Mesh* mesh, char* fileBuffer);
 	void SaveMaterial(RES_Material* mat);
 	void LoadMaterial(RES_Material* mat, char** buffer,uint size);
+	void UnloadTexure(uint id);
 };
 
 #endif //__FileSystemModule_H__

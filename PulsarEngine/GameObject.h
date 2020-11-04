@@ -22,7 +22,7 @@ public:
 	void SetUUID(const char* id);
 	void DrawMesh();
 	void SetActive(bool val);
-	void AddComponent(ComponentTypes type);
+	Component* AddComponent(ComponentTypes type);
 	void Delete();
 	void SaveToDelete(GameObject* trash);
 	void DeleteGOComponent(ComponentTypes type);
@@ -42,7 +42,7 @@ public:
 	GameObject* GetFirstChild() { return Childs[0]; }
 	GameObject* GetParent() { return parent; }
 	void SaveGameobject(JSonHandler* file, const char* label);
-	void LoadGameObject(JSonHandler* file, const char* label);
+	void LoadGameObject(JSonHandler* file);
 
 private:
 	void AddPendingChilds();

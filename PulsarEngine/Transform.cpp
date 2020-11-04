@@ -170,10 +170,12 @@ void Transform::SetGlobalTransform(float4x4 t)
 
 void Transform::SaveComponent(JSonHandler* file)
 {
-	JSonHandler node = file->CreateNode("Transform");
+	JSonHandler node = file->InsertNodeArray("Components");
+	node.SaveNum("CompType", (double)compType);
+	node.SaveString("UUID",UUID.c_str());
 	//Position
 	node.CreateArray("Position");
-	node.InsertNumArray("Position",position.x);
+	node.InsertNumArray("Position", position.x);
 	node.InsertNumArray("Position", position.y);
 	node.InsertNumArray("Position", position.z);
 	//Rotation
@@ -188,7 +190,28 @@ void Transform::SaveComponent(JSonHandler* file)
 	node.InsertNumArray("Scale", scale.z);
 }
 
-void Transform::LoadComponent(JSonHandler* file, const char* label)
+void Transform::LoadComponent(JSonHandler* file)
 {
+	//JSonHandler node = file->GetNode("Transform");
+	UUID = file->GetString("UUID");
+	file->LoadArray("Position");
+	file->LoadArray("Rotation");
+	file->LoadArray("Scale");
+	float3 pos((float)file->GetNumArray("Position", 1), (float)file->GetNumArray("Position", 2), (float)file->GetNumArray("Position", 3));
+	SetPosition(pos);
+	/*position.x = ;
+	position.y = ;
+	position.z = ;*/
+	float3 rot((float)file->GetNumArray("Rotation", 1), (float)file->GetNumArray("Rotation", 2),(float)file->GetNumArray("Rotation", 3));
+	SetEulerRotation(rot);
+	/*eulerRotation.x = ;
+	eulerRotation.y = ;
+	eulerRotation.z = ;*/
+	float3 s((float)file->GetNumArray("Scale", 1),(float)file->GetNumArray("Scale", 2),(float)file->GetNumArray("Scale", 3));
+	SetScale(s);
+	/*scale.x = ;
+	scale.y = ;
+	scale.z = ;*/
 
+	updateTransform = true;
 }

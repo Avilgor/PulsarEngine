@@ -26,10 +26,11 @@ public:
 	void ReplaceMesh(RES_Mesh* mesh, int index);
 	void UpdateComponent();
 	void DeleteComponent();
-	bool LoadImportedMesh();
+	void LoadMesh(RES_Mesh* mesh);
 	void DrawVertexNormals(RES_Mesh* mesh);
 	void DrawFaceNormals(RES_Mesh* mesh);
 	void SetAllMeshesMaterial(RES_Material* mat);
+	void SetMaterialByUUID(RES_Material* mat);
 	RES_Mesh* GetMesh(int index);
 	std::vector<RES_Mesh*> GetMeshes() { return meshes; }
 	void Render();
@@ -39,11 +40,13 @@ public:
 	void CreatePyramid();
 	void CreatePlane(float size);
 	void SaveComponent(JSonHandler* file);
-	void LoadComponent(JSonHandler* file, const char* label);
+	void LoadComponent(JSonHandler* file);
 
+private:
+	RES_Mesh* CreateMesh(JSonHandler* file);
 public:
 
-	std::string path = "";
+	std::string pathFBX = "";
 	std::string name = "";
 	bool drawTexture = true;
 	/*std::string name;

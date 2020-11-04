@@ -1194,21 +1194,6 @@ int json_object_get_boolean(const JSON_Object *object, const char *name) {
     return json_value_get_boolean(json_object_get_value(object, name));
 }
 
-JSON_Object* json_object_in_array_by_name(const char* name, JSON_Array* array)
-{
-    int modules = json_array_get_count(array);
-
-    for (size_t i = 0; i < modules; i++)
-    {
-        JSON_Object* object = json_array_get_object(array, i);
-        if (strcmp(name, json_object_get_string(object, "name")) == 0)
-            return object;
-    }
-
-    //LOG_ERROR("JSON object %s could not be found", name);
-    return NULL;
-}
-
 JSON_Value * json_object_dotget_value(const JSON_Object *object, const char *name) {
     const char *dot_position = strchr(name, '.');
     if (!dot_position) {
@@ -1304,17 +1289,6 @@ double json_array_get_number(const JSON_Array *array, size_t index) {
 
 JSON_Object * json_array_get_object(const JSON_Array *array, size_t index) {
     return json_value_get_object(json_array_get_value(array, index));
-}
-
-JSON_Object* json_array_get_object_by_name(const JSON_Array* array, const char* name) {
-    for (int i = 0; i < array->count; i++)
-    {
-        JSON_Object* object = json_array_get_object(array, i);
-        if (strcmp(name, json_object_get_string(object, "name")) == 0)
-            return object;
-    }
-
-    return NULL;
 }
 
 JSON_Array * json_array_get_array(const JSON_Array *array, size_t index) {

@@ -41,7 +41,7 @@ public:
 	void SetEulerRotation(float3 degrees);
 	void SetGlobalTransform(float4x4 transform);
 	void SaveComponent(JSonHandler* file);
-	void LoadComponent(JSonHandler* file, const char* label);
+	void LoadComponent(JSonHandler* file);
 
 private:
 	void UpdateTRS();

@@ -3,6 +3,7 @@
 #include "FileSystemModule.h"
 #include "Material.h"
 #include "RES_Material.h"
+#include "Mesh.h"
 #include "JSonHandler.h"
 #include "Assimp/include/material.h"
 #include "Assimp/include/texture.h"
@@ -38,7 +39,7 @@ void Material::GenerateBuffers()
 	{
 		for (std::vector<RES_Material*>::iterator it = materials.begin(); it != materials.end(); ++it)
 		{
-			App->fileSystem->LoadTexture((*it)->path.c_str(), (*it));
+			App->fileSystem->LoadTexture((*it)->texturePath.c_str(), (*it));
 			if ((*it)->textureID != -1)
 			{
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -61,11 +62,7 @@ void Material::GenerateBuffers()
 void Material::GenerateBuffer(RES_Material* mat)
 {
 	if (mat != nullptr)
-	{
-		char* buffer = nullptr;
-		//App->fileSystem->LoadTexture(mat->path.c_str(), mat);
-		uint size = App->fileSystem->Load(mat->path.c_str(), &buffer);
-		App->fileSystem->LoadMaterial(mat,&buffer,size);
+	{	
 		if (mat->textureID != -1)
 		{
 			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -88,11 +85,9 @@ void Material::LoadTextureNewMaterial(std::string pathtext)
 	RES_Material* mat = new RES_Material();
 	//mat->name = "Material texture";
 	mat->texturesNum = 1;	
-	App->fileSystem->LoadTexture(pathtext.c_str(),mat);
-	//char* buffer = nullptr;
-	//App->fileSystem->Load(mat->path.c_str(), &buffer);
-	//App->fileSystem->LoadMaterial(mat, &buffer,mat->bufferSize);
-	GenerateBuffer(mat);
+	mat->texturePath = pathtext;
+	App->fileSystem->LoadTexture(mat->texturePath.c_str(), mat);
+	LoadMaterial(mat);
 	materials.push_back(mat);
 }
 
@@ -175,7 +170,7 @@ void Material::ChangeMaterialTexture(const char* path, int index)
 	{
 		materials[0]->Clean();
 		materials[0]->name = "Material texture";
-		materials[0]->path = path;
+		materials[0]->texturePath = path;
 		materials[0]->texturesNum = 1;
 		LoadMaterial(materials[0]);
 	}
@@ -189,7 +184,7 @@ void Material::ChangeAllMaterialsTextures(const char* path)
 		{
 			(*it)->Clean();
 			(*it)->name = "Material texture";
-			(*it)->path = path;
+			(*it)->texturePath = path;
 			(*it)->texturesNum = 1;
 			LoadMaterial((*it));
 		}		
@@ -198,15 +193,54 @@ void Material::ChangeAllMaterialsTextures(const char* path)
 
 void Material::LoadMaterial(RES_Material* mat)
 {	
+	char* buffer = nullptr;
+	//App->fileSystem->LoadTexture(mat->texturePath.c_str(), mat);
+	uint size = App->fileSystem->Load(mat->texturePath.c_str(), &buffer);
+	App->fileSystem->LoadMaterial(mat, &buffer, size);	
 	GenerateBuffer(mat);
+}
+
+RES_Material* Material::CreateMaterial(JSonHandler* file)
+{
+	RES_Material* mat = new RES_Material();
+	mat->LoadMaterial(file);
+	materials.push_back(mat);
+	return mat;
 }
 
 void Material::SaveComponent(JSonHandler* file)
 {
-	JSonHandler node = file->CreateNode("Material");
+	JSonHandler node = file->InsertNodeArray("Components");
+	node.SaveNum("CompType", (double)compType);
+	node.SaveString("UUID", UUID.c_str());
+	node.SaveBool("Active", active);
+	node.CreateArray("Materials");
+	for (std::vector<RES_Material*>::iterator it = materials.begin(); it != materials.end(); ++it)
+	{
+		(*it)->SaveMaterial(&node, "Materials");
+	}
 }
 
-void Material::LoadComponent(JSonHandler* file, const char* label)
+void Material::LoadComponent(JSonHandler* file)
 {
-
+	Mesh* meshComp = nullptr; 
+	//JSonHandler node = file->GetNode("Material");
+	if (gameobject->GetFirstComponentType(MESH_COMP) != nullptr) meshComp = gameobject->GetFirstComponentType(MESH_COMP)->AsMesh();
+	UUID = file->GetString("UUID");
+	active = file->GetBool("Active");
+	file->LoadArray("Materials");
+	int i = file->GetArrayCount("Materials");
+	if (i > 0)
+	{
+		for (int a = 0; a < i; a++)
+		{
+			JSonHandler tempnode = file->GetNodeArray("Materials", a);
+			RES_Material* temp = CreateMaterial(&tempnode);
+			LoadMaterial(temp);
+			if (meshComp != nullptr)
+			{
+				meshComp->SetMaterialByUUID(temp);
+			}
+		}
+	}
 }

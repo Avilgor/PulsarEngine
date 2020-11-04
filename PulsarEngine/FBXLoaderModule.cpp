@@ -148,7 +148,7 @@ bool FBXLoaderModule::ImportMesh(Mesh* mesh,const char* path)
 			RES_Mesh* newMesh = new RES_Mesh();
 			newMesh->name = mesh->name;
 			newMesh->name.append(std::to_string(i));
-			LOG("Name: %s",newMesh->name.c_str());
+			//LOG("Name: %s",newMesh->name.c_str());
 			newMesh->name = scene->mMeshes[i]->mName.C_Str();
 			newMesh->verticesSize = scene->mMeshes[i]->mNumVertices;
 			newMesh->verticesArray = new float[newMesh->verticesSize * 3];
@@ -222,7 +222,7 @@ RES_Mesh* FBXLoaderModule::LoadMesh(int num, const aiScene* scene,const char* na
 	return newMesh;
 }
 */
-
+/*
 bool FBXLoaderModule::ImportAll(Mesh* mesh, Material* mat, const char* path)
 {
 	bool ret = true;
@@ -307,4 +307,4 @@ bool FBXLoaderModule::ImportMaterialFBX(Material* mat, const char* pathfbx, cons
 	}
 
 	return ret;
-}
+}*/

@@ -41,6 +41,7 @@ public:
 	bool NodeExist();
 	void CreateArray(const char* name);
 	JSonHandler CreateNode(const char* name);
+	void LoadArray(const char* name);
 
 	//Getters Node
 	int GetNodeItemsCount();
@@ -56,8 +57,7 @@ public:
 
 	//Setters Node	
 	void SaveBool(const char* name, bool val);
-	void SaveInt(const char* name,int val);
-	void SaveFloat(const char* name,float val);
+	void SaveNum(const char* name,double val);
 	void SaveString(const char* name, const char* val);
 	void InsertBoolArray(const char* arName, bool val);
 	void InsertNumArray(const char* arName, double val);

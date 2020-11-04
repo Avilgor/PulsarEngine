@@ -2,6 +2,7 @@
 #define __Component_H__
 
 #include <vector>
+#include <string> 
 
 class GameObject;
 class Mesh;
@@ -22,14 +23,14 @@ public:
 	Mesh* AsMesh() { return mesh; }
 	Material* AsMaterial() { return material; }
 	virtual void SaveComponent(JSonHandler* file) {}
-	virtual void LoadComponent(JSonHandler* file, const char* label) {}
+	virtual void LoadComponent(JSonHandler* file) {}
 
 
 public:
 	GameObject* gameobject;
 	ComponentTypes compType;	
 	bool active;
-
+	std::string UUID;
 	Component* component = nullptr;
 	Mesh* mesh = nullptr;
 	Material* material = nullptr;

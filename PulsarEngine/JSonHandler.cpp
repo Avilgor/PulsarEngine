@@ -45,7 +45,7 @@ bool JSonHandler::GetBool(const char* name)
 double JSonHandler::GetNum(const char* name)
 {
 	if (json_object_has_value_of_type(node, name, JSONNumber))
-		return json_object_get_boolean(node, name);
+		return json_object_get_number(node, name);
 	return 0;
 }
 
@@ -73,7 +73,7 @@ double JSonHandler::GetNumArray(const char* arName, uint index)
 	{
 		if (nodeArrays.find(arName) != nodeArrays.end()) //Array exists
 		{
-			json_array_get_number(nodeArrays[arName].dataArray, index);
+			return json_array_get_number(nodeArrays[arName].dataArray, index);
 		}
 		else return 0;
 	} 
@@ -123,14 +123,18 @@ JSonHandler JSonHandler::GetNodeArray(const char* arName, uint index)
 {
 	if (!nodeArrays.empty())
 	{
-		if (nodeArrays.find(arName) != nodeArrays.end()) //Array exists
-		{
-			return JSonHandler(json_array_get_object(nodeArrays[arName].dataArray, index));
+		for (std::map<std::string, JSonArrayData>::iterator it = nodeArrays.begin(); it != nodeArrays.end(); ++it)
+		{			
+			//LOG("Map name: %s",(*it).first.c_str());
+			//LOG("Array name: %s",arName);
+			if ((*it).first.compare(arName) == 0)
+			{
+				JSonHandler temp(json_array_get_object((*it).second.dataArray, index));
+				return temp;
+			}
 		}
-		else return JSonHandler();
-	}
-	else return JSonHandler();
-
+	}	
+	return JSonHandler();
 }
 
 //Setters
@@ -139,15 +143,11 @@ void JSonHandler::SaveBool(const char* name, bool val)
 	json_object_set_boolean(node, name, val);
 }
 
-void JSonHandler::SaveInt(const char* name, int val)
+void JSonHandler::SaveNum(const char* name, double val)
 {
 	json_object_set_number(node, name, val);
 }
 
-void JSonHandler::SaveFloat(const char* name, float val)
-{
-	json_object_set_number(node, name, val);
-}
 
 void JSonHandler::SaveString(const char* name, const char* val)
 {
@@ -210,6 +210,19 @@ JSonHandler JSonHandler::InsertNodeArray(const char* arName)
 }
 
 ///////
+
+void JSonHandler::LoadArray(const char* name)
+{
+	if (json_object_has_value_of_type(node, name, JSONArray))
+	{
+		JSonArrayData data;
+		data.dataArray = json_object_get_array(node, name);
+		data.size = json_array_get_count(data.dataArray);
+		nodeArrays.emplace(name, data);
+		//LOG("Array %s loaded",name);
+	}
+	else LOG("Array not found");
+}
 
 uint JSonHandler::Serialize(char** buffer)
 {
