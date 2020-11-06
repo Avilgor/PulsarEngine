@@ -7,6 +7,7 @@
 class GameObject;
 class Mesh;
 class Material;
+class Camera;
 class JSonHandler;
 
 class Component
@@ -22,6 +23,7 @@ public:
 	Component* GetComponent() { return component; }
 	Mesh* AsMesh() { return mesh; }
 	Material* AsMaterial() { return material; }
+	Camera* AsCamera() { return camera; }
 	virtual void SaveComponent(JSonHandler* file) {}
 	virtual void LoadComponent(JSonHandler* file) {}
 
@@ -34,6 +36,7 @@ public:
 	Component* component = nullptr;
 	Mesh* mesh = nullptr;
 	Material* material = nullptr;
+	Camera* camera = nullptr;
 };
 
 #endif //__Component_H__

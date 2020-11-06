@@ -10,14 +10,16 @@ Transform::Transform(GameObject* parent) : Component(parent, TRANSFORM_COMP)
 {
 	transform = float4x4::FromTRS(float3::zero, Quat::identity, float3::one);
 	transformGlobal = transform;
-	updateTransform = true;
+	loadedTransform = false;
+	//updateTransform = true;
 }
 
 Transform::Transform(GameObject* parent, float3 pos, Quat rot, float3 scale) : Component(parent,TRANSFORM_COMP)
 {
 	transform = float4x4::FromTRS(pos, rot, scale);
 	transformGlobal = transform;
-	updateTransform = true;
+	loadedTransform = false;
+	//updateTransform = true;
 }
 
 Transform::Transform(GameObject* parent, float3 position, float3 rotation, float3 scale) : Component(parent, TRANSFORM_COMP)
@@ -26,7 +28,8 @@ Transform::Transform(GameObject* parent, float3 position, float3 rotation, float
 	UpdateQuaternion();
 	transform = float4x4::FromTRS(position, quaternionRotation, scale);
 	transformGlobal = transform;
-	updateTransform = true;
+	loadedTransform = false;
+	//updateTransform = true;
 }
 
 Transform::Transform(GameObject* parent, float4x4 t) : Component(parent, TRANSFORM_COMP)
@@ -34,7 +37,8 @@ Transform::Transform(GameObject* parent, float4x4 t) : Component(parent, TRANSFO
 	transform = t;
 	transform.Decompose(position, quaternionRotation, scale);
 	transformGlobal = transform;
-	updateTransform = true;
+	loadedTransform = false;
+	//updateTransform = true;
 }
 
 Transform::~Transform()
@@ -60,7 +64,17 @@ void Transform::UpdateComponent()
 		
 		UpdateTRS();
 		gameobject->ToggleUpdateTransform();
+		gameobject->UpdateAABB();
 		updateTransform = false;
+	}
+
+	if (loadedTransform)
+	{
+		SetPosition(loadPos);
+		SetEulerRotation(loadRot);
+		SetScale(loadScale);
+		loadedTransform = false;
+		updateTransform = true;
 	}
 }
 
@@ -180,13 +194,13 @@ void Transform::LoadComponent(JSonHandler* file)
 	file->LoadArray("Rotation");
 	file->LoadArray("Scale");
 	float3 pos((float)file->GetNumArray("Position", 0), (float)file->GetNumArray("Position", 1), (float)file->GetNumArray("Position", 2));
-	SetPosition(pos);
+	loadPos = pos;
 
 	float3 rot((float)file->GetNumArray("Rotation", 0), (float)file->GetNumArray("Rotation", 1),(float)file->GetNumArray("Rotation", 2));
-	SetEulerRotation(rot);
+	loadRot = rot;
 
 	float3 s((float)file->GetNumArray("Scale", 0),(float)file->GetNumArray("Scale", 1),(float)file->GetNumArray("Scale", 2));
-	SetScale(s);
-
+	loadScale = s;
+	loadedTransform = true;
 	updateTransform = true;
 }

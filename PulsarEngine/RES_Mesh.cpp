@@ -4,6 +4,7 @@
 #include "JSonHandler.h"
 #include "Glew/include/GL/glew.h"
 #include "SDL/include/SDL_opengl.h"
+#include "MathGeoLib/include/MathGeoLib.h"
 
 RES_Mesh::RES_Mesh()
 {
@@ -19,7 +20,6 @@ RES_Mesh::RES_Mesh()
 	normalsSize = 0;
 	drawText = true;
 	UUID = App->GenerateUUID_V4();
-	aabb.SetNegativeInfinity();
 	indicesArray = nullptr;
 	verticesArray = nullptr;
 	normalsArray = nullptr;
@@ -86,11 +86,6 @@ void RES_Mesh::LoadMesh(JSonHandler* file)
 	path = file->GetString("Path");
 	drawText = file->GetBool("DrawText");
 	materialUUID = file->GetString("MaterialUUID");
-}
-
-void RES_Mesh::UpdateAABB()
-{
-
 }
 
 

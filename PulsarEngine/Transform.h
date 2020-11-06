@@ -58,6 +58,11 @@ private:
 	float3 scale;
 	Quat quaternionRotation;
 	float3 eulerRotation;	
+
+	float3 loadPos;
+	float3 loadRot;
+	float3 loadScale;
+	bool loadedTransform;
 };
 
 #endif //__Transform_H__

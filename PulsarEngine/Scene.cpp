@@ -198,6 +198,15 @@ void Scene::LoadScene(JSonHandler* file)
 			}
 		}
 		LOG("Gameobjects childs set");
+
+		//Load transforms
+		/*int t = 0;
+		for (std::map<std::string, GameObject*>::iterator it = gameobjectsLoaded.begin(); it != gameobjectsLoaded.end(); it++)
+		{
+			JSonHandler temp = file->GetNodeArray("Gameobjects", t);
+			(*it).second->LoadTransform(&temp);
+			t++;
+		}*/
 	}
 	gameobjectsLoaded.clear();
 	LOG("Scene %s loaded!", name.c_str());

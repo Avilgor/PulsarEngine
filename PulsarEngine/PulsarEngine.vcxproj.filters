@@ -159,6 +159,9 @@
     <ClInclude Include="Scene.h">
       <Filter>Sources\Elements</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Sources\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -277,6 +280,9 @@
     </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Sources\Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Sources\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

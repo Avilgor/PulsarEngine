@@ -5,6 +5,7 @@
 #include "Light.h"
 #include "Glew\include\GL\glew.h"
 #include "SDL\include\SDL_opengl.h"
+#include "MathGeoLib/include/Geometry/AABB.h"
 #include <gl/GL.h>
 #include <gl/GLU.h>
 
@@ -27,6 +28,7 @@ public:
 
 	void OnResize(int width, int height,int offsetX = 0,int offsetY = 0);
 	void RenderGroundGrid(int size);
+	void RenderAABB(AABB box);
 
 	//RenderOptions
 	void ToggleShaded();

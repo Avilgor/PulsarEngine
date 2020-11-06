@@ -47,6 +47,7 @@ enum ComponentTypes
 	TRANSFORM_COMP = 1,
 	MESH_COMP,
 	MATERIAL_COMP,
+	CAMERA_COMP,
 };
 
 // Configuration -----------

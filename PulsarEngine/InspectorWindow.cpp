@@ -46,7 +46,7 @@ void InspectorWindow::GameObjectSection(GameObject* go)
 	char name[50];
 	strcpy_s(name, 50, go->name.c_str());
 	if (ImGui::InputText("###", name, 50, name_input_flags)) go->name = name;
-	//ImGui::Separator();
+	if (ImGui::Checkbox("AABB", &go->drawAABB)) go->SetDrawAABB(go->drawAABB);
 }
 
 void InspectorWindow::TransformSection(GameObject* go)

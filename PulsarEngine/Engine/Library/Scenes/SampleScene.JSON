@@ -14,7 +14,7 @@
             "Components": [
                 {
                     "CompType": 1,
-                    "UUID": "19a0a013-8eee-4f12-885d-d24ca07f6fac",
+                    "UUID": "678b882a-4a66-4d29-877d-fd71474769f7",
                     "Position": [
                         0,
                         0,
@@ -188,8 +188,7 @@
             "name": "trump",
             "active": true,
             "Childs": [
-                "39e64866-9386-408b-ba5f-1fa0c11f244e",
-                "d241afc7-8486-497d-bd44-d8ba24834653"
+                "39e64866-9386-408b-ba5f-1fa0c11f244e"
             ],
             "Components": [
                 {
@@ -207,8 +206,8 @@
                     ],
                     "Scale": [
                         0.019999999552965164,
-                        0.019999997690320015,
-                        0.019999997690320015
+                        0.019999993965029716,
+                        0.019999993965029716
                     ]
                 }
             ]
@@ -261,65 +260,6 @@
                     "Materials": [
                         {
                             "UUID": "b6b5b6db-9593-4756-ae2b-93f31a9bf9db",
-                            "Name": "tumpLPcolors",
-                            "Path": "Library\/Textures\/tumpLPcolors.dds",
-                            "ColorR": 0.58823531866073608,
-                            "ColorG": 0.58823531866073608,
-                            "ColorB": 0.58823531866073608,
-                            "ColorA": 1
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "UUID": "d241afc7-8486-497d-bd44-d8ba24834653",
-            "Parent_UUID": "c026bed9-f137-4233-a85f-079c39370b87",
-            "name": "Mesh0",
-            "active": true,
-            "Childs": [],
-            "Components": [
-                {
-                    "CompType": 1,
-                    "UUID": "2b9efa8c-9dec-4c6f-bd76-4f900c977bcd",
-                    "Position": [
-                        -19132650,
-                        0,
-                        0
-                    ],
-                    "Rotation": [
-                        8.651423740957398e-06,
-                        0,
-                        -0
-                    ],
-                    "Scale": [
-                        6250000,
-                        6250001.5,
-                        6250001.5
-                    ]
-                },
-                {
-                    "CompType": 2,
-                    "Active": true,
-                    "DrawTexture": true,
-                    "FBX_Path": "Assets\/3D\/Trump\/trump.FBX",
-                    "Meshes": [
-                        {
-                            "UUID": "4bd486df-3131-4e75-a6bc-478c30482690",
-                            "Name": "Mesh0",
-                            "Path": "Library\/Meshes\/Mesh0",
-                            "DrawText": true,
-                            "MaterialUUID": "cf007702-d963-4bfa-8b15-d048c3ef6855"
-                        }
-                    ]
-                },
-                {
-                    "CompType": 3,
-                    "UUID": "04a5bc84-acbe-4d63-be52-4910f8096039",
-                    "Active": true,
-                    "Materials": [
-                        {
-                            "UUID": "cf007702-d963-4bfa-8b15-d048c3ef6855",
                             "Name": "tumpLPcolors",
                             "Path": "Library\/Textures\/tumpLPcolors.dds",
                             "ColorR": 0.58823531866073608,

@@ -3,6 +3,7 @@
 #include "ModuleRenderer3D.h"
 #include "Glew\include\GL\glew.h"
 #include "SDL\include\SDL_opengl.h"
+#include "MathGeoLib/include/Geometry/AABB.h"
 #include <gl/GL.h>
 #include <gl/GLU.h>
 
@@ -198,6 +199,46 @@ bool ModuleRenderer3D::CleanUp()
 	return true;
 }
 
+void ModuleRenderer3D::RenderAABB(AABB box)
+{
+	glDisable(GL_LIGHTING);
+	glBegin(GL_LINES);
+	float3 corners[8];
+	box.GetCornerPoints(corners);
+
+	glVertex3fv((GLfloat*)&corners[1]);
+	glVertex3fv((GLfloat*)&corners[5]);
+	glVertex3fv((GLfloat*)&corners[7]);
+	glVertex3fv((GLfloat*)&corners[3]);
+
+	glVertex3fv((GLfloat*)&corners[4]);
+	glVertex3fv((GLfloat*)&corners[0]);
+	glVertex3fv((GLfloat*)&corners[2]);
+	glVertex3fv((GLfloat*)&corners[6]);
+
+	glVertex3fv((GLfloat*)&corners[5]);
+	glVertex3fv((GLfloat*)&corners[4]);
+	glVertex3fv((GLfloat*)&corners[6]);
+	glVertex3fv((GLfloat*)&corners[7]);
+
+	glVertex3fv((GLfloat*)&corners[0]);
+	glVertex3fv((GLfloat*)&corners[1]);
+	glVertex3fv((GLfloat*)&corners[3]);
+	glVertex3fv((GLfloat*)&corners[2]);
+
+	glVertex3fv((GLfloat*)&corners[1]);
+	glVertex3fv((GLfloat*)&corners[3]);
+	glVertex3fv((GLfloat*)&corners[0]);
+	glVertex3fv((GLfloat*)&corners[2]);
+
+	glVertex3fv((GLfloat*)&corners[5]);
+	glVertex3fv((GLfloat*)&corners[7]);
+	glVertex3fv((GLfloat*)&corners[4]);
+	glVertex3fv((GLfloat*)&corners[6]);
+
+	glEnd();
+	glEnable(GL_LIGHTING);
+}
 
 void ModuleRenderer3D::OnResize(int width, int height, int offsetX, int offsetY)
 {

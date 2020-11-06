@@ -5,7 +5,9 @@
 #include "Transform.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "Camera.h"
 #include "JSonHandler.h"
+#include "MathGeoLib/include/Geometry/AABB.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
 
@@ -21,13 +23,11 @@ GameObject::GameObject(const char* n, GameObject* p)
 	if(p != nullptr) parentUUID = p->UUID;
 	transformUpdate = false;
 	CreateTransform();
-	//AddComponent(TRANSFORM_COMP);
 }
 
 GameObject::GameObject(const char* n, float3 pos, Quat rotation, float3 scale, GameObject* p)
 {
 	UUID = App->GenerateUUID_V4();
-	//App->GoIDNum += 1;
 	name = n;
 	active = true;
 	selected = false;
@@ -37,14 +37,11 @@ GameObject::GameObject(const char* n, float3 pos, Quat rotation, float3 scale, G
 	if (p != nullptr) parentUUID = p->UUID;
 	transformUpdate = false;
 	CreateTransform(pos,rotation,scale);
-	//LOG("ID: %s", UUID.c_str());
-	//AddComponent(TRANSFORM_COMP);
 }
 
 GameObject::GameObject(const char* n, float3 pos, float3 rotation, float3 scale, GameObject* p)
 {
 	UUID = App->GenerateUUID_V4();
-	//App->GoIDNum += 1;
 	name = n;
 	active = true;
 	selected = false;
@@ -54,8 +51,6 @@ GameObject::GameObject(const char* n, float3 pos, float3 rotation, float3 scale,
 	if (p != nullptr) parentUUID = p->UUID;
 	transformUpdate = false;
 	CreateTransform(pos, rotation, scale);
-	//LOG("ID: %s", UUID.c_str());
-	//AddComponent(TRANSFORM_COMP);
 }
 
 GameObject::~GameObject()
@@ -162,10 +157,6 @@ void GameObject::UpdateGameObject()
 	}
 }
 
-void GameObject::UpdateAABB()
-{
-
-}
 
 void GameObject::SaveGameobject(JSonHandler* file, const char* label)
 {
@@ -253,10 +244,23 @@ void GameObject::LoadGameObject(JSonHandler* file)
 	}
 }
 
+void GameObject::LoadTransform(JSonHandler* file)
+{
+	file->LoadArray("Components");
+	JSonHandler json = file->GetNodeArray("Components", 0);
+	transform->LoadComponent(&json);
+	LOG("Transform loaded")
+}
+
 void GameObject::DrawMesh()
 {
 	if (active)
 	{
+		if (drawAABB)
+		{
+			App->renderer3D->RenderAABB(Gaabb);
+		}
+
 		if (!Components.empty())
 		{
 			for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)
@@ -273,6 +277,40 @@ void GameObject::DrawMesh()
 			}
 		}
 	}	
+}
+
+void GameObject::SetDrawAABB(bool val)
+{
+	drawAABB = val;
+	if (!Childs.empty())
+	{
+		for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
+		{
+			(*it)->SetDrawAABB(val);
+		}
+	}
+}
+
+void GameObject::UpdateAABB()
+{
+
+	Component* temp = GetFirstComponentType(MESH_COMP);
+	if (temp != nullptr)
+	{
+		Mesh* mesh = temp->AsMesh();
+		if (mesh != nullptr)
+		{
+			Gobb = mesh->GetMeshAABB();
+			Gobb.Transform(transform->GetGlobalTransform());			
+			Gaabb.SetNegativeInfinity();
+			Gaabb.Enclose(Gobb);
+		}
+	}	
+}
+
+AABB GameObject::GetGlobalAABB()
+{
+	return Gaabb;
 }
 
 void GameObject::CreateTransform()
@@ -298,9 +336,6 @@ Component* GameObject::AddComponent(ComponentTypes type)
 	Material* mat = nullptr;
 	switch (type)
 	{
-	/*case TRANSFORM_COMP:
-		transform = new Transform(this);
-		break;*/
 	case MESH_COMP:
 		mesh = new Mesh(this);
 		Components.push_back(mesh->component);
@@ -310,6 +345,11 @@ Component* GameObject::AddComponent(ComponentTypes type)
 		mat = new Material(this);
 		Components.push_back(mat->component);
 		return mat->component;
+		break;
+	case CAMERA_COMP:
+		/*mat = new Material(this);
+		Components.push_back(mat->component);
+		return mat->component;*/
 		break;
 	default:
 		return comp;
@@ -443,14 +483,12 @@ void GameObject::SetParent(GameObject* p)
 			parent->RemoveChild(UUID);
 			parent = p;
 			parentUUID = p->UUID;
-			//g = transform->GetGlobalTransform();
 			parent->AddChild(this);
 		}
 		else
 		{
 			parentUUID = p->UUID;
 			parent = p;
-			//g = transform->GetGlobalTransform();
 		}
 		transform->SetGlobalTransform();
 	}

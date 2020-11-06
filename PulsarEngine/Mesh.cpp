@@ -4,10 +4,12 @@
 #include "Transform.h"
 #include "Mesh.h"
 #include "RES_Mesh.h"
+#include "Material.h"
 #include "JSonHandler.h"
 #include "Glew/include/GL/glew.h"
 #include "SDL/include/SDL_opengl.h"
-#include "Material.h"
+#include "MathGeoLib/include/Geometry/AABB.h"
+
 #include <vector>
 
 Mesh::Mesh(GameObject* parent) : Component(parent, MESH_COMP)
@@ -15,6 +17,7 @@ Mesh::Mesh(GameObject* parent) : Component(parent, MESH_COMP)
 	pathFBX = "";
 	component->mesh = this;
 	drawTexture = true;
+	aabb.SetNegativeInfinity();
 }
 
 Mesh::~Mesh()
@@ -60,6 +63,18 @@ void Mesh::LoadMesh(RES_Mesh* mesh)
 	App->fileSystem->Load(path.c_str(), &buffer);
 	App->fileSystem->LoadMesh(mesh, buffer);
 	GenerateBuffers(mesh);
+	UpdateAABB();
+}
+
+void Mesh::UpdateAABB()
+{
+	aabb.Enclose((float3*)meshes[0]->verticesArray, meshes[0]->verticesSize);
+	gameobject->UpdateAABB();
+}
+
+AABB Mesh::GetMeshAABB()
+{
+	return aabb;
 }
 
 void Mesh::AddMesh(RES_Mesh* mesh)
@@ -330,6 +345,49 @@ void Mesh::SaveComponent(JSonHandler* file)
 	node.SaveBool("Active",active);
 	node.SaveBool("DrawTexture",drawTexture);
 	node.SaveString("FBX_Path", pathFBX.c_str());
+	/*float3 corners[8];
+	aabb.GetCornerPoints(corners);
+	node.CreateArray("AABB");
+	JSonHandler vector = node.InsertNodeArray("AABB");
+	vector.SaveNum("x", corners[0].x);
+	vector.SaveNum("y", corners[0].y);
+	vector.SaveNum("z", corners[0].z);
+
+	JSonHandler vector = node.InsertNodeArray("AABB");
+	vector.SaveNum("x", corners[1].x);
+	vector.SaveNum("y", corners[1].y);
+	vector.SaveNum("z", corners[1].z);
+
+	JSonHandler vector = node.InsertNodeArray("AABB");
+	vector.SaveNum("x", corners[2].x);
+	vector.SaveNum("y", corners[2].y);
+	vector.SaveNum("z", corners[2].z);
+
+	JSonHandler vector = node.InsertNodeArray("AABB");
+	vector.SaveNum("x", corners[3].x);
+	vector.SaveNum("y", corners[3].y);
+	vector.SaveNum("z", corners[3].z);
+
+	JSonHandler vector = node.InsertNodeArray("AABB");
+	vector.SaveNum("x", corners[4].x);
+	vector.SaveNum("y", corners[4].y);
+	vector.SaveNum("z", corners[4].z);
+
+	JSonHandler vector = node.InsertNodeArray("AABB");
+	vector.SaveNum("x", corners[5].x);
+	vector.SaveNum("y", corners[5].y);
+	vector.SaveNum("z", corners[5].z);
+
+	JSonHandler vector = node.InsertNodeArray("AABB");
+	vector.SaveNum("x", corners[6].x);
+	vector.SaveNum("y", corners[6].y);
+	vector.SaveNum("z", corners[6].z);
+
+	JSonHandler vector = node.InsertNodeArray("AABB");
+	vector.SaveNum("x", corners[7].x);
+	vector.SaveNum("y", corners[7].y);
+	vector.SaveNum("z", corners[7].z);
+	*/
 	node.CreateArray("Meshes");
 	for (std::vector<RES_Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it)
 	{

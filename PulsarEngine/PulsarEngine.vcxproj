@@ -41,11 +41,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\parson;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Devil\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\ImGui;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\include;$(IncludePath)</IncludePath>
+    <IncludePath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\ImGuizmo;D:\GitHub Proyects\PulsarEngine\PulsarEngine\parson;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Devil\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\ImGui;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\Devil\lib\x86;D:\GitHub Proyects\PulsarEngine\PulsarEngine\glut;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\libx86;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\lib\Win32;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\libx86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\parson;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Devil\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\ImGui;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\include;$(IncludePath)</IncludePath>
+    <IncludePath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\ImGuizmo;D:\GitHub Proyects\PulsarEngine\PulsarEngine\parson;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Devil\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\include;D:\GitHub Proyects\PulsarEngine\PulsarEngine\ImGui;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\GitHub Proyects\PulsarEngine\PulsarEngine\Devil\lib\x86;D:\GitHub Proyects\PulsarEngine\PulsarEngine\glut;D:\GitHub Proyects\PulsarEngine\PulsarEngine\SDL\libx86;D:\GitHub Proyects\PulsarEngine\PulsarEngine\Glew\lib\Win32;D:\GitHub Proyects\PulsarEngine\PulsarEngine\MathGeoLib\libx86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -86,6 +86,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ConfigWindow.h" />
@@ -130,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ConfigWindow.cpp" />

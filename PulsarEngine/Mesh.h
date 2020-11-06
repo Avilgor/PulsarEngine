@@ -41,6 +41,8 @@ public:
 	void CreatePlane(float size);
 	void SaveComponent(JSonHandler* file);
 	void LoadComponent(JSonHandler* file);
+	void UpdateAABB();
+	AABB GetMeshAABB();
 
 private:
 	RES_Mesh* CreateMesh(JSonHandler* file);
@@ -49,27 +51,10 @@ public:
 	std::string pathFBX = "";
 	std::string name = "";
 	bool drawTexture = true;
-	/*std::string name;
-	uint VAO;
-	uint idVertex;
-	uint idIndex;
-	uint idText;
-	uint idNormals;
-	int verticesSize;
-	uint indexSize;
-	uint textSize;
-	uint normalsSize;
-	
-	uint* indicesArray = nullptr;
-	float* verticesArray = nullptr;
-	float* normalsArray = nullptr;
-	float* texturesArray = nullptr;
-	
-	Material* material = nullptr;*/
 	
 private:
 	std::vector<RES_Mesh*> meshes;
-	
+	AABB aabb;
 };
 
 

@@ -15,7 +15,6 @@ public:
 	~RES_Mesh();
 	void Clean();
 	void SetMaterial(RES_Material* mat);
-	void UpdateAABB();
 	void SaveMesh(JSonHandler* file, const char* label);
 	void LoadMesh(JSonHandler* file);
 
@@ -36,7 +35,6 @@ public:
 	float* verticesArray;
 	float* normalsArray;
 	float* texturesArray;
-	AABB aabb;
 	std::string UUID="";
 	std::string materialUUID = "";
 	bool drawVertexNormals;

@@ -3,6 +3,7 @@
 
 #include "Component.h"
 #include "MathGeoLib/include/MathGeoLib.h"
+#include "MathGeoLib/include/Geometry/AABB.h"
 
 #include <vector>
 #include <string>
@@ -27,6 +28,7 @@ public:
 	void Delete();
 	void SaveToDelete(GameObject* trash);
 	void DeleteGOComponent(ComponentTypes type);
+
 	void AddChild(GameObject* child);
 	GameObject* CreateChild();
 	GameObject* CreateChild(const char* name);
@@ -35,16 +37,22 @@ public:
 	void DeleteAllChilds();
 	void DeleteGameobject();
 	bool HasChilds();
+
 	void SetTransformUpdate(bool val) { transformUpdate = val; }
 	void SetParent(GameObject* parent);
-	void UpdateAABB();
 	std::vector<Component*> GetAllComponents() { return Components; }
 	std::vector<GameObject*> GetAllChilds() { return Childs; }
 	Component* GetFirstComponentType(ComponentTypes type);
 	GameObject* GetFirstChild() { return Childs[0]; }
 	GameObject* GetParent() { return parent; }
+
 	void SaveGameobject(JSonHandler* file, const char* label);
 	void LoadGameObject(JSonHandler* file);
+	void LoadTransform(JSonHandler* file);
+
+	void UpdateAABB();
+	AABB GetGlobalAABB();
+	void SetDrawAABB(bool val);
 
 private:
 	void AddPendingChilds();
@@ -60,9 +68,10 @@ public:
 	bool showHierarchy = false;
 	bool toDelete = false;
 	bool transformUpdate = true;
+	bool drawAABB = false;
 	Transform* transform = nullptr;
-	AABB aabb;
-	AABB oobb;
+	AABB Gaabb;
+	OBB Gobb;
 
 private:
 	GameObject* parent = nullptr;
