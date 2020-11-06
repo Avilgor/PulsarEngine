@@ -7,14 +7,14 @@
             "name": "Root",
             "active": true,
             "Childs": [
-                "2bec5103-0a87-4578-912f-617534d8f7d8",
-                "2d479613-5dab-40d2-9b93-e49edede0f36",
-                "1a922eb9-676c-40af-bb92-bbd8329d66cc"
+                "c026bed9-f137-4233-a85f-079c39370b87",
+                "0e510caf-3441-4e5d-96ec-99e21c5b2286",
+                "cb08e2f2-626b-43f3-b0ab-cb1ab5b2cdc4"
             ],
             "Components": [
                 {
                     "CompType": 1,
-                    "UUID": "24dc84b4-e379-4c2e-ac9f-2f4ea1f1dba4",
+                    "UUID": "3b63bbd8-4147-4a28-808b-67c6eee0de0d",
                     "Position": [
                         0,
                         0,
@@ -34,15 +34,18 @@
             ]
         },
         {
-            "UUID": "2bec5103-0a87-4578-912f-617534d8f7d8",
+            "UUID": "c026bed9-f137-4233-a85f-079c39370b87",
             "Parent_UUID": "0",
-            "name": "Trump",
+            "name": "trump",
             "active": true,
-            "Childs": [],
+            "Childs": [
+                "d241afc7-8486-497d-bd44-d8ba24834653",
+                "39e64866-9386-408b-ba5f-1fa0c11f244e"
+            ],
             "Components": [
                 {
                     "CompType": 1,
-                    "UUID": "3ece325f-461f-490f-b157-37e6e5f70fa7",
+                    "UUID": "6fc7fd4c-e817-4cca-9279-906b9048deeb",
                     "Position": [
                         3,
                         0,
@@ -58,6 +61,34 @@
                         0.020000001415610313,
                         0.020000001415610313
                     ]
+                }
+            ]
+        },
+        {
+            "UUID": "d241afc7-8486-497d-bd44-d8ba24834653",
+            "Parent_UUID": "c026bed9-f137-4233-a85f-079c39370b87",
+            "name": "Mesh0",
+            "active": true,
+            "Childs": [],
+            "Components": [
+                {
+                    "CompType": 1,
+                    "UUID": "2b9efa8c-9dec-4c6f-bd76-4f900c977bcd",
+                    "Position": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "Rotation": [
+                        -0,
+                        0,
+                        -0
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ]
                 },
                 {
                     "CompType": 2,
@@ -66,33 +97,26 @@
                     "FBX_Path": "Assets\/3D\/Trump\/trump.FBX",
                     "Meshes": [
                         {
-                            "UUID": "a2a9ccf3-911b-4be2-84f1-8d76f060b74e",
-                            "Name": "trump0",
-                            "Path": "Library\/Meshes\/trump0",
+                            "UUID": "4bd486df-3131-4e75-a6bc-478c30482690",
+                            "Name": "Mesh0",
+                            "Path": "Library\/Meshes\/Mesh0",
                             "DrawText": true,
-                            "MaterialUUID": "f849e9e2-dcf6-4980-a9f4-12f52d6b9fe6"
-                        },
-                        {
-                            "UUID": "335ff90c-ee6e-41d1-a6fd-5c64d621db17",
-                            "Name": "trump01",
-                            "Path": "Library\/Meshes\/trump01",
-                            "DrawText": true,
-                            "MaterialUUID": "f849e9e2-dcf6-4980-a9f4-12f52d6b9fe6"
+                            "MaterialUUID": "cf007702-d963-4bfa-8b15-d048c3ef6855"
                         }
                     ]
                 },
                 {
                     "CompType": 3,
-                    "UUID": "34f35632-8fa9-4590-9bee-95c98cfb1679",
+                    "UUID": "04a5bc84-acbe-4d63-be52-4910f8096039",
                     "Active": true,
                     "Materials": [
                         {
-                            "UUID": "f849e9e2-dcf6-4980-a9f4-12f52d6b9fe6",
+                            "UUID": "cf007702-d963-4bfa-8b15-d048c3ef6855",
                             "Name": "tumpLPcolors",
                             "Path": "Library\/Textures\/tumpLPcolors.dds",
-                            "ColorR": 1,
-                            "ColorG": 1,
-                            "ColorB": 1,
+                            "ColorR": 0.58823531866073608,
+                            "ColorG": 0.58823531866073608,
+                            "ColorB": 0.58823531866073608,
                             "ColorA": 1
                         }
                     ]
@@ -100,17 +124,107 @@
             ]
         },
         {
-            "UUID": "2d479613-5dab-40d2-9b93-e49edede0f36",
-            "Parent_UUID": "0",
-            "name": "Baker House",
+            "UUID": "39e64866-9386-408b-ba5f-1fa0c11f244e",
+            "Parent_UUID": "c026bed9-f137-4233-a85f-079c39370b87",
+            "name": "Mesh1",
             "active": true,
             "Childs": [],
             "Components": [
                 {
                     "CompType": 1,
-                    "UUID": "57b5f981-7c29-44e6-a965-342d68dd60a2",
+                    "UUID": "0e374d79-3bd2-4d01-8d9e-69a1148d6f76",
+                    "Position": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "Rotation": [
+                        -0,
+                        0,
+                        -0
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ]
+                },
+                {
+                    "CompType": 2,
+                    "Active": true,
+                    "DrawTexture": true,
+                    "FBX_Path": "Assets\/3D\/Trump\/trump.FBX",
+                    "Meshes": [
+                        {
+                            "UUID": "eee5d497-0b01-4aed-9fd1-9adba0a257ff",
+                            "Name": "Mesh1",
+                            "Path": "Library\/Meshes\/Mesh1",
+                            "DrawText": true,
+                            "MaterialUUID": "b6b5b6db-9593-4756-ae2b-93f31a9bf9db"
+                        }
+                    ]
+                },
+                {
+                    "CompType": 3,
+                    "UUID": "ad27d76f-24ab-42e0-9417-a63363d77f27",
+                    "Active": true,
+                    "Materials": [
+                        {
+                            "UUID": "b6b5b6db-9593-4756-ae2b-93f31a9bf9db",
+                            "Name": "tumpLPcolors",
+                            "Path": "Library\/Textures\/tumpLPcolors.dds",
+                            "ColorR": 0.58823531866073608,
+                            "ColorG": 0.58823531866073608,
+                            "ColorB": 0.58823531866073608,
+                            "ColorA": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "UUID": "0e510caf-3441-4e5d-96ec-99e21c5b2286",
+            "Parent_UUID": "0",
+            "name": "BakerHouse",
+            "active": true,
+            "Childs": [
+                "bf512134-cf2c-4441-8a23-92888b2b060d",
+                "9a2da05e-8a96-42ec-965a-f0de8b74bccd"
+            ],
+            "Components": [
+                {
+                    "CompType": 1,
+                    "UUID": "1985f289-7793-4020-ba34-e5a9ee5216c8",
                     "Position": [
                         -1,
+                        0,
+                        0
+                    ],
+                    "Rotation": [
+                        -0,
+                        0,
+                        -0
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ]
+                }
+            ]
+        },
+        {
+            "UUID": "bf512134-cf2c-4441-8a23-92888b2b060d",
+            "Parent_UUID": "0e510caf-3441-4e5d-96ec-99e21c5b2286",
+            "name": "Untitled.0010",
+            "active": true,
+            "Childs": [],
+            "Components": [
+                {
+                    "CompType": 1,
+                    "UUID": "a2347b93-76fb-46a4-b84b-58797b2b2081",
+                    "Position": [
+                        0,
                         0,
                         0
                     ],
@@ -132,33 +246,26 @@
                     "FBX_Path": "Assets\/3D\/Baker\/BakerHouse.fbx",
                     "Meshes": [
                         {
-                            "UUID": "93311490-3845-4c50-9a3b-e860ec0c9e23",
-                            "Name": "BakerHouse0",
-                            "Path": "Library\/Meshes\/BakerHouse0",
+                            "UUID": "b2614738-04f1-4ce1-a33c-ab8b848bf3eb",
+                            "Name": "Untitled.0010",
+                            "Path": "Library\/Meshes\/Untitled.0010",
                             "DrawText": true,
-                            "MaterialUUID": "e1563d4d-c29f-4433-8c7d-5e17564d1cf3"
-                        },
-                        {
-                            "UUID": "a98b7e70-c735-48a8-8e92-8826993fbd63",
-                            "Name": "BakerHouse01",
-                            "Path": "Library\/Meshes\/BakerHouse01",
-                            "DrawText": true,
-                            "MaterialUUID": "e1563d4d-c29f-4433-8c7d-5e17564d1cf3"
+                            "MaterialUUID": "a9e0a04a-8ba4-41a5-b447-1183c39c50eb"
                         }
                     ]
                 },
                 {
                     "CompType": 3,
-                    "UUID": "99b00297-2194-4b8b-a31f-577fe4296b54",
+                    "UUID": "c3aa59ce-896c-4aed-92c8-17b32477130d",
                     "Active": true,
                     "Materials": [
                         {
-                            "UUID": "e1563d4d-c29f-4433-8c7d-5e17564d1cf3",
+                            "UUID": "a9e0a04a-8ba4-41a5-b447-1183c39c50eb",
                             "Name": "Baker_house",
                             "Path": "Library\/Textures\/Baker_house.dds",
-                            "ColorR": 1,
-                            "ColorG": 1,
-                            "ColorB": 1,
+                            "ColorR": 0.47040000557899475,
+                            "ColorG": 0.47040000557899475,
+                            "ColorB": 0.47040000557899475,
                             "ColorA": 1
                         }
                     ]
@@ -166,15 +273,76 @@
             ]
         },
         {
-            "UUID": "1a922eb9-676c-40af-bb92-bbd8329d66cc",
-            "Parent_UUID": "0",
-            "name": "Chiken",
+            "UUID": "9a2da05e-8a96-42ec-965a-f0de8b74bccd",
+            "Parent_UUID": "0e510caf-3441-4e5d-96ec-99e21c5b2286",
+            "name": "Untitled1",
             "active": true,
             "Childs": [],
             "Components": [
                 {
                     "CompType": 1,
-                    "UUID": "f934f62d-67ff-42d7-bffb-30c0bb72030a",
+                    "UUID": "b10360af-922b-489a-88fc-adbd12fe3794",
+                    "Position": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "Rotation": [
+                        -0,
+                        0,
+                        -0
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ]
+                },
+                {
+                    "CompType": 2,
+                    "Active": true,
+                    "DrawTexture": true,
+                    "FBX_Path": "Assets\/3D\/Baker\/BakerHouse.fbx",
+                    "Meshes": [
+                        {
+                            "UUID": "4c11913f-482b-4835-9d33-65d239dac351",
+                            "Name": "Untitled1",
+                            "Path": "Library\/Meshes\/Untitled1",
+                            "DrawText": true,
+                            "MaterialUUID": "58936a61-ceaf-4981-abb3-4b9747352733"
+                        }
+                    ]
+                },
+                {
+                    "CompType": 3,
+                    "UUID": "757f8392-9583-49a1-a5be-d4399e99dda0",
+                    "Active": true,
+                    "Materials": [
+                        {
+                            "UUID": "58936a61-ceaf-4981-abb3-4b9747352733",
+                            "Name": "Baker_house",
+                            "Path": "Library\/Textures\/Baker_house.dds",
+                            "ColorR": 0.47040000557899475,
+                            "ColorG": 0.47040000557899475,
+                            "ColorB": 0.47040000557899475,
+                            "ColorA": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "UUID": "cb08e2f2-626b-43f3-b0ab-cb1ab5b2cdc4",
+            "Parent_UUID": "0",
+            "name": "cock",
+            "active": true,
+            "Childs": [
+                "14cfce4a-8d19-4953-b3b0-5e676d9fe7c9"
+            ],
+            "Components": [
+                {
+                    "CompType": 1,
+                    "UUID": "be753931-5a00-46db-ac45-1d7d0586c5f1",
                     "Position": [
                         -4,
                         0,
@@ -190,6 +358,34 @@
                         0.0099999997764825821,
                         0.0099999997764825821
                     ]
+                }
+            ]
+        },
+        {
+            "UUID": "14cfce4a-8d19-4953-b3b0-5e676d9fe7c9",
+            "Parent_UUID": "cb08e2f2-626b-43f3-b0ab-cb1ab5b2cdc4",
+            "name": "0",
+            "active": true,
+            "Childs": [],
+            "Components": [
+                {
+                    "CompType": 1,
+                    "UUID": "af334e18-3b3d-4f6e-a07f-d3b3053f34bc",
+                    "Position": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "Rotation": [
+                        -0,
+                        0,
+                        -0
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ]
                 },
                 {
                     "CompType": 2,
@@ -198,23 +394,23 @@
                     "FBX_Path": "Assets\/3D\/Chiken\/cock.fbx",
                     "Meshes": [
                         {
-                            "UUID": "f725b949-70df-4917-9d27-73b2d949ca66",
-                            "Name": "cock0",
-                            "Path": "Library\/Meshes\/cock0",
+                            "UUID": "95e7abef-ff01-40f7-80aa-f00ac751d4a6",
+                            "Name": "0",
+                            "Path": "Library\/Meshes\/0",
                             "DrawText": true,
-                            "MaterialUUID": "9ae8c1e5-4be5-40b8-b56c-c567e4bc2fc0"
+                            "MaterialUUID": "ee5f8223-0ebf-4572-a3f0-27b23bf7e80d"
                         }
                     ]
                 },
                 {
                     "CompType": 3,
-                    "UUID": "4306dc77-e02c-4500-8b8f-1e5f8c22cb62",
+                    "UUID": "aa086c61-583f-4666-aa26-43a9ef4d43c1",
                     "Active": true,
                     "Materials": [
                         {
-                            "UUID": "9ae8c1e5-4be5-40b8-b56c-c567e4bc2fc0",
-                            "Name": "rooster_color",
-                            "Path": "Library\/Textures\/rooster_color.dds",
+                            "UUID": "ee5f8223-0ebf-4572-a3f0-27b23bf7e80d",
+                            "Name": "Material texture",
+                            "Path": "Library\/Textures\/Material texture.dds",
                             "ColorR": 1,
                             "ColorG": 1,
                             "ColorB": 1,

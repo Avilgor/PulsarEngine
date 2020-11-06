@@ -42,24 +42,25 @@ void Scene::StartScene()
 	App->camera->LookAt(vec3(0, 0, 0));
 	
 	/*GameObject* trump = new GameObject("Trump", float3(3.0f, 0.0f, 0.0f), float3(-90.0f, 0.0f, 0.0f), float3(0.02f, 0.02f, 0.02f));
-	trump->AddComponent(MESH_COMP);
-	trump->AddComponent(MATERIAL_COMP);
+	//trump->AddComponent(MESH_COMP);
+	//trump->AddComponent(MATERIAL_COMP);
 	root->AddChild(trump);
-
+	App->fileSystem->ImportFBX(trump, "Assets/3D/Trump/trump.FBX");
 
 	GameObject* go2 = new GameObject("Baker House", float3(-1.0f, 0.0f, 0.0f), float3::zero, float3::one);
-	go2->AddComponent(MESH_COMP);
-	go2->AddComponent(MATERIAL_COMP);
+	//go2->AddComponent(MESH_COMP);
+	//go2->AddComponent(MATERIAL_COMP);
 	root->AddChild(go2);
+	App->fileSystem->ImportFBX(go2, "Assets/3D/Baker/BakerHouse.fbx");
 
 
 	GameObject* go3 = new GameObject("Chiken", float3(-4.0f, 0.0f, 0.0f), float3::zero, float3(0.01f, 0.01f, 0.01f));
-	go3->AddComponent(MESH_COMP);
-	go3->AddComponent(MATERIAL_COMP);
+	//go3->AddComponent(MESH_COMP);
+	//go3->AddComponent(MATERIAL_COMP);
 	root->AddChild(go3);
+	App->fileSystem->ImportFBX(go3, "Assets/3D/Chiken/cock.fbx");*/
 
-
-	Component* comp = trump->GetFirstComponentType(MESH_COMP);
+	/*Component* comp = trump->GetFirstComponentType(MESH_COMP);
 	if (comp != nullptr)
 	{
 		if (comp->AsMesh() != nullptr) App->fileSystem->ImportMesh(comp->AsMesh(), "Assets/3D/Trump/trump.FBX");

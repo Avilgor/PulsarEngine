@@ -27,7 +27,8 @@ public:
 	void SaveToDelete(GameObject* trash);
 	void DeleteGOComponent(ComponentTypes type);
 	void AddChild(GameObject* child);
-	void CreateChild();
+	GameObject* CreateChild();
+	GameObject* CreateChild(const char* name);
 	void DeleteChild(std::string id);
 	void RemoveChild(std::string id);
 	void DeleteAllChilds();

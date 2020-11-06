@@ -346,11 +346,20 @@ void GameObject::AddChild(GameObject* child)
 	child->SetParent(this);
 }
 
-void GameObject::CreateChild()
+GameObject* GameObject::CreateChild()
 {
 	GameObject* child = new GameObject("Child",this);
 	toAddChilds.push_back(child);
+	return child;
 }
+
+GameObject* GameObject::CreateChild(const char* n)
+{
+	GameObject* child = new GameObject(n, this);
+	toAddChilds.push_back(child);
+	return child;
+}
+
 
 void GameObject::AddPendingChilds()
 {
@@ -413,17 +422,23 @@ bool GameObject::HasChilds()
 
 void GameObject::SetParent(GameObject* p)
 {
-	if (parent != nullptr /*&& p->UUID.compare(parent->UUID) != 0*/)
+	if (p != nullptr)
 	{
-		parent->RemoveChild(UUID);
-		parent = p;
-		parentUUID = p->UUID;
-		//parent->AddChild(this);
-	}
-	else
-	{
-		parentUUID = p->UUID;
-		parent = p;
+		float4x4 g = transform->GetTransform();
+		if (parent != nullptr && p->UUID.compare(parent->UUID) != 0)
+		{
+			parent->RemoveChild(UUID);
+			parent = p;
+			parentUUID = p->UUID;
+			g = transform->GetGlobalTransform();
+			parent->AddChild(this);
+		}
+		else
+		{
+			parentUUID = p->UUID;
+			parent = p;
+		}
+		transform->SetGlobalTransform(g);
 	}
 }
 

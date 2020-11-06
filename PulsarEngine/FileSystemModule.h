@@ -17,6 +17,7 @@ class RES_Material;
 class Mesh;
 class Material;
 struct aiScene;
+struct aiMaterial;
 class RES_Mesh;
 
 struct json_array_t;
@@ -71,8 +72,9 @@ public:
 
 	uint64 GetLastModTime(const char* filename);
 	std::string GetUniqueName(const char* path, const char* name) const;
-	void LoadTexture(const char* path, RES_Material* mat);
+	bool LoadTexture(const char* path, RES_Material* mat);
 	void GetDroppedFile(const char* path);
+	std::string GetFilePath(const char* path);
 	std::string GetFileExtension(const char* path);
 	std::string GetFileName(const char* path);
 	std::string GetFileAndExtension(const char* path);
@@ -80,8 +82,8 @@ public:
 	//void SaveJSon();
 
 
-	bool ImportMesh(Mesh* mesh, const char* path);
-	//bool ImportMaterialFBX(Material* mesh, const char* path);
+	//bool ImportMesh(Mesh* mesh, const char* path);
+	RES_Material* ImportMaterialFBX(aiMaterial* material, GameObject* go, const char* fbxPath);
 	//bool ImportMaterialFBX(Material* mesh, const char* pathfbx, const char* pathtext);
 	//bool ImportAll(Mesh* mesh, Material* mat, const char* path);
 	void SaveMesh(RES_Mesh* mesh/*, char** fileBuffer*/);
@@ -89,6 +91,7 @@ public:
 	void SaveMaterial(RES_Material* mat);
 	void LoadMaterial(RES_Material* mat, char** buffer,uint size);
 	void UnloadTexure(uint id);
+	bool ImportFBX(GameObject* go, const char* path);
 };
 
 #endif //__FileSystemModule_H__

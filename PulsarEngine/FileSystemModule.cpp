@@ -503,12 +503,13 @@ std::string FileSystemModule::GetUniqueName(const char* path, const char* name) 
 	return finalName;
 }
 
-void FileSystemModule::LoadTexture(const char* path, RES_Material* mat)
+bool FileSystemModule::LoadTexture(const char* path, RES_Material* mat)
 {
 	/*
 	* There is an error when a texture load failed,
 	* making that any later load can't open texture file
 	*/
+	bool ret = true;
 	uint imageID = 0;
 	ilGenImages(1, &imageID);
 	ilBindImage(imageID);
@@ -519,10 +520,12 @@ void FileSystemModule::LoadTexture(const char* path, RES_Material* mat)
 	if (imageID == 0)
 	{
 		LOG("Could not create a texture buffer to load: %s, %d", path, ilGetError());
+		ret = false;
 	}
 	else if (ilLoadImage(path) == IL_FALSE)
 	{
 		LOG("Error trying to load the texture from %s", path);
+		ret = false;
 	}
 	else
 	{
@@ -542,6 +545,7 @@ void FileSystemModule::LoadTexture(const char* path, RES_Material* mat)
 			mat->textWidth = mat->textHeight = 0;
 			do error = ilGetError();
 			while (error != IL_NO_ERROR);
+			ret = false;
 		}
 		else
 		{
@@ -550,6 +554,16 @@ void FileSystemModule::LoadTexture(const char* path, RES_Material* mat)
 			LOG("Texture: %s loaded successfully",path);
 		}		
 	}
+	return ret;
+}
+
+std::string FileSystemModule::GetFilePath(const char* p)
+{
+	std::string path = "";
+	std::string name = "";
+	std::string extension = "";
+	SplitFilePath(p, &path, &name, &extension);
+	return path;
 }
 
 std::string FileSystemModule::GetFileExtension(const char* p)
@@ -587,12 +601,13 @@ void FileSystemModule::GetDroppedFile(const char* path)
 	{
 		//Create gameobject
 		GameObject* go = App->scene->GetActiveScene()->CreateEmptyGameobject();
-		go->AddComponent(MESH_COMP);
+		ImportFBX(go,path);
+		/*go->AddComponent(MESH_COMP);
 		Component* comp = go->GetFirstComponentType(MESH_COMP);
 		if (comp != nullptr)
 		{
 			if (comp->AsMesh() != nullptr) ImportMesh(comp->AsMesh(), path);
-		}
+		}*/
 	}
 	else if (HasExtension(path, "png") || HasExtension(path, "dds"))//Texture
 	{
@@ -607,7 +622,14 @@ void FileSystemModule::GetDroppedFile(const char* path)
 				{ 
 					if (comp->AsMaterial() != nullptr)
 					{
-						comp->AsMaterial()->ChangeMaterialTexture(path,0);
+						RES_Material* tempMat = comp->AsMaterial()->GetMaterial(0);
+						tempMat->Clean();
+						tempMat->name = "Material texture";
+						tempMat->texturePath = path;
+						tempMat->texturesNum = 1;
+						LoadTexture(path,tempMat);
+						SaveMaterial(tempMat);
+						comp->AsMaterial()->LoadMaterial(tempMat);
 					}
 				}
 				else //Create material and add texture
@@ -677,7 +699,7 @@ void FileSystemModule::SaveMesh(RES_Mesh* mesh)
 		std::string pathfile = MESHES_PATH;
 		pathfile.append(mesh->name.c_str());
 		//pathfile += ".meta";
-		App->fileSystem->Save(pathfile.c_str(), buffer, size);
+		Save(pathfile.c_str(), buffer, size);
 		mesh->path = pathfile;
 		RELEASE_ARRAY(buffer);
 	}
@@ -746,7 +768,7 @@ void FileSystemModule::SaveMaterial(RES_Material* mat)
 		std::string pathfile = TEXTURES_PATH;
 		pathfile.append(mat->name.c_str());
 		pathfile += ".dds";
-		App->fileSystem->Save(pathfile.c_str(), buffer, size);
+		Save(pathfile.c_str(), buffer, size);
 		mat->texturePath = pathfile;
 		mat->bufferSize = int(size);
 		RELEASE_ARRAY(data);
@@ -812,6 +834,98 @@ void FileSystemModule::LoadMaterial(RES_Material* mat, char** buffer, uint size)
 	else LOG("Error loading texture to material.");
 }
 
+bool FileSystemModule::ImportFBX(GameObject* parent, const char* path)
+{
+	bool ret = true;
+	//LOG("Path FBX: %s",path);
+	std::string filePath = GetFilePath(path);
+	parent->name = App->fileSystem->GetFileName(path);
+	//LOG("File path: %s",filePath.c_str());
+	const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
+	if (scene != nullptr && scene->HasMeshes())
+	{				
+		for (int i = 0; i < scene->mNumMeshes; i++)
+		{
+			GameObject* gameobject = parent->CreateChild();
+			Component* temp = gameobject->AddComponent(MESH_COMP);
+			if (temp != nullptr)
+			{
+				Mesh* meshcomp = temp->AsMesh();
+				if (meshcomp != nullptr)
+				{
+					meshcomp->pathFBX = path;
+					meshcomp->name = scene->mMeshes[i]->mName.C_Str();
+					RES_Mesh* newMesh = new RES_Mesh();
+					newMesh->name = meshcomp->name.append(std::to_string(i));
+					gameobject->name = newMesh->name;
+					newMesh->verticesSize = scene->mMeshes[i]->mNumVertices;
+					newMesh->verticesArray = new float[newMesh->verticesSize * 3];
+					memcpy(newMesh->verticesArray, scene->mMeshes[i]->mVertices, sizeof(float) * newMesh->verticesSize * 3);
+					//Indices
+					if (scene->mMeshes[i]->HasFaces())
+					{
+						newMesh->indexSize = scene->mMeshes[i]->mNumFaces * 3;
+						newMesh->indicesArray = new uint[newMesh->indexSize];
+
+						for (uint a = 0; a < scene->mMeshes[i]->mNumFaces; a++)
+						{
+							if (scene->mMeshes[i]->mFaces[a].mNumIndices != 3)
+							{
+								LOG("Geometry face with != 3 indices!");
+							}
+							else memcpy(&newMesh->indicesArray[a * 3], scene->mMeshes[i]->mFaces[a].mIndices, 3 * sizeof(uint));
+						}
+					}
+
+					//Normals
+					if (scene->mMeshes[i]->HasNormals())
+					{
+						newMesh->normalsSize = newMesh->verticesSize;
+						newMesh->normalsArray = new float[newMesh->normalsSize * 3];
+						memcpy(newMesh->normalsArray, scene->mMeshes[i]->mNormals, sizeof(float) * newMesh->normalsSize * 3);
+					}
+
+					//Texture coords
+					if (scene->mMeshes[i]->HasTextureCoords(0))
+					{
+						newMesh->textSize = newMesh->verticesSize;
+						newMesh->texturesArray = new float[newMesh->verticesSize * 2];
+
+						for (int a = 0; a < newMesh->textSize; a++)
+						{
+							newMesh->texturesArray[a * 2] = scene->mMeshes[i]->mTextureCoords[0][a].x;
+							newMesh->texturesArray[a * 2 + 1] = scene->mMeshes[i]->mTextureCoords[0][a].y;
+						}
+					}					
+					SaveMesh(newMesh);					
+					if (scene->HasMaterials())
+					{
+						RES_Material* tempMat = ImportMaterialFBX(scene->mMaterials[scene->mMeshes[i]->mMaterialIndex], gameobject, path);
+						newMesh->SetMaterial(tempMat);
+					}
+					meshcomp->AddMesh(newMesh);
+				}
+				else
+				{
+					LOG("Mesh component not found in go %s", gameobject->name.c_str());
+				}
+			}	
+			else
+			{
+				LOG("Error creating mesh component");
+			}
+			
+		}
+		aiReleaseImport(scene);
+	}
+	else
+	{
+		LOG("Error loading mesh %s", path);
+	}
+
+	return ret;
+}
+/*
 bool FileSystemModule::ImportMesh(Mesh* mesh, const char* path)
 {
 	bool ret = true;
@@ -877,14 +991,14 @@ bool FileSystemModule::ImportMesh(Mesh* mesh, const char* path)
 	}
 
 	return ret;
-}
+}*/
 
 void FileSystemModule::UnloadTexure(uint id)
 {
 	ilDeleteImages(1, &id);
 }
-/*
 
+/*
 bool FileSystemModule::ImportAll(Mesh* mesh, Material* mat, const char* path)
 {
 	bool ret = true;
@@ -893,29 +1007,27 @@ bool FileSystemModule::ImportAll(Mesh* mesh, Material* mat, const char* path)
 
 	return ret;
 }
+*/
 
-
-bool FileSystemModule::ImportMaterialFBX(Material* mat, const char* path)
+RES_Material* FileSystemModule::ImportMaterialFBX(aiMaterial* material, GameObject* go,const char* fbxPath)
 {
-	bool ret = true;
-	const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
+	RES_Material* ret = nullptr;
 
-	if (scene != nullptr && scene->HasMaterials())
+	Component* tempComp = go->AddComponent(MATERIAL_COMP);
+	if (tempComp != nullptr)
 	{
-		for (uint i = 0; i < scene->mNumMaterials; ++i)
+		Material* mat = tempComp->AsMaterial();
+		if (mat != nullptr)
 		{
 			RES_Material* matInfo = new RES_Material();
-			aiMaterial* material = scene->mMaterials[i];
 			matInfo->texturesNum = material->GetTextureCount(aiTextureType_DIFFUSE);
-			std::string extension;
-			std::string filename;
-			std::string dir;
-			App->fileSystem->SplitFilePath(path, &dir, &filename, &extension);
-			aiString tempPath;
-
-			material->GetTexture(aiTextureType_DIFFUSE, 0, &tempPath);
-			//LOG("Texture base path: %s", tempPath.C_Str());
-			matInfo->texturePath = dir.append(tempPath.C_Str());
+			aiString textPath;
+			material->GetTexture(aiTextureType_DIFFUSE, 0, &textPath);
+			std::string dir = GetFilePath(fbxPath);
+			dir.append(textPath.C_Str());
+			dir = NormalizePath(dir.c_str());
+			matInfo->texturePath = dir;
+			LOG("TexturePath: %s", dir.c_str());
 			aiColor4D color;
 			material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
 			matInfo->color = Color(color.r, color.g, color.b, color.a);
@@ -924,19 +1036,20 @@ bool FileSystemModule::ImportMaterialFBX(Material* mat, const char* path)
 			material->Get(AI_MATKEY_NAME, matName);
 			matInfo->name = matName.C_Str();
 			mat->SaveMaterial(matInfo);
+			if(LoadTexture(matInfo->texturePath.c_str(), matInfo))
+			{
+				SaveMaterial(matInfo);
+				mat->LoadMaterial(matInfo);
+			}			
+			ret = matInfo;
 		}
-
-		aiReleaseImport(scene);
-		mat->GenerateBuffers();
+		else LOG("Material component not found in %s gameobject.",go->name.c_str());
 	}
-	else
-	{
-		LOG("Materials not found.");
-	}
-
+	else LOG("Failed to create material component.");
+	
 	return ret;
 }
-
+/*
 bool FileSystemModule::ImportMaterialFBX(Material* mat, const char* pathfbx, const char* pathtext)
 {
 	bool ret = true;
