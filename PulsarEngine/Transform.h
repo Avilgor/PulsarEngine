@@ -23,7 +23,7 @@ public:
 	void ResetTransform();
 	void UpdateEuler();
 	float4x4 GetTransform() { return transform; }
-	float4x4 GetTransformT() { return transformT; }
+	float4x4 GetTransformTransposed();
 	float3 GetPosition() { return position; }
 	float3 GetGlobalPosition();
 	float3 GetEulerRotation() { return eulerRotation; }
@@ -32,14 +32,14 @@ public:
 	float3 RotationToEuler() { return eulerRotation; }
 	Quat RotationToQuaternion() { return quaternionRotation; }
 	float4x4 GetGlobalTransform() { return transformGlobal; }
-	float4x4 GetGlobalTransformT() { return transformTGlobal; }
+	float4x4 GetGlobalTransformTransposed();
 
 	void Rotate(float3 rot);
 	void SetPosition(float3 pos);
 	void SetScale(float3 scale);
 	void SetQuatRotation(Quat rot);
 	void SetEulerRotation(float3 degrees);
-	void SetGlobalTransform(float4x4 transform);
+	void SetGlobalTransform();
 	void SaveComponent(JSonHandler* file);
 	void LoadComponent(JSonHandler* file);
 
@@ -48,16 +48,16 @@ private:
 	void UpdateLocal();	
 	void UpdateQuaternion();
 
+public:
+	bool updateTransform;
+
 private:
 	float4x4 transform;
-	float4x4 transformT;
 	float4x4 transformGlobal;
-	float4x4 transformTGlobal;
 	float3 position;
 	float3 scale;
 	Quat quaternionRotation;
-	float3 eulerRotation;
-	bool updateTransform;
+	float3 eulerRotation;	
 };
 
 #endif //__Transform_H__

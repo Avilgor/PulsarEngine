@@ -18,6 +18,7 @@ public:
 	~GameObject();
 
 	void UpdateTransform();
+	void ToggleUpdateTransform();
 	void UpdateGameObject();
 	void SetUUID(const char* id);
 	void DrawMesh();

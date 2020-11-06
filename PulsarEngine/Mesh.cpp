@@ -179,7 +179,7 @@ void Mesh::Render()
 		for (int i = 0; i < meshes.size(); i++)
 		{
 			glPushMatrix();
-			glMultMatrixf((float*)&gameobject->transform->GetTransformT());
+			glMultMatrixf((float*)&gameobject->transform->GetGlobalTransformTransposed());
 
 			//glBindVertexArray(VAO);	
 			glBindBuffer(GL_ARRAY_BUFFER, meshes[i]->idVertex);

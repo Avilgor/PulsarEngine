@@ -97,6 +97,19 @@ void GameObject::SetUUID(const char* id)
 	UUID = id;
 }
 
+void GameObject::ToggleUpdateTransform()
+{
+	if(transform != nullptr) transform->updateTransform = true;
+
+	if (!Childs.empty())
+	{
+		for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
+		{
+			(*it)->ToggleUpdateTransform();
+		}
+	}
+}
+
 void GameObject::UpdateTransform()
 {
 	if (!toDelete)
@@ -424,21 +437,22 @@ void GameObject::SetParent(GameObject* p)
 {
 	if (p != nullptr)
 	{
-		float4x4 g = transform->GetTransform();
+		//float4x4 g = transform->GetTransform();
 		if (parent != nullptr && p->UUID.compare(parent->UUID) != 0)
 		{
 			parent->RemoveChild(UUID);
 			parent = p;
 			parentUUID = p->UUID;
-			g = transform->GetGlobalTransform();
+			//g = transform->GetGlobalTransform();
 			parent->AddChild(this);
 		}
 		else
 		{
 			parentUUID = p->UUID;
 			parent = p;
+			//g = transform->GetGlobalTransform();
 		}
-		transform->SetGlobalTransform(g);
+		transform->SetGlobalTransform();
 	}
 }
 
