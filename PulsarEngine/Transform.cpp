@@ -10,7 +10,7 @@
 Transform::Transform(GameObject* parent) : Component(parent, TRANSFORM_COMP)
 {
 	transform = float4x4::FromTRS(float3::zero, Quat::identity, float3::one);
-	transformGlobal = transform;
+	transformGlobal = float4x4::identity;
 	loadedTransform = false;
 	//updateTransform = true;
 }
@@ -18,7 +18,7 @@ Transform::Transform(GameObject* parent) : Component(parent, TRANSFORM_COMP)
 Transform::Transform(GameObject* parent, float3 pos, Quat rot, float3 scale) : Component(parent,TRANSFORM_COMP)
 {
 	transform = float4x4::FromTRS(pos, rot, scale);
-	transformGlobal = transform;
+	transformGlobal = float4x4::identity;
 	loadedTransform = false;
 	//updateTransform = true;
 }
@@ -28,7 +28,7 @@ Transform::Transform(GameObject* parent, float3 position, float3 rotation, float
 	eulerRotation = rotation;
 	UpdateQuaternion();
 	transform = float4x4::FromTRS(position, quaternionRotation, scale);
-	transformGlobal = transform;
+	transformGlobal = float4x4::identity;
 	loadedTransform = false;
 	//updateTransform = true;
 }
@@ -37,7 +37,7 @@ Transform::Transform(GameObject* parent, float4x4 t) : Component(parent, TRANSFO
 {
 	transform = t;
 	transform.Decompose(position, quaternionRotation, scale);
-	transformGlobal = transform;
+	transformGlobal = float4x4::identity;
 	loadedTransform = false;
 	//updateTransform = true;
 }

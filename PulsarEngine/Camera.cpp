@@ -10,7 +10,6 @@ Camera::Camera(GameObject* parent) : Component(parent, CAMERA_COMP)
 	frustum.SetPos(float3(0, 0, 0));
 	frustum.SetFront(float3::unitZ);
 	frustum.SetUp(float3::unitY);
-
 	frustum.SetViewPlaneDistances(0.1f, 1000.0f);
 	frustum.SetPerspective(1.0f, 1.0f);
 
@@ -18,7 +17,8 @@ Camera::Camera(GameObject* parent) : Component(parent, CAMERA_COMP)
 }
 
 Camera::~Camera()
-{}
+{
+}
 
 void Camera::UpdateComponent()
 {
@@ -75,6 +75,15 @@ void Camera::LoadComponent(JSonHandler* file)
 	UpdateCameraPlanes();
 }
 
+void Camera::LookAt(float3 pos)
+{
+	float3 v = pos - frustum.Pos();
+	float3x3 matrix = float3x3::LookAt(frustum.Front(), v.Normalized(), frustum.Up(), float3::unitY);
+	frustum.SetFront(matrix.MulDir(frustum.Front()).Normalized());
+	frustum.SetUp(matrix.MulDir(frustum.Up()).Normalized());
+	UpdateCameraPlanes();
+}
+
 void Camera::UpdateCameraPlanes()
 {
 	frustum.GetPlanes(planes);
@@ -107,34 +116,14 @@ void Camera::SetAspectRatio(float val)
 
 float* Camera::GetOpenGLViewMatrix()
 {
-	static float4x4 m = frustum.ViewMatrix();
+	float4x4 m = frustum.ViewMatrix();
 	m.Transpose();
 	return (float*)m.v;
 }
 
 float* Camera::GetOpenGLProjectionMatrix()
 {
-	static float4x4 m = frustum.ProjectionMatrix();
+	float4x4 m = frustum.ProjectionMatrix();
 	m.Transpose();
 	return (float*)m.v;
-}
-
-float Camera::GetNearPlane()
-{
-	return frustum.NearPlaneDistance();
-}
-
-float Camera::GetFarPlane()
-{
-	return frustum.FarPlaneDistance();
-}
-
-float Camera::GetFOV()
-{
-	return frustum.VerticalFov() * RADTODEG;
-}
-
-float Camera::GetAspectRatio()
-{
-	return frustum.AspectRatio();
 }

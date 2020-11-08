@@ -25,7 +25,7 @@ public:
 	update_status PreUpdate(float dt);
 	update_status PostUpdate(float dt);
 	bool CleanUp();
-
+	void UpdateProjection();
 	void OnResize(int width, int height,int offsetX = 0,int offsetY = 0);
 	void RenderGroundGrid(int size);
 	void RenderAABB(AABB box);

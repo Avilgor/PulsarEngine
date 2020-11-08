@@ -23,6 +23,7 @@ GameObject::GameObject(const char* n, GameObject* p)
 	if(p != nullptr) parentUUID = p->UUID;
 	transformUpdate = false;
 	CreateTransform();
+	//LOG("Created gameobject %s",name.c_str());
 }
 
 GameObject::GameObject(const char* n, float3 pos, Quat rotation, float3 scale, GameObject* p)
@@ -346,11 +347,13 @@ Component* GameObject::AddComponent(ComponentTypes type)
 	case MESH_COMP:
 		mesh = new Mesh(this);
 		Components.push_back(mesh->component);
+		//LOG("Added component mesh");
 		return mesh->component;
 		break;
 	case MATERIAL_COMP:
 		mat = new Material(this);
 		Components.push_back(mat->component);
+		//LOG("Added component material");
 		return mat->component;
 		break;
 	case CAMERA_COMP:
@@ -361,6 +364,8 @@ Component* GameObject::AddComponent(ComponentTypes type)
 			camera = nullptr;
 		}
 		camera = new Camera(this);
+		return camera->component;
+		//LOG("Added component camera");
 		break;
 	default:
 		return comp;

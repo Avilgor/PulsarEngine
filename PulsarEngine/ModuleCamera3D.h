@@ -3,7 +3,11 @@
 
 #include "Module.h"
 #include "Globals.h"
-#include "glmath.h"
+#include "Camera.h"
+#include "MathGeoLib/include/MathBuildConfig.h"
+#include "MathGeoLib/include/MathGeoLib.h"
+
+#pragma comment (lib, "MathGeoLib/libx86/MathGeoLib.lib") 
 
 class ModuleCamera3D : public Module
 {
@@ -15,23 +19,22 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 
-	void Look(const vec3 &Position, const vec3 &Reference, bool RotateAroundReference = false);
-	void LookAt(const vec3 &Spot);
-	void Move(const vec3 &Movement);
-	float* GetViewMatrix();
-	void SetAspectRatio();
+	void Look(float3 Position);
+	void Move(vec val);
+	void Zoom(float val);
+	void Pan(float x,float y);
+	void SetReference(float3 pos);
+	float3 GetPos();
+	float* GetGLViewMatrix();
+	float* GetGLProjectionMatrix();
 
-private:
-
-	void CalculateViewMatrix();
 
 public:
-	
-	vec3 X, Y, Z, Position, Reference;
+	Camera* camera = nullptr;
 
 private:
-
-	mat4x4 ViewMatrix, ViewMatrixInverse;
+	bool lockRef;
+	float3 reference;
 	bool mouseDrag;
 };
 

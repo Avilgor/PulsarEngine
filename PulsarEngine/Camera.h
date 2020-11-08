@@ -22,6 +22,8 @@ public:
 	void UpdateCamera(const float4x4& global);
 	void UpdateCameraPlanes();
 
+	void LookAt(float3 pos);
+
 	void SetNearPlane(float val);
 	void SetFarPlane(float val);
 	void SetFOV(float val);
@@ -29,10 +31,10 @@ public:
 
 	float* GetOpenGLViewMatrix();
 	float* GetOpenGLProjectionMatrix();
-	float GetNearPlane();
-	float GetFarPlane();
-	float GetFOV();
-	float GetAspectRatio();
+	float GetNearPlane() { return frustum.NearPlaneDistance(); }
+	float GetFarPlane() { return frustum.FarPlaneDistance(); }
+	float GetFOV() { return frustum.VerticalFov() * RADTODEG; }
+	float GetAspectRatio() { return frustum.AspectRatio(); }
 
 public:
 	Frustum frustum;

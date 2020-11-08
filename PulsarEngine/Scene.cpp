@@ -15,7 +15,6 @@ Scene::Scene()
 {
 	root = new GameObject("Root");
 	root->SetUUID("0");
-	//Camera gameobject
 }
 
 Scene::Scene(const char* n)
@@ -38,8 +37,8 @@ void Scene::StartScene()
 {	
 	LOG("Starting scene %s",name.c_str());
 
-	App->camera->Move(vec3(1.0f, 1.0f, 0.0f));
-	App->camera->LookAt(vec3(0, 0, 0));
+	//App->camera->Move(vec(0.0f, 10.0f, 5.0f));
+	//App->camera->Look(float3(0, 0, 0));
 	
 	/*GameObject* trump = new GameObject("Trump", float3(3.0f, 0.0f, 0.0f), float3(-90.0f, 0.0f, 0.0f), float3(0.02f, 0.02f, 0.02f));
 	//trump->AddComponent(MESH_COMP);

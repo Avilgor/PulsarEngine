@@ -159,14 +159,15 @@ bool ModuleRenderer3D::Init()
 // PreUpdate: clear buffer
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
+	UpdateProjection();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glLoadIdentity();
 
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->GetViewMatrix());
+	glLoadMatrixf(App->camera->GetGLViewMatrix());
 
 	// light 0 on cam pos
-	lights[0].SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
+	lights[0].SetPos(App->camera->GetPos().x, App->camera->GetPos().y, App->camera->GetPos().z);
 
 	for(uint i = 0; i < MAX_LIGHTS; ++i)
 		lights[i].Render();
@@ -189,6 +190,17 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 	SDL_GL_SwapWindow(App->window->window);
 	return ret;
+}
+
+void ModuleRenderer3D::UpdateProjection()
+{
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	glLoadMatrixf((GLfloat*)App->camera->GetGLProjectionMatrix());
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 }
 
 // Called before quitting
