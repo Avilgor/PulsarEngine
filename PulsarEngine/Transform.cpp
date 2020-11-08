@@ -61,7 +61,7 @@ void Transform::UpdateComponent()
 {
 	if (updateTransform)
 	{
-		if (gameobject->GetParent() != nullptr) transformGlobal = gameobject->GetParent()->transform->GetGlobalTransform() * transform;
+		if (gameobject->GetParent() != nullptr) transformGlobal = transform * gameobject->GetParent()->transform->GetGlobalTransform();
 		
 		UpdateTRS();
 		gameobject->ToggleUpdateTransform();
