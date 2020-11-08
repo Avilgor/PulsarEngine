@@ -24,8 +24,12 @@ public:
 	void UpdateEuler();
 	float4x4 GetTransform() { return transform; }
 	float4x4 GetTransformTransposed();
-	float3 GetPosition() { return position; }
+	float3 GetLocalPosition() { return position; }
 	float3 GetGlobalPosition();
+	float3 GetLocalRotation() { return eulerRotation; }
+	float3 GetGlobalRotation();
+	float3 GetLocalScale() { return scale; }
+	float3 GetGlobalScale();
 	float3 GetEulerRotation() { return eulerRotation; }
 	Quat GetQuaternionRotation() { return quaternionRotation; }
 	float3 GetScale() { return scale; }

@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "GameObject.h"
 #include "Transform.h"
+#include "Camera.h"
 #include "JSonHandler.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
@@ -65,6 +66,7 @@ void Transform::UpdateComponent()
 		UpdateTRS();
 		gameobject->ToggleUpdateTransform();
 		gameobject->UpdateAABB();
+		if (gameobject->camera != nullptr) gameobject->camera->UpdateCamera(transformGlobal);
 		updateTransform = false;
 	}
 
@@ -115,6 +117,26 @@ void Transform::DeleteComponent()
 float3 Transform::GetGlobalPosition()
 {
 	return float3(transformGlobal[0][3], transformGlobal[1][3], transformGlobal[2][3]);
+}
+
+float3 Transform::GetGlobalRotation()
+{
+	float3 position;
+	float3 scale;
+	Quat quat;
+	transformGlobal.Decompose(position, quat, scale);
+	float3 euler = quat.ToEulerXYZ();
+	euler *= RADTODEG;
+	return euler;
+}
+
+float3 Transform::GetGlobalScale()
+{
+	float3 position;
+	float3 scale;
+	Quat quat;
+	transformGlobal.Decompose(position, quat, scale);
+	return scale;
 }
 
 void Transform::SetPosition(float3 pos)

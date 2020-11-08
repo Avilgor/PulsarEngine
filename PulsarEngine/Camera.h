@@ -2,6 +2,7 @@
 #define __Camera_H__
 
 #include "Component.h"
+#include "MathGeoLib/include/MathBuildConfig.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
 #pragma comment (lib, "MathGeoLib/libx86/MathGeoLib.lib") 
@@ -18,9 +19,26 @@ public:
 	void DeleteComponent();
 	void SaveComponent(JSonHandler* file);
 	void LoadComponent(JSonHandler* file);
+	void UpdateCamera(const float4x4& global);
+	void UpdateCameraPlanes();
+
+	void SetNearPlane(float val);
+	void SetFarPlane(float val);
+	void SetFOV(float val);
+	void SetAspectRatio(float val);
+
+	float* GetOpenGLViewMatrix();
+	float* GetOpenGLProjectionMatrix();
+	float GetNearPlane();
+	float GetFarPlane();
+	float GetFOV();
+	float GetAspectRatio();
 
 public:
-	
+	Frustum frustum;
+	bool culling = false;
+	bool mainCamera = false;
+	Plane planes[6];
 };
 
 #endif //__Camera_H__

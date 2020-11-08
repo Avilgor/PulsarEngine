@@ -220,9 +220,7 @@ void GameObject::LoadGameObject(JSonHandler* file)
 		for (int i = 0; i < num; i++)
 		{
 			JSonHandler json = file->GetNodeArray("Components", i);
-			//int num = json.GetNum("CompType");
 			//LOG("Comp type: %d",num);
-			//ComponentTypes t = (ComponentTypes)num;
 			switch ((int)json.GetNum("CompType"))
 			{
 			case TRANSFORM_COMP:
@@ -239,6 +237,11 @@ void GameObject::LoadGameObject(JSonHandler* file)
 				comp = AddComponent(MATERIAL_COMP);
 				if (comp != nullptr) comp->AsMaterial()->LoadComponent(&json);
 				break;
+			case CAMERA_COMP:
+				//LOG("Load camera");
+				comp = AddComponent(CAMERA_COMP);
+				if (comp != nullptr) comp->AsCamera()->LoadComponent(&json);
+				break;
 			}	
 		}
 	}
@@ -249,7 +252,11 @@ void GameObject::LoadTransform(JSonHandler* file)
 	file->LoadArray("Components");
 	JSonHandler json = file->GetNodeArray("Components", 0);
 	transform->LoadComponent(&json);
-	LOG("Transform loaded")
+	/*if (camera != nullptr)
+	{
+		JSonHandler json = file->GetNodeArray("Components", 1);
+		camera->LoadComponent(&json);
+	}*/
 }
 
 void GameObject::DrawMesh()
@@ -347,9 +354,13 @@ Component* GameObject::AddComponent(ComponentTypes type)
 		return mat->component;
 		break;
 	case CAMERA_COMP:
-		/*mat = new Material(this);
-		Components.push_back(mat->component);
-		return mat->component;*/
+		if (camera != nullptr)
+		{
+			camera->DeleteComponent();
+			delete camera;
+			camera = nullptr;
+		}
+		camera = new Camera(this);
 		break;
 	default:
 		return comp;
@@ -376,7 +387,13 @@ Component* GameObject::GetFirstComponentType(ComponentTypes type)
 
 void GameObject::DeleteGOComponent(ComponentTypes type)
 {
-	if (type != TRANSFORM_COMP)
+	if (type == CAMERA_COMP && camera != nullptr)
+	{
+		camera->DeleteComponent();
+		delete camera;
+		camera = nullptr;
+	}
+	else if (type != TRANSFORM_COMP)
 	{
 		if (!Components.empty())
 		{
@@ -390,7 +407,7 @@ void GameObject::DeleteGOComponent(ComponentTypes type)
 			Components = temp;
 			temp.clear();
 		}
-	}
+	}	
 }
 
 void GameObject::AddChild(GameObject* child)
@@ -477,7 +494,6 @@ void GameObject::SetParent(GameObject* p)
 {
 	if (p != nullptr)
 	{
-		//float4x4 g = transform->GetTransform();
 		if (parent != nullptr && p->UUID.compare(parent->UUID) != 0)
 		{
 			parent->RemoveChild(UUID);

@@ -202,7 +202,7 @@ update_status EditorMain::Update(float dt)
     {
         if (!selectedGameObjects.empty())
         {
-            float3 pos = selectedGameObjects[0]->transform->GetPosition();
+            float3 pos = selectedGameObjects[0]->transform->GetLocalPosition();
             App->camera->LookAt(vec3(pos.x, pos.y, pos.z));
         }
     }
@@ -211,7 +211,7 @@ update_status EditorMain::Update(float dt)
     {
         if (!selectedGameObjects.empty())
         {
-            float3 pos = selectedGameObjects[0]->transform->GetPosition();
+            float3 pos = selectedGameObjects[0]->transform->GetLocalPosition();
             App->camera->LookAt(vec3(pos.x, pos.y, pos.z));
         }
     }

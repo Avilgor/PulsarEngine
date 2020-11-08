@@ -55,7 +55,7 @@ void InspectorWindow::TransformSection(GameObject* go)
 	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		//Position
-		float3 pos = tr->GetPosition();
+		float3 pos = tr->GetLocalPosition();
 		bool newPos = false;
 
 		ImGui::Text("Position");

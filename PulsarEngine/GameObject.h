@@ -9,6 +9,7 @@
 #include <string>
 
 class Transform;
+class Camera;
 
 class GameObject
 {
@@ -70,6 +71,7 @@ public:
 	bool transformUpdate = true;
 	bool drawAABB = false;
 	Transform* transform = nullptr;
+	Camera* camera = nullptr;
 	AABB Gaabb;
 	OBB Gobb;
 
