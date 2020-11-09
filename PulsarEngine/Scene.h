@@ -18,10 +18,12 @@ public:
 	~Scene();
 
 	void StartScene();
-	update_status UpdateScene();
+	update_status UpdateScene(float dt);
 	void CleanScene();
 	void SaveScene();
 	void LoadScene(JSonHandler* file);
+	void SaveTempScene();
+	void LoadTempScene();
 	GameObject* GetRoot() { return root; }
 	GameObject* CreateEmptyGameobject();
 	GameObject* CreateEmptyGameobject(const char* name);

@@ -21,11 +21,7 @@ Application::Application()
 	camera = new ModuleCamera3D(this);
 	scene = new ModuleScene(this);
 	editor = new EditorMain(this);
-	//fbxLoader = new FBXLoaderModule();
 
-	// The order of calls is very important!
-	// Modules will Init() Start() and Update in this order
-	// They will CleanUp() in reverse order
 
 	// Main Modules
 	AddModule(fileSystem);
@@ -144,9 +140,7 @@ void Application::SaveSettings()
 	LOG("Saving settings...");
 	JSonHandler settings;
 	JSonHandler node = settings.CreateNode("EngineSettings");
-	/*JSonHandler sampleNode = node.CreateNode("Sample node");
-	sampleNode.SaveString("Sample","node value");
-	LOG("Get result: %s", sampleNode.GetString("Sample").c_str());*/
+	
 	for (std::list<Module*>::const_iterator it = modulesList.begin(); it != modulesList.end(); ++it)
 	{
 		(*it)->SaveSettings(node.CreateNode((*it)->name.c_str()));

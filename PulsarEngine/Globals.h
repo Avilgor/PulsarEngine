@@ -34,6 +34,16 @@ void log(const char file[], int line, const char* format, ...);
 typedef unsigned int uint;
 typedef unsigned __int64 uint64;
 
+enum SceneState
+{
+	SCENE_PLAY = 1,
+	SCENE_PAUSE,
+	SCENE_STOP,
+	SCENE_RUNNING,
+	SCENE_UNPAUSE,
+	SCENE_STEP,
+	SCENE_ENDSTEP
+};
 
 enum update_status
 {

@@ -112,7 +112,7 @@ void Scene::StartScene()
 	}*/
 }
 
-update_status Scene::UpdateScene()
+update_status Scene::UpdateScene(float dt)
 {
 	update_status ret = UPDATE_CONTINUE;
 	//LOG("Scene update");
@@ -121,11 +121,11 @@ update_status Scene::UpdateScene()
 	if (root != nullptr)
 	{
 		root->UpdateTransform();
-		//LOG("Transforms update");
-		root->UpdateGameObject();
-		//LOG("Gameobjects update");
+		//Temp
+		/*if(App->scene->state == SCENE_RUNNING)*/ root->UpdateGameObject();
+
 		root->DrawMesh();
-		//LOG("Draw mesh update");
+
 	}
 
 	return ret;
@@ -145,15 +145,12 @@ void Scene::SaveScene()
 {
 	JSonHandler* saveFile = new JSonHandler();
 	
-	//Save gameobjects hierarchy
+	//Save gameobjects 
 	JSonHandler settings;
 	settings.SaveString("Name",name.c_str());
 	std::string label = "Gameobjects";
 	settings.CreateArray(label.c_str());
 	root->SaveGameobject(&settings,label.c_str());
-
-	//Save gameobjects stats and components
-
 
 	//Write to file
 	char* buffer = nullptr;
@@ -197,18 +194,50 @@ void Scene::LoadScene(JSonHandler* file)
 			}
 		}
 		LOG("Gameobjects childs set");
-
-		//Load transforms
-		/*int t = 0;
-		for (std::map<std::string, GameObject*>::iterator it = gameobjectsLoaded.begin(); it != gameobjectsLoaded.end(); it++)
-		{
-			JSonHandler temp = file->GetNodeArray("Gameobjects", t);
-			(*it).second->LoadTransform(&temp);
-			t++;
-		}*/
 	}
 	gameobjectsLoaded.clear();
 	LOG("Scene %s loaded!", name.c_str());
+}
+
+void Scene::SaveTempScene()
+{
+	JSonHandler* saveFile = new JSonHandler();
+
+	//Save gameobjects hierarchy
+	JSonHandler settings;
+	settings.SaveString("Name", name.c_str());
+	std::string label = "Gameobjects";
+	settings.CreateArray(label.c_str());
+	root->SaveGameobject(&settings, label.c_str());
+
+	//Write to file
+	char* buffer = nullptr;
+	uint size = settings.Serialize(&buffer);
+	std::string fileName = SCENES_PATH;
+	fileName.append(name);
+	fileName.append("temp.JSON");
+	App->fileSystem->Save(fileName.c_str(), buffer, size);
+	RELEASE_ARRAY(buffer);
+
+	LOG("Recover scene created", name.c_str());
+}
+
+void Scene::LoadTempScene()
+{
+	char* buffer = nullptr;
+	std::string path = SCENES_PATH;
+	path.append(name.c_str());
+	path.append("temp.JSON");
+	uint size = App->fileSystem->Load(path.c_str(), &buffer);
+	if (size > 0)
+	{
+		JSonHandler* node = new JSonHandler(buffer);		
+		LoadScene(node);
+
+		delete node;
+		RELEASE_ARRAY(buffer);
+	}
+	else LOG("Error recovering scene.");
 }
 
 GameObject* Scene::CreateEmptyGameobject()

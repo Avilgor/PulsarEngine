@@ -28,9 +28,21 @@ SceneWindow::~SceneWindow()
 update_status SceneWindow::Draw()
 {
 	update_status ret = UPDATE_CONTINUE;
-    ImGui::Begin(name.c_str(), &active,flags);	
+    ImGui::Begin(name.c_str(), &active,flags);
 	App->editor->mouse_in_scene = ImGui::IsWindowHovered();
-	ImVec2 winSize = ImGui::GetWindowSize();	
+	ImVec2 winSize = ImGui::GetWindowSize();
+
+	ImGui::Indent((winSize.x/2) -(75 *2));
+	if(ImGui::Button("Play",ImVec2(75.0f,25.0f))) App->scene->state = SCENE_PLAY;
+	ImGui::SameLine();
+	if (ImGui::Button("Pause", ImVec2(75.0f, 25.0f))) App->scene->state = SCENE_PAUSE;
+	ImGui::SameLine();
+	if (ImGui::Button("Stop", ImVec2(75.0f, 25.0f))) App->scene->state = SCENE_STOP;
+	ImGui::SameLine();
+	if (ImGui::Button("Step", ImVec2(75.0f, 25.0f))) App->scene->state = SCENE_STEP;
+	ImGui::Unindent();
+	
+		
 	if (winSize.x != lastSizeX || winSize.y != lastSizeY) SetNewSize(winSize.x, winSize.y);	
 	ImGui::SetCursorPos(ImVec2(offsetX, offsetY));	
 	cornerX = ImGui::GetCursorScreenPos().x;
