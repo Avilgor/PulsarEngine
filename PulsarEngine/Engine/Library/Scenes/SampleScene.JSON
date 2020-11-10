@@ -14,7 +14,7 @@
             "Components": [
                 {
                     "CompType": 1,
-                    "UUID": "678b882a-4a66-4d29-877d-fd71474769f7",
+                    "UUID": "67f39067-1658-41b0-a14a-391d129e7385",
                     "Position": [
                         0,
                         0,
@@ -37,7 +37,7 @@
             "UUID": "0e510caf-3441-4e5d-96ec-99e21c5b2286",
             "Parent_UUID": "0",
             "name": "BakerHouse",
-            "active": true,
+            "active": false,
             "Childs": [
                 "9a2da05e-8a96-42ec-965a-f0de8b74bccd",
                 "bf512134-cf2c-4441-8a23-92888b2b060d"
@@ -68,7 +68,7 @@
             "UUID": "9a2da05e-8a96-42ec-965a-f0de8b74bccd",
             "Parent_UUID": "0e510caf-3441-4e5d-96ec-99e21c5b2286",
             "name": "Untitled1",
-            "active": true,
+            "active": false,
             "Childs": [],
             "Components": [
                 {
@@ -127,7 +127,7 @@
             "UUID": "bf512134-cf2c-4441-8a23-92888b2b060d",
             "Parent_UUID": "0e510caf-3441-4e5d-96ec-99e21c5b2286",
             "name": "Untitled.0010",
-            "active": true,
+            "active": false,
             "Childs": [],
             "Components": [
                 {
@@ -206,8 +206,8 @@
                     ],
                     "Scale": [
                         0.019999999552965164,
-                        0.019999993965029716,
-                        0.019999993965029716
+                        0.019999992102384567,
+                        0.019999992102384567
                     ]
                 }
             ]
@@ -275,7 +275,7 @@
             "UUID": "cb08e2f2-626b-43f3-b0ab-cb1ab5b2cdc4",
             "Parent_UUID": "0",
             "name": "cock",
-            "active": true,
+            "active": false,
             "Childs": [
                 "14cfce4a-8d19-4953-b3b0-5e676d9fe7c9"
             ],
@@ -305,7 +305,7 @@
             "UUID": "14cfce4a-8d19-4953-b3b0-5e676d9fe7c9",
             "Parent_UUID": "cb08e2f2-626b-43f3-b0ab-cb1ab5b2cdc4",
             "name": "0",
-            "active": true,
+            "active": false,
             "Childs": [],
             "Components": [
                 {

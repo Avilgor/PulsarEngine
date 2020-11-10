@@ -179,7 +179,7 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
 	update_status ret = UPDATE_CONTINUE;
-
+	
 	glUseProgram(0);
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 	glClearColor(0, 0, 0,0);

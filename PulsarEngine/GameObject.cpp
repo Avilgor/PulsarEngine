@@ -23,6 +23,7 @@ GameObject::GameObject(const char* n, GameObject* p)
 	if(p != nullptr) parentUUID = p->UUID;
 	transformUpdate = false;
 	CreateTransform();
+	hasAABB = false;
 	//LOG("Created gameobject %s",name.c_str());
 }
 
@@ -38,6 +39,7 @@ GameObject::GameObject(const char* n, float3 pos, Quat rotation, float3 scale, G
 	if (p != nullptr) parentUUID = p->UUID;
 	transformUpdate = false;
 	CreateTransform(pos,rotation,scale);
+	hasAABB = false;
 }
 
 GameObject::GameObject(const char* n, float3 pos, float3 rotation, float3 scale, GameObject* p)
@@ -52,6 +54,7 @@ GameObject::GameObject(const char* n, float3 pos, float3 rotation, float3 scale,
 	if (p != nullptr) parentUUID = p->UUID;
 	transformUpdate = false;
 	CreateTransform(pos, rotation, scale);
+	hasAABB = false;
 }
 
 GameObject::~GameObject()
@@ -181,7 +184,6 @@ void GameObject::SaveGameobject(JSonHandler* file, const char* label)
 	}
 
 	//Save components	
-	//JSonHandler comp = node.CreateNode("Components");
 	node.CreateArray("Components");
 	if(transform != nullptr) transform->SaveComponent(&node);
 	if (!Components.empty())
@@ -197,7 +199,6 @@ void GameObject::SaveGameobject(JSonHandler* file, const char* label)
 	{
 		for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
 		{
-			//node.InsertStringArray("Childs", (*it)->UUID.c_str());
 			(*it)->SaveGameobject(file, label);
 		}
 	}
@@ -253,29 +254,45 @@ void GameObject::LoadTransform(JSonHandler* file)
 	file->LoadArray("Components");
 	JSonHandler json = file->GetNodeArray("Components", 0);
 	transform->LoadComponent(&json);
-	/*if (camera != nullptr)
-	{
-		JSonHandler json = file->GetNodeArray("Components", 1);
-		camera->LoadComponent(&json);
-	}*/
 }
 
 void GameObject::DrawMesh()
 {
 	if (active)
 	{
-		if (drawAABB)
+		if (hasAABB && drawAABB)
 		{
 			App->renderer3D->RenderAABB(Gaabb);
 		}
 
-		if (!Components.empty())
+		//Disabled because frustum culling is not working well
+		/*Component* temp = GetFirstComponentType(MESH_COMP);
+		if (temp != nullptr)
 		{
-			for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)
+			Mesh* mesh = temp->AsMesh();
+			if (mesh != nullptr)
 			{
-				if ((*it)->active && (*it)->compType == MESH_COMP) (*it)->UpdateComponent();
+				AABBCheck temp = App->camera->CheckAABB(Gaabb);
+				if (temp == AABB_IN || temp == AABB_INTERSECT) mesh->UpdateComponent();
+				//else LOG("Gameobject %s mesh is not visible.",name.c_str());
 			}
+		}*/
+		if (hasAABB)
+		{
+			AABBCheck temp = App->camera->CheckAABB(Gaabb);
+			if (temp == AABB_IN || temp == AABB_INTERSECT)
+			{
+				if (!Components.empty())
+				{
+					for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)
+					{
+						if ((*it)->active && (*it)->compType == MESH_COMP) (*it)->UpdateComponent();
+					}
+				}
+			}
+			//else LOG("Gameobject %s out of frustum.", name.c_str());
 		}
+		
 
 		if (!Childs.empty())
 		{
@@ -285,6 +302,37 @@ void GameObject::DrawMesh()
 			}
 		}
 	}	
+}
+
+void GameObject::CheckRayIntersect(std::vector<GameObject*>* vec, LineSegment ray)
+{
+	if (active)
+	{
+		if (hasAABB)
+		{
+			Component* temp = GetFirstComponentType(MESH_COMP);
+			if (temp != nullptr)
+			{
+				Mesh* mesh = temp->AsMesh();
+				if (mesh != nullptr)
+				{
+					if (ray.Intersects(mesh->GetMeshAABB()))
+					{
+						LOG("Gameobject %s mouse click intersect.", name.c_str());
+						vec->push_back(this);
+					}
+				}
+			}
+		}
+
+		if (!Childs.empty())
+		{
+			for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
+			{
+				(*it)->CheckRayIntersect(vec,ray);
+			}
+		}
+	}
 }
 
 void GameObject::SetDrawAABB(bool val)
@@ -301,7 +349,6 @@ void GameObject::SetDrawAABB(bool val)
 
 void GameObject::UpdateAABB()
 {
-
 	Component* temp = GetFirstComponentType(MESH_COMP);
 	if (temp != nullptr)
 	{
@@ -312,6 +359,7 @@ void GameObject::UpdateAABB()
 			Gobb.Transform(transform->GetGlobalTransform());			
 			Gaabb.SetNegativeInfinity();
 			Gaabb.Enclose(Gobb);
+			hasAABB = true;
 		}
 	}	
 }

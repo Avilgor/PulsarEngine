@@ -51,6 +51,7 @@ public:
 	std::string pathFBX = "";
 	std::string name = "";
 	bool drawTexture = true;
+	bool drawAABB = false;
 	
 private:
 	std::vector<RES_Mesh*> meshes;

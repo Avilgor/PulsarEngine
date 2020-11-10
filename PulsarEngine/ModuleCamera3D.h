@@ -27,7 +27,8 @@ public:
 	float3 GetPos();
 	float* GetGLViewMatrix();
 	float* GetGLProjectionMatrix();
-
+	AABBCheck CheckAABB(AABB box);
+	LineSegment CastRay(float x,float y);
 
 public:
 	Camera* camera = nullptr;
@@ -36,6 +37,7 @@ private:
 	bool lockRef;
 	float3 reference;
 	bool mouseDrag;
+
 };
 
 #endif //__ModuleCamera3D_H__

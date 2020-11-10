@@ -25,7 +25,11 @@ Mesh::~Mesh()
 
 void Mesh::UpdateComponent()
 {
-	if(!meshes.empty()) Render();
+	if (!meshes.empty())
+	{
+		if (drawAABB) App->renderer3D->RenderAABB(aabb);		
+		Render();
+	}
 }
 
 void Mesh::DeleteComponent()
@@ -44,7 +48,6 @@ void Mesh::DeleteComponent()
 
 void Mesh::SetMaterialByUUID(RES_Material* mat)
 {
-//	LOG("Setting meshes materials");
 	if (!meshes.empty())
 	{
 		for (std::vector<RES_Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it)
@@ -184,13 +187,13 @@ void Mesh::GenerateBuffers(RES_Mesh* mesh)
 }
 
 void Mesh::Render()
-{	
+{
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	for (std::vector<RES_Mesh*>::iterator it = meshes.begin(); it != meshes.end(); ++it)
-	{		
+	{
 		for (int i = 0; i < meshes.size(); i++)
 		{
 			glPushMatrix();
@@ -226,7 +229,7 @@ void Mesh::Render()
 			glBindBuffer(GL_NORMAL_ARRAY, 0);
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
-		
+
 	}
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);

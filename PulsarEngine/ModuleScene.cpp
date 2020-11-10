@@ -63,6 +63,12 @@ void ModuleScene::SaveScene()
 	save = false;
 }
 
+void ModuleScene::GetIntersectedGameobjects(std::vector<GameObject*>* vec, LineSegment ray)
+{
+	activeScene->GetRoot()->CheckRayIntersect(vec,ray);
+}
+
+
 void ModuleScene::LoadScene()
 {
 	LOG("Loading new scene...");

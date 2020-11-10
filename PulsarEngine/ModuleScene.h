@@ -3,6 +3,7 @@
 
 #include "Module.h"
 #include "Timer.h"
+#include "MathGeoLib/include/MathGeoLib.h"
 
 class Scene;
 
@@ -26,6 +27,7 @@ public:
 	void SetTimeScale(float val);
 	float GetDeltaTime();
 	float GetSceneRunningTime();
+	void GetIntersectedGameobjects(std::vector<GameObject*> *vec,LineSegment ray);
 
 private:
 	void SaveScene();

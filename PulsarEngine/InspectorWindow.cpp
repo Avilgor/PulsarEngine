@@ -165,6 +165,7 @@ void InspectorWindow::MeshSection(GameObject* go)
 
 			ImGui::Text("Mesh %d",i);
 			ImGui::Text("Name: %s", (*it)->name.c_str());
+			ImGui::Checkbox("Mesh AABB", &mesh->drawAABB);
 			ImGui::Text("Draw textures");
 			ImGui::SameLine();
 			ImGui::Checkbox(labelText.c_str(), &(*it)->drawText);

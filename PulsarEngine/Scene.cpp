@@ -125,7 +125,6 @@ update_status Scene::UpdateScene(float dt)
 		/*if(App->scene->state == SCENE_RUNNING)*/ root->UpdateGameObject();
 
 		root->DrawMesh();
-
 	}
 
 	return ret;

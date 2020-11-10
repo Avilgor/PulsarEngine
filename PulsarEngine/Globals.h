@@ -34,6 +34,13 @@ void log(const char file[], int line, const char* format, ...);
 typedef unsigned int uint;
 typedef unsigned __int64 uint64;
 
+enum AABBCheck
+{
+	AABB_IN = 1,
+	AABB_OUT,
+	AABB_INTERSECT
+};
+
 enum SceneState
 {
 	SCENE_PLAY = 1,

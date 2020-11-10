@@ -1,8 +1,12 @@
 #include "Globals.h"
 #include "Application.h"
 #include "SceneWindow.h"
+#include "Transform.h"
+#include "Mesh.h"
+#include "RES_Mesh.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
+#include "MathGeoLib/include/MathGeoLib.h"
 
 #include <string>
 
@@ -29,7 +33,8 @@ update_status SceneWindow::Draw()
 {
 	update_status ret = UPDATE_CONTINUE;
     ImGui::Begin(name.c_str(), &active,flags);
-	App->editor->mouse_in_scene = ImGui::IsWindowHovered();
+	bool inScene = ImGui::IsWindowHovered();
+	App->editor->mouse_in_scene = inScene;
 	ImVec2 winSize = ImGui::GetWindowSize();
 
 	ImGui::Indent((winSize.x/2) -(75 *2));
@@ -49,7 +54,9 @@ update_status SceneWindow::Draw()
 	cornerY = ImGui::GetCursorScreenPos().y + windowSizeY;
 	cornerY = App->window->height - cornerY;
 	ImGui::Image((ImTextureID)App->renderer3D->renderTexture, winSize);		
-    ImGui::End();
+	if (inScene && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) ClickSelect(winSize);
+
+	ImGui::End();
 
 	return ret;
 }
@@ -76,4 +83,55 @@ void SceneWindow::SetNewSize(float x, float y)
 	offsetX = (lastSizeX - 5.0f - windowSizeX) / 2; 
 	offsetY = (lastSizeY - 5.0f - windowSizeY) / 2;
 
+}
+
+void SceneWindow::ClickSelect(ImVec2 winSize)
+{
+	vec mousePos;
+	mousePos.x = App->input->GetMouseX();
+	mousePos.y = App->input->GetMouseY();
+	float mouseNX = mousePos.x / (float)App->window->width;
+	float mouseNY = mousePos.y / (float)App->window->height;
+	//float mouseNX = mousePos.x / (float)winSize.x;
+	//float mouseNY = mousePos.y / (float)winSize.y;
+
+	//mouseNX = (mouseNX - 0.5) / 0.5;
+	//mouseNY = (mouseNY - 0.5) / 0.5;
+
+	LineSegment ray = App->camera->CastRay(mouseNX, mouseNY);
+	std::vector<GameObject*> rayIntersect;
+	App->scene->GetIntersectedGameobjects(&rayIntersect,ray);
+	bool gotGo = false;
+	LOG("Intersections size = %d",rayIntersect.size());
+	for (std::vector<GameObject*>::iterator it = rayIntersect.begin(); it != rayIntersect.end(); it++)
+	{
+		Mesh* mesh = (*it)->GetFirstComponentType(MESH_COMP)->AsMesh();
+		LineSegment temp = ray;
+		temp.Transform((*it)->transform->GetGlobalTransform().Inverted());
+		int bufferSize = mesh->GetMesh(0)->indexSize;
+		uint* buffer = mesh->GetMesh(0)->indicesArray;
+		float* vertices = mesh->GetMesh(0)->verticesArray;
+		for (int i = 0;i < bufferSize;i += 3)
+		{
+			//LOG("Triangle: %d",i);
+			uint a = buffer[i] * 3;
+			vec v1(vertices[a]);
+
+			uint b = buffer[i + 1] * 3;
+			vec v2(vertices[b]);
+
+			uint c = buffer[i + 2] * 3;
+			vec v3(vertices[c]);
+
+			Triangle t(v1,v2,v3);
+			if (temp.Intersects(t, nullptr, nullptr))
+			{
+				LOG("Gameobject %s selected",(*it)->name.c_str());
+				App->editor->SelectOne((*it));
+				gotGo = true;
+				break;
+			}
+		}
+		if (gotGo) break;
+	}
 }

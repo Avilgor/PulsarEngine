@@ -4,6 +4,7 @@
 #include "EditorWindow.h"
 #include "Globals.h"
 #include "ImGui/imgui.h"
+#include "MathGeoLib/include/MathGeoLib.h"
 #include <string>
 
 class SceneWindow : public EditorWindow
@@ -14,6 +15,7 @@ public:
 
 	update_status Draw();
 	void SetNewSize(float x, float y);
+	void ClickSelect(ImVec2 size);
 
 private:
 	ImGuiWindowFlags flags;

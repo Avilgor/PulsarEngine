@@ -29,7 +29,6 @@ void Camera::UpdateCamera(const float4x4& global)
 {
 	frustum.SetFront(global.WorldZ());
 	frustum.SetUp(global.WorldY());
-
 	float3 position;
 	float3 scale;
 	Quat quat;

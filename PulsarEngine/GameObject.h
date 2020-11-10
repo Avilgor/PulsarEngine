@@ -54,6 +54,7 @@ public:
 	void UpdateAABB();
 	AABB GetGlobalAABB();
 	void SetDrawAABB(bool val);
+	void CheckRayIntersect(std::vector<GameObject*> *vec,LineSegment ray);
 
 private:
 	void AddPendingChilds();
@@ -81,7 +82,7 @@ private:
 	std::vector<GameObject*> Childs;
 	std::vector<GameObject*> toDeleteChilds;
 	std::vector<GameObject*> toAddChilds;
-
+	bool hasAABB;
 };
 
 #endif //__GameObject_H__
