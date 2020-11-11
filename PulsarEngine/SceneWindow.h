@@ -5,6 +5,8 @@
 #include "Globals.h"
 #include "ImGui/imgui.h"
 #include "MathGeoLib/include/MathGeoLib.h"
+#include "ImGuizmo/ImGuizmo.h"
+
 #include <string>
 
 class SceneWindow : public EditorWindow
@@ -15,7 +17,10 @@ public:
 
 	update_status Draw();
 	void SetNewSize(float x, float y);
-	void ClickSelect(ImVec2 size);
+	void HandleClick();
+	void HandleGuizmo();
+	float2 SceneToWindow(float2 p);
+	float2 WindowToScene(float2 p);
 
 private:
 	ImGuiWindowFlags flags;
@@ -27,6 +32,9 @@ private:
 	float windowSizeY;
 	float offsetX;
 	float offsetY;
+
+	ImGuizmo::OPERATION gizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+	ImGuizmo::MODE gizmoMode = ImGuizmo::MODE::LOCAL;
 };
 
 #endif //__SceneWindow_H__

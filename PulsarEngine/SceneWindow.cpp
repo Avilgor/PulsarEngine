@@ -7,6 +7,7 @@
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
 #include "MathGeoLib/include/MathGeoLib.h"
+#include "ImGuizmo/ImGuizmo.h"
 
 #include <string>
 
@@ -45,8 +46,7 @@ update_status SceneWindow::Draw()
 	if (ImGui::Button("Stop", ImVec2(75.0f, 25.0f))) App->scene->state = SCENE_STOP;
 	ImGui::SameLine();
 	if (ImGui::Button("Step", ImVec2(75.0f, 25.0f))) App->scene->state = SCENE_STEP;
-	ImGui::Unindent();
-	
+	ImGui::Unindent();	
 		
 	if (winSize.x != lastSizeX || winSize.y != lastSizeY) SetNewSize(winSize.x, winSize.y);	
 	ImGui::SetCursorPos(ImVec2(offsetX, offsetY));	
@@ -54,7 +54,19 @@ update_status SceneWindow::Draw()
 	cornerY = ImGui::GetCursorScreenPos().y + windowSizeY;
 	cornerY = App->window->height - cornerY;
 	ImGui::Image((ImTextureID)App->renderer3D->renderTexture, winSize);		
-	if (inScene && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) ClickSelect(winSize);
+
+	//Handle guizmo
+	if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN) gizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+	if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN) gizmoOperation = ImGuizmo::OPERATION::ROTATE;
+	if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN) gizmoOperation = ImGuizmo::OPERATION::SCALE;
+
+	if (!App->editor->selectedGameObjects.empty()) HandleGuizmo();
+
+	//Handle click
+	if (ImGuizmo::IsUsing() == false)
+	{
+		if (inScene && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) HandleClick();
+	}
 
 	ImGui::End();
 
@@ -85,7 +97,27 @@ void SceneWindow::SetNewSize(float x, float y)
 
 }
 
-void SceneWindow::ClickSelect(ImVec2 winSize)
+
+float2 SceneWindow::SceneToWindow(float2 p) 
+{
+	float2 ret;
+	ret.x = p.x - cornerX;
+	ret.y = p.y - cornerY;
+	ret.x = ret.x / windowSizeX * App->window->width;
+	ret.y = ret.y / windowSizeY * App->window->height;
+	return ret;
+}
+
+
+float2 SceneWindow::WindowToScene(float2 p) 
+{
+	float2 ret; 
+	ret.x = (p.x / App->window->width * windowSizeX) + cornerX;
+	ret.y = (p.y / App->window->height * windowSizeY) + cornerY;
+	return ret;
+}
+
+void SceneWindow::HandleClick()
 {
 	vec mousePos;
 	mousePos.x = App->input->GetMouseX();
@@ -97,41 +129,81 @@ void SceneWindow::ClickSelect(ImVec2 winSize)
 
 	//mouseNX = (mouseNX - 0.5) / 0.5;
 	//mouseNY = (mouseNY - 0.5) / 0.5;
-
+	std::vector<GameObject*> gameobjects = App->camera->GetDrawnObjects();
 	LineSegment ray = App->camera->CastRay(mouseNX, mouseNY);
-	std::vector<GameObject*> rayIntersect;
-	App->scene->GetIntersectedGameobjects(&rayIntersect,ray);
-	bool gotGo = false;
-	LOG("Intersections size = %d",rayIntersect.size());
-	for (std::vector<GameObject*>::iterator it = rayIntersect.begin(); it != rayIntersect.end(); it++)
+	std::vector<GameObject*> intersections;
+	for (std::vector<GameObject*>::iterator it = gameobjects.begin(); it != gameobjects.end(); it++)
 	{
-		Mesh* mesh = (*it)->GetFirstComponentType(MESH_COMP)->AsMesh();
-		LineSegment temp = ray;
-		temp.Transform((*it)->transform->GetGlobalTransform().Inverted());
-		int bufferSize = mesh->GetMesh(0)->indexSize;
-		uint* buffer = mesh->GetMesh(0)->indicesArray;
-		float* vertices = mesh->GetMesh(0)->verticesArray;
-		for (int i = 0;i < bufferSize;i += 3)
+		GameObject* temp = (*it)->CheckRayIntersect(ray);
+		if (temp != nullptr) intersections.push_back((*it));
+	}
+	//App->scene->GetIntersectedGameobjects(&rayIntersect,ray);
+	bool gotGo = false;
+	LOG("Intersections size = %d", intersections.size());
+	if (!intersections.empty())
+	{
+		for (std::vector<GameObject*>::iterator it = intersections.begin(); it != intersections.end(); it++)
 		{
-			//LOG("Triangle: %d",i);
-			uint a = buffer[i] * 3;
-			vec v1(vertices[a]);
-
-			uint b = buffer[i + 1] * 3;
-			vec v2(vertices[b]);
-
-			uint c = buffer[i + 2] * 3;
-			vec v3(vertices[c]);
-
-			Triangle t(v1,v2,v3);
-			if (temp.Intersects(t, nullptr, nullptr))
+			Mesh* mesh = (*it)->GetFirstComponentType(MESH_COMP)->AsMesh();
+			LineSegment temp = ray;
+			temp.Transform((*it)->transform->GetGlobalTransform().Inverted());
+			int bufferSize = mesh->GetMesh(0)->indexSize;
+			uint* buffer = mesh->GetMesh(0)->indicesArray;
+			float* vertices = mesh->GetMesh(0)->verticesArray;
+			for (int i = 0; i < bufferSize; i += 3)
 			{
-				LOG("Gameobject %s selected",(*it)->name.c_str());
-				App->editor->SelectOne((*it));
-				gotGo = true;
-				break;
+				//LOG("Triangle: %d",i);
+				uint a = buffer[i] * 3;
+				vec v1(vertices[a]);
+
+				uint b = buffer[i + 1] * 3;
+				vec v2(vertices[b]);
+
+				uint c = buffer[i + 2] * 3;
+				vec v3(vertices[c]);
+
+				Triangle t(v1, v2, v3);
+				if (temp.Intersects(t, nullptr, nullptr))
+				{
+					LOG("Gameobject %s selected", (*it)->name.c_str());
+					App->editor->SelectOne((*it));
+					gotGo = true;
+					break;
+				}
 			}
+			if (gotGo) break;
 		}
-		if (gotGo) break;
+		if (!gotGo) App->editor->EmptySelected();
+	}
+}
+
+void SceneWindow::HandleGuizmo()
+{
+	GameObject* gameObject = App->editor->selectedGameObjects[0];
+
+	float4x4 viewMatrix = App->camera->camera->frustum.ViewMatrix();
+	viewMatrix.Transpose();
+	float4x4 projectionMatrix = App->camera->camera->frustum.ProjectionMatrix().Transposed();
+	float4x4 modelProjection = gameObject->transform->GetGlobalTransformTransposed();
+
+	ImGuizmo::SetDrawlist();
+	float3 pos = gameObject->transform->GetGlobalPosition();
+	float tempCornerX = cornerX;
+	float tempCornerY = App->window->height - cornerY - windowSizeY;
+	ImGuizmo::SetRect(tempCornerX, tempCornerY,windowSizeX, windowSizeY);
+
+	float modelPtr[16];
+	memcpy(modelPtr, modelProjection.ptr(), 16 * sizeof(float));
+	ImGuizmo::MODE finalMode; 
+	if (gizmoOperation == ImGuizmo::OPERATION::SCALE) finalMode = ImGuizmo::MODE::LOCAL;
+	else finalMode = gizmoMode;
+	ImGuizmo::Manipulate(viewMatrix.ptr(), projectionMatrix.ptr(), gizmoOperation, finalMode, modelPtr);
+
+	if (ImGuizmo::IsUsing())
+	{
+		float4x4 newMatrix;
+		newMatrix.Set(modelPtr);
+		modelProjection = newMatrix.Transposed();
+		gameObject->transform->SetGlobalTransform(modelProjection);
 	}
 }

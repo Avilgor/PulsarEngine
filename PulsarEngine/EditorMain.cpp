@@ -16,6 +16,7 @@
 #include "ImGui/imgui_impl_sdl.h"
 #include "ImGui/imgui_impl_opengl3.h"
 
+
 #include <vector>
 #include <string>
 
@@ -33,7 +34,7 @@ bool EditorMain::Init()
 	LOG("Initializing editor...");
 	bool ret = true;
     mainWindow = App->window->window;
-
+    
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -197,7 +198,7 @@ update_status EditorMain::Update(float dt)
         }
     }
 
-    if (mouse_in_scene && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) EmptySelected();
+    //if (mouse_in_scene && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) EmptySelected();//Temp
     if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT)
     {
         if (!selectedGameObjects.empty())

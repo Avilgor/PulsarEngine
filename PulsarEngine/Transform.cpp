@@ -181,9 +181,18 @@ void Transform::SetEulerRotation(float3 degrees)
 
 void Transform::SetGlobalTransform()
 {
+
 	if (gameobject->GetParent() != nullptr)transform = gameobject->GetParent()->transform->GetGlobalTransform().Inverted() * transform;
 
 	transformGlobal = transform;
+	updateTransform = true;
+}
+
+void Transform::SetGlobalTransform(float4x4 t)
+{
+	if (gameobject->GetParent() != nullptr)transform = gameobject->GetParent()->transform->GetGlobalTransform().Inverted() * t;
+
+	transformGlobal = t;
 	updateTransform = true;
 }
 

@@ -3,7 +3,11 @@
 #include "ModuleScene.h"
 #include "Scene.h"
 #include "GameObject.h"
-
+#include "Mesh.h"
+#include "RES_Mesh.h"
+#include "Transform.h"
+#include "ImGuizmo/ImGuizmo.h"
+#include "MathGeoLib/include/MathGeoLib.h"
 
 ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app,"Scene",start_enabled)
 {
@@ -19,6 +23,7 @@ bool ModuleScene::Init()
 	activeScene = new Scene("SampleScene");
 	state = SCENE_STOP;
 	lastState = state;
+	ImGuizmo::Enable(true);
 	return true;
 }
 
@@ -123,6 +128,8 @@ update_status ModuleScene::PreUpdate(float dt)
 	return UPDATE_CONTINUE;
 }
 
+
+
 // Update
 update_status ModuleScene::Update(float dt)
 {
@@ -185,6 +192,7 @@ update_status ModuleScene::Update(float dt)
 	}
 
 	ret = activeScene->UpdateScene(dt);
+
 	if (save) SaveScene();
 	if (load) LoadScene();
 

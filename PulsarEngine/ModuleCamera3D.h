@@ -17,6 +17,7 @@ public:
 
 	bool Start();
 	update_status Update(float dt);
+	update_status PostUpdate(float dt);
 	bool CleanUp();
 
 	void Look(float3 Position);
@@ -29,6 +30,8 @@ public:
 	float* GetGLProjectionMatrix();
 	AABBCheck CheckAABB(AABB box);
 	LineSegment CastRay(float x,float y);
+	void AddDrawnGameobject(GameObject* go);
+	std::vector<GameObject*> GetDrawnObjects() { return drawnGameobjects; }
 
 public:
 	Camera* camera = nullptr;
@@ -37,7 +40,7 @@ private:
 	bool lockRef;
 	float3 reference;
 	bool mouseDrag;
-
+	std::vector<GameObject*> drawnGameobjects;
 };
 
 #endif //__ModuleCamera3D_H__

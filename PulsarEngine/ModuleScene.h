@@ -5,6 +5,7 @@
 #include "Timer.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
+
 class Scene;
 
 class ModuleScene : public Module
@@ -28,6 +29,7 @@ public:
 	float GetDeltaTime();
 	float GetSceneRunningTime();
 	void GetIntersectedGameobjects(std::vector<GameObject*> *vec,LineSegment ray);
+	
 
 private:
 	void SaveScene();

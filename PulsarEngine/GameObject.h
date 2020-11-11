@@ -55,6 +55,7 @@ public:
 	AABB GetGlobalAABB();
 	void SetDrawAABB(bool val);
 	void CheckRayIntersect(std::vector<GameObject*> *vec,LineSegment ray);
+	GameObject* CheckRayIntersect(LineSegment ray);
 
 private:
 	void AddPendingChilds();

@@ -304,6 +304,31 @@ void GameObject::DrawMesh()
 	}	
 }
 
+GameObject* GameObject::CheckRayIntersect(LineSegment ray)
+{
+	if (active)
+	{
+		if (hasAABB)
+		{
+			Component* temp = GetFirstComponentType(MESH_COMP);
+			if (temp != nullptr)
+			{
+				Mesh* mesh = temp->AsMesh();
+				if (mesh != nullptr)
+				{
+					if (ray.Intersects(mesh->GetMeshAABB()))
+					{
+						LOG("Gameobject %s mouse click intersect.", name.c_str());
+						return this;
+					}
+				}
+			}
+		}
+	}
+
+	return nullptr;
+}
+
 void GameObject::CheckRayIntersect(std::vector<GameObject*>* vec, LineSegment ray)
 {
 	if (active)

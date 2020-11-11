@@ -96,6 +96,21 @@ update_status ModuleCamera3D::Update(float dt)
 	return UPDATE_CONTINUE;
 }
 
+// -----------------------------------------------------------------
+update_status ModuleCamera3D::PostUpdate(float dt)
+{
+	drawnGameobjects.clear();
+	return UPDATE_CONTINUE;
+}
+
+
+// -----------------------------------------------------------------
+void ModuleCamera3D::AddDrawnGameobject(GameObject* go)
+{
+	drawnGameobjects.push_back(go);
+}
+
+// -----------------------------------------------------------------
 AABBCheck ModuleCamera3D::CheckAABB(AABB box)
 {
 	float3 corners[8];
