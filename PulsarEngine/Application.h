@@ -10,8 +10,8 @@
 #include "ModuleCamera3D.h"
 #include "ModuleScene.h"
 #include "EditorMain.h"
-//#include "FBXLoaderModule.h"
 #include "FileSystemModule.h"
+#include "FileManager.h"
 
 #include <list> 
 #include <string>
@@ -26,15 +26,13 @@ public:
 	ModuleCamera3D* camera;
 	ModuleScene* scene;
 	EditorMain* editor;
-	//FBXLoaderModule* fbxLoader;
 	FileSystemModule* fileSystem;
+	FileManager* fileManager;
 
 	float ms = 0.0f;
 	float fps = 0.0f;
 
 	std::vector<std::string> ConsoleLogs;
-
-	//int GoIDNum = 0;
 
 private:
 

@@ -95,6 +95,7 @@
     <ClInclude Include="ConsoleWindow.h" />
     <ClInclude Include="EditorMain.h" />
     <ClInclude Include="EditorWindow.h" />
+    <ClInclude Include="FileManager.h" />
     <ClInclude Include="FileSystemModule.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="glmath.h" />
@@ -205,6 +206,7 @@
     <ClCompile Include="ConsoleWindow.cpp" />
     <ClCompile Include="EditorMain.cpp" />
     <ClCompile Include="EditorWindow.cpp" />
+    <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="FileSystemModule.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="glmath.cpp" />

@@ -381,6 +381,9 @@
     <ClInclude Include="ImGuizmo\ImGuizmo.h">
       <Filter>Sources\Tools\ImGuizmo</Filter>
     </ClInclude>
+    <ClInclude Include="FileManager.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -613,6 +616,9 @@
     </ClCompile>
     <ClCompile Include="ImGuizmo\ImGuizmo.cpp">
       <Filter>Sources\Tools\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="FileManager.cpp">
+      <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

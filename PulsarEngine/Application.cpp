@@ -21,13 +21,14 @@ Application::Application()
 	camera = new ModuleCamera3D(this);
 	scene = new ModuleScene(this);
 	editor = new EditorMain(this);
-
+	fileManager = new FileManager(this);
 
 	// Main Modules
 	AddModule(fileSystem);
 	AddModule(window);
 	AddModule(camera);
 	AddModule(input);
+	AddModule(fileManager);
 	
 	// Scenes
 	AddModule(editor);

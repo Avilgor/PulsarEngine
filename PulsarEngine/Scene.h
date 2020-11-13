@@ -35,6 +35,7 @@ public:
 public:
 	GameObject* root = nullptr;
 	std::string name = "UnknowScene";
+	std::string UUID = "";
 };
 
 #endif //__Scene_H__

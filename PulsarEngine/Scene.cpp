@@ -15,6 +15,7 @@ Scene::Scene()
 {
 	root = new GameObject("Root");
 	root->SetUUID("0");
+	UUID = App->GenerateUUID_V4();
 }
 
 Scene::Scene(const char* n)
@@ -146,6 +147,7 @@ void Scene::SaveScene()
 	
 	//Save gameobjects 
 	JSonHandler settings;
+	settings.SaveString("UUID", UUID.c_str());
 	settings.SaveString("Name",name.c_str());
 	std::string label = "Gameobjects";
 	settings.CreateArray(label.c_str());
@@ -166,6 +168,7 @@ void Scene::SaveScene()
 void Scene::LoadScene(JSonHandler* file)
 {
 	std::map <std::string, GameObject*> gameobjectsLoaded;
+	UUID = file->GetString("UUID");
 	name = file->GetString("Name");
 	file->LoadArray("Gameobjects");
 	int num = file->GetArrayCount("Gameobjects");
