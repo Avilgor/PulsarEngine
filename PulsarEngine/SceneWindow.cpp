@@ -44,8 +44,8 @@ update_status SceneWindow::Draw()
 	if (ImGui::Button("Pause", ImVec2(75.0f, 25.0f))) App->scene->state = SCENE_PAUSE;
 	ImGui::SameLine();
 	if (ImGui::Button("Stop", ImVec2(75.0f, 25.0f))) App->scene->state = SCENE_STOP;
-	ImGui::SameLine();
-	if (ImGui::Button("Step", ImVec2(75.0f, 25.0f))) App->scene->state = SCENE_STEP;
+	//ImGui::SameLine();
+	//if (ImGui::Button("Step", ImVec2(75.0f, 25.0f))) App->scene->state = SCENE_STEP;
 	ImGui::Unindent();	
 		
 	if (winSize.x != lastSizeX || winSize.y != lastSizeY) SetNewSize(winSize.x, winSize.y);	
@@ -69,6 +69,8 @@ update_status SceneWindow::Draw()
 	}
 
 	ImGui::End();
+
+	App->renderer3D->RenderLine(nearClick,farClick);
 
 	return ret;
 }
@@ -131,6 +133,8 @@ void SceneWindow::HandleClick()
 	//mouseNY = (mouseNY - 0.5) / 0.5;
 	std::vector<GameObject*> gameobjects = App->camera->GetDrawnObjects();
 	LineSegment ray = App->camera->CastRay(mouseNX, mouseNY);
+	nearClick = ray.a;
+	farClick = ray.b;
 	std::vector<GameObject*> intersections;
 	for (std::vector<GameObject*>::iterator it = gameobjects.begin(); it != gameobjects.end(); it++)
 	{
@@ -147,9 +151,9 @@ void SceneWindow::HandleClick()
 			Mesh* mesh = (*it)->GetFirstComponentType(MESH_COMP)->AsMesh();
 			LineSegment temp = ray;
 			temp.Transform((*it)->transform->GetGlobalTransform().Inverted());
-			int bufferSize = mesh->GetMesh(0)->indexSize;
-			uint* buffer = mesh->GetMesh(0)->indicesArray;
-			float* vertices = mesh->GetMesh(0)->verticesArray;
+			int bufferSize = mesh->GetMesh()->indexSize;
+			uint* buffer = mesh->GetMesh()->indicesArray;
+			float* vertices = mesh->GetMesh()->verticesArray;
 			for (int i = 0; i < bufferSize; i += 3)
 			{
 				//LOG("Triangle: %d",i);
@@ -185,25 +189,24 @@ void SceneWindow::HandleGuizmo()
 	viewMatrix.Transpose();
 	float4x4 projectionMatrix = App->camera->camera->frustum.ProjectionMatrix().Transposed();
 	float4x4 modelProjection = gameObject->transform->GetGlobalTransformTransposed();
+	float4x4 modelChangeMat = gameObject->transform->GetTransformTransposed();
 
 	ImGuizmo::SetDrawlist();
-	float3 pos = gameObject->transform->GetGlobalPosition();
 	float tempCornerX = cornerX;
 	float tempCornerY = App->window->height - cornerY - windowSizeY;
 	ImGuizmo::SetRect(tempCornerX, tempCornerY,windowSizeX, windowSizeY);
 
 	float modelPtr[16];
-	memcpy(modelPtr, modelProjection.ptr(), 16 * sizeof(float));
-	ImGuizmo::MODE finalMode; 
-	if (gizmoOperation == ImGuizmo::OPERATION::SCALE) finalMode = ImGuizmo::MODE::LOCAL;
-	else finalMode = gizmoMode;
-	ImGuizmo::Manipulate(viewMatrix.ptr(), projectionMatrix.ptr(), gizmoOperation, finalMode, modelPtr);
+	memcpy(modelPtr, modelChangeMat.ptr(), 16 * sizeof(float));
+	//ImGuizmo::MODE finalMode; 
+	//if (gizmoOperation == ImGuizmo::OPERATION::SCALE) finalMode = ImGuizmo::MODE::LOCAL;
+	//else finalMode = gizmoMode;
+	ImGuizmo::Manipulate(viewMatrix.ptr(), projectionMatrix.ptr(), gizmoOperation, gizmoMode, modelPtr,modelProjection.ptr());
 
 	if (ImGuizmo::IsUsing())
 	{
 		float4x4 newMatrix;
 		newMatrix.Set(modelPtr);
-		modelProjection = newMatrix.Transposed();
-		gameObject->transform->SetGlobalTransform(modelProjection);
+		gameObject->transform->SetLocalTransform(newMatrix.Transposed());
 	}
 }

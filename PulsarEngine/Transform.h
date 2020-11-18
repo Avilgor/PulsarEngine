@@ -45,6 +45,7 @@ public:
 	void SetEulerRotation(float3 degrees);
 	void SetGlobalTransform();
 	void SetGlobalTransform(float4x4 t);
+	void SetLocalTransform(float4x4 t);
 	void SaveComponent(JSonHandler* file);
 	void LoadComponent(JSonHandler* file);
 

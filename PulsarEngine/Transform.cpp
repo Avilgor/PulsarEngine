@@ -196,6 +196,12 @@ void Transform::SetGlobalTransform(float4x4 t)
 	updateTransform = true;
 }
 
+void Transform::SetLocalTransform(float4x4 t)
+{
+	transform = t;
+	updateTransform = true;
+}
+
 void Transform::SaveComponent(JSonHandler* file)
 {
 	JSonHandler node = file->InsertNodeArray("Components");

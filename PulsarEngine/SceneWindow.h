@@ -34,7 +34,10 @@ private:
 	float offsetY;
 
 	ImGuizmo::OPERATION gizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
-	ImGuizmo::MODE gizmoMode = ImGuizmo::MODE::LOCAL;
+	ImGuizmo::MODE gizmoMode = ImGuizmo::MODE::WORLD;
+
+	float3 nearClick;
+	float3 farClick;
 };
 
 #endif //__SceneWindow_H__
