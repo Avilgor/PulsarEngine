@@ -14,6 +14,8 @@ struct PathNode
 
 	bool isLeaf = true;
 	bool isFile = true;
+	bool treeOpen = false;
+	bool selectedNode = false;
 
 	bool IsLastFolder() const
 	{

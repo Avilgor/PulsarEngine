@@ -10,6 +10,7 @@
 
 class Transform;
 class Camera;
+//class RES_Material;
 
 class GameObject
 {
@@ -56,6 +57,7 @@ public:
 	void SetDrawAABB(bool val);
 	void CheckRayIntersect(std::vector<GameObject*> *vec,LineSegment ray);
 	GameObject* CheckRayIntersect(LineSegment ray);
+	//void SetMaterial(RES_Material* mat);
 
 private:
 	void AddPendingChilds();

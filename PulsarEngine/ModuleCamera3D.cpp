@@ -132,33 +132,6 @@ AABBCheck ModuleCamera3D::CheckAABB(AABB box)
 		if (out == 0) return AABB_OUT;		
 	}
 
-	/*for (int p = 0; p < 6; p++) //For each plane
-	{
-		int out = 0;
-		//int iInCount = 8;
-		//int iPtIn = 1;
-		for (int i = 0; i < 8; i++) //For each corner
-		{
-			if (!camera->planes[p].IsInPositiveDirection(corners[i]))
-			{
-				out += 1;
-				//iPtIn = 0;
-				//--iInCount;
-				//return AABB_INTERSECT; //One point in means the object is visible
-			}
-		}
-
-		if (out >= 8)
-		{
-			LOG("Out of plane %d",p);
-			//return AABB_OUT;
-		}
-
-		//iTotalIn += iPtIn;
-	}*/
-
-	//if (iTotalIn == 6) return AABB_IN;
-
 	return AABB_IN;
 }
 

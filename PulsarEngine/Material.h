@@ -19,26 +19,19 @@ public:
 
 	void UpdateComponent();
 	void DeleteComponent();
-	void GenerateBuffers();
-	void GenerateBuffer(RES_Material* mat);
-	void SaveMaterial(RES_Material* mat);
-	void LoadTextureNewMaterial(std::string path);
-	void LoadMaterial(RES_Material* mat);
-	RES_Material* GetMaterial(int index);
-	RES_Material* GetLastMaterial();
-	std::vector<RES_Material*> GetAllMaterials() { return materials; }
-	void ChangeMaterial(RES_Material* mat, int index);
-	void RemoveMaterial(int index);
-	void DeleteMaterials();
-	void ChangeMaterialTexture(const char* path,int index);
-	void ChangeAllMaterialsTextures(const char* path);
-	RES_Material* CreateMaterial(JSonHandler* file);
+	//void LoadTextureNewMaterial(std::string path);
+	//void LoadMaterial(RES_Material* mat);
+	RES_Material* GetMaterial() { return resMaterial; }
+	void SetMaterial(RES_Material* mat);
+	void DeleteMaterial();
+	//void ChangeMaterialTexture(const char* path);
+	//RES_Material* CreateMaterial(JSonHandler* file);
 	void SaveComponent(JSonHandler* file);
 	void LoadComponent(JSonHandler* file);
 
-public:
+private:
 	
-	std::vector<RES_Material*> materials;
+	RES_Material* resMaterial = nullptr;
 };
 
 #endif //__Material_H__

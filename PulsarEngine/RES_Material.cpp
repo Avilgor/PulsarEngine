@@ -6,36 +6,57 @@
 #include "Glew/include/GL/glew.h"
 #include "SDL/include/SDL_opengl.h"
 
-RES_Material::RES_Material()
+RES_Material::RES_Material() : EngineResource(MATERIAL_RES)
 {
 	textData = nullptr;
 	texturesNum = 0;
 	textureID = 0;
-	texturePath = "";
 	color = Color(1.0f, 1.0f, 1.0f);
-	name = "";
 	textWidth = 0;
 	textHeight = 0;
-	UUID = App->GenerateUUID_V4();
+	clean = false;
+	matRes = this;
 }
 
+RES_Material::RES_Material(std::string id) : EngineResource(MATERIAL_RES,id)
+{
+	textData = nullptr;
+	texturesNum = 0;
+	textureID = 0;
+	color = Color(1.0f, 1.0f, 1.0f);
+	textWidth = 0;
+	textHeight = 0;
+	clean = false;
+	matRes = this;
+}
+
+
 RES_Material::~RES_Material()
-{}
+{
+	if (!clean)
+	{
+		App->fileSystem->UnloadTexure(textureID);
+		textData = nullptr;
+		texturesNum = 0;
+		textureID = 0;
+		color = Color(1.0f, 1.0f, 1.0f);
+		textWidth = 0;
+		textHeight = 0;
+	}
+}
 
 void RES_Material::Clean()
 {
-	//glDeleteBuffers(1, &(GLuint)textureID);
-	//delete textData;
 	App->fileSystem->UnloadTexure(textureID);
 	textData = nullptr;
 	texturesNum = 0;
 	textureID = 0;
-	texturePath = "";
 	color = Color(1.0f, 1.0f, 1.0f);
-	name = "";
 	textWidth = 0;
 	textHeight = 0;
+	clean = true;
 }
+
 void RES_Material::ChangeColor(float r, float g, float b, float a)
 {
 	color.r = r;
@@ -48,24 +69,25 @@ void RES_Material::ChangeColor(Color col)
 	color = col;
 }
 
-void RES_Material::SaveMaterial(JSonHandler* file, const char* label)
+void RES_Material::SaveResource(JSonHandler* file)
 {
-	JSonHandler node = file->InsertNodeArray(label);
-	node.SaveString("UUID", UUID.c_str());
-	node.SaveString("Name", name.c_str());
-	node.SaveString("Path", texturePath.c_str());
-
-	node.SaveNum("ColorR",color.r);
-	node.SaveNum("ColorG", color.g);
-	node.SaveNum("ColorB", color.b);
-	node.SaveNum("ColorA", color.a);
+	file->SaveString("UUID", UUID.c_str());
+	file->SaveString("Name", name.c_str());
+	file->SaveNum("Type", (double)type);
+	file->SaveString("LibPath", libPath.c_str());
+	file->SaveString("AssetPath", assetPath.c_str());
+	file->SaveNum("ColorR",color.r);
+	file->SaveNum("ColorG", color.g);
+	file->SaveNum("ColorB", color.b);
+	file->SaveNum("ColorA", color.a);
 }
 
-void RES_Material::LoadMaterial(JSonHandler* file)
+void RES_Material::LoadResource(JSonHandler* file)
 {
 	name = file->GetString("Name");
 	UUID = file->GetString("UUID");
-	texturePath = file->GetString("Path");
+	libPath = file->GetString("LibPath");
+	assetPath = file->GetString("AssetPath");
 	color.r = file->GetNum("ColorR");
 	color.g = file->GetNum("ColorG");
 	color.b = file->GetNum("ColorB");

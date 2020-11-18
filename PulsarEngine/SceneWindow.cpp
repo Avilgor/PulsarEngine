@@ -125,12 +125,12 @@ void SceneWindow::HandleClick()
 	mousePos.x = App->input->GetMouseX();
 	mousePos.y = App->input->GetMouseY();
 	float mouseNX = mousePos.x / (float)App->window->width;
-	float mouseNY = mousePos.y / (float)App->window->height;
+	float mouseNY = -mousePos.y / (float)App->window->height;
 	//float mouseNX = mousePos.x / (float)winSize.x;
 	//float mouseNY = mousePos.y / (float)winSize.y;
 
-	//mouseNX = (mouseNX - 0.5) / 0.5;
-	//mouseNY = (mouseNY - 0.5) / 0.5;
+	mouseNX = (mouseNX - 0.5) / 0.5;
+	mouseNY = (mouseNY - 0.5) / 0.5;
 	std::vector<GameObject*> gameobjects = App->camera->GetDrawnObjects();
 	LineSegment ray = App->camera->CastRay(mouseNX, mouseNY);
 	nearClick = ray.a;
@@ -141,7 +141,7 @@ void SceneWindow::HandleClick()
 		GameObject* temp = (*it)->CheckRayIntersect(ray);
 		if (temp != nullptr) intersections.push_back((*it));
 	}
-	//App->scene->GetIntersectedGameobjects(&rayIntersect,ray);
+	
 	bool gotGo = false;
 	LOG("Intersections size = %d", intersections.size());
 	if (!intersections.empty())

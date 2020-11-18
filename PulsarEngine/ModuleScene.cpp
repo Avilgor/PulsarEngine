@@ -33,8 +33,9 @@ bool ModuleScene::Start()
 	LOG("Starting module scene...");
 	bool ret = true;	
 	timeScale = 1.0f;
+	state = SCENE_STOP;
 	activeScene->StartScene();
-	LoadScene();
+	//LoadScene();
 	return ret;
 }
 
@@ -54,12 +55,12 @@ Scene* ModuleScene::GetActiveScene()
 
 void ModuleScene::RequestSave()
 {
-	save = true;
+	if (state == SCENE_STOP) save = true;
 }
 
 void ModuleScene::RequestLoad()
 {
-	load = true;
+	if (state == SCENE_STOP) load = true;
 }
 
 void ModuleScene::SaveScene()
@@ -81,7 +82,7 @@ void ModuleScene::LoadScene()
 	Scene* scene = new Scene();
 	char* buffer = nullptr;
 	std::string path = SCENES_PATH;
-	path.append("SampleScene.JSON");
+	path.append("SampleScene.psscene");
 	uint size = App->fileSystem->Load(path.c_str(), &buffer);
 	if (size > 0)
 	{

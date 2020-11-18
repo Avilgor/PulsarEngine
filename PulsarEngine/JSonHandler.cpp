@@ -211,7 +211,7 @@ JSonHandler JSonHandler::InsertNodeArray(const char* arName)
 
 ///////
 
-void JSonHandler::LoadArray(const char* name)
+bool JSonHandler::LoadArray(const char* name)
 {
 	if (json_object_has_value_of_type(node, name, JSONArray))
 	{
@@ -220,8 +220,10 @@ void JSonHandler::LoadArray(const char* name)
 		data.size = json_array_get_count(data.dataArray);
 		nodeArrays.emplace(name, data);
 		//LOG("Array %s loaded",name);
+		return true;
 	}
 	else LOG("Array not found");
+	return false;
 }
 
 uint JSonHandler::Serialize(char** buffer)

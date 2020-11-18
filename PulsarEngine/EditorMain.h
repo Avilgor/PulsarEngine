@@ -48,6 +48,12 @@ public:
 	SDL_Window* mainWindow;	
 	bool mouse_in_scene = false;
 	std::vector<GameObject*> selectedGameObjects;
+
+	KEY_STATE rightMouse;
+	KEY_STATE leftMouse;
+	KEY_STATE ctrl;
+	KEY_STATE deleteKey;
+	bool mouseDrag = false;
 };
 
 #endif // __EditorMain_H__

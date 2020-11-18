@@ -10,7 +10,7 @@
 #include <string>
 
 #define LIBRARY_PATH "Library/"
-#define FOLDERS_PATH "Library/Folders/"
+#define ASSETS_PATH "Library/Assets/"
 #define MESHES_PATH "Library/Meshes/"
 #define MATERIALS_PATH "Library/Materials/"
 #define TEXTURES_PATH "Library/Textures/"
@@ -64,7 +64,14 @@ enum ComponentTypes
 	TRANSFORM_COMP = 1,
 	MESH_COMP,
 	MATERIAL_COMP,
-	CAMERA_COMP,
+	CAMERA_COMP
+};
+
+enum RESOURCE_TYPE
+{
+	MESH_RES = 1,
+	MATERIAL_RES,
+	SCENE_RES
 };
 
 // Configuration -----------

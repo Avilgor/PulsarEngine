@@ -11,7 +11,7 @@
 #include "ModuleScene.h"
 #include "EditorMain.h"
 #include "FileSystemModule.h"
-#include "FileManager.h"
+#include "ResourceManager.h"
 
 #include <list> 
 #include <string>
@@ -27,7 +27,7 @@ public:
 	ModuleScene* scene;
 	EditorMain* editor;
 	FileSystemModule* fileSystem;
-	FileManager* fileManager;
+	ResourceManager* resourceManager;
 
 	float ms = 0.0f;
 	float fps = 0.0f;

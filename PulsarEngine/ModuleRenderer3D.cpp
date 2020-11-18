@@ -211,6 +211,16 @@ bool ModuleRenderer3D::CleanUp()
 	return true;
 }
 
+void ModuleRenderer3D::RenderLine(float3 a, float3 b)
+{
+	glBegin(GL_LINES);
+	
+	glVertex3f(a.x,a.y,a.z);
+	glVertex3f(b.x,b.y,b.z);
+	
+	glEnd();
+}
+
 void ModuleRenderer3D::RenderAABB(AABB box)
 {
 	glDisable(GL_LIGHTING);

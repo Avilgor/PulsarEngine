@@ -4,10 +4,8 @@
 #include "GameObject.h"
 #include "Transform.h"
 #include "Mesh.h"
-#include "RES_Mesh.h"
-#include "Material.h"
-#include "RES_Material.h"
 #include "JSonHandler.h"
+#include "ResourceManager.h"
 
 #include <map>
 
@@ -41,24 +39,18 @@ void Scene::StartScene()
 	//App->camera->Move(vec(0.0f, 10.0f, 5.0f));
 	//App->camera->Look(float3(0, 0, 0));
 	
-	/*GameObject* trump = new GameObject("Trump", float3(3.0f, 0.0f, 0.0f), float3(-90.0f, 0.0f, 0.0f), float3(0.02f, 0.02f, 0.02f));
-	//trump->AddComponent(MESH_COMP);
-	//trump->AddComponent(MATERIAL_COMP);
+	GameObject* trump = new GameObject("Trump", float3(3.0f, 0.0f, 0.0f), float3(-90.0f, 0.0f, 0.0f), float3(0.02f, 0.02f, 0.02f));
 	root->AddChild(trump);
-	App->fileSystem->ImportFBX(trump, "Assets/3D/Trump/trump.FBX");
+	App->resourceManager->ImportFBX("Assets/3D/Trump/trump.FBX",trump);
 
-	GameObject* go2 = new GameObject("Baker House", float3(-1.0f, 0.0f, 0.0f), float3::zero, float3::one);
-	//go2->AddComponent(MESH_COMP);
-	//go2->AddComponent(MATERIAL_COMP);
+	/*GameObject* go2 = new GameObject("Baker House", float3(-1.0f, 0.0f, 0.0f), float3::zero, float3::one);
 	root->AddChild(go2);
-	App->fileSystem->ImportFBX(go2, "Assets/3D/Baker/BakerHouse.fbx");
+	App->resourceManager->ImportFBX("Assets/3D/Baker/BakerHouse.fbx",go2);
 
 
 	GameObject* go3 = new GameObject("Chiken", float3(-4.0f, 0.0f, 0.0f), float3::zero, float3(0.01f, 0.01f, 0.01f));
-	//go3->AddComponent(MESH_COMP);
-	//go3->AddComponent(MATERIAL_COMP);
 	root->AddChild(go3);
-	App->fileSystem->ImportFBX(go3, "Assets/3D/Chiken/cock.fbx");*/
+	App->resourceManager->ImportFBX("Assets/3D/Chiken/cock.fbx",go3);*/
 
 	/*Component* comp = trump->GetFirstComponentType(MESH_COMP);
 	if (comp != nullptr)
@@ -142,9 +134,7 @@ void Scene::CleanScene()
 
 
 void Scene::SaveScene()
-{
-	JSonHandler* saveFile = new JSonHandler();
-	
+{	
 	//Save gameobjects 
 	JSonHandler settings;
 	settings.SaveString("UUID", UUID.c_str());
@@ -158,7 +148,7 @@ void Scene::SaveScene()
 	uint size = settings.Serialize(&buffer);
 	std::string fileName = SCENES_PATH;
 	fileName.append(name);
-	fileName.append(".JSON");
+	fileName.append(".psscene");
 	App->fileSystem->Save(fileName.c_str(), buffer, size);
 	RELEASE_ARRAY(buffer);
 
@@ -203,8 +193,6 @@ void Scene::LoadScene(JSonHandler* file)
 
 void Scene::SaveTempScene()
 {
-	JSonHandler* saveFile = new JSonHandler();
-
 	//Save gameobjects hierarchy
 	JSonHandler settings;
 	settings.SaveString("Name", name.c_str());
@@ -217,7 +205,7 @@ void Scene::SaveTempScene()
 	uint size = settings.Serialize(&buffer);
 	std::string fileName = SCENES_PATH;
 	fileName.append(name);
-	fileName.append("temp.JSON");
+	fileName.append("temp.psscene");
 	App->fileSystem->Save(fileName.c_str(), buffer, size);
 	RELEASE_ARRAY(buffer);
 
@@ -226,6 +214,8 @@ void Scene::SaveTempScene()
 
 void Scene::LoadTempScene()
 {
+	App->editor->EmptySelected();
+	root->DeleteAllChilds();
 	char* buffer = nullptr;
 	std::string path = SCENES_PATH;
 	path.append(name.c_str());

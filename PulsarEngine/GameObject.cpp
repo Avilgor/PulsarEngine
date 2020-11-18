@@ -24,7 +24,6 @@ GameObject::GameObject(const char* n, GameObject* p)
 	transformUpdate = false;
 	CreateTransform();
 	hasAABB = false;
-	//LOG("Created gameobject %s",name.c_str());
 }
 
 GameObject::GameObject(const char* n, float3 pos, Quat rotation, float3 scale, GameObject* p)
@@ -212,7 +211,6 @@ void GameObject::LoadGameObject(JSonHandler* file)
 	name = file->GetString("name");
 	active = file->GetBool("active");
 
-	//LOG("Loading %s gameobject components...",name.c_str());
 	//Load components	
 	file->LoadArray("Components");
 	int num = file->GetArrayCount("Components");
@@ -611,7 +609,7 @@ void GameObject::Delete()
 
 	transform->DeleteComponent();
 	transform = nullptr;
-	LOG("Deleted Gameobject: %s", name.c_str());
+//	LOG("Deleted Gameobject: %s", name.c_str());
 	delete this;
 }
 
@@ -623,7 +621,7 @@ void GameObject::SaveToDelete(GameObject* trash)
 
 void GameObject::DeleteGameobject()
 {	
-	LOG("To delete: %s",name.c_str());
+//	LOG("To delete: %s",name.c_str());
 	toDelete = true;
 	if(parent != nullptr) parent->SaveToDelete(this);
 	if (!Childs.empty())

@@ -12,8 +12,6 @@
 
 HierarchyWindow::HierarchyWindow(std::string name) : EditorWindow(name)
 {
-	//delKey = false;
-	ctrl = false;
 }
 
 HierarchyWindow::~HierarchyWindow()
@@ -23,7 +21,6 @@ HierarchyWindow::~HierarchyWindow()
 update_status HierarchyWindow::Draw()
 {
 	update_status ret = UPDATE_CONTINUE;
-	SaveInputs();
 	ImGui::SetNextWindowBgAlpha(1.0f);
 	ImGui::Begin(name.c_str(), &active);
 	DrawSceneGameObjects();
@@ -31,18 +28,6 @@ update_status HierarchyWindow::Draw()
 	ImGui::End();
 
 	return ret;
-}
-
-void HierarchyWindow::SaveInputs()
-{
-	if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT || App->input->GetKey(SDL_SCANCODE_RCTRL)) ctrl = true;
-	else ctrl = false;
-
-	if ((App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN)) App->editor->DeleteSelected();
-	//else delKey = false;
-
-	leftMouse = App->input->GetMouseButton(SDL_BUTTON_LEFT);
-	rightMouse = App->input->GetMouseButton(SDL_BUTTON_RIGHT);
 }
 
 void HierarchyWindow::DrawSceneGameObjects()
@@ -106,11 +91,11 @@ void HierarchyWindow::DrawGameObject(GameObject* go)
 
 void HierarchyWindow::NodeInput(GameObject* go)
 {
-	if (leftMouse == KEY_DOWN)
+	if (App->editor->leftMouse == KEY_DOWN)
 	{
 		if (ImGui::IsItemHovered())
 		{
-			if (ctrl)
+			if (App->editor->ctrl == KEY_REPEAT)
 			{
 				if (go->selected) App->editor->RemoveSelection(go);//go->selected = false;
 				else App->editor->AddSelection(go);//go->selected = true;

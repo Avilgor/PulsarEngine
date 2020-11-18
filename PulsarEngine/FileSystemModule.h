@@ -5,6 +5,7 @@
 #include "Globals.h"
 
 #include <vector>
+#include <string>
 
 struct SDL_RWops;
 int close_sdl_rwops(SDL_RWops* rw);
@@ -49,7 +50,7 @@ public:
 	const char* GetWriteDir() const;
 	void DiscoverFiles(const char* directory, std::vector<std::string>& file_list, std::vector<std::string>& dir_list) const;
 	void GetAllFilesWithExtension(const char* directory, const char* extension, std::vector<std::string>& file_list) const;
-	PathNode GetAllFiles(const char* directory, std::vector<std::string>* filter_ext = nullptr, std::vector<std::string>* ignore_ext = nullptr) const;
+	PathNode GetAllFiles(const char* directory, std::vector<std::string>* filter_ext = nullptr, std::vector<std::string>* ignore_ext = nullptr);
 	void GetRealDir(const char* path, std::string& output) const;
 	std::string GetPathRelativeToAssets(const char* originalPath) const;
 
@@ -73,25 +74,26 @@ public:
 	uint64 GetLastModTime(const char* filename);
 	std::string GetUniqueName(const char* path, const char* name) const;
 	bool LoadTexture(const char* path, RES_Material* mat);
-	void GetDroppedFile(const char* path);
+	void GetDroppedFile(const char* path, GameObject* go = nullptr, RES_Material* mat = nullptr);
 	std::string GetFilePath(const char* path);
 	std::string GetFileExtension(const char* path);
 	std::string GetFileName(const char* path);
 	std::string GetFileAndExtension(const char* path);
-	//JSON_Array* LoadJSon();
-	//void SaveJSon();
+	std::string GetPathAndFile(const char* path);
 
 
 	//bool ImportMesh(Mesh* mesh, const char* path);
 	RES_Material* ImportMaterialFBX(aiMaterial* material, GameObject* go, const char* fbxPath);
+	bool ImportFBX(const char* path, GameObject* parent);
 	//bool ImportMaterialFBX(Material* mesh, const char* pathfbx, const char* pathtext);
 	//bool ImportAll(Mesh* mesh, Material* mat, const char* path);
-	void SaveMesh(RES_Mesh* mesh/*, char** fileBuffer*/);
+	void SaveMeshBufferInfo(RES_Mesh* mesh/*, char** fileBuffer*/);
 	void LoadMesh(RES_Mesh* mesh, char* fileBuffer);
 	void SaveMaterial(RES_Material* mat);
-	void LoadMaterial(RES_Material* mat, char** buffer,uint size);
-	void UnloadTexure(uint id);
-	bool ImportFBX(GameObject* go, const char* path);
+	void LoadMaterial(RES_Material* mat/*, char** buffer,uint size*/);
+	void UnloadTexure(uint id);	
+	void Create_MetaFile(std::string file, JSonHandler* node);
+	//void CreatePulsarAsset(JSonHandler* node,std::string uuid,std::string name);
 };
 
 #endif //__FileSystemModule_H__

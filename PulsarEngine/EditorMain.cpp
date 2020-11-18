@@ -182,21 +182,11 @@ update_status EditorMain::Update(float dt)
 {
     update_status status = UPDATE_CONTINUE;
 
-    if (!WindowsList.empty())
-    {
-        status = RenderDock();
-        if (status == UPDATE_CONTINUE)
-        {           
-            for (std::vector<EditorWindow*>::const_iterator it = WindowsList.begin(); it != WindowsList.end(); ++it)
-            {
-                if (status == UPDATE_CONTINUE)
-                {
-                    if ((*it)->IsActive()) (*it)->InfoProcessing();
-                }
-                else break;
-            }           
-        }
-    }
+    //Save input states for all editor modules
+    ctrl = App->input->GetKey(SDL_SCANCODE_LCTRL);
+    deleteKey = App->input->GetKey(SDL_SCANCODE_DELETE);
+    leftMouse = App->input->GetMouseButton(SDL_BUTTON_LEFT);
+    rightMouse = App->input->GetMouseButton(SDL_BUTTON_RIGHT);
 
     //if (mouse_in_scene && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) EmptySelected();//Temp
     if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT)
@@ -216,6 +206,26 @@ update_status EditorMain::Update(float dt)
             App->camera->Look(float3(pos.x, pos.y, pos.z));
         }
     }
+
+    //Process inputs
+    if (deleteKey == KEY_DOWN) DeleteSelected();
+
+    //Update editor windows
+    if (!WindowsList.empty())
+    {
+        status = RenderDock();
+        if (status == UPDATE_CONTINUE)
+        {           
+            for (std::vector<EditorWindow*>::const_iterator it = WindowsList.begin(); it != WindowsList.end(); ++it)
+            {
+                if (status == UPDATE_CONTINUE)
+                {
+                    if ((*it)->IsActive()) (*it)->InfoProcessing();
+                }
+                else break;
+            }           
+        }
+    }  
    
 	return status;
 }

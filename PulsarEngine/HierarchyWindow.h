@@ -15,13 +15,7 @@ public:
 	void DrawSceneGameObjects();
 	void DrawGameObject(GameObject* go);
 	void NodeInput(GameObject* go);
-	void SaveInputs();
 
-private:
-	bool ctrl;
-	KEY_STATE rightMouse;
-	KEY_STATE leftMouse;
-	//bool delKey;
 };
 
 #endif //__HierarchyWindow_H__

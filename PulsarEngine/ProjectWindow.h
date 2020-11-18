@@ -3,7 +3,10 @@
 
 #include "EditorWindow.h"
 #include "Globals.h"
-#include <string>
+#include "PathNode.h"
+#include "Timer.h"
+
+#include <vector>
 
 class ProjectWindow : public EditorWindow
 {
@@ -13,8 +16,15 @@ public:
 
 	update_status Draw();
 
-private:
+	void GetTree();
+	void DrawItem(PathNode* node);
+	void PrintAllNodes(PathNode node);
+	void NodeInput(PathNode* node);
 
+private:
+	PathNode assetsFolder;
+	//std::vector<PathNode> selectedItems;
+	Timer reScanTimer;
 };
 
 #endif //__ProjectWindow_H__
