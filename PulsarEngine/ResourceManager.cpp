@@ -33,32 +33,6 @@ update_status ResourceManager::Update(float dt)
 
 bool ResourceManager::CleanUp()
 {
-	/*if (!materialResources.empty())
-	{
-		for (std::map<std::string, std::shared_ptr<RES_Material>>::iterator it = materialResources.begin(); it != materialResources.end(); ++it)
-		{
-			(*it).second.get()->Clean();
-		}
-	}
-
-	if (!meshResources.empty())
-	{
-		for (std::map<std::string, std::shared_ptr<RES_Mesh>>::iterator it = meshResources.begin(); it != meshResources.end(); ++it)
-		{
-			(*it).second.get()->Clean();
-		}
-	}
-
-	if (!sceneResources.empty())
-	{
-		for (std::map<std::string, std::shared_ptr<Scene>>::iterator it = sceneResources.begin(); it != sceneResources.end(); ++it)
-		{
-			(*it).second.get()->CleanScene();
-		}
-	}
-	materialResources.clear();
-	meshResources.clear();
-	sceneResources.clear();*/
 	if (!loadedResources.empty())
 	{
 		for (std::map<std::string, EngineResource*>::iterator it = loadedResources.begin(); it != loadedResources.end(); ++it)
@@ -74,6 +48,7 @@ bool ResourceManager::CleanUp()
 
 void ResourceManager::GetEngineFiles()
 {
+	//if (!resourcesMap.empty()) resourcesMap.clear();
 	std::vector<std::string> ext;
 	ext.push_back("psmesh");
 	ext.push_back("psmaterial");
@@ -84,18 +59,9 @@ void ResourceManager::GetEngineFiles()
 	LOG("Engine resources loaded.");
 }
 
-/*void ResourceManager::GetPulsarAssets()
-{
-	std::vector<std::string> ext;
-	ext.push_back("psasset");
-	PathNode pulsarasset;
-	pulsarasset = App->fileSystem->GetAllFiles(ASSETS_PATH, &ext, nullptr);
-	SaveEngineAsset(pulsarasset);
-	LOG("Pulsar assets loaded.");
-}*/
-
 void ResourceManager::LoadMetaFiles()
 {
+	if (!metaFiles.empty()) metaFiles.clear();
 	std::vector<std::string> ext;
 	ext.push_back("meta");
 	metaNode = App->fileSystem->GetAllFiles("Assets", &ext, nullptr);
@@ -662,7 +628,6 @@ EngineResource* ResourceManager::GetResource(std::string uuid)
 	{
 		if (LoadResource(uuid))
 		{
-			//loadedResources[uuid]->references++;
 			return loadedResources[uuid];
 		}
 		else

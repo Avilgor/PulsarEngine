@@ -40,7 +40,7 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 	void LoadMetaFiles();
-	void GetEngineFiles();
+	
 	//void GetPulsarAssets();
 	
 	GameObject* ImportFBX(const char* path);
@@ -60,7 +60,7 @@ public:
 	void FreeResource(std::string uuid);
 
 private:
-	
+	void GetEngineFiles();
 	void SaveMetaNode(PathNode node);
 	void SaveEngineResource(PathNode node);
 	bool LoadMeshResource(RES_Mesh* mesh);

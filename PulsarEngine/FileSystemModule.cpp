@@ -850,6 +850,7 @@ bool FileSystemModule::ImportFBX(const char* path, GameObject* parent)
 						node.CreateArray("Resources");
 						RES_Mesh* newMesh = new RES_Mesh();
 						newMesh->name = scene->mMeshes[i]->mName.C_Str();
+						newMesh->name.append(std::to_string(i));
 						newMesh->assetPath = path;
 
 						//Vertex
