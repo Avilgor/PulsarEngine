@@ -3,6 +3,7 @@
 
 #include "Module.h"
 #include "PathNode.h"
+#include "Timer.h"
 
 #include <string>
 #include <map>
@@ -13,6 +14,7 @@ class Scene;
 class EngineResource;
 class GameObject;
 
+
 struct MetaFile
 {
 	uint64 modTime;
@@ -20,6 +22,7 @@ struct MetaFile
 	std::string name = "";
 	std::vector<std::vector<std::string> > resourcesIDs;
 	std::string resourceID = "";
+	std::string filePath = "";
 };
 
 /*struct PulsarAsset
@@ -52,6 +55,7 @@ public:
 	EngineResource* GetMetaResource(std::string id);
 
 	bool CheckMetaFile(std::string name);
+	bool CheckMetaPath(std::string path,std::string name);
 	std::string Save_RES_Mesh(RES_Mesh* mesh,const char* path);
 	std::string Save_RES_Material(RES_Material* mat, const char* path);
 	void SaveResource(EngineResource* res);	
@@ -75,6 +79,7 @@ private:
 	std::map<std::string, EngineResource*> loadedResources;
 	std::map<std::string, MetaFile> metaFiles;
 	PathNode metaNode;
+	Timer reScanTimer;
 };
 
 #endif //__FileManager_H__

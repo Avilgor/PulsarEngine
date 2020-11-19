@@ -6,6 +6,7 @@
 #include "RES_Mesh.h"
 #include "RES_Material.h"
 #include "Scene.h"
+#include "Timer.h"
 #include "Glew/include/GL/glew.h"
 #include "SDL/include/SDL_opengl.h"
 
@@ -28,6 +29,17 @@ bool ResourceManager::Start()
 
 update_status ResourceManager::Update(float dt)
 {
+	if (reScanTimer.ReadSec() > 3.0f)
+	{
+		//Scan files for changes
+		std::vector<std::string> ext;
+		ext.push_back("meta");
+		PathNode nodePaths;
+		nodePaths = App->fileSystem->GetAllFiles("Assets", nullptr, &ext);
+
+		App->editor->scanProjectFiles = true;
+		reScanTimer.Start();
+	}
 	return UPDATE_CONTINUE;
 }
 
@@ -169,6 +181,8 @@ void ResourceManager::SaveMetaNode(PathNode n)
 			file.modTime = node->GetNum("LastModificationTime");
 			file.ID = node->GetString("UUID");
 			file.name = node->GetString("Name");
+			file.filePath = n.path;
+			//file.filePath = node->GetString("FilePath");
 			//LOG("New meta name: %s",file.name.c_str());
 			file.resourceID = node->GetString("ResourceID");
 			if (node->LoadArray("Objects"))
@@ -283,6 +297,35 @@ bool ResourceManager::CheckMetaFile(std::string name)
 		return true;
 	}
 	else return false;
+}
+
+bool ResourceManager::CheckMetaPath(std::string path,std::string name)
+{
+	if (metaFiles.find(name) != metaFiles.end())
+	{
+		std::string metaLoc = path;
+		metaLoc.append(".meta");
+		//LOG("Meta path: %s",metaFiles[name].filePath);
+		if (App->fileSystem->Exists(metaLoc.c_str())) return true;
+		else
+		{		
+			//File moved or renamed
+			if (App->fileSystem->Exists(metaFiles[name].filePath.c_str()))
+			{				
+				//Meta fille found, move it
+				App->fileSystem->MoveFileTo(metaFiles[name].filePath.c_str(), metaLoc.c_str());
+				metaFiles[name].filePath = metaLoc;
+				LOG("Meta file %s moved",metaLoc.c_str());
+				return true;
+			}	
+			else
+			{
+				//Old meta file not found
+				return false;
+			}
+		}
+	}
+	return false;
 }
 
 GameObject* ResourceManager::ImportFBXFromMeta(std::string id)

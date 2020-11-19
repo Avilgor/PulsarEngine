@@ -390,6 +390,18 @@ bool FileSystemModule::DuplicateFile(const char* srcFile, const char* dstFile)
 	}
 }
 
+bool FileSystemModule::MoveFileTo(const char* file, const char* dst)
+{
+	bool ret = false;
+	if(DuplicateFile(file, dst)) ret = Remove(file);
+	if (ret)
+	{
+		LOG("File moved to %s", dst);
+	}
+	else LOG("Failed to move file %s",file);
+	return ret;
+}
+
 int close_sdl_rwops(SDL_RWops* rw)
 {
 	RELEASE_ARRAY(rw->hidden.mem.base);
@@ -936,7 +948,7 @@ bool FileSystemModule::ImportFBX(const char* path, GameObject* parent)
 			//CreatePulsarAsset(&file, assetID, parent->name);
 
 			//Create meta file
-			file.SaveString("Name", parent->name.c_str());
+			file.SaveString("Name", parent->name.c_str());			
 			Create_MetaFile(path, &file);
 
 			aiReleaseImport(scene);
@@ -967,6 +979,7 @@ void FileSystemModule::Create_MetaFile(std::string file, JSonHandler* node)
 	//Save meta file
 	node->SaveNum("LastModificationTime", GetLastModTime(file.c_str()));
 	node->SaveString("UUID", App->GenerateUUID_V4().c_str());
+	//node->SaveString("FilePath", GetFilePath(file.c_str()).c_str());
 
 	//Write to file
 	char* buffer = nullptr;

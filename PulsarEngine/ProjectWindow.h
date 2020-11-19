@@ -22,9 +22,11 @@ public:
 	void NodeInput(PathNode* node);
 
 private:
+	void CheckFileMoved(PathNode node);
+
+private:
 	PathNode assetsFolder;
 	//std::vector<PathNode> selectedItems;
-	Timer reScanTimer;
 };
 
 #endif //__ProjectWindow_H__

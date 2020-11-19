@@ -12,7 +12,6 @@
 ProjectWindow::ProjectWindow(std::string name) : EditorWindow(name)
 {
 	GetTree();
-	reScanTimer.Start();
 }
 
 ProjectWindow::~ProjectWindow()
@@ -22,11 +21,14 @@ ProjectWindow::~ProjectWindow()
 update_status ProjectWindow::Draw()
 {
 	update_status ret = UPDATE_CONTINUE;
-	if (reScanTimer.ReadSec() >= 3.0f/* && selectedItems.empty()*/)
+	if (App->editor->scanProjectFiles)
 	{
+		PathNode temp = assetsFolder;
 		GetTree();
-		reScanTimer.Start();
-		//LOG("Assets files gathered");
+
+		CheckFileMoved(temp);
+		
+		App->editor->scanProjectFiles = false;
 	}
 
 	ImGui::SetNextWindowBgAlpha(1.0f);
@@ -98,6 +100,39 @@ void ProjectWindow::NodeInput(PathNode* node)
 				else App->editor->SelectOne(go);*/
 				node->selectedNode = true;
 			}
+		}
+	}
+}
+
+void ProjectWindow::CheckFileMoved(PathNode node)
+{
+	if (node.isFile)
+	{
+		//LOG("Name: %s", node.localPath.c_str());
+		//LOG("Path: %s",node.path);
+		std::string extension = App->fileSystem->GetFileExtension(node.localPath.c_str());
+		if (extension.compare("png") == 0 || extension.compare("fbx") == 0 || extension.compare("dds") == 0 || extension.compare("FBX") == 0)
+		{
+			if (App->resourceManager->CheckMetaFile(node.localPath))
+			{
+				//File has meta
+				//Check if moved				
+				if (!App->resourceManager->CheckMetaPath(node.path, node.localPath)) LOG("File %s meta not found",node.path.c_str());
+			}
+			else
+			{
+				//File does not have meta
+				//New or renamed
+				LOG("File %s meta not found",node.path.c_str());
+			}
+		}
+	}
+	else if (!node.children.empty())
+	{
+		std::vector<PathNode> temp = node.children;
+		for (int a = 0; a < temp.size(); a++)
+		{			
+			CheckFileMoved(temp[a]);
 		}
 	}
 }
