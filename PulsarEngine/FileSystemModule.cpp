@@ -621,37 +621,53 @@ std::string FileSystemModule::GetPathAndFile(const char* p)
 
 void FileSystemModule::GetDroppedFile(const char* path,GameObject* go,RES_Material* mat)
 {
+	LOG("Got dropped file");
 	if (HasExtension(path, "fbx"))//Mesh
 	{
-		//Create gameobject
-		if(go == nullptr) go = App->scene->GetActiveScene()->CreateEmptyGameobject();
+		if (App->scene->state == SCENE_STOP)
+		{
+			if(go == nullptr) go = App->scene->GetActiveScene()->CreateEmptyGameobject();
 
-		ImportFBX(path, go);		
+			ImportFBX(path, go);	
+		}
+		else LOG("Cannot import files while scenne is running");
 	}
 	else if (HasExtension(path, "png") || HasExtension(path, "dds"))//Texture
 	{
-		if(mat == nullptr) mat = new RES_Material();
-		mat->name = "NewMaterial";
-		mat->assetPath = path;
-		mat->texturesNum = 1;
-		//Load and save texture info
-		if (LoadTexture(path, mat))
+		if (!App->resourceManager->CheckMetaFile(GetFileAndExtension(path)))//Meta not found
 		{
-			//Save material resource
-			std::string resPath = App->resourceManager->Save_RES_Material(mat, GetFilePath(path).c_str());
-			App->resourceManager->SaveResource(mat->resource);
+			if (App->scene->state == SCENE_STOP)
+			{
+				if (mat == nullptr) mat = new RES_Material();
+				mat->name = "NewMaterial";
+				mat->assetPath = path;
+				mat->texturesNum = 1;
+				//Load and save texture info
+				if (LoadTexture(path, mat))
+				{
+					//Save material resource
+					std::string resPath = App->resourceManager->Save_RES_Material(mat, GetFilePath(path).c_str());
+					App->resourceManager->SaveResource(mat->resource);
 
-			//Create asset file
-			std::string tempId = App->GenerateUUID_V4();
-			JSonHandler file;
-			file.CreateArray("Objects");
-			JSonHandler node = file.InsertNodeArray("Objects");
-			node.CreateArray("Resources");
-			node.InsertStringArray("Resources", mat->UUID.c_str());
+					//Create asset file
+					std::string tempId = App->GenerateUUID_V4();
+					JSonHandler file;
+					file.CreateArray("Objects");
+					JSonHandler node = file.InsertNodeArray("Objects");
+					node.CreateArray("Resources");
+					node.InsertStringArray("Resources", mat->UUID.c_str());
 
-			//Create meta file
-			file.SaveString("Name", mat->name.c_str());
-			Create_MetaFile(path, &file);
+					//Create meta file
+					file.SaveString("Name", mat->name.c_str());
+					Create_MetaFile(path, &file);
+				}
+			}
+			else LOG("Cannot import files while scenne is running");
+		}
+		else
+		{
+			EngineResource* res = App->resourceManager->GetMetaResource(GetFileAndExtension(path));
+			if (res != nullptr) mat = res->AsMaterial();
 		}
 		//Set texture to selected gameobjects
 		if (App->editor->HasSelection())
@@ -842,122 +858,126 @@ bool FileSystemModule::ImportFBX(const char* path, GameObject* parent)
 
 	if (App->resourceManager->CheckMetaFile(metaPath.c_str()) == false) //Meta file not found
 	{
-		parent->name = GetFileName(path);
-		const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
-
-		if (scene != nullptr && scene->HasMeshes())
+		if (App->scene->state == SCENE_STOP)
 		{
-			JSonHandler file;
-			file.CreateArray("Objects");
-			for (int i = 0; i < scene->mNumMeshes; i++)
+			parent->name = GetFileName(path);
+			const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
+
+			if (scene != nullptr && scene->HasMeshes())
 			{
-				GameObject* gameobject = parent->CreateChild();
-				Component* temp = gameobject->AddComponent(MESH_COMP);
-				if (temp != nullptr)
+				JSonHandler file;
+				file.CreateArray("Objects");
+				for (int i = 0; i < scene->mNumMeshes; i++)
 				{
-					Mesh* meshcomp = temp->AsMesh();
-					if (meshcomp != nullptr)
+					GameObject* gameobject = parent->CreateChild();
+					Component* temp = gameobject->AddComponent(MESH_COMP);
+					if (temp != nullptr)
 					{
-						JSonHandler node = file.InsertNodeArray("Objects");
-						node.CreateArray("Resources");
-						RES_Mesh* newMesh = new RES_Mesh();
-						newMesh->name = scene->mMeshes[i]->mName.C_Str();
-						newMesh->name.append(std::to_string(i));
-						newMesh->assetPath = path;
-
-						//Vertex
-						newMesh->verticesSize = scene->mMeshes[i]->mNumVertices;
-						newMesh->verticesArray = new float[newMesh->verticesSize * 3];
-						memcpy(newMesh->verticesArray, scene->mMeshes[i]->mVertices, sizeof(float) * newMesh->verticesSize * 3);
-
-						//Indices
-						if (scene->mMeshes[i]->HasFaces())
+						Mesh* meshcomp = temp->AsMesh();
+						if (meshcomp != nullptr)
 						{
-							newMesh->indexSize = scene->mMeshes[i]->mNumFaces * 3;
-							newMesh->indicesArray = new uint[newMesh->indexSize];
+							JSonHandler node = file.InsertNodeArray("Objects");
+							node.CreateArray("Resources");
+							RES_Mesh* newMesh = new RES_Mesh();
+							newMesh->name = scene->mMeshes[i]->mName.C_Str();
+							newMesh->name.append(std::to_string(i));
+							newMesh->assetPath = path;
 
-							for (uint a = 0; a < scene->mMeshes[i]->mNumFaces; a++)
+							//Vertex
+							newMesh->verticesSize = scene->mMeshes[i]->mNumVertices;
+							newMesh->verticesArray = new float[newMesh->verticesSize * 3];
+							memcpy(newMesh->verticesArray, scene->mMeshes[i]->mVertices, sizeof(float) * newMesh->verticesSize * 3);
+
+							//Indices
+							if (scene->mMeshes[i]->HasFaces())
 							{
-								if (scene->mMeshes[i]->mFaces[a].mNumIndices != 3)
+								newMesh->indexSize = scene->mMeshes[i]->mNumFaces * 3;
+								newMesh->indicesArray = new uint[newMesh->indexSize];
+
+								for (uint a = 0; a < scene->mMeshes[i]->mNumFaces; a++)
 								{
-									LOG("Geometry face with != 3 indices!");
+									if (scene->mMeshes[i]->mFaces[a].mNumIndices != 3)
+									{
+										LOG("Geometry face with != 3 indices!");
+									}
+									else memcpy(&newMesh->indicesArray[a * 3], scene->mMeshes[i]->mFaces[a].mIndices, 3 * sizeof(uint));
 								}
-								else memcpy(&newMesh->indicesArray[a * 3], scene->mMeshes[i]->mFaces[a].mIndices, 3 * sizeof(uint));
 							}
-						}
 
-						//Normals
-						if (scene->mMeshes[i]->HasNormals())
-						{
-							newMesh->normalsSize = newMesh->verticesSize;
-							newMesh->normalsArray = new float[newMesh->normalsSize * 3];
-							memcpy(newMesh->normalsArray, scene->mMeshes[i]->mNormals, sizeof(float) * newMesh->normalsSize * 3);
-						}
-
-						//Texture coords
-						if (scene->mMeshes[i]->HasTextureCoords(0))
-						{
-							newMesh->textSize = newMesh->verticesSize;
-							newMesh->texturesArray = new float[newMesh->verticesSize * 2];
-
-							for (int a = 0; a < newMesh->textSize; a++)
+							//Normals
+							if (scene->mMeshes[i]->HasNormals())
 							{
-								newMesh->texturesArray[a * 2] = scene->mMeshes[i]->mTextureCoords[0][a].x;
-								newMesh->texturesArray[a * 2 + 1] = scene->mMeshes[i]->mTextureCoords[0][a].y;
+								newMesh->normalsSize = newMesh->verticesSize;
+								newMesh->normalsArray = new float[newMesh->normalsSize * 3];
+								memcpy(newMesh->normalsArray, scene->mMeshes[i]->mNormals, sizeof(float) * newMesh->normalsSize * 3);
 							}
+
+							//Texture coords
+							if (scene->mMeshes[i]->HasTextureCoords(0))
+							{
+								newMesh->textSize = newMesh->verticesSize;
+								newMesh->texturesArray = new float[newMesh->verticesSize * 2];
+
+								for (int a = 0; a < newMesh->textSize; a++)
+								{
+									newMesh->texturesArray[a * 2] = scene->mMeshes[i]->mTextureCoords[0][a].x;
+									newMesh->texturesArray[a * 2 + 1] = scene->mMeshes[i]->mTextureCoords[0][a].y;
+								}
+							}
+
+							//Save mesh info
+							SaveMeshBufferInfo(newMesh);
+
+							//Set pulsar asset info
+							node.InsertStringArray("Resources", newMesh->UUID.c_str());
+
+							//Save mesh resource file
+							std::string resPath = App->resourceManager->Save_RES_Mesh(newMesh, GetFilePath(path).c_str());
+
+							//Save into resource manager map
+							App->resourceManager->SaveResource(newMesh);
+
+							//Load resource
+							App->resourceManager->LoadResource(newMesh->UUID);
+
+							if (scene->HasMaterials())
+							{
+								RES_Material* tempMat = ImportMaterialFBX(scene->mMaterials[scene->mMeshes[i]->mMaterialIndex], gameobject, path);
+								meshcomp->SetMaterial(tempMat);
+								node.InsertStringArray("Resources", tempMat->UUID.c_str());
+							}
+							meshcomp->SetMesh(newMesh);
 						}
-
-						//Save mesh info
-						SaveMeshBufferInfo(newMesh);
-
-						//Set pulsar asset info
-						node.InsertStringArray("Resources",newMesh->UUID.c_str());
-
-						//Save mesh resource file
-						std::string resPath = App->resourceManager->Save_RES_Mesh(newMesh,GetFilePath(path).c_str());
-
-						//Save into resource manager map
-						App->resourceManager->SaveResource(newMesh);
-
-						//Load resource
-						App->resourceManager->LoadResource(newMesh->UUID);
-
-						if (scene->HasMaterials())
+						else
 						{
-							RES_Material* tempMat = ImportMaterialFBX(scene->mMaterials[scene->mMeshes[i]->mMaterialIndex], gameobject, path);
-							meshcomp->SetMaterial(tempMat);
-							node.InsertStringArray("Resources", tempMat->UUID.c_str());
+							LOG("Mesh component not found in go %s", gameobject->name.c_str());
+							ret = false;
 						}
-						meshcomp->SetMesh(newMesh);
 					}
 					else
 					{
-						LOG("Mesh component not found in go %s", gameobject->name.c_str());
+						LOG("Error creating mesh component");
 						ret = false;
 					}
-				}
-				else
-				{
-					LOG("Error creating mesh component");
-					ret = false;
-				}
 
+				}
+				//Save asset
+				//std::string assetID = App->GenerateUUID_V4();
+				//CreatePulsarAsset(&file, assetID, parent->name);
+
+				//Create meta file
+				file.SaveString("Name", parent->name.c_str());
+				Create_MetaFile(path, &file);
+
+				aiReleaseImport(scene);
 			}
-			//Save asset
-			//std::string assetID = App->GenerateUUID_V4();
-			//CreatePulsarAsset(&file, assetID, parent->name);
-
-			//Create meta file
-			file.SaveString("Name", parent->name.c_str());			
-			Create_MetaFile(path, &file);
-
-			aiReleaseImport(scene);
+			else
+			{
+				LOG("Error loading mesh %s", path);
+				ret = false;
+			}
 		}
-		else
-		{
-			LOG("Error loading mesh %s", path);
-			ret = false;
-		}
+		else LOG("Cannot import file while scene is running");
 	}
 	else //Meta file found
 	{
@@ -1017,57 +1037,61 @@ RES_Material* FileSystemModule::ImportMaterialFBX(aiMaterial* material, GameObje
 	
 	//LOG("Meta path %s", textPath.C_Str());
 
-	if (App->resourceManager->CheckMetaFile(textPath.C_Str()) == false) //Meta file not found
+	if (App->resourceManager->CheckMetaFile(textPath.C_Str()) == false ) //Meta file not found
 	{
-		Component* tempComp = go->AddComponent(MATERIAL_COMP);
-		if (tempComp != nullptr)
+		if (App->scene->state == SCENE_STOP)
 		{
-			Material* mat = tempComp->AsMaterial();
-			if (mat != nullptr)
+			Component* tempComp = go->AddComponent(MATERIAL_COMP);
+			if (tempComp != nullptr)
 			{
-				JSonHandler file;
-				//file.CreateArray("Objects");
-				//JSonHandler node = file.InsertNodeArray("Objects");
-				//node.CreateArray("Resources");
-				matInfo = new RES_Material();
-				matInfo->texturesNum = material->GetTextureCount(aiTextureType_DIFFUSE);
-				std::string dir = GetFilePath(fbxPath);
-				dir.append(textPath.C_Str());
-				dir = NormalizePath(dir.c_str());
-				matInfo->assetPath = dir;
-
-				aiColor4D color;
-				material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-				matInfo->color = Color(color.r, color.g, color.b, color.a);
-
-				matInfo->name = GetFileName(dir.c_str());
-
-				//Load and save texture info
-				if (LoadTexture(dir.c_str(), matInfo))
+				Material* mat = tempComp->AsMaterial();
+				if (mat != nullptr)
 				{
-					//Save material resource
-					std::string resPath = App->resourceManager->Save_RES_Material(matInfo, GetFilePath(fbxPath).c_str());
-					App->resourceManager->SaveResource(matInfo);
+					JSonHandler file;
+					//file.CreateArray("Objects");
+					//JSonHandler node = file.InsertNodeArray("Objects");
+					//node.CreateArray("Resources");
+					matInfo = new RES_Material();
+					matInfo->texturesNum = material->GetTextureCount(aiTextureType_DIFFUSE);
+					std::string dir = GetFilePath(fbxPath);
+					dir.append(textPath.C_Str());
+					dir = NormalizePath(dir.c_str());
+					matInfo->assetPath = dir;
 
-					//Create asset file
-					//std::string tempId = App->GenerateUUID_V4();
-					//node.InsertStringArray("Resources", mat->UUID.c_str());
-					//CreatePulsarAsset(&file, tempId, GetFileName(dir.c_str()));
+					aiColor4D color;
+					material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+					matInfo->color = Color(color.r, color.g, color.b, color.a);
 
-					//Create meta file
-					file.SaveString("Name", matInfo->name.c_str());
-					file.SaveString("ResourceID",matInfo->UUID.c_str());
-					Create_MetaFile(dir.c_str(), &file);
+					matInfo->name = GetFileName(dir.c_str());
 
-					//Load resource 
-					App->resourceManager->LoadResource(matInfo->UUID);
+					//Load and save texture info
+					if (LoadTexture(dir.c_str(), matInfo))
+					{
+						//Save material resource
+						std::string resPath = App->resourceManager->Save_RES_Material(matInfo, GetFilePath(fbxPath).c_str());
+						App->resourceManager->SaveResource(matInfo);
 
-					mat->SetMaterial(matInfo);
+						//Create asset file
+						//std::string tempId = App->GenerateUUID_V4();
+						//node.InsertStringArray("Resources", mat->UUID.c_str());
+						//CreatePulsarAsset(&file, tempId, GetFileName(dir.c_str()));
+
+						//Create meta file
+						file.SaveString("Name", matInfo->name.c_str());
+						file.SaveString("ResourceID", matInfo->UUID.c_str());
+						Create_MetaFile(dir.c_str(), &file);
+
+						//Load resource 
+						App->resourceManager->LoadResource(matInfo->UUID);
+
+						mat->SetMaterial(matInfo);
+					}
 				}
+				else LOG("Material component not found in %s gameobject.", go->name.c_str());
 			}
-			else LOG("Material component not found in %s gameobject.", go->name.c_str());
+			else LOG("Failed to create material component.");
 		}
-		else LOG("Failed to create material component.");
+		else LOG("Cannot import files while scene running");
 	}
 	else
 	{

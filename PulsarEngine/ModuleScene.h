@@ -21,6 +21,7 @@ public:
 	update_status PostUpdate(float dt);
 	bool CleanUp();
 	Scene* GetActiveScene();
+	SceneState GetSceneState() { return state; }
 	void RequestSave();
 	void RequestLoad();
 	void CreateNewScene();

@@ -3,7 +3,7 @@
 
 #include "Module.h"
 #include "PathNode.h"
-#include "Timer.h"
+//#include "Timer.h"
 
 #include <string>
 #include <map>
@@ -79,7 +79,7 @@ private:
 	std::map<std::string, EngineResource*> loadedResources;
 	std::map<std::string, MetaFile> metaFiles;
 	PathNode metaNode;
-	Timer reScanTimer;
+	//Timer reScanTimer;
 };
 
 #endif //__FileManager_H__

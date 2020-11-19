@@ -54,7 +54,7 @@ public:
 	KEY_STATE ctrl;
 	KEY_STATE deleteKey;
 	bool mouseDrag = false;
-	bool scanProjectFiles = true;
+	//bool scanProjectFiles = true;
 };
 
 #endif // __EditorMain_H__

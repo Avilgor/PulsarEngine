@@ -34,8 +34,7 @@ update_status SceneWindow::Draw()
 {
 	update_status ret = UPDATE_CONTINUE;
     ImGui::Begin(name.c_str(), &active,flags);
-	bool inScene = ImGui::IsWindowHovered();
-	App->editor->mouse_in_scene = inScene;
+	App->editor->mouse_in_scene = ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
 	ImVec2 winSize = ImGui::GetWindowSize();
 
 	ImGui::Indent((winSize.x/2) -(75 *2));
@@ -65,7 +64,7 @@ update_status SceneWindow::Draw()
 	//Handle click
 	if (ImGuizmo::IsUsing() == false)
 	{
-		if (inScene && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) HandleClick();
+		if (App->editor->mouse_in_scene && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) HandleClick();
 	}
 
 	ImGui::End();
@@ -178,6 +177,10 @@ void SceneWindow::HandleClick()
 			if (gotGo) break;
 		}
 		if (!gotGo) App->editor->EmptySelected();
+	}
+	else
+	{
+		App->editor->EmptySelected();
 	}
 }
 

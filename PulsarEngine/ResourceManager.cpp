@@ -29,17 +29,13 @@ bool ResourceManager::Start()
 
 update_status ResourceManager::Update(float dt)
 {
-	if (reScanTimer.ReadSec() > 3.0f)
+	/*if (reScanTimer.ReadSec() > 3.0f)
 	{
 		//Scan files for changes
-		std::vector<std::string> ext;
-		ext.push_back("meta");
-		PathNode nodePaths;
-		nodePaths = App->fileSystem->GetAllFiles("Assets", nullptr, &ext);
 
 		App->editor->scanProjectFiles = true;
 		reScanTimer.Start();
-	}
+	}*/
 	return UPDATE_CONTINUE;
 }
 

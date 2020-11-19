@@ -205,10 +205,12 @@ update_status EditorMain::Update(float dt)
             float3 pos = selectedGameObjects[0]->transform->GetLocalPosition();
             App->camera->Look(float3(pos.x, pos.y, pos.z));
         }
-    }
+    } 
 
     //Process inputs
     if (deleteKey == KEY_DOWN) DeleteSelected();
+    if (leftMouse == KEY_REPEAT) mouseDrag = true;
+    if (leftMouse == KEY_UP) mouseDrag = false;
 
     //Update editor windows
     if (!WindowsList.empty())
@@ -225,8 +227,8 @@ update_status EditorMain::Update(float dt)
                 else break;
             }           
         }
-    }  
-   
+    }   
+
 	return status;
 }
 

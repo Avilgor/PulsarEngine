@@ -24,9 +24,13 @@ public:
 private:
 	void CheckFileMoved(PathNode node);
 
+public:
+	bool mouseOnWindow = false;
+
 private:
 	PathNode assetsFolder;
-	//std::vector<PathNode> selectedItems;
+	PathNode* selectedItem = nullptr;
+	Timer scanTimer;
 };
 
 #endif //__ProjectWindow_H__

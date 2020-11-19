@@ -12,6 +12,7 @@
 ProjectWindow::ProjectWindow(std::string name) : EditorWindow(name)
 {
 	GetTree();
+	scanTimer.Start();
 }
 
 ProjectWindow::~ProjectWindow()
@@ -21,20 +22,36 @@ ProjectWindow::~ProjectWindow()
 update_status ProjectWindow::Draw()
 {
 	update_status ret = UPDATE_CONTINUE;
-	if (App->editor->scanProjectFiles)
+	
+	if (App->editor->leftMouse == KEY_DOWN)
 	{
-		PathNode temp = assetsFolder;
-		GetTree();
-
-		CheckFileMoved(temp);
-		
-		App->editor->scanProjectFiles = false;
+		if (selectedItem != nullptr)
+		{
+			selectedItem->selectedNode = false;
+			selectedItem = nullptr;
+		}
 	}
 
 	ImGui::SetNextWindowBgAlpha(1.0f);
 	ImGui::Begin(name.c_str(), &active);
+	mouseOnWindow = ImGui::IsWindowHovered();
 	DrawItem(&assetsFolder);
 	ImGui::End();
+
+	if (selectedItem != nullptr)
+	{
+		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP && App->editor->mouse_in_scene)
+		{
+			App->fileSystem->GetDroppedFile(selectedItem->path.c_str());
+		}
+	}
+	else if (scanTimer.ReadSec() > 3.0f)
+	{
+		PathNode temp = assetsFolder;
+		GetTree();
+		CheckFileMoved(temp);
+		scanTimer.Start();
+	}
 
 	return ret;
 }
@@ -60,7 +77,7 @@ void ProjectWindow::DrawItem(PathNode* node)
 	}
 	
 
-	//if (node.selectedNode) ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 1, 1, 0.4));
+	//if (node->selectedNode) ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 1, 1, 0.4));
 
 	if (node->selectedNode)
 	{
@@ -71,7 +88,7 @@ void ProjectWindow::DrawItem(PathNode* node)
 
 	//if (node.selectedNode == false) ImGui::PopStyleColor();
 
-	//NodeInput(node);
+	NodeInput(node);
 
 
 	if (node->treeOpen && !node->children.empty())
@@ -92,13 +109,9 @@ void ProjectWindow::NodeInput(PathNode* node)
 		{
 			if (ImGui::IsItemHovered())
 			{
-				/*if (App->editor->ctrl == KEY_REPEAT)
-				{
-					if (go->selected) App->editor->RemoveSelection(go);//go->selected = false;
-					else App->editor->AddSelection(go);//go->selected = true;
-				}
-				else App->editor->SelectOne(go);*/
 				node->selectedNode = true;
+				if (selectedItem != nullptr) selectedItem->selectedNode = false;
+				selectedItem = node;
 			}
 		}
 	}
@@ -117,13 +130,13 @@ void ProjectWindow::CheckFileMoved(PathNode node)
 			{
 				//File has meta
 				//Check if moved				
-				if (!App->resourceManager->CheckMetaPath(node.path, node.localPath)) LOG("File %s meta not found",node.path.c_str());
+				if (!App->resourceManager->CheckMetaPath(node.path, node.localPath)) {} //LOG("File %s meta not found", node.path.c_str());
 			}
 			else
 			{
 				//File does not have meta
 				//New or renamed
-				LOG("File %s meta not found",node.path.c_str());
+				//LOG("File %s meta not found",node.path.c_str());
 			}
 		}
 	}
