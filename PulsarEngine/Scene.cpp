@@ -249,35 +249,41 @@ GameObject* Scene::CreateEmptyGameobject(const char* name)
 void Scene::CreateCube()
 {
 	GameObject* go = new GameObject("Cube");
-	go->AddComponent(MESH_COMP);
 	root->AddChild(go);
-	Component* comp = go->GetFirstComponentType(MESH_COMP);
-	if (comp != nullptr)
-	{
-		if (comp->AsMesh() != nullptr) comp->AsMesh()->CreateCube();
-	}
+	App->resourceManager->ImportFBX("DefaultAssets/Models/cube.fbx", go);
 }
 
 void Scene::CreatePyramid()
 {
 	GameObject* go = new GameObject("Pyramid");
-	go->AddComponent(MESH_COMP);
 	root->AddChild(go);
-	Component* comp = go->GetFirstComponentType(MESH_COMP);
-	if (comp != nullptr)
-	{
-		if (comp->AsMesh() != nullptr) comp->AsMesh()->CreatePyramid();
-	}
+	App->resourceManager->ImportFBX("DefaultAssets/Models/cone.fbx", go);
 }
 
 void Scene::CreatePlane()
 {
 	GameObject* go = new GameObject("Plane");
-	go->AddComponent(MESH_COMP);
 	root->AddChild(go);
-	Component* comp = go->GetFirstComponentType(MESH_COMP);
-	if (comp != nullptr)
-	{
-		if (comp->AsMesh() != nullptr) comp->AsMesh()->CreatePlane(5);
-	}
+	App->resourceManager->ImportFBX("DefaultAssets/Models/plane.fbx", go);
+}
+
+void Scene::CreateSphere()
+{
+	GameObject* go = new GameObject("Sphere");
+	root->AddChild(go);
+	App->resourceManager->ImportFBX("DefaultAssets/Models/sphere.fbx", go);
+}
+
+void Scene::CreateCylinder()
+{
+	GameObject* go = new GameObject("Cylinder");
+	root->AddChild(go);
+	App->resourceManager->ImportFBX("DefaultAssets/Models/cylinder.fbx", go);
+}
+
+void Scene::CreateTorus()
+{
+	GameObject* go = new GameObject("Torus");
+	root->AddChild(go);
+	App->resourceManager->ImportFBX("DefaultAssets/Models/torus.fbx", go);
 }

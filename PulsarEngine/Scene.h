@@ -29,6 +29,9 @@ public:
 	GameObject* CreateEmptyGameobject(const char* name);
 	void CreateCube();
 	void CreatePyramid();
+	void CreateSphere();
+	void CreateCylinder();
+	void CreateTorus();
 	void CreatePlane();
 
 

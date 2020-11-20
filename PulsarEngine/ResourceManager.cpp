@@ -74,6 +74,8 @@ void ResourceManager::LoadMetaFiles()
 	ext.push_back("meta");
 	metaNode = App->fileSystem->GetAllFiles("Assets", &ext, nullptr);
 	SaveMetaNode(metaNode);
+	PathNode tempmetaNode = App->fileSystem->GetAllFiles("DefaultAssets", &ext, nullptr);
+	SaveMetaNode(tempmetaNode);
 	LOG("Meta files loaded.");
 }
 

@@ -32,11 +32,11 @@ update_status MenuBar::Draw()
 	if (ImGui::BeginMenu("Create"))
 	{
 		if (ImGui::MenuItem("Gameobject")) App->scene->GetActiveScene()->CreateEmptyGameobject();
-
 		if (ImGui::MenuItem("Cube")) App->scene->GetActiveScene()->CreateCube();
-
 		if (ImGui::MenuItem("Pyramid")) App->scene->GetActiveScene()->CreatePyramid();
-
+		if (ImGui::MenuItem("Sphere")) App->scene->GetActiveScene()->CreateSphere();
+		if (ImGui::MenuItem("Cylinder")) App->scene->GetActiveScene()->CreateCylinder();
+		if (ImGui::MenuItem("Torus")) App->scene->GetActiveScene()->CreateTorus();
 		if (ImGui::MenuItem("Plane")) App->scene->GetActiveScene()->CreatePlane();
 
 		ImGui::EndMenu();
