@@ -9,18 +9,34 @@
 
 #include <map>
 
-Scene::Scene()
+Scene::Scene() : EngineResource(SCENE_RES)
 {
 	root = new GameObject("Root");
 	root->SetUUID("0");
-	UUID = App->GenerateUUID_V4();
+	sceneRes = this;
 }
 
-Scene::Scene(const char* n)
+Scene::Scene(const char* n) : EngineResource(SCENE_RES)
 {
 	name = n;
 	root = new GameObject("Root");
 	root->SetUUID("0");
+	sceneRes = this;
+}
+
+Scene::Scene(std::string id) : EngineResource(SCENE_RES,id)
+{
+	root = new GameObject("Root");
+	root->SetUUID("0");
+	sceneRes = this;
+}
+
+Scene::Scene(const char* n, std::string id) : EngineResource(SCENE_RES, id)
+{
+	name = n;
+	root = new GameObject("Root");
+	root->SetUUID("0");
+	sceneRes = this;
 }
 
 Scene::~Scene()
@@ -123,7 +139,14 @@ update_status Scene::UpdateScene(float dt)
 	return ret;
 }
 
-void Scene::CleanScene()
+update_status Scene::PostUpdateScene(float dt)
+{
+	update_status ret = UPDATE_CONTINUE;
+
+	return ret;
+}
+
+void Scene::Clean()
 {
 	App->editor->EmptySelected();
 	root->DeleteAllChilds();
@@ -133,29 +156,20 @@ void Scene::CleanScene()
 }
 
 
-void Scene::SaveScene()
+void Scene::SaveResource(JSonHandler* file)
 {	
 	//Save gameobjects 
-	JSonHandler settings;
-	settings.SaveString("UUID", UUID.c_str());
-	settings.SaveString("Name",name.c_str());
+	file->SaveString("UUID", UUID.c_str());
+	file->SaveNum("Type", (double)type);
+	file->SaveString("Name",name.c_str());
 	std::string label = "Gameobjects";
-	settings.CreateArray(label.c_str());
-	root->SaveGameobject(&settings,label.c_str());
-
-	//Write to file
-	char* buffer = nullptr;
-	uint size = settings.Serialize(&buffer);
-	std::string fileName = SCENES_PATH;
-	fileName.append(name);
-	fileName.append(".psscene");
-	App->fileSystem->Save(fileName.c_str(), buffer, size);
-	RELEASE_ARRAY(buffer);
+	file->CreateArray(label.c_str());
+	root->SaveGameobject(file,label.c_str());
 
  	LOG("Scene %s saved!", name.c_str());
 }
 
-void Scene::LoadScene(JSonHandler* file)
+void Scene::LoadResource(JSonHandler* file)
 {
 	std::map <std::string, GameObject*> gameobjectsLoaded;
 	UUID = file->GetString("UUID");
@@ -224,7 +238,7 @@ void Scene::LoadTempScene()
 	if (size > 0)
 	{
 		JSonHandler* node = new JSonHandler(buffer);		
-		LoadScene(node);
+		LoadResource(node);
 
 		delete node;
 		RELEASE_ARRAY(buffer);

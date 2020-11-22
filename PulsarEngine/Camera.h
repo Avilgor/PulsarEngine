@@ -28,6 +28,7 @@ public:
 	void SetFarPlane(float val);
 	void SetFOV(float val);
 	void SetAspectRatio(float val);
+	void AdaptFOV(float width, float height);
 
 	float* GetOpenGLViewMatrix();
 	float* GetOpenGLProjectionMatrix();

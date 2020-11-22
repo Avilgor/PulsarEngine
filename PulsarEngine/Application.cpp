@@ -25,10 +25,10 @@ Application::Application()
 
 	// Main Modules
 	AddModule(fileSystem);
+	AddModule(resourceManager);
 	AddModule(window);
 	AddModule(camera);
 	AddModule(input);
-	AddModule(resourceManager);
 	
 	// Scenes
 	AddModule(editor);
@@ -54,7 +54,7 @@ bool Application::Init()
 	{
 		if(ret) ret = (*it)->Init();
 	}
-
+	LoadSettings();
 	// After all Init calls we call Start() in all modules
 	LOG("Application Start --------------");
 	for (std::list<Module*>::const_iterator it = modulesList.begin(); it != modulesList.end(); ++it)
@@ -162,16 +162,15 @@ void Application::LoadSettings()
 
 	if (size > 0)
 	{
+		LOG("Size ok");
 		JSonHandler file(buffer);
 		JSonHandler settings = file.GetNode("EngineSettings");
 
-		if (settings.NodeExist())
+		for (std::list<Module*>::const_iterator it = modulesList.begin(); it != modulesList.end(); ++it)
 		{
-			for (std::list<Module*>::const_iterator it = modulesList.begin(); it != modulesList.end(); ++it)
-			{
-				(*it)->LoadSettings(settings.GetNode((*it)->name.c_str()));
-			}
-		}
+			LOG("Loding %s settings..",(*it)->name.c_str());
+			(*it)->LoadSettings(settings.GetNode((*it)->name.c_str()));
+		}		
 	}
 }
 

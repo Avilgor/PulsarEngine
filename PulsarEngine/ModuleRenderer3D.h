@@ -45,10 +45,11 @@ public:
 public:
 
 	uint frameBuffer = 0;
-	uint depthBuffer = 0;
+	uint renderBuffer = 0;
 	uint renderTexture = 0;
+	uint depthTexture = 0;
 	Light lights[MAX_LIGHTS];
 	SDL_GLContext context;
-	mat3x3 NormalMatrix;
-	mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
+	//mat3x3 NormalMatrix;
+	//mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
 };

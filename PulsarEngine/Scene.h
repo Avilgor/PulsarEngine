@@ -2,6 +2,7 @@
 #define __Scene_H__
 
 #include "Globals.h"
+#include "EngineResource.h"
 #include <string>
 
 class GameObject;
@@ -9,19 +10,22 @@ class Mesh;
 class Material;
 class JSonHandler;
 
-class Scene
+class Scene : public EngineResource
 {
 public:
 
 	Scene();
 	Scene(const char* name);
+	Scene(std::string uuid);
+	Scene(const char* name, std::string uuid);
 	~Scene();
 
 	void StartScene();
 	update_status UpdateScene(float dt);
-	void CleanScene();
-	void SaveScene();
-	void LoadScene(JSonHandler* file);
+	update_status PostUpdateScene(float dt);
+	void Clean();
+	void SaveResource(JSonHandler* file);
+	void LoadResource(JSonHandler* file);
 	void SaveTempScene();
 	void LoadTempScene();
 	GameObject* GetRoot() { return root; }
@@ -35,10 +39,8 @@ public:
 	void CreatePlane();
 
 
-public:
+private:
 	GameObject* root = nullptr;
-	std::string name = "UnknowScene";
-	std::string UUID = "";
 };
 
 #endif //__Scene_H__

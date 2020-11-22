@@ -103,6 +103,11 @@ update_status ModuleCamera3D::PostUpdate(float dt)
 	return UPDATE_CONTINUE;
 }
 
+// -----------------------------------------------------------------
+void ModuleCamera3D::ResizeView(int w, int h)
+{
+	camera->AdaptFOV(w, h);
+}
 
 // -----------------------------------------------------------------
 void ModuleCamera3D::AddDrawnGameobject(GameObject* go)

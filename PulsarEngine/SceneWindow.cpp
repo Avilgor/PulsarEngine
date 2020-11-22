@@ -14,14 +14,12 @@
 SceneWindow::SceneWindow(std::string name) : EditorWindow(name)
 {
 	flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
-	lastSizeX = 0;
-	lastSizeY = 0;
-	cornerX = 0;
-	cornerY = 0;
-	windowSizeX = 0;
-	windowSizeY = 0;
-	offsetX = 0;
-	offsetY = 0;
+	corners.x = 0;
+	corners.y = 0;
+	windowSize.x = 0;
+	windowSize.y = 0;
+	offsets.x = 0;
+	offsets.y = 0;
 }
 
 SceneWindow::~SceneWindow()
@@ -35,7 +33,7 @@ update_status SceneWindow::Draw()
 	update_status ret = UPDATE_CONTINUE;
     ImGui::Begin(name.c_str(), &active,flags);
 	App->editor->mouse_in_scene = ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
-	ImVec2 winSize = ImGui::GetWindowSize();
+	ImVec2 winSize = ImGui::GetContentRegionAvail();
 
 	ImGui::Indent((winSize.x/2) -(75 *2));
 	if(ImGui::Button("Play",ImVec2(75.0f,25.0f))) App->scene->state = SCENE_PLAY;
@@ -47,11 +45,11 @@ update_status SceneWindow::Draw()
 	//if (ImGui::Button("Step", ImVec2(75.0f, 25.0f))) App->scene->state = SCENE_STEP;
 	ImGui::Unindent();	
 		
-	if (winSize.x != lastSizeX || winSize.y != lastSizeY) SetNewSize(winSize.x, winSize.y);	
-	ImGui::SetCursorPos(ImVec2(offsetX, offsetY));	
-	cornerX = ImGui::GetCursorScreenPos().x;
-	cornerY = ImGui::GetCursorScreenPos().y + windowSizeY;
-	cornerY = App->window->height - cornerY;
+	ImGui::SetCursorPos(ImVec2(offsets.x, offsets.y));
+	corners.x = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMin().x;
+	corners.y = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y;
+	if (windowSize.x != winSize.x || windowSize.y != winSize.y) SetNewSize(winSize.x, winSize.y);
+	
 	ImGui::Image((ImTextureID)App->renderer3D->renderTexture, winSize);		
 
 	//Handle guizmo
@@ -76,36 +74,21 @@ update_status SceneWindow::Draw()
 
 void SceneWindow::SetNewSize(float x, float y)
 {
-	lastSizeX = x;
-	lastSizeY = y;
+	windowSize.x = x;
+	windowSize.y = y;
 
-	windowSizeX = App->window->width;
-	windowSizeY = App->window->height;
-
-	if (windowSizeX > lastSizeX - 10.0f)
-	{
-		windowSizeX /= (windowSizeX / (lastSizeX - 10.0f));
-		windowSizeY /= (windowSizeX / (lastSizeX - 10.0f));
-	}
-
-	if (windowSizeY > lastSizeY - 10.0f)
-	{
-		windowSizeX /= (windowSizeX / (lastSizeY - 10.0f));
-		windowSizeY /= (windowSizeX / (lastSizeY - 10.0f));
-	}
-	offsetX = (lastSizeX - 5.0f - windowSizeX) / 2; 
-	offsetY = (lastSizeY - 5.0f - windowSizeY) / 2;
-
+	App->renderer3D->OnResize(windowSize.x, -windowSize.y);
+	//App->camera->ResizeView(windowSize.x, windowSize.y);
 }
 
 
 float2 SceneWindow::SceneToWindow(float2 p) 
 {
 	float2 ret;
-	ret.x = p.x - cornerX;
-	ret.y = p.y - cornerY;
-	ret.x = ret.x / windowSizeX * App->window->width;
-	ret.y = ret.y / windowSizeY * App->window->height;
+	ret.x = p.x - corners.x;
+	ret.y = p.y - corners.y;
+	ret.x = ret.x / windowSize.x * App->window->width;
+	ret.y = ret.y / windowSize.y * App->window->height;
 	return ret;
 }
 
@@ -113,16 +96,15 @@ float2 SceneWindow::SceneToWindow(float2 p)
 float2 SceneWindow::WindowToScene(float2 p) 
 {
 	float2 ret; 
-	ret.x = (p.x / App->window->width * windowSizeX) + cornerX;
-	ret.y = (p.y / App->window->height * windowSizeY) + cornerY;
+	ret.x = (p.x / App->window->width * windowSize.x) + corners.x;
+	ret.y = (p.y / App->window->height * windowSize.y) + corners.y;
 	return ret;
 }
 
 void SceneWindow::HandleClick()
 {
-	vec mousePos;
-	mousePos.x = App->input->GetMouseX();
-	mousePos.y = App->input->GetMouseY();
+	mousePos.x = App->input->GetMouseX() - corners.x;;
+	mousePos.y = App->input->GetMouseY() - corners.y;
 	float mouseNX = mousePos.x / (float)App->window->width;
 	float mouseNY = -mousePos.y / (float)App->window->height;
 	//float mouseNX = mousePos.x / (float)winSize.x;
@@ -195,9 +177,9 @@ void SceneWindow::HandleGuizmo()
 	float4x4 modelChangeMat = gameObject->transform->GetTransformTransposed();
 
 	ImGuizmo::SetDrawlist();
-	float tempCornerX = cornerX;
-	float tempCornerY = App->window->height - cornerY - windowSizeY;
-	ImGuizmo::SetRect(tempCornerX, tempCornerY,windowSizeX, windowSizeY);
+	//float tempCornerX = corners.x;
+	//float tempCornerY = App->window->height - cornerY - windowSizeY;
+	ImGuizmo::SetRect(corners.x, corners.y,windowSize.x, windowSize.y);
 
 	float modelPtr[16];
 	memcpy(modelPtr, modelChangeMat.ptr(), 16 * sizeof(float));

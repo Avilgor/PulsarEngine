@@ -3,8 +3,6 @@
 #include "ModuleScene.h"
 #include "Scene.h"
 #include "GameObject.h"
-#include "Mesh.h"
-#include "RES_Mesh.h"
 #include "Transform.h"
 #include "ImGuizmo/ImGuizmo.h"
 #include "MathGeoLib/include/MathGeoLib.h"
@@ -20,7 +18,6 @@ ModuleScene::~ModuleScene()
 
 bool ModuleScene::Init()
 {	
-	activeScene = new Scene("SampleScene");
 	state = SCENE_STOP;
 	lastState = state;
 	ImGuizmo::Enable(true);
@@ -34,17 +31,37 @@ bool ModuleScene::Start()
 	bool ret = true;	
 	timeScale = 1.0f;
 	state = SCENE_STOP;
-	activeScene->StartScene();
+	if (lastSceneID.compare("0") != 0)
+	{
+		EngineResource* temp = App->resourceManager->GetResource(lastSceneID);
+		if(temp != nullptr) activeScene = temp->AsScene();
+		else
+		{
+			activeScene = new Scene("NewScene");
+			App->resourceManager->PlaceResource(activeScene->resource);
+			App->resourceManager->SaveResource(activeScene->UUID, "Assets/");
+			//activeScene->references++;
+			LOG("New scene created");
+		}
+	}
+	else
+	{
+		activeScene = new Scene("NewScene");
+		App->resourceManager->PlaceResource(activeScene->resource);
+		App->resourceManager->SaveResource(activeScene->UUID,"Assets/");
+		LOG("New scene created");
+		//->references++;
+	}
+	//activeScene->StartScene();
 	//LoadScene();
 	return ret;
 }
-
 
 bool ModuleScene::CleanUp()
 {
 	LOG("Unloading current scene...");
 	//activeScene->SaveScene();
-	activeScene->CleanScene();
+	//activeScene->SaveResource(nullptr);
 	return true;
 }
 
@@ -58,15 +75,30 @@ void ModuleScene::RequestSave()
 	if (state == SCENE_STOP) save = true;
 }
 
-void ModuleScene::RequestLoad()
+void ModuleScene::SetScene(std::string uuid)
 {
-	if (state == SCENE_STOP) load = true;
+	//if (activeScene != nullptr) App->resourceManager->FreeResource(activeScene->UUID);
+	activeScene = App->resourceManager->GetResource(uuid)->AsScene();
+	//activeScene->references++;
+}
+
+void ModuleScene::SetScene(Scene* scene)
+{
+	//if (activeScene != nullptr) App->resourceManager->FreeResource(activeScene->UUID);
+	activeScene = scene;
+	//activeScene->references++;
 }
 
 void ModuleScene::SaveScene()
 {
-	activeScene->SaveScene();
+	App->resourceManager->SaveResource(activeScene->UUID);
 	save = false;
+}
+
+std::string ModuleScene::GetActiveSceneUUID()
+{
+	if (activeScene != nullptr) return activeScene->UUID;
+	else return "0";
 }
 
 void ModuleScene::GetIntersectedGameobjects(std::vector<GameObject*>* vec, LineSegment ray)
@@ -74,30 +106,15 @@ void ModuleScene::GetIntersectedGameobjects(std::vector<GameObject*>* vec, LineS
 	activeScene->GetRoot()->CheckRayIntersect(vec,ray);
 }
 
-
-void ModuleScene::LoadScene()
+void ModuleScene::SaveSettings(JSonHandler node)
 {
-	LOG("Loading new scene...");
+	node.SaveString("LastScene", GetActiveSceneUUID().c_str());
+}
 
-	Scene* scene = new Scene();
-	char* buffer = nullptr;
-	std::string path = SCENES_PATH;
-	path.append("SampleScene.psscene");
-	uint size = App->fileSystem->Load(path.c_str(), &buffer);
-	if (size > 0)
-	{
-		//activeScene->SaveScene();
-		activeScene->CleanScene();
-
-		JSonHandler* node = new JSonHandler(buffer);
-		activeScene = scene;
-		activeScene->LoadScene(node);
-		load = false;
-
-		delete node;
-		RELEASE_ARRAY(buffer);
-	}
-	else LOG("Error loading scene.");
+void ModuleScene::LoadSettings(JSonHandler node)
+{
+	lastSceneID = node.GetString("LastScene");
+	LOG("Last scene id %s",lastSceneID.c_str());
 }
 
 void ModuleScene::SetTimeScale(float val)
@@ -117,10 +134,12 @@ float ModuleScene::GetSceneRunningTime()
 
 void ModuleScene::CreateNewScene()
 {
-	activeScene->SaveScene();
-	activeScene->CleanScene();
-	Scene* scenenew = new Scene("NewScene");
-	activeScene = scenenew;
+	App->resourceManager->SaveResource(activeScene->UUID);
+	App->resourceManager->FreeResource(activeScene->UUID);
+	activeScene = new Scene("NewScene");
+	App->resourceManager->PlaceResource(activeScene->resource);
+	activeScene->StartScene();
+	App->resourceManager->SaveResource(activeScene->UUID);
 }
 
 // PreUpdate
@@ -128,8 +147,6 @@ update_status ModuleScene::PreUpdate(float dt)
 {	
 	return UPDATE_CONTINUE;
 }
-
-
 
 // Update
 update_status ModuleScene::Update(float dt)
@@ -195,7 +212,6 @@ update_status ModuleScene::Update(float dt)
 	ret = activeScene->UpdateScene(dt);
 
 	if (save) SaveScene();
-	if (load) LoadScene();
 
 	if (state != lastState) lastState = state;
 	lastDT = dt;

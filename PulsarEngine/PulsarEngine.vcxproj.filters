@@ -180,9 +180,6 @@
     <ClInclude Include="parson\parson.h">
       <Filter>Sources\Tools</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Sources\Elements</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Sources\Components</Filter>
     </ClInclude>
@@ -387,6 +384,9 @@
     <ClInclude Include="EngineResource.h">
       <Filter>Sources\Res</Filter>
     </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Sources\Res</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -502,9 +502,6 @@
     </ClCompile>
     <ClCompile Include="parson\parson.c">
       <Filter>Sources\Tools</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Sources\Elements</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Sources\Components</Filter>
@@ -624,6 +621,9 @@
       <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="EngineResource.cpp">
+      <Filter>Sources\Res</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
       <Filter>Sources\Res</Filter>
     </ClCompile>
   </ItemGroup>

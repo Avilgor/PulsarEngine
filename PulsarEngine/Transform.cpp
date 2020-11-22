@@ -9,6 +9,9 @@
 
 Transform::Transform(GameObject* parent) : Component(parent, TRANSFORM_COMP)
 {
+	position = float3::zero;
+	eulerRotation = float3::zero;;
+	scale = float3::one;
 	transform = float4x4::FromTRS(float3::zero, Quat::identity, float3::one);
 	transformGlobal = float4x4::identity;
 	loadedTransform = false;
@@ -17,6 +20,9 @@ Transform::Transform(GameObject* parent) : Component(parent, TRANSFORM_COMP)
 
 Transform::Transform(GameObject* parent, float3 pos, Quat rot, float3 scale) : Component(parent,TRANSFORM_COMP)
 {
+	position = float3::zero;
+	eulerRotation = float3::zero;;
+	scale = float3::one;
 	transform = float4x4::FromTRS(pos, rot, scale);
 	transformGlobal = float4x4::identity;
 	loadedTransform = false;
@@ -25,6 +31,9 @@ Transform::Transform(GameObject* parent, float3 pos, Quat rot, float3 scale) : C
 
 Transform::Transform(GameObject* parent, float3 position, float3 rotation, float3 scale) : Component(parent, TRANSFORM_COMP)
 {
+	position = float3::zero;
+	eulerRotation = float3::zero;;
+	scale = float3::one;
 	eulerRotation = rotation;
 	UpdateQuaternion();
 	transform = float4x4::FromTRS(position, quaternionRotation, scale);
@@ -35,6 +44,9 @@ Transform::Transform(GameObject* parent, float3 position, float3 rotation, float
 
 Transform::Transform(GameObject* parent, float4x4 t) : Component(parent, TRANSFORM_COMP)
 {
+	position = float3::zero;
+	eulerRotation = float3::zero;;
+	scale = float3::one;
 	transform = t;
 	transform.Decompose(position, quaternionRotation, scale);
 	transformGlobal = float4x4::identity;

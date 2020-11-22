@@ -121,22 +121,22 @@ void ProjectWindow::CheckFileMoved(PathNode node)
 {
 	if (node.isFile)
 	{
-		//LOG("Name: %s", node.localPath.c_str());
-		//LOG("Path: %s",node.path);
-		std::string extension = App->fileSystem->GetFileExtension(node.localPath.c_str());
-		if (extension.compare("png") == 0 || extension.compare("fbx") == 0 || extension.compare("dds") == 0 || extension.compare("FBX") == 0)
+		if (App->resourceManager->CheckMetaFile(node.localPath))
+		{				
+			App->resourceManager->CheckMetaPath(node.path, node.localPath);
+		}
+		else
 		{
-			if (App->resourceManager->CheckMetaFile(node.localPath))
+			//File does not have meta
+			//New or renamed
+			std::string extension = App->fileSystem->GetFileExtension(node.localPath.c_str());
+			if (extension.compare("psmesh") == 0 || extension.compare("psmaterial") == 0 || extension.compare("psscene") == 0)
 			{
-				//File has meta
-				//Check if moved				
-				if (!App->resourceManager->CheckMetaPath(node.path, node.localPath)) {} //LOG("File %s meta not found", node.path.c_str());
-			}
-			else
-			{
-				//File does not have meta
-				//New or renamed
-				//LOG("File %s meta not found",node.path.c_str());
+				if (App->resourceManager->CreateResourceMetaByName(node.localPath))
+				{
+					LOG("Meta file %s created.",node.localPath.c_str());
+				}
+				else LOG("Meta file %s creation error.", node.localPath.c_str());
 			}
 		}
 	}

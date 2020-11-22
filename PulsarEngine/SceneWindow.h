@@ -24,17 +24,13 @@ public:
 
 private:
 	ImGuiWindowFlags flags;
-	float lastSizeX;
-	float lastSizeY;
-	float cornerX;
-	float cornerY;
-	float windowSizeX;
-	float windowSizeY;
-	float offsetX;
-	float offsetY;
+	float2 corners;
+	float2 windowSize;
+	float2 offsets;
+	float2 mousePos;
 
 	ImGuizmo::OPERATION gizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
-	ImGuizmo::MODE gizmoMode = ImGuizmo::MODE::WORLD;
+	ImGuizmo::MODE gizmoMode = ImGuizmo::MODE::LOCAL;
 
 	float3 nearClick;
 	float3 farClick;

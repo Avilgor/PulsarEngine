@@ -23,18 +23,21 @@ public:
 	Scene* GetActiveScene();
 	SceneState GetSceneState() { return state; }
 	void RequestSave();
-	void RequestLoad();
+	void SetScene(std::string uuid);
 	void CreateNewScene();
 	float GetTimeScale() { return timeScale; }
 	void SetTimeScale(float val);
 	float GetDeltaTime();
 	float GetSceneRunningTime();
 	void GetIntersectedGameobjects(std::vector<GameObject*> *vec,LineSegment ray);
-	
+	std::string GetActiveSceneUUID();
+	void SetScene(Scene* scene);
+	void SaveSettings(JSonHandler node);
+	void LoadSettings(JSonHandler node);
 
 private:
 	void SaveScene();
-	void LoadScene();
+	//void LoadScene();
 
 public:
 	SceneState state;
@@ -48,6 +51,7 @@ private:
 	SceneState lastState;
 	Timer sceneStartTimer; //No stop
 	Timer sceneRunTime; //Stop when paused
+	std::string lastSceneID = "0";
 };
 
 #endif //__ModuleScene_H__

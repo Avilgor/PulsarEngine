@@ -20,6 +20,8 @@ public:
 	virtual void Clean() {}
 	virtual void SaveResource(JSonHandler* file) {}
 	virtual void LoadResource(JSonHandler* file) {}
+	void SetAssetsPath(std::string path);
+	void SetFullPath(std::string path);
 
 	RES_Mesh* AsMesh() { return meshRes; }
 	RES_Material* AsMaterial() { return matRes; }
@@ -28,13 +30,18 @@ public:
 public:
 	std::string UUID = "";
 	std::string name = "New Resource";
+	std::string extension = "";
 	std::string libPath = "";
 	std::string assetPath = "";
+	std::string currentPath = "";
 	RESOURCE_TYPE type;
 	bool clean;
 	bool loaded = false;
 	int references;
 	EngineResource* resource;
+
+private:
+	void SetExtension();
 
 protected:
 	RES_Mesh* meshRes = nullptr;

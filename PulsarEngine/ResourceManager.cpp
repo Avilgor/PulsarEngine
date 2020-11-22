@@ -23,19 +23,13 @@ bool ResourceManager::Start()
 {
 	LoadMetaFiles();
 	GetEngineFiles();
-	//GetPulsarAssets();
+
 	return true;
 }
 
 update_status ResourceManager::Update(float dt)
 {
-	/*if (reScanTimer.ReadSec() > 3.0f)
-	{
-		//Scan files for changes
 
-		App->editor->scanProjectFiles = true;
-		reScanTimer.Start();
-	}*/
 	return UPDATE_CONTINUE;
 }
 
@@ -89,21 +83,31 @@ void ResourceManager::SaveEngineResource(PathNode n)
 		{
 			RES_Mesh* mesh = nullptr;
 			RES_Material* mat = nullptr;
+			Scene* scene = nullptr;
 			JSonHandler* node = new JSonHandler(buffer);
+			//LOG("File path: %s",n.path.c_str());
 			switch ((int)node->GetNum("Type"))
 			{
 				case MESH_RES:
 					mesh = new RES_Mesh();
 					mesh->LoadResource(node);
+					mesh->SetFullPath(n.localPath);
 					resourcesMap.emplace(mesh->UUID,mesh->resource);
+					//LOG("Saved mesh res");
 					break;
 				case MATERIAL_RES:
 					mat = new RES_Material();
 					mat->LoadResource(node);
+					mat->SetFullPath(n.localPath);
 					resourcesMap.emplace(mat->UUID,mat->resource);
+					//LOG("Saved material res");
 					break;
-				case SCENE_RES: 
-
+				case SCENE_RES: 				
+					scene = new Scene();
+					scene->LoadResource(node);
+					scene->SetFullPath(n.localPath);
+					resourcesMap.emplace(scene->UUID, scene->resource);
+					//LOG("Saved scene res");
 					break;
 			}
 			delete node;
@@ -118,53 +122,6 @@ void ResourceManager::SaveEngineResource(PathNode n)
 		}
 	}
 }
-
-/*void ResourceManager::SaveEngineAsset(PathNode n)
-{
-	if (n.isFile)
-	{
-		char* buffer = nullptr;
-		PulsarAsset file;
-		uint size = App->fileSystem->Load(n.path.c_str(), &buffer);
-		if (size > 0)
-		{
-			JSonHandler* node = new JSonHandler(buffer);
-			file.name = node->GetNum("FileName");
-			file.uuid = node->GetString("UUID");
-			node->LoadArray("Objects");
-			int num = node->GetArrayCount("Objects");
-			if (num > 0)
-			{
-				for (int i = 0; i < num; i++)
-				{
-					JSonHandler node2 = node->GetNodeArray("Resources", i);
-					node->LoadArray("Resources");
-					int num = node->GetArrayCount("Resources");
-					if (num > 0)
-					{
-						for (int i = 0; i < num; i++)
-						{
-							JSonHandler json = node->GetNodeArray("Resources", i);
-							file.resourcesIDs.push_back(json.GetString("UUID"));
-						}
-					}
-					JSonHandler json = node->GetNodeArray("Resources", i);
-					file.resourcesIDs.push_back(json.GetString("UUID"));
-				}
-			}
-			pulsarAssets.emplace(file.uuid, file);
-			delete node;
-			RELEASE_ARRAY(buffer);
-		}
-	}
-	else if (!n.children.empty())
-	{
-		for (int i = 0; i < n.children.size(); i++)
-		{
-			SaveEngineAsset(n.children[i]);
-		}
-	}
-}*/
 
 void ResourceManager::SaveMetaNode(PathNode n)
 {
@@ -249,7 +206,7 @@ bool ResourceManager::LoadMaterialResource(RES_Material* mat)
 bool ResourceManager::LoadSceneResource(Scene* scene)
 {
 	bool ret = true;
-
+	if (ret) loadedResources.emplace(scene->UUID, scene->resource);
 	return ret;
 }
 
@@ -292,6 +249,7 @@ bool ResourceManager::CheckMetaFile(std::string name)
 {
 	if (metaFiles.find(name) != metaFiles.end())
 	{
+		//LOG("Meta file found");
 		return true;
 	}
 	else return false;
@@ -310,9 +268,10 @@ bool ResourceManager::CheckMetaPath(std::string path,std::string name)
 			//File moved or renamed
 			if (App->fileSystem->Exists(metaFiles[name].filePath.c_str()))
 			{				
-				//Meta fille found, move it
+				//Meta file found, move it
 				App->fileSystem->MoveFileTo(metaFiles[name].filePath.c_str(), metaLoc.c_str());
 				metaFiles[name].filePath = metaLoc;
+				resourcesMap[metaFiles[name].resourceID]->currentPath = path;
 				LOG("Meta file %s moved",metaLoc.c_str());
 				return true;
 			}	
@@ -337,14 +296,12 @@ GameObject* ResourceManager::ImportFBXFromMeta(std::string id)
 
 		if (!meta.resourcesIDs.empty())
 		{
-			//LOG("Objects size %d",meta.resourcesIDs.size());
 			for (std::vector<std::vector<std::string> >::const_iterator it = meta.resourcesIDs.begin(); it != meta.resourcesIDs.end(); ++it)
 			{
 				if (!(*it).empty())
 				{
 					GameObject* child = go->CreateChild();
 					std::vector<std::string> tempV = (*it);		
-					//LOG("Resources size %d", tempV.size());
 					for (int i = 0; i < tempV.size(); i++)
 					{
 						if (LoadResource(tempV[i]))
@@ -385,8 +342,6 @@ GameObject* ResourceManager::ImportFBXFromMeta(std::string id)
 											}
 										}
 									}
-									break;
-								case SCENE_RES:
 									break;
 								}
 							}
@@ -458,8 +413,6 @@ void ResourceManager::ImportFBXFromMeta(std::string id, GameObject* go)
 										}
 									}
 									break;
-								case SCENE_RES:
-									break;
 								}
 							}
 						}
@@ -496,34 +449,6 @@ void ResourceManager::FreeResource(std::string uuid)
 	}
 }
 
-/*GameObject* ResourceManager::LoadPulsarAsset(std::string id)
-{	
-	GameObject* go = nullptr;
-	if (pulsarAssets.find(id) != pulsarAssets.end())
-	{
-		PulsarAsset asset = pulsarAssets[id];
-		go = new GameObject(asset.name.c_str());
-		
-		for (std::vector<std::string>::const_iterator it = asset.resourcesIDs.begin(); it != asset.resourcesIDs.end(); ++it)
-		{
-			LoadResource((*it));
-		}
-	}
-	return go;
-}
-
-void ResourceManager::LoadPulsarAsset(std::string id, GameObject* go)
-{
-	if (pulsarAssets.find(id) != pulsarAssets.end())
-	{
-		PulsarAsset asset = pulsarAssets[id];
-		for (std::vector<std::string>::const_iterator it = asset.resourcesIDs.begin(); it != asset.resourcesIDs.end(); ++it)
-		{
-			LoadResource((*it));
-		}
-	}
-}*/
-
 GameObject* ResourceManager::ImportFBX(const char* path)
 {
 	if (App->scene->state == SCENE_STOP)
@@ -547,40 +472,6 @@ RES_Material* ResourceManager::ImportTexture(const char* path)
 		App->fileSystem->GetDroppedFile(path,nullptr,mat);
 		return mat;
 	}
-}
-
-std::string ResourceManager::Save_RES_Mesh(RES_Mesh* mesh, const char* path)
-{
-	JSonHandler file;
-	mesh->SaveResource(&file);
-
-	//Write to file
-	char* buffer = nullptr;
-	uint size = file.Serialize(&buffer);
-	std::string fileName = path;
-	fileName.append(mesh->name);
-	fileName.append(".psmesh");
-	App->fileSystem->Save(fileName.c_str(), buffer, size);
-	RELEASE_ARRAY(buffer);
-
-	return fileName;
-}
-
-std::string ResourceManager::Save_RES_Material(RES_Material* mat, const char* path)
-{
-	JSonHandler file;
-	mat->SaveResource(&file);
-
-	//Write to file
-	char* buffer = nullptr;
-	uint size = file.Serialize(&buffer);
-	std::string fileName = path;
-	fileName.append(mat->name);
-	fileName.append(".psmaterial");
-	App->fileSystem->Save(fileName.c_str(), buffer, size);
-	RELEASE_ARRAY(buffer);
-
-	return fileName;
 }
 
 bool ResourceManager::GenerateMeshBuffer(RES_Mesh* mesh)
@@ -656,8 +547,41 @@ bool ResourceManager::GenerateMaterialBuffer(RES_Material* material)
 	return false;
 }
 
+std::string ResourceManager::SaveResource(std::string uuid)
+{
+	JSonHandler file;
+	resourcesMap[uuid]->SaveResource(&file);
 
-void ResourceManager::SaveResource(EngineResource* res)
+	//Write to file
+	char* buffer = nullptr;
+	uint size = file.Serialize(&buffer);
+	App->fileSystem->Save(resourcesMap[uuid]->currentPath.c_str(), buffer, size);
+	RELEASE_ARRAY(buffer);
+
+	return resourcesMap[uuid]->currentPath.c_str();
+}
+
+void ResourceManager::SaveResource(std::string uuid, std::string path)
+{
+	JSonHandler file;
+	resourcesMap[uuid]->SaveResource(&file);
+
+	//Remove old files
+	if(App->fileSystem->Exists(resourcesMap[uuid]->currentPath.c_str())) App->fileSystem->Remove(resourcesMap[uuid]->currentPath.c_str());
+	std::string temp = resourcesMap[uuid]->name;/* .append(resourcesMap[uuid]->extension);*/
+	if (CheckMetaFile(temp)) App->fileSystem->Remove(temp.c_str());	
+	
+	//Write to file
+	char* buffer = nullptr;
+	uint size = file.Serialize(&buffer);	
+	resourcesMap[uuid]->SetAssetsPath(path);
+	LOG("Asset path: %s",resourcesMap[uuid]->currentPath.c_str());
+	App->fileSystem->Save(resourcesMap[uuid]->currentPath.c_str(), buffer, size);
+	CreateResourceMeta(uuid);
+	RELEASE_ARRAY(buffer);
+}
+
+void ResourceManager::PlaceResource(EngineResource* res)
 {
 	resourcesMap.emplace(res->UUID, res);
 }
@@ -677,4 +601,43 @@ EngineResource* ResourceManager::GetResource(std::string uuid)
 			return nullptr;
 		}
 	}
+}
+
+void ResourceManager::CreateResourceMeta(std::string uuid)
+{
+	JSonHandler file;
+
+	file.SaveNum("LastModificationTime", App->fileSystem->GetLastModTime(resourcesMap[uuid]->currentPath.c_str()));
+	file.SaveString("UUID", App->GenerateUUID_V4().c_str());
+	file.SaveString("ResourceID", uuid.c_str());
+
+	//Write to file
+	char* buffer = nullptr;
+	uint size = file.Serialize(&buffer);
+	std::string fileName = resourcesMap[uuid]->currentPath;
+	fileName.append(".meta");
+	App->fileSystem->Save(fileName.c_str(), buffer, size);
+	RELEASE_ARRAY(buffer);
+	App->resourceManager->LoadMetaFiles();
+}
+
+EngineResource* ResourceManager::GetResourceByName(std::string name)
+{
+	for (std::map<std::string, EngineResource*>::iterator it = resourcesMap.begin(); it != resourcesMap.end(); ++it)
+	{
+		if ((*it).second->name.append((*it).second->extension).compare(name) == 0)
+		{
+			return (*it).second;
+		}
+	}
+	return nullptr;
+}
+
+bool ResourceManager::CreateResourceMetaByName(std::string name)
+{
+	EngineResource* temp = GetResourceByName(name);
+	if (temp != nullptr) CreateResourceMeta(temp->UUID);
+	else return false;
+
+	return true;
 }

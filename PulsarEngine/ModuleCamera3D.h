@@ -32,6 +32,7 @@ public:
 	LineSegment CastRay(float x,float y);
 	void AddDrawnGameobject(GameObject* go);
 	std::vector<GameObject*> GetDrawnObjects() { return drawnGameobjects; }
+	void ResizeView(int w, int h);
 
 public:
 	Camera* camera = nullptr;

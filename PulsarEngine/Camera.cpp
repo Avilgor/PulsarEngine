@@ -83,6 +83,12 @@ void Camera::LookAt(float3 pos)
 	UpdateCameraPlanes();
 }
 
+void Camera::AdaptFOV(float width, float height)
+{
+	float temp = 2.0f * std::atan(std::tan(frustum.HorizontalFov() * 0.5f) * (height / width));
+	frustum.SetVerticalFovAndAspectRatio(temp,frustum.AspectRatio());
+}
+
 void Camera::UpdateCameraPlanes()
 {
 	frustum.GetPlanes(planes);

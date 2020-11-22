@@ -222,7 +222,7 @@ bool JSonHandler::LoadArray(const char* name)
 		//LOG("Array %s loaded",name);
 		return true;
 	}
-	else LOG("Array not found");
+	//else LOG("Array not found");
 	return false;
 }
 

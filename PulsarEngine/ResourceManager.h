@@ -44,8 +44,6 @@ public:
 	bool CleanUp();
 	void LoadMetaFiles();
 	
-	//void GetPulsarAssets();
-	
 	GameObject* ImportFBX(const char* path);
 	void ImportFBX(const char* path, GameObject* go);
 	RES_Material* ImportTexture(const char* path);
@@ -56,9 +54,14 @@ public:
 
 	bool CheckMetaFile(std::string name);
 	bool CheckMetaPath(std::string path,std::string name);
-	std::string Save_RES_Mesh(RES_Mesh* mesh,const char* path);
-	std::string Save_RES_Material(RES_Material* mat, const char* path);
-	void SaveResource(EngineResource* res);	
+	//std::string Save_RES_Mesh(RES_Mesh* mesh,const char* path);
+	//std::string Save_RES_Material(RES_Material* mat, const char* path);
+	std::string SaveResource(std::string uuid);
+	void SaveResource(std::string uuid,std::string path);
+	void PlaceResource(EngineResource* res);	
+	void CreateResourceMeta(std::string uuid);
+	EngineResource* GetResourceByName(std::string name);
+	bool CreateResourceMetaByName(std::string name);
 
 	bool LoadResource(std::string uuid);
 	void FreeResource(std::string uuid);
@@ -79,7 +82,7 @@ private:
 	std::map<std::string, EngineResource*> loadedResources;
 	std::map<std::string, MetaFile> metaFiles;
 	PathNode metaNode;
-	//Timer reScanTimer;
+
 };
 
 #endif //__FileManager_H__

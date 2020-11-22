@@ -70,7 +70,6 @@ bool FileSystemModule::Init(Config& config)
 	char* write_path = SDL_GetPrefPath(App->GetOrganizationName(), App->GetTitleName());
 	
 	SDL_free(write_path);
-	App->LoadSettings();
 	return ret;
 }
 
@@ -91,7 +90,7 @@ void FileSystemModule::CreateLibraryDirectories()
 	//CreateDir(ANIMATIONS_PATH);
 	//CreateDir(PARTICLES_PATH);
 	//CreateDir(SHADERS_PATH);
-	CreateDir(SCENES_PATH);
+	//CreateDir(SCENES_PATH);
 }
 
 // Add a new zip file or folder
@@ -646,8 +645,9 @@ void FileSystemModule::GetDroppedFile(const char* path,GameObject* go,RES_Materi
 				if (LoadTexture(path, mat))
 				{
 					//Save material resource
-					std::string resPath = App->resourceManager->Save_RES_Material(mat, GetFilePath(path).c_str());
-					App->resourceManager->SaveResource(mat->resource);
+					App->resourceManager->PlaceResource(mat->resource);
+					App->resourceManager->SaveResource(mat->UUID, GetFilePath(path));
+					
 
 					//Create asset file
 					std::string tempId = App->GenerateUUID_V4();
@@ -932,10 +932,8 @@ bool FileSystemModule::ImportFBX(const char* path, GameObject* parent)
 							node.InsertStringArray("Resources", newMesh->UUID.c_str());
 
 							//Save mesh resource file
-							std::string resPath = App->resourceManager->Save_RES_Mesh(newMesh, GetFilePath(path).c_str());
-
-							//Save into resource manager map
-							App->resourceManager->SaveResource(newMesh);
+							App->resourceManager->PlaceResource(newMesh->resource);
+							App->resourceManager->SaveResource(newMesh->UUID, GetFilePath(path));
 
 							//Load resource
 							App->resourceManager->LoadResource(newMesh->UUID);
@@ -1068,8 +1066,9 @@ RES_Material* FileSystemModule::ImportMaterialFBX(aiMaterial* material, GameObje
 					if (LoadTexture(dir.c_str(), matInfo))
 					{
 						//Save material resource
-						std::string resPath = App->resourceManager->Save_RES_Material(matInfo, GetFilePath(fbxPath).c_str());
-						App->resourceManager->SaveResource(matInfo);
+						App->resourceManager->PlaceResource(matInfo->resource);
+						App->resourceManager->SaveResource(matInfo->UUID, GetFilePath(fbxPath));
+						
 
 						//Create asset file
 						//std::string tempId = App->GenerateUUID_V4();
