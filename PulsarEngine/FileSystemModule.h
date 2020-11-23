@@ -35,7 +35,7 @@ public:
 	~FileSystemModule();
 
 	// Called before render is available
-	bool Init(Config& config);
+	bool Init();
 
 	// Called before quitting
 	bool CleanUp();
@@ -76,7 +76,7 @@ public:
 	uint64 GetLastModTime(const char* filename);
 	std::string GetUniqueName(const char* path, const char* name) const;
 	bool LoadTexture(const char* path, RES_Material* mat);
-	void GetDroppedFile(const char* path, GameObject* go = nullptr, RES_Material* mat = nullptr);
+	void GetDroppedFile(const char* path, GameObject* go = nullptr);
 	std::string GetFilePath(const char* path);
 	std::string GetFileExtension(const char* path);
 	std::string GetFileName(const char* path);

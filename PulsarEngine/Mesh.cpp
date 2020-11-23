@@ -189,6 +189,6 @@ void Mesh::LoadComponent(JSonHandler* file)
 	{
 		resMesh = res->AsMesh();
 		resMesh->references++;
+		UpdateAABB();
 	}
-	UpdateAABB();
 }

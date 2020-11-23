@@ -233,17 +233,26 @@ void GameObject::LoadGameObject(JSonHandler* file)
 			case MESH_COMP:
 				//LOG("Load mesh");
 				comp = AddComponent(MESH_COMP);
-				if (comp != nullptr) comp->AsMesh()->LoadComponent(&json);
+				if (comp != nullptr)
+				{
+					if(comp->AsMesh() != nullptr) comp->AsMesh()->LoadComponent(&json);
+				}
 				break;
 			case MATERIAL_COMP:
 				//LOG("Load material");
 				comp = AddComponent(MATERIAL_COMP);
-				if (comp != nullptr) comp->AsMaterial()->LoadComponent(&json);
+				if (comp != nullptr)
+				{
+					if(comp->AsMaterial() != nullptr) comp->AsMaterial()->LoadComponent(&json);
+				}
 				break;
 			case CAMERA_COMP:
 				//LOG("Load camera");
 				comp = AddComponent(CAMERA_COMP);
-				if (comp != nullptr) comp->AsCamera()->LoadComponent(&json);
+				if (comp != nullptr)
+				{
+					if(comp->AsCamera() != nullptr) comp->AsCamera()->LoadComponent(&json);
+				}
 				break;
 			}	
 		}

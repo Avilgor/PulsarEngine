@@ -61,7 +61,7 @@ FileSystemModule::~FileSystemModule()
 }
 
 
-bool FileSystemModule::Init(Config& config)
+bool FileSystemModule::Init()
 {
 	LOG("Loading File System...");
 	bool ret = true;
@@ -648,11 +648,13 @@ std::string FileSystemModule::GetPathAndFile(const char* p)
 	return path;
 }
 
-void FileSystemModule::GetDroppedFile(const char* path,GameObject* go,RES_Material* mat)
+void FileSystemModule::GetDroppedFile(const char* path,GameObject* go)
 {
 	LOG("Got dropped file");
-	if (HasExtension(path, "fbx"))//Mesh
+	std::string extension = GetFileExtension(path);
+	if (extension.compare("fbx") == 0)//Mesh
 	{
+		//LOG("Drop fbx");
 		if (App->scene->state == SCENE_STOP)
 		{
 			if(go == nullptr) go = App->scene->GetActiveScene()->CreateEmptyGameobject();
@@ -661,67 +663,143 @@ void FileSystemModule::GetDroppedFile(const char* path,GameObject* go,RES_Materi
 		}
 		else LOG("Cannot import files while scenne is running");
 	}
-	else if (HasExtension(path, "png") || HasExtension(path, "dds"))//Texture
+
+	if (extension.compare("png") == 0 || extension.compare("dds") == 0)//Texture
 	{
-		if (!App->resourceManager->CheckMetaFile(GetFileAndExtension(path)))//Meta not found
+		//LOG("Drop png");
+		if (App->editor->HasSelection())
 		{
-			if (App->scene->state == SCENE_STOP)
+			RES_Material* mat = nullptr;
+			if (!App->resourceManager->CheckMetaFile(GetFileAndExtension(path)))//Meta not found
 			{
-				if (mat == nullptr) mat = new RES_Material();
-				mat->name = "NewMaterial";
-				mat->assetPath = path;
-				mat->texturesNum = 1;
-				//Load and save texture info
-				if (LoadTexture(path, mat))
+				if (App->scene->state == SCENE_STOP)
 				{
-					//Save material resource
-					App->resourceManager->PlaceResource(mat->resource);
-					App->resourceManager->SaveResource(mat->UUID, GetFilePath(path));
-					
+					if (mat == nullptr) mat = new RES_Material();
+					mat->name = "NewMaterial";
+					mat->assetPath = path;
+					mat->texturesNum = 1;
+					//Load and save texture info
+					if (LoadTexture(path, mat))
+					{
+						//Save material resource
+						App->resourceManager->PlaceResource(mat->resource);
+						App->resourceManager->SaveResource(mat->UUID, GetFilePath(path));
 
-					//Create asset file
-					std::string tempId = App->GenerateUUID_V4();
-					JSonHandler file;
-					file.CreateArray("Objects");
-					JSonHandler node = file.InsertNodeArray("Objects");
-					node.CreateArray("Resources");
-					node.InsertStringArray("Resources", mat->UUID.c_str());
 
-					//Create meta file
-					file.SaveString("Name", mat->name.c_str());
-					Create_MetaFile(path, &file);
+						//Create asset file
+						std::string tempId = App->GenerateUUID_V4();
+						JSonHandler file;
+						file.SaveString("ResourceID", mat->UUID.c_str());
+
+						//Create meta file
+						file.SaveString("Name", mat->name.c_str());
+						Create_MetaFile(path, &file);
+					}
+				}
+				else LOG("Cannot import files while scenne is running");
+			}
+			else
+			{
+				LOG("png meta found");
+				EngineResource* res = App->resourceManager->GetMetaResource(GetFileAndExtension(path));
+				if (res != nullptr) mat = res->AsMaterial();
+			}
+
+			if (mat != nullptr)
+			{
+				LOG("Set png mat");
+				std::vector<GameObject*> selected = App->editor->selectedGameObjects;
+				for (std::vector<GameObject*>::iterator it = selected.begin(); it != selected.end(); ++it)
+				{
+					Component* comp = (*it)->GetFirstComponentType(MATERIAL_COMP);
+					if (comp != nullptr)//Has material -> replace texture
+					{
+						if (comp->AsMaterial() != nullptr) comp->AsMaterial()->SetMaterial(mat);
+					}
+					else //Create material and add texture
+					{
+						comp = (*it)->AddComponent(MATERIAL_COMP);
+						if (comp != nullptr)
+						{
+							if (comp->AsMaterial() != nullptr)
+							{
+								Component* comp2 = (*it)->GetFirstComponentType(MESH_COMP);
+								if (comp2 != nullptr)//If has mesh, add material to mesh
+								{
+									comp2->AsMesh()->SetMaterial(comp->AsMaterial()->GetMaterial());
+								}
+							}
+						}
+					}
 				}
 			}
-			else LOG("Cannot import files while scenne is running");
 		}
-		else
+	}
+
+	if (extension.compare("psscene") == 0)
+	{		
+		//LOG("Drop scene");
+		EngineResource* res = App->resourceManager->GetResourceByName(GetFileName(path));
+		if (res != nullptr)
 		{
-			EngineResource* res = App->resourceManager->GetMetaResource(GetFileAndExtension(path));
-			if (res != nullptr) mat = res->AsMaterial();
+			App->resourceManager->LoadResource(res->UUID);
+			App->scene->SetScene(res->AsScene());
 		}
-		//Set texture to selected gameobjects
+	}
+
+	if (extension.compare("psmesh") == 0)
+	{
+		//LOG("Drop mesh");
 		if (App->editor->HasSelection())
 		{
 			std::vector<GameObject*> selected = App->editor->selectedGameObjects;
+			EngineResource* res = App->resourceManager->GetResourceByName(GetFileName(path));
+			if (res != nullptr) App->resourceManager->LoadResource(res->UUID);
+				
 			for (std::vector<GameObject*>::iterator it = selected.begin(); it != selected.end(); ++it)
 			{
-				Component* comp = (*it)->GetFirstComponentType(MATERIAL_COMP);
+				Component* comp = (*it)->GetFirstComponentType(MESH_COMP);
 				if (comp != nullptr)//Has material -> replace texture
-				{ 
-					if (comp->AsMaterial() != nullptr) comp->AsMaterial()->SetMaterial(mat);
+				{
+					if (comp->AsMesh() != nullptr) comp->AsMesh()->SetMesh(res->AsMesh());
 				}
 				else //Create material and add texture
 				{
-					comp = (*it)->AddComponent(MATERIAL_COMP);
+					comp = (*it)->AddComponent(MESH_COMP);
 					if (comp != nullptr)
 					{
-						if (comp->AsMaterial() != nullptr)
+						if (comp->AsMesh() != nullptr) comp->AsMesh()->SetMesh(res->AsMesh());
+					}
+				}
+			}
+		}
+	}
+
+	if (extension.compare("psmaterial") == 0)
+	{
+		//LOG("Drop material");
+		if (App->editor->HasSelection())
+		{
+			std::vector<GameObject*> selected = App->editor->selectedGameObjects;
+			EngineResource* res = App->resourceManager->GetResourceByName(GetFileName(path));
+			if (res != nullptr)
+			{
+				if (App->resourceManager->LoadResource(res->UUID))
+				{
+					for (std::vector<GameObject*>::iterator it = selected.begin(); it != selected.end(); ++it)
+					{
+						Component* comp = (*it)->GetFirstComponentType(MATERIAL_COMP);
+						if (comp != nullptr)
 						{
-							Component* comp2 = (*it)->GetFirstComponentType(MESH_COMP);
-							if (comp2 != nullptr)//If has mesh, add material to mesh
+							if (comp->AsMaterial() != nullptr) comp->AsMaterial()->SetMaterial(res->AsMaterial());
+						}
+						else
+						{
+							comp = (*it)->AddComponent(MATERIAL_COMP);
+							if (comp != nullptr)
 							{
-								comp2->AsMesh()->SetMaterial(comp->AsMaterial()->GetMaterial());
-							}							
+								if (comp->AsMaterial() != nullptr) comp->AsMaterial()->SetMaterial(res->AsMaterial());
+							}
 						}
 					}
 				}

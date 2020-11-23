@@ -14,16 +14,24 @@
 
 ResourceManager::ResourceManager(Application* app, bool start_enabled) : Module(app, "ResourceManager", start_enabled)
 {
-
+	
 }
 ResourceManager::~ResourceManager()
 {}
 
-bool ResourceManager::Start()
+bool ResourceManager::Init()
 {
+	LOG("Loading resource manager...");
+	bool ret = true;
+
 	LoadMetaFiles();
 	GetEngineFiles();
 
+	return ret;
+}
+
+bool ResourceManager::Start()
+{
 	return true;
 }
 
@@ -92,23 +100,23 @@ void ResourceManager::SaveEngineResource(PathNode n)
 				case MESH_RES:
 					mesh = new RES_Mesh();
 					mesh->LoadResource(node);
-					mesh->SetFullPath(n.localPath);
+					mesh->SetFullPath(n.path);
 					resourcesMap.emplace(mesh->UUID,mesh->resource);
-					//LOG("Saved mesh res");
+					LOG("Saved mesh res");
 					break;
 				case MATERIAL_RES:
 					mat = new RES_Material();
 					mat->LoadResource(node);
-					mat->SetFullPath(n.localPath);
+					mat->SetFullPath(n.path);
 					resourcesMap.emplace(mat->UUID,mat->resource);
-					//LOG("Saved material res");
+					LOG("Saved material res");
 					break;
 				case SCENE_RES: 				
 					scene = new Scene();
 					scene->LoadResource(node);
-					scene->SetFullPath(n.localPath);
+					scene->SetFullPath(n.path);
 					resourcesMap.emplace(scene->UUID, scene->resource);
-					//LOG("Saved scene res");
+					LOG("Saved scene res");
 					break;
 			}
 			delete node;
@@ -208,7 +216,9 @@ bool ResourceManager::LoadSceneResource(Scene* scene)
 {
 	bool ret = true;
 	char* buffer = nullptr;
-	std::string name = scene->name.append(".psscene");
+	//LOG("Name %s",scene->name.c_str());
+	std::string name = scene->name;
+	name = name.append(".psscene");
 	if (metaFiles.find(name) != metaFiles.end())
 	{
 		std::string path = App->fileSystem->GetPathAndFile(metaFiles[name].filePath.c_str());
@@ -503,6 +513,7 @@ EngineResource* ResourceManager::GetMetaResource(std::string id)
 	{
 		if (metaFiles[id].resourceID.compare("") != 0)
 		{
+			LOG("Return meta resource");
 			return GetResource(metaFiles[id].resourceID);
 		}
 	}
@@ -536,16 +547,6 @@ GameObject* ResourceManager::ImportFBX(const char* path)
 void ResourceManager::ImportFBX(const char* path, GameObject* go)
 {
 	if (App->scene->state == SCENE_STOP) App->fileSystem->ImportFBX(path, go);
-}
-
-RES_Material* ResourceManager::ImportTexture(const char* path)
-{
-	if (App->scene->state == SCENE_STOP)
-	{
-		RES_Material* mat = new RES_Material();
-		App->fileSystem->GetDroppedFile(path,nullptr,mat);
-		return mat;
-	}
 }
 
 bool ResourceManager::GenerateMeshBuffer(RES_Mesh* mesh)
@@ -626,6 +627,7 @@ std::string ResourceManager::SaveResource(std::string uuid)
 	JSonHandler file;
 	resourcesMap[uuid]->SaveResource(&file);
 
+	LOG("Asset path: %s", resourcesMap[uuid]->currentPath.c_str());
 	//Write to file
 	char* buffer = nullptr;
 	uint size = file.Serialize(&buffer);
@@ -649,7 +651,7 @@ void ResourceManager::SaveResource(std::string uuid, std::string path)
 	char* buffer = nullptr;
 	uint size = file.Serialize(&buffer);	
 	resourcesMap[uuid]->SetAssetsPath(path);
-	//LOG("Asset path: %s",resourcesMap[uuid]->currentPath.c_str());
+	
 	App->fileSystem->Save(resourcesMap[uuid]->currentPath.c_str(), buffer, size);
 	CreateResourceMeta(uuid);
 	RELEASE_ARRAY(buffer);
@@ -699,7 +701,9 @@ EngineResource* ResourceManager::GetResourceByName(std::string name)
 {
 	for (std::map<std::string, EngineResource*>::iterator it = resourcesMap.begin(); it != resourcesMap.end(); ++it)
 	{
-		if ((*it).second->name.append((*it).second->extension).compare(name) == 0)
+		//LOG("Res name: %s",(*it).second->name.c_str());
+		//LOG("Search name: %s",name.c_str());
+		if ((*it).second->name.compare(name) == 0)
 		{
 			return (*it).second;
 		}

@@ -103,14 +103,19 @@ float2 SceneWindow::WindowToScene(float2 p)
 
 void SceneWindow::HandleClick()
 {
-	mousePos.x = App->input->GetMouseX() - corners.x;;
+
+	mousePos.x = App->input->GetMouseX() - corners.x;
 	mousePos.y = App->input->GetMouseY() - corners.y;
 	float mouseNX = ((mousePos.x / windowSize.x) - 0.5f) * 2.0f;
 	float mouseNY = -((mousePos.y / windowSize.y) - 0.5f) * 2.0f;
+	LOG("Corners X:%f/Y:%f", corners.x, corners.y);
+	LOG("MousePos X:%f/Y:%f",mousePos.x,mousePos.y);
+	LOG("WindowSize X:%f/Y:%f", windowSize.x, windowSize.y);
+	LOG("Normals X:%f/Y:%f", mouseNX, mouseNY);
 
 	std::vector<GameObject*> gameobjects = App->camera->GetDrawnObjects();
 	//LOG("Drawn objects %d",gameobjects.size());
-	//LOG("Normals X:%f/Y:%f",mouseNX,mouseNY);
+	
 	LineSegment ray = App->camera->CastRay(mouseNX, mouseNY);
 	nearClick = ray.a;
 	farClick = ray.b;
@@ -137,29 +142,32 @@ void SceneWindow::HandleClick()
 				{
 					LineSegment temp = ray;
 					temp.Transform((*it)->transform->GetGlobalTransform().Inverted());
-					int bufferSize = mesh->GetMesh()->indexSize;
+					int bufferSize = mesh->GetMesh()->verticesSize;
 					uint* buffer = mesh->GetMesh()->indicesArray;
 					float* vertices = mesh->GetMesh()->verticesArray;
 					for (int i = 0; i < bufferSize; i += 3)
 					{
-						float3 v1(vertices[buffer[i] * 3], vertices[buffer[i] * 3 + 1],
-							vertices[buffer[i] * 3 + 2]);
-
-						float3 v2(vertices[buffer[i + 1] * 3], vertices[buffer[i + 1] * 3 + 1],
-							vertices[buffer[i + 1] * 3 + 2]);
-
-						float3 v3(vertices[buffer[i + 2] * 3], vertices[buffer[i + 2] * 3 + 1],
-							vertices[buffer[i + 2] * 3 + 2]);
-
-						Triangle triangle(v1, v2, v3);
-
-						float distance;
-						float3 intersectionPoint;
-						if (temp.Intersects(triangle, &distance, &intersectionPoint))
+						if (((i + 2) * 3) + 2 < bufferSize)
 						{
-							App->editor->SelectOne((*it));
-							gotGo = true;
-							break;
+							float3 v1(vertices[buffer[i] * 3], vertices[buffer[i] * 3 + 1],
+								vertices[buffer[i] * 3 + 2]);
+
+							float3 v2(vertices[buffer[i + 1] * 3], vertices[buffer[i + 1] * 3 + 1],
+								vertices[buffer[i + 1] * 3 + 2]);
+
+							float3 v3(vertices[buffer[i + 2] * 3], vertices[buffer[i + 2] * 3 + 1],
+								vertices[buffer[i + 2] * 3 + 2]);
+
+							Triangle triangle(v1, v2, v3);
+
+							float distance;
+							float3 intersectionPoint;
+							if (temp.Intersects(triangle, &distance, &intersectionPoint))
+							{
+								App->editor->SelectOne((*it));
+								gotGo = true;
+								break;
+							}
 						}
 					}
 					if (gotGo) break;

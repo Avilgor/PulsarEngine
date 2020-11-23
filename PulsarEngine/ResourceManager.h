@@ -32,6 +32,7 @@ public:
 	ResourceManager(Application* app, bool start_enabled = true);
 	~ResourceManager();
 
+	bool Init();
 	bool Start();
 	update_status Update(float dt);
 	bool CleanUp();
@@ -39,7 +40,7 @@ public:
 	
 	GameObject* ImportFBX(const char* path);
 	void ImportFBX(const char* path, GameObject* go);
-	RES_Material* ImportTexture(const char* path);
+	//RES_Material* ImportTexture(const char* path);
 	GameObject* ImportFBXFromMeta(std::string id);
 	void ImportFBXFromMeta(std::string id,GameObject* go);
 	EngineResource* GetResource(std::string uuid);
