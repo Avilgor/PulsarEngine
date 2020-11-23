@@ -38,30 +38,34 @@ bool ModuleScene::Start()
 		else
 		{
 			activeScene = new Scene("NewScene");
+			GameObject* camera = new GameObject("MainCamera");
+			camera->AddComponent(CAMERA_COMP);
+			activeScene->GetRoot()->AddChild(camera);
 			App->resourceManager->PlaceResource(activeScene->resource);
 			App->resourceManager->SaveResource(activeScene->UUID, "Assets/");
-			//activeScene->references++;
+			activeScene->references++;
 			LOG("New scene created");
 		}
 	}
 	else
 	{
 		activeScene = new Scene("NewScene");
+		GameObject* camera = new GameObject("MainCamera");
+		camera->AddComponent(CAMERA_COMP);
+		activeScene->GetRoot()->AddChild(camera);
 		App->resourceManager->PlaceResource(activeScene->resource);
 		App->resourceManager->SaveResource(activeScene->UUID,"Assets/");
 		LOG("New scene created");
-		//->references++;
+		activeScene->references++;
 	}
-	//activeScene->StartScene();
-	//LoadScene();
+
 	return ret;
 }
 
 bool ModuleScene::CleanUp()
 {
 	LOG("Unloading current scene...");
-	//activeScene->SaveScene();
-	//activeScene->SaveResource(nullptr);
+
 	return true;
 }
 
@@ -77,16 +81,16 @@ void ModuleScene::RequestSave()
 
 void ModuleScene::SetScene(std::string uuid)
 {
-	//if (activeScene != nullptr) App->resourceManager->FreeResource(activeScene->UUID);
+	if (activeScene != nullptr) App->resourceManager->FreeResource(activeScene->UUID);
 	activeScene = App->resourceManager->GetResource(uuid)->AsScene();
-	//activeScene->references++;
+	activeScene->references++;
 }
 
 void ModuleScene::SetScene(Scene* scene)
 {
-	//if (activeScene != nullptr) App->resourceManager->FreeResource(activeScene->UUID);
+	if (activeScene != nullptr) App->resourceManager->FreeResource(activeScene->UUID);
 	activeScene = scene;
-	//activeScene->references++;
+	activeScene->references++;
 }
 
 void ModuleScene::SaveScene()
@@ -114,7 +118,6 @@ void ModuleScene::SaveSettings(JSonHandler node)
 void ModuleScene::LoadSettings(JSonHandler node)
 {
 	lastSceneID = node.GetString("LastScene");
-	//LOG("Last scene id %s",lastSceneID.c_str());
 }
 
 void ModuleScene::SetTimeScale(float val)

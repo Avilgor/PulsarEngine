@@ -7,6 +7,7 @@
 #include "Material.h"
 #include "RES_Mesh.h"
 #include "RES_Material.h"
+#include "Camera.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
 
@@ -32,6 +33,33 @@ update_status InspectorWindow::Draw()
 		if (go->transform != nullptr) TransformSection(go);
 		if (go->GetFirstComponentType(MESH_COMP)) MeshSection(go);
 		if (go->GetFirstComponentType(MATERIAL_COMP)) MaterialSection(go);
+		if (go->camera != nullptr) CameraSection(go);
+
+		ImVec2 winSize = ImGui::GetContentRegionAvail();
+		if (ImGui::Button("Add component"))
+		{
+			if (ImGui::BeginPopup(go->name.c_str()))
+			{
+				if (ImGui::Button("Mesh"))
+				{
+					go->AddComponent(MESH_COMP);
+					//ImGui::CloseCurrentPopup();
+				}
+
+				if (ImGui::Button("Material"))
+				{
+					go->AddComponent(MATERIAL_COMP);
+					//ImGui::CloseCurrentPopup();
+				}
+
+				if (ImGui::Button("Camera"))
+				{
+					go->AddComponent(CAMERA_COMP);
+					//ImGui::CloseCurrentPopup();
+				}
+				ImGui::EndPopup();
+			}
+		}
 	}
 	ImGui::End();	
 
@@ -169,6 +197,7 @@ void InspectorWindow::MeshSection(GameObject* go)
 		if(mesh->GetMaterial() != nullptr) ImGui::Text("Material: %s", mesh->GetMaterial()->name.c_str());
 		else ImGui::Text("Material: -");
 		ImGui::Separator();
+		if (ImGui::Button("Delete component")) go->DeleteGOComponent(MESH_COMP);
 	}
 }
 
@@ -191,42 +220,37 @@ void InspectorWindow::MaterialSection(GameObject* go)
 			ImGui::Text("Width: %d", mat->textWidth);
 			//ImGui::SameLine();
 			ImGui::Text("Height: %d", mat->textHeight);
-			/*
-			Color tempColor = mat->color;
-			ImGui::Text("Color");
-			ImGui::Text("R");
-			ImGui::SameLine();
-			ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.15f);
-			if (ImGui::InputFloat("##ColorR", &tempColor.r, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) colorChange = true;
-			ImGui::PopItemWidth();
-			ImGui::SameLine();
-
-			ImGui::Text("G");
-			ImGui::SameLine();
-			ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.15f);
-			if (ImGui::InputFloat("##ColorG", &tempColor.g, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) colorChange = true;
-			ImGui::PopItemWidth();
-			ImGui::SameLine();
-
-			ImGui::Text("B");
-			ImGui::SameLine();
-			ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.15f);
-			if (ImGui::InputFloat("##ColorB", &tempColor.b, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) colorChange = true;
-			ImGui::PopItemWidth();
-
-			ImGui::Text("Alpha");
-			ImGui::SameLine();
-			ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.20f);
-			if (ImGui::InputFloat("##ColorA", &tempColor.a, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) colorChange = true;
-			ImGui::PopItemWidth();*/
 
 			ImGui::Separator();
-
-			//ImGui::Spacing();
 			ImGui::Image((ImTextureID)mat->textureID, ImVec2(200, 200), ImVec2(0, 1), ImVec2(1, 0));
-			//if (colorChange) mat->ChangeColor(tempColor);
-			//ImGui::Separator();
-			//ImGui::Spacing();
+			ImGui::Separator();
+			if (ImGui::Button("Delete component")) go->DeleteGOComponent(MATERIAL_COMP);
 		}
+	}	
+}
+
+void InspectorWindow::CameraSection(GameObject* go)
+{
+	if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		Camera* cam = go->camera;
+		ImGui::Text("Main camera");
+		ImGui::SameLine();
+		ImGui::Checkbox("##cameraMain", &cam->mainCamera);
+		if (cam->mainCamera) App->camera->SetMainCamera(cam);
+		float fplane = cam->GetFarPlane();
+		float nplane = cam->GetNearPlane();
+		float fov = cam->GetFOV();
+		float aspect = cam->GetAspectRatio();
+		ImGui::Text("Near plane");
+		if (ImGui::InputFloat("##camfplane", &nplane, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) cam->SetFarPlane(nplane);
+		ImGui::Text("Far plane");
+		if (ImGui::InputFloat("##camnplane", &fplane, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) cam->SetNearPlane(fplane);
+		ImGui::Text("FOV");
+		if (ImGui::InputFloat("##camfov", &fov, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) cam->SetFOV(fov);
+		ImGui::Text("Aspect ratio");
+		if (ImGui::InputFloat("##camaspect", &aspect, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) cam->SetAspectRatio(aspect);		
+		ImGui::Separator();
+		if (ImGui::Button("Delete component")) go->DeleteGOComponent(CAMERA_COMP);
 	}
 }

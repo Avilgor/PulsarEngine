@@ -142,6 +142,8 @@ void GameObject::UpdateGameObject()
 			AddPendingChilds();			
 		}
 
+		if (camera != nullptr) camera->UpdateComponent();
+
 		if (!Components.empty())
 		{
 			for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)
@@ -184,7 +186,8 @@ void GameObject::SaveGameobject(JSonHandler* file, const char* label)
 
 	//Save components	
 	node.CreateArray("Components");
-	if(transform != nullptr) transform->SaveComponent(&node);
+	if (transform != nullptr) transform->SaveComponent(&node);
+	if (camera != nullptr) camera->SaveComponent(&node);
 	if (!Components.empty())
 	{
 		for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)

@@ -1,5 +1,6 @@
 #include "Globals.h"
 #include "Camera.h"
+#include "Application.h"
 #include "JSonHandler.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
@@ -22,7 +23,19 @@ Camera::~Camera()
 
 void Camera::UpdateComponent()
 {
-
+	if (gameobject != nullptr && gameobject->selected)
+	{
+		float3 corners[8];
+		corners[0] = frustum.CornerPoint(0);
+		corners[1] = frustum.CornerPoint(1);
+		corners[2] = frustum.CornerPoint(2);
+		corners[3] = frustum.CornerPoint(3);
+		corners[4] = frustum.CornerPoint(4);
+		corners[5] = frustum.CornerPoint(5);
+		corners[6] = frustum.CornerPoint(6);
+		corners[7] = frustum.CornerPoint(7);
+		App->renderer3D->RenderBox(corners);
+	}
 }
 
 void Camera::UpdateCamera(const float4x4& global)

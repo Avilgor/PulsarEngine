@@ -36,7 +36,11 @@ bool ModuleCamera3D::Start()
 	return ret;
 }
 
-
+void ModuleCamera3D::SetMainCamera(Camera* cam)
+{
+	if (mainCamera != nullptr && mainCamera->UUID.compare(cam->UUID) != 0) mainCamera->mainCamera = false;
+	mainCamera = cam;
+}
 
 // -----------------------------------------------------------------
 bool ModuleCamera3D::CleanUp()
@@ -58,6 +62,8 @@ update_status ModuleCamera3D::PreUpdate(float dt)
 // -----------------------------------------------------------------
 update_status ModuleCamera3D::Update(float dt)
 {
+	if (mainCamera != nullptr && !mainCamera->mainCamera) mainCamera = nullptr;
+
 	if (App->editor->mouse_in_scene || mouseDrag)
 	{
 		vec newPos(0.0f, 0.0f, 0.0f); 
@@ -121,7 +127,13 @@ AABBCheck ModuleCamera3D::CheckAABB(AABB box)
 	float3 corners[8];
 	int iTotalIn = 0;
 	box.GetCornerPoints(corners);
-	Plane* planes = camera->planes;
+	Plane* planes = nullptr;
+	if (mainCamera != nullptr)
+	{
+		LOG("Using main camera");
+		planes = mainCamera->planes;
+	}
+	else planes = camera->planes;
 
 	for (int p = 0; p < 6; p++)
 	{

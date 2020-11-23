@@ -34,10 +34,11 @@ public:
 	void AddDrawnGameobject(GameObject* go);
 	std::vector<GameObject*> GetDrawnObjects() { return drawnGameobjects; }
 	void ResizeView(int w, int h);
+	void SetMainCamera(Camera* cam);
 
 public:
 	Camera* camera = nullptr;
-
+	Camera* mainCamera = nullptr;
 private:
 	bool lockRef;
 	float3 reference;

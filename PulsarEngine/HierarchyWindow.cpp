@@ -25,14 +25,16 @@ update_status HierarchyWindow::Draw()
 
 	ImGui::SetNextWindowBgAlpha(1.0f);
 	ImGui::Begin(name.c_str(), &active);
-	windowHovered = ImGui::IsWindowHovered();
+	windowHovered = ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
 	DrawSceneGameObjects();
 	ImGui::End();
 
 	if (App->editor->mouseDrag && App->editor->leftMouse == KEY_UP)
 	{
+		LOG("Drag mouse");
 		if (windowHovered)
 		{
+			LOG("Set parent");
 			if (objHovered != nullptr) App->editor->SetSelectionParent(objHovered);
 			else App->editor->SetSelectionParent(App->scene->GetActiveScene()->GetRoot());
 		}
@@ -100,7 +102,7 @@ void HierarchyWindow::NodeInput(GameObject* go)
 {
 	if (App->editor->leftMouse == KEY_DOWN)
 	{
-		if (ImGui::IsItemHovered())
+		if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem))
 		{
 			objHovered = go;
 			if (App->editor->ctrl == KEY_REPEAT)

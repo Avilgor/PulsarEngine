@@ -18,6 +18,7 @@ private:
 	void TransformSection(GameObject* go);
 	void MeshSection(GameObject* go);
 	void MaterialSection(GameObject* go);
+	void CameraSection(GameObject* go);
 
 public:
 
