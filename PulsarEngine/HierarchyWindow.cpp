@@ -20,12 +20,23 @@ HierarchyWindow::~HierarchyWindow()
 
 update_status HierarchyWindow::Draw()
 {
-	update_status ret = UPDATE_CONTINUE;
+	update_status ret = UPDATE_CONTINUE; 
+	objHovered = nullptr;
+
 	ImGui::SetNextWindowBgAlpha(1.0f);
 	ImGui::Begin(name.c_str(), &active);
+	windowHovered = ImGui::IsWindowHovered();
 	DrawSceneGameObjects();
-
 	ImGui::End();
+
+	if (App->editor->mouseDrag && App->editor->leftMouse == KEY_UP)
+	{
+		if (windowHovered)
+		{
+			if (objHovered != nullptr) App->editor->SetSelectionParent(objHovered);
+			else App->editor->SetSelectionParent(App->scene->GetActiveScene()->GetRoot());
+		}
+	}
 
 	return ret;
 }
@@ -49,11 +60,7 @@ void HierarchyWindow::DrawGameObject(GameObject* go)
 
 	if (go->active == false) ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 1, 1, 0.4));
 
-	if (go->selected)
-	{
-		nodeFlag |= ImGuiTreeNodeFlags_Selected;
-		//ImGui::SetNextTreeNodeOpen(true);
-	}
+	if (go->selected) nodeFlag |= ImGuiTreeNodeFlags_Selected;
 	
 	go->showHierarchy = ImGui::TreeNodeEx(go->name.c_str(), nodeFlag);
 
@@ -95,17 +102,14 @@ void HierarchyWindow::NodeInput(GameObject* go)
 	{
 		if (ImGui::IsItemHovered())
 		{
+			objHovered = go;
 			if (App->editor->ctrl == KEY_REPEAT)
 			{
 				if (go->selected) App->editor->RemoveSelection(go);//go->selected = false;
 				else App->editor->AddSelection(go);//go->selected = true;
 			}
 			else App->editor->SelectOne(go);
-		}
-		/*else
-		{
-			if (!ctrl) App->editor->RemoveSelection(go);
-		}*/		
+		}	
 	}
 
 	/*if (ImGui::IsItemHovered() && rightMouse == KEY_DOWN)

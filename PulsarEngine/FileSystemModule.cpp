@@ -153,6 +153,36 @@ void FileSystemModule::DiscoverFiles(const char* directory, std::vector<std::str
 	PHYSFS_freeList(rc);
 }
 
+std::string FileSystemModule::SearchFile(const char* file)
+{
+	std::string ret = "";
+	PathNode folder = App->fileSystem->GetAllFiles("Assets", nullptr, nullptr);
+	SearchFolder(folder,file,&ret);
+	return ret;
+}
+
+bool FileSystemModule::SearchFolder(PathNode node, std::string name, std::string* path)
+{
+	bool ret = false;
+	if (node.isFile)
+	{
+		if (node.localPath.compare(name) == 0)
+		{
+			path = &node.path;
+			ret = true;
+		}
+	}
+	else if (!node.children.empty())
+	{
+		std::vector<PathNode> temp = node.children;
+		for (int a = 0; a < temp.size(); a++)
+		{
+			if(!ret) ret = SearchFolder(temp[a],name,path);
+		}
+	}
+	return ret;
+}
+
 void FileSystemModule::GetAllFilesWithExtension(const char* directory, const char* extension, std::vector<std::string>& file_list) const
 {
 	std::vector<std::string> files;

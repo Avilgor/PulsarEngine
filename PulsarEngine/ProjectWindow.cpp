@@ -44,6 +44,10 @@ update_status ProjectWindow::Draw()
 		{
 			App->fileSystem->GetDroppedFile(selectedItem->path.c_str());
 		}
+		else if (App->editor->deleteKey == KEY_DOWN)
+		{
+			App->resourceManager->DeleteResourceByPath(selectedItem->path);
+		}
 	}
 	else if (scanTimer.ReadSec() > 3.0f)
 	{

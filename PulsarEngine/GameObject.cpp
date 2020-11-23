@@ -263,19 +263,21 @@ void GameObject::DrawMesh()
 			App->renderer3D->RenderAABB(Gaabb);
 		}
 
-		//Disabled because frustum culling is not working well
-		/*Component* temp = GetFirstComponentType(MESH_COMP);
+		Component* temp = GetFirstComponentType(MESH_COMP);
 		if (temp != nullptr)
 		{
 			Mesh* mesh = temp->AsMesh();
 			if (mesh != nullptr)
 			{
 				AABBCheck temp = App->camera->CheckAABB(Gaabb);
-				if (temp == AABB_IN || temp == AABB_INTERSECT) mesh->UpdateComponent();
-				//else LOG("Gameobject %s mesh is not visible.",name.c_str());
+				if (temp == AABB_IN || temp == AABB_INTERSECT)
+				{					
+					App->camera->AddDrawnGameobject(this);
+					mesh->UpdateComponent();
+				}
 			}
-		}*/
-		if (hasAABB)
+		}
+		/*if (hasAABB)
 		{
 			AABBCheck temp = App->camera->CheckAABB(Gaabb);
 			if (temp == AABB_IN || temp == AABB_INTERSECT)
@@ -289,7 +291,7 @@ void GameObject::DrawMesh()
 				}
 			}
 			//else LOG("Gameobject %s out of frustum.", name.c_str());
-		}
+		}*/
 		
 
 		if (!Childs.empty())
@@ -316,7 +318,7 @@ GameObject* GameObject::CheckRayIntersect(LineSegment ray)
 				{
 					if (ray.Intersects(mesh->GetMeshAABB()))
 					{
-						LOG("Gameobject %s mouse click intersect.", name.c_str());
+						//LOG("Gameobject %s mouse click intersect.", name.c_str());
 						return this;
 					}
 				}

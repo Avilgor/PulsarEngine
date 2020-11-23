@@ -105,17 +105,16 @@ void SceneWindow::HandleClick()
 {
 	mousePos.x = App->input->GetMouseX() - corners.x;;
 	mousePos.y = App->input->GetMouseY() - corners.y;
-	float mouseNX = mousePos.x / (float)App->window->width;
-	float mouseNY = -mousePos.y / (float)App->window->height;
-	//float mouseNX = mousePos.x / (float)winSize.x;
-	//float mouseNY = mousePos.y / (float)winSize.y;
+	float mouseNX = ((mousePos.x / windowSize.x) - 0.5f) * 2.0f;
+	float mouseNY = -((mousePos.y / windowSize.y) - 0.5f) * 2.0f;
 
-	mouseNX = (mouseNX - 0.5) / 0.5;
-	mouseNY = (mouseNY - 0.5) / 0.5;
 	std::vector<GameObject*> gameobjects = App->camera->GetDrawnObjects();
+	//LOG("Drawn objects %d",gameobjects.size());
+	//LOG("Normals X:%f/Y:%f",mouseNX,mouseNY);
 	LineSegment ray = App->camera->CastRay(mouseNX, mouseNY);
 	nearClick = ray.a;
 	farClick = ray.b;
+	//Check AABB intersections
 	std::vector<GameObject*> intersections;
 	for (std::vector<GameObject*>::iterator it = gameobjects.begin(); it != gameobjects.end(); it++)
 	{
@@ -124,39 +123,48 @@ void SceneWindow::HandleClick()
 	}
 	
 	bool gotGo = false;
-	LOG("Intersections size = %d", intersections.size());
+	//LOG("Intersections size = %d", intersections.size());
+	//Check mesh intersections
 	if (!intersections.empty())
 	{
 		for (std::vector<GameObject*>::iterator it = intersections.begin(); it != intersections.end(); it++)
-		{
-			Mesh* mesh = (*it)->GetFirstComponentType(MESH_COMP)->AsMesh();
-			LineSegment temp = ray;
-			temp.Transform((*it)->transform->GetGlobalTransform().Inverted());
-			int bufferSize = mesh->GetMesh()->indexSize;
-			uint* buffer = mesh->GetMesh()->indicesArray;
-			float* vertices = mesh->GetMesh()->verticesArray;
-			for (int i = 0; i < bufferSize; i += 3)
+		{		
+			Component* comp = (*it)->GetFirstComponentType(MESH_COMP);
+			if (comp != nullptr)
 			{
-				//LOG("Triangle: %d",i);
-				uint a = buffer[i] * 3;
-				vec v1(vertices[a]);
-
-				uint b = buffer[i + 1] * 3;
-				vec v2(vertices[b]);
-
-				uint c = buffer[i + 2] * 3;
-				vec v3(vertices[c]);
-
-				Triangle t(v1, v2, v3);
-				if (temp.Intersects(t, nullptr, nullptr))
+				Mesh* mesh = comp->AsMesh();
+				if (mesh != nullptr)
 				{
-					LOG("Gameobject %s selected", (*it)->name.c_str());
-					App->editor->SelectOne((*it));
-					gotGo = true;
-					break;
+					LineSegment temp = ray;
+					temp.Transform((*it)->transform->GetGlobalTransform().Inverted());
+					int bufferSize = mesh->GetMesh()->indexSize;
+					uint* buffer = mesh->GetMesh()->indicesArray;
+					float* vertices = mesh->GetMesh()->verticesArray;
+					for (int i = 0; i < bufferSize; i += 3)
+					{
+						float3 v1(vertices[buffer[i] * 3], vertices[buffer[i] * 3 + 1],
+							vertices[buffer[i] * 3 + 2]);
+
+						float3 v2(vertices[buffer[i + 1] * 3], vertices[buffer[i + 1] * 3 + 1],
+							vertices[buffer[i + 1] * 3 + 2]);
+
+						float3 v3(vertices[buffer[i + 2] * 3], vertices[buffer[i + 2] * 3 + 1],
+							vertices[buffer[i + 2] * 3 + 2]);
+
+						Triangle triangle(v1, v2, v3);
+
+						float distance;
+						float3 intersectionPoint;
+						if (temp.Intersects(triangle, &distance, &intersectionPoint))
+						{
+							App->editor->SelectOne((*it));
+							gotGo = true;
+							break;
+						}
+					}
+					if (gotGo) break;
 				}
-			}
-			if (gotGo) break;
+			}			
 		}
 		if (!gotGo) App->editor->EmptySelected();
 	}
@@ -177,15 +185,10 @@ void SceneWindow::HandleGuizmo()
 	float4x4 modelChangeMat = gameObject->transform->GetTransformTransposed();
 
 	ImGuizmo::SetDrawlist();
-	//float tempCornerX = corners.x;
-	//float tempCornerY = App->window->height - cornerY - windowSizeY;
 	ImGuizmo::SetRect(corners.x, corners.y,windowSize.x, windowSize.y);
 
 	float modelPtr[16];
 	memcpy(modelPtr, modelChangeMat.ptr(), 16 * sizeof(float));
-	//ImGuizmo::MODE finalMode; 
-	//if (gizmoOperation == ImGuizmo::OPERATION::SCALE) finalMode = ImGuizmo::MODE::LOCAL;
-	//else finalMode = gizmoMode;
 	ImGuizmo::Manipulate(viewMatrix.ptr(), projectionMatrix.ptr(), gizmoOperation, gizmoMode, modelPtr,modelProjection.ptr());
 
 	if (ImGuizmo::IsUsing())

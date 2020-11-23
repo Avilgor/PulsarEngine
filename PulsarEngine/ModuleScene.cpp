@@ -114,7 +114,7 @@ void ModuleScene::SaveSettings(JSonHandler node)
 void ModuleScene::LoadSettings(JSonHandler node)
 {
 	lastSceneID = node.GetString("LastScene");
-	LOG("Last scene id %s",lastSceneID.c_str());
+	//LOG("Last scene id %s",lastSceneID.c_str());
 }
 
 void ModuleScene::SetTimeScale(float val)

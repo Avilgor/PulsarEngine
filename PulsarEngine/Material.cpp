@@ -97,6 +97,7 @@ void Material::LoadComponent(JSonHandler* file)
 	if (gameobject->GetFirstComponentType(MESH_COMP) != nullptr) meshComp = gameobject->GetFirstComponentType(MESH_COMP)->AsMesh();
 	UUID = file->GetString("UUID");
 	active = file->GetBool("Active");	
-	resMaterial = App->resourceManager->GetResource(file->GetString("ResUUID"))->AsMaterial();
+	EngineResource* res = App->resourceManager->GetResource(file->GetString("ResUUID"));
+	if (res != nullptr) resMaterial = res->AsMaterial();
 	if (resMaterial != nullptr) meshComp->SetMaterial(resMaterial);
 }

@@ -39,6 +39,7 @@ bool ResourceManager::CleanUp()
 	{
 		for (std::map<std::string, EngineResource*>::iterator it = loadedResources.begin(); it != loadedResources.end(); ++it)
 		{
+			LOG("Deleting resource %s",(*it).second->name.c_str());
 			(*it).second->Clean();
 		}
 	}
@@ -206,7 +207,29 @@ bool ResourceManager::LoadMaterialResource(RES_Material* mat)
 bool ResourceManager::LoadSceneResource(Scene* scene)
 {
 	bool ret = true;
-	if (ret) loadedResources.emplace(scene->UUID, scene->resource);
+	char* buffer = nullptr;
+	std::string name = scene->name.append(".psscene");
+	if (metaFiles.find(name) != metaFiles.end())
+	{
+		std::string path = App->fileSystem->GetPathAndFile(metaFiles[name].filePath.c_str());
+		uint size = App->fileSystem->Load(path.c_str(), &buffer);
+		if (size > 0)
+		{
+			JSonHandler* node = new JSonHandler(buffer);
+			ret = scene->LoadScene(node);
+			if (ret) loadedResources.emplace(scene->UUID, scene->resource);
+		}
+		else
+		{
+			LOG("Buffer size 0 or less");
+			ret = false;
+		}
+	}
+	else
+	{	
+		LOG("Scene meta not found");
+		ret = false;
+	}
 	return ret;
 }
 
@@ -222,9 +245,11 @@ bool ResourceManager::LoadResource(std::string uuid)
 			{
 			case MESH_RES:
 				ret = LoadMeshResource(resourcesMap[uuid]->AsMesh());
+				loadedResources[uuid]->clean = false;
 				break;
 			case MATERIAL_RES:
 				ret = LoadMaterialResource(resourcesMap[uuid]->AsMaterial());
+				loadedResources[uuid]->clean = false;
 				break;
 			case SCENE_RES:
 				ret = LoadSceneResource(resourcesMap[uuid]->AsScene());
@@ -234,7 +259,7 @@ bool ResourceManager::LoadResource(std::string uuid)
 				LOG("Resource type error.");
 				break;
 			}
-			loadedResources[uuid]->clean = false;
+			
 		}
 		else
 		{
@@ -244,6 +269,55 @@ bool ResourceManager::LoadResource(std::string uuid)
 	}
 	return ret;
 }
+
+void ResourceManager::DeleteResource(std::string uuid)
+{
+	if (loadedResources.find(uuid) != loadedResources.end())
+	{
+		loadedResources[uuid]->Clean();
+		loadedResources.erase(uuid);
+	}
+
+	if (resourcesMap.find(uuid) != resourcesMap.end())
+	{
+		if (metaFiles.find(resourcesMap[uuid]->name) != metaFiles.end())
+		{
+			App->fileSystem->Remove(metaFiles[resourcesMap[uuid]->name].filePath.c_str());
+			metaFiles.erase(resourcesMap[uuid]->name);
+		}
+		App->fileSystem->Remove(resourcesMap[uuid]->libPath.c_str());
+		std::string resPath = App->fileSystem->SearchFile(resourcesMap[uuid]->name.c_str());
+		if(resPath.compare("") != 0) App->fileSystem->Remove(resPath.c_str());
+		resourcesMap.erase(uuid);
+	}
+}
+
+void ResourceManager::DeleteResourceByPath(std::string path)
+{
+	std::string uuid;
+	std::string name = App->fileSystem->GetFileAndExtension(path.c_str());
+
+	if (metaFiles.find(name) != metaFiles.end())
+	{
+		uuid = metaFiles[name].resourceID;
+		App->fileSystem->Remove(metaFiles[name].filePath.c_str());
+		metaFiles.erase(name);
+
+		if (loadedResources.find(uuid) != loadedResources.end())
+		{
+			loadedResources[uuid]->Clean();
+			loadedResources.erase(uuid);
+		}
+
+		if (resourcesMap.find(uuid) != resourcesMap.end())
+		{
+			App->fileSystem->Remove(resourcesMap[uuid]->libPath.c_str());
+			App->fileSystem->Remove(path.c_str());
+			resourcesMap.erase(uuid);
+		}
+	}
+}
+
 
 bool ResourceManager::CheckMetaFile(std::string name)
 {
@@ -575,7 +649,7 @@ void ResourceManager::SaveResource(std::string uuid, std::string path)
 	char* buffer = nullptr;
 	uint size = file.Serialize(&buffer);	
 	resourcesMap[uuid]->SetAssetsPath(path);
-	LOG("Asset path: %s",resourcesMap[uuid]->currentPath.c_str());
+	//LOG("Asset path: %s",resourcesMap[uuid]->currentPath.c_str());
 	App->fileSystem->Save(resourcesMap[uuid]->currentPath.c_str(), buffer, size);
 	CreateResourceMeta(uuid);
 	RELEASE_ARRAY(buffer);

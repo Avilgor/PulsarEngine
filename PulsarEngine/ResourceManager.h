@@ -25,13 +25,6 @@ struct MetaFile
 	std::string filePath = "";
 };
 
-/*struct PulsarAsset
-{
-	std::string name = "";
-	std::string uuid = "";
-	std::vector<std::string> resourcesIDs;
-};*/
-
 
 class ResourceManager : public Module
 {
@@ -62,6 +55,8 @@ public:
 	void CreateResourceMeta(std::string uuid);
 	EngineResource* GetResourceByName(std::string name);
 	bool CreateResourceMetaByName(std::string name);
+	void DeleteResource(std::string uuid);
+	void DeleteResourceByPath(std::string path);
 
 	bool LoadResource(std::string uuid);
 	void FreeResource(std::string uuid);

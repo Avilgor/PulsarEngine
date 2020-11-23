@@ -169,40 +169,61 @@ void Scene::SaveResource(JSonHandler* file)
  	LOG("Scene %s saved!", name.c_str());
 }
 
+bool Scene::LoadScene(JSonHandler* file)
+{
+	bool ret = true;
+	std::map <std::string, GameObject*> gameobjectsLoaded;
+	if (file != nullptr)
+	{
+		if (file->LoadArray("Gameobjects"))
+		{
+			int num = file->GetArrayCount("Gameobjects");
+			gameobjectsLoaded.emplace(root->UUID, root);
+
+			if (num > 1)//Start with 1 to avoid root
+			{
+				//Load all gameobjects
+				for (int a = 1; a < num; a++)
+				{
+					GameObject* go = new GameObject();
+					JSonHandler temp = file->GetNodeArray("Gameobjects", a);
+					go->LoadGameObject(&temp);
+					gameobjectsLoaded.emplace(go->UUID, go);
+				}
+				//LOG("Scene gameobjects loaded...");
+
+				//Set gameobjects hierarchy
+				for (std::map<std::string, GameObject*>::iterator it = gameobjectsLoaded.begin(); it != gameobjectsLoaded.end(); it++)
+				{
+					if ((*it).second->UUID.compare("0") != 0)
+					{
+						gameobjectsLoaded[(*it).second->parentUUID]->AddChild((*it).second);
+						(*it).second->SetParent(gameobjectsLoaded[(*it).second->parentUUID]);
+					}
+				}
+				//LOG("Gameobjects childs set");
+			}
+			gameobjectsLoaded.clear();
+			LOG("Scene %s loaded!", name.c_str());
+		}
+		else
+		{
+			LOG("Scene gameobjects array error.");
+			ret = false;
+		}
+	}
+	else
+	{
+		LOG("Scene json error");
+		ret = false;
+	}
+	return ret;
+}
+
 void Scene::LoadResource(JSonHandler* file)
 {
-	std::map <std::string, GameObject*> gameobjectsLoaded;
 	UUID = file->GetString("UUID");
 	name = file->GetString("Name");
-	file->LoadArray("Gameobjects");
-	int num = file->GetArrayCount("Gameobjects");
-	gameobjectsLoaded.emplace(root->UUID,root);
-
-	if (num > 1)//Start with 1 to avoid root
-	{
-		//Load all gameobjects
-		for (int a = 1; a < num; a++)
-		{
-			GameObject* go = new GameObject();
-			JSonHandler temp = file->GetNodeArray("Gameobjects",a);
-			go->LoadGameObject(&temp);
-			gameobjectsLoaded.emplace(go->UUID, go);
-		}
-		LOG("Scene gameobjects loaded...");
-		
-		//Set gameobjects hierarchy
-		for (std::map<std::string,GameObject*>::iterator it = gameobjectsLoaded.begin(); it != gameobjectsLoaded.end(); it++)
-		{
-			if ((*it).second->UUID.compare("0") != 0)
-			{
-				gameobjectsLoaded[(*it).second->parentUUID]->AddChild((*it).second);
-				(*it).second->SetParent(gameobjectsLoaded[(*it).second->parentUUID]);
-			}
-		}
-		LOG("Gameobjects childs set");
-	}
-	gameobjectsLoaded.clear();
-	LOG("Scene %s loaded!", name.c_str());
 }
 
 void Scene::SaveTempScene()

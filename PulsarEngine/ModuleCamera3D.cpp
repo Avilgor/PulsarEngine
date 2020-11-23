@@ -49,6 +49,13 @@ bool ModuleCamera3D::CleanUp()
 }
 
 // -----------------------------------------------------------------
+update_status ModuleCamera3D::PreUpdate(float dt)
+{
+	drawnGameobjects.clear();
+	return UPDATE_CONTINUE;
+}
+
+// -----------------------------------------------------------------
 update_status ModuleCamera3D::Update(float dt)
 {
 	if (App->editor->mouse_in_scene || mouseDrag)
@@ -93,13 +100,6 @@ update_status ModuleCamera3D::Update(float dt)
 			Pan(temp.x,temp.y);			
 		}
 	}
-	return UPDATE_CONTINUE;
-}
-
-// -----------------------------------------------------------------
-update_status ModuleCamera3D::PostUpdate(float dt)
-{
-	drawnGameobjects.clear();
 	return UPDATE_CONTINUE;
 }
 

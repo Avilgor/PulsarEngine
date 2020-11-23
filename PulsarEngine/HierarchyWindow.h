@@ -16,6 +16,11 @@ public:
 	void DrawGameObject(GameObject* go);
 	void NodeInput(GameObject* go);
 
+private:
+	bool selectionItem;
+	GameObject* objHovered;
+	bool windowHovered;
+
 };
 
 #endif //__HierarchyWindow_H__

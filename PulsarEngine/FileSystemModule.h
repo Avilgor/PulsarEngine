@@ -47,6 +47,7 @@ public:
 	bool Exists(const char* file) const;
 	bool CreateDir(const char* dir);
 	bool IsDirectory(const char* file) const;
+	std::string SearchFile(const char* file);
 	const char* GetWriteDir() const;
 	void DiscoverFiles(const char* directory, std::vector<std::string>& file_list, std::vector<std::string>& dir_list) const;
 	void GetAllFilesWithExtension(const char* directory, const char* extension, std::vector<std::string>& file_list) const;
@@ -95,6 +96,9 @@ public:
 	void UnloadTexure(uint id);	
 	void Create_MetaFile(std::string file, JSonHandler* node);
 	//void CreatePulsarAsset(JSonHandler* node,std::string uuid,std::string name);
+
+private:
+	bool SearchFolder(PathNode node,std::string name, std::string* path);
 };
 
 #endif //__FileSystemModule_H__

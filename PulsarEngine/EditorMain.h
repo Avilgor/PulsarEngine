@@ -37,6 +37,7 @@ public:
 	void DeleteSelected();
 	void EmptySelected();
 	bool HasSelection();
+	void SetSelectionParent(GameObject* go);
 
 private:
 	std::vector<EditorWindow*> WindowsList;

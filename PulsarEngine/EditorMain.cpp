@@ -205,12 +205,7 @@ update_status EditorMain::Update(float dt)
             float3 pos = selectedGameObjects[0]->transform->GetLocalPosition();
             App->camera->Look(float3(pos.x, pos.y, pos.z));
         }
-    } 
-
-    //Process inputs
-    if (deleteKey == KEY_DOWN) DeleteSelected();
-    if (leftMouse == KEY_REPEAT) mouseDrag = true;
-    if (leftMouse == KEY_UP) mouseDrag = false;
+    }  
 
     //Update editor windows
     if (!WindowsList.empty())
@@ -229,7 +224,22 @@ update_status EditorMain::Update(float dt)
         }
     }   
 
+    //Process inputs
+    if (deleteKey == KEY_DOWN) DeleteSelected();
+    if (leftMouse == KEY_REPEAT) mouseDrag = true;
+    if (leftMouse == KEY_UP) mouseDrag = false;
 	return status;
+}
+
+void EditorMain::SetSelectionParent(GameObject* go)
+{
+    if (go != nullptr && !selectedGameObjects.empty())
+    {
+        for (std::vector<GameObject*>::iterator it = selectedGameObjects.begin(); it != selectedGameObjects.end(); ++it)
+        {
+            (*it)->SetParent(go);
+        }
+    }
 }
 
 // -----------------------------------------------------------------

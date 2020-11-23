@@ -83,7 +83,6 @@ void Mesh::SetMaterial(RES_Material* m)
 
 void Mesh::Render()
 {
-	
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -233,7 +232,7 @@ void Mesh::LoadComponent(JSonHandler* file)
 	UUID = file->GetString("CompUUID");
 	active = file->GetBool("Active");
 	drawTexture = file->GetBool("DrawTexture");
-	resMesh = App->resourceManager->GetResource(file->GetString("MeshUUID"))->AsMesh();
-	//resMat = App->resourceManager->GetMaterialResource(file->GetString("MaterialUUID"));
+	EngineResource* res = App->resourceManager->GetResource(file->GetString("MeshUUID"));
+	if(res != nullptr) resMesh = res->AsMesh();
 	UpdateAABB();
 }

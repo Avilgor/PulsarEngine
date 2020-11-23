@@ -26,6 +26,7 @@ public:
 	void Clean();
 	void SaveResource(JSonHandler* file);
 	void LoadResource(JSonHandler* file);
+	bool LoadScene(JSonHandler* node);
 	void SaveTempScene();
 	void LoadTempScene();
 	GameObject* GetRoot() { return root; }
