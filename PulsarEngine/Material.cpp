@@ -23,18 +23,6 @@ void Material::UpdateComponent()
 {
 }
 
-/*
-void Material::LoadTextureNewMaterial(std::string pathtext)
-{
-	resMaterial = new RES_Material();
-	//mat->name = "Material texture";
-	resMaterial->texturesNum = 1;
-	resMaterial->texturePath = pathtext;
-	App->fileSystem->LoadTexture(resMaterial->texturePath.c_str(), resMaterial);
-	LoadMaterial(resMaterial);
-}
-*/
-
 void Material::DeleteComponent()
 {
 	if (material != nullptr) App->resourceManager->FreeResource(material->UUID);
@@ -55,33 +43,7 @@ void Material::DeleteMaterial()
 	if(material != nullptr) App->resourceManager->FreeResource(material->UUID);
 	material = nullptr;
 }
-/*
-void Material::ChangeMaterialTexture(const char* path)
-{
-	if (material != nullptr)
-	{
-		resMaterial->name = "Material texture";
-		resMaterial->texturePath = path;
-		resMaterial->texturesNum = 1;
-		LoadMaterial(resMaterial);
-	}
-}
-*/
-/*
-void Material::LoadMaterial(RES_Material* mat)
-{	
-	//char* buffer = nullptr;
-	//uint size = App->fileSystem->Load(mat->texturePath.c_str(), &buffer);
-	App->fileSystem->LoadMaterial(mat, &buffer, size);	
-}*/
-/*
-RES_Material* Material::CreateMaterial(JSonHandler* file)
-{
-	resMaterial = new RES_Material();
-	resMaterial->LoadMaterial(file);
-	return resMaterial;
-}
-*/
+
 void Material::SaveComponent(JSonHandler* file)
 {
 	JSonHandler node = file->InsertNodeArray("Components");
@@ -98,6 +60,10 @@ void Material::LoadComponent(JSonHandler* file)
 	UUID = file->GetString("UUID");
 	active = file->GetBool("Active");	
 	EngineResource* res = App->resourceManager->GetResource(file->GetString("ResUUID"));
-	if (res != nullptr) resMaterial = res->AsMaterial();
+	if (res != nullptr) 
+	{
+		resMaterial = res->AsMaterial();
+		resMaterial->references++;
+	}
 	if (resMaterial != nullptr) meshComp->SetMaterial(resMaterial);
 }

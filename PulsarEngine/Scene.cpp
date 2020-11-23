@@ -55,9 +55,9 @@ void Scene::StartScene()
 	//App->camera->Move(vec(0.0f, 10.0f, 5.0f));
 	//App->camera->Look(float3(0, 0, 0));
 	
-	GameObject* trump = new GameObject("Trump", float3(3.0f, 0.0f, 0.0f), float3(-90.0f, 0.0f, 0.0f), float3(0.02f, 0.02f, 0.02f));
+	/*GameObject* trump = new GameObject("Trump", float3(3.0f, 0.0f, 0.0f), float3(-90.0f, 0.0f, 0.0f), float3(0.02f, 0.02f, 0.02f));
 	root->AddChild(trump);
-	App->resourceManager->ImportFBX("Assets/3D/Trump/trump.fbx",trump);
+	App->resourceManager->ImportFBX("Assets/3D/Trump/trump.fbx",trump);*/
 
 	/*GameObject* go2 = new GameObject("Baker House", float3(-1.0f, 0.0f, 0.0f), float3::zero, float3::one);
 	root->AddChild(go2);

@@ -45,9 +45,8 @@ update_status MenuBar::Draw()
 	if (ImGui::BeginMenu("Edit"))
 	{
 		if (ImGui::MenuItem("Create child")) App->editor->CreateSelectionChild();
-
+		if (ImGui::MenuItem("Unparent")) App->editor->SetSelectionParent(App->scene->GetActiveScene()->GetRoot());
 		if (ImGui::MenuItem("Delete all childs")) App->editor->DeleteSelectionChilds();
-
 		if (ImGui::MenuItem("Delete selected")) App->editor->DeleteSelected();
 		ImGui::EndMenu();
 	}

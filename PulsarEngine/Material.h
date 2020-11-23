@@ -19,13 +19,9 @@ public:
 
 	void UpdateComponent();
 	void DeleteComponent();
-	//void LoadTextureNewMaterial(std::string path);
-	//void LoadMaterial(RES_Material* mat);
 	RES_Material* GetMaterial() { return resMaterial; }
 	void SetMaterial(RES_Material* mat);
 	void DeleteMaterial();
-	//void ChangeMaterialTexture(const char* path);
-	//RES_Material* CreateMaterial(JSonHandler* file);
 	void SaveComponent(JSonHandler* file);
 	void LoadComponent(JSonHandler* file);
 

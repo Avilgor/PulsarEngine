@@ -36,31 +36,33 @@ update_status InspectorWindow::Draw()
 		if (go->camera != nullptr) CameraSection(go);
 
 		ImVec2 winSize = ImGui::GetContentRegionAvail();
-		if (ImGui::Button("Add component"))
+		ImGui::Spacing();
+		ImGui::Separator();
+		if (ImGui::Button("Add component")) ImGui::OpenPopup(go->name.c_str());
+
+		if (ImGui::BeginPopup(go->name.c_str()))
 		{
-			if (ImGui::BeginPopup(go->name.c_str()))
+			if (ImGui::Button("Mesh"))
 			{
-				if (ImGui::Button("Mesh"))
-				{
-					go->AddComponent(MESH_COMP);
-					//ImGui::CloseCurrentPopup();
-				}
-
-				if (ImGui::Button("Material"))
-				{
-					go->AddComponent(MATERIAL_COMP);
-					//ImGui::CloseCurrentPopup();
-				}
-
-				if (ImGui::Button("Camera"))
-				{
-					go->AddComponent(CAMERA_COMP);
-					//ImGui::CloseCurrentPopup();
-				}
-				ImGui::EndPopup();
+				go->AddComponent(MESH_COMP);
+				ImGui::CloseCurrentPopup();
 			}
+
+			if (ImGui::Button("Material"))
+			{
+				go->AddComponent(MATERIAL_COMP);
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::Button("Camera"))
+			{
+				go->AddComponent(CAMERA_COMP);
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
 		}
 	}
+	
 	ImGui::End();	
 
 	return ret;
@@ -170,35 +172,33 @@ void InspectorWindow::MeshSection(GameObject* go)
 	if (ImGui::CollapsingHeader("Mesh", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		Mesh* mesh = go->GetFirstComponentType(MESH_COMP)->AsMesh();
-		ImGui::Text("Active");
-		ImGui::SameLine();
-		ImGui::Checkbox("##meshActive", &mesh->active);
+		if (mesh != nullptr)
+		{
+			ImGui::Text("Active");
+			ImGui::SameLine();
+			ImGui::Checkbox("##meshActive", &mesh->active);
 
-		ImGui::Text("Texture");
-		ImGui::SameLine();
-		ImGui::Checkbox("##textActive", &mesh->drawTexture);
-		
-		//ImGui::Text("Path: %s", mesh->path.c_str());
-		//ImGui::Separator();
-	
-		//ImGui::Text("Mesh %d",i);
-		ImGui::Text("Name: %s", mesh->GetMesh()->name.c_str());
-		/*ImGui::Checkbox("Mesh AABB", &mesh->drawAABB);
-		ImGui::Text("Draw textures");
-		ImGui::SameLine();
-		ImGui::Checkbox("##drawText", &mesh->drawTexture);*/
-		ImGui::Text("Vertex normals");
-		ImGui::SameLine();
-		ImGui::Checkbox("##DrawVNormal", &mesh->drawVertexNormals);
-		ImGui::Text("Face normals");
-		ImGui::SameLine();
-		ImGui::Checkbox("##DrawFNormal", &mesh->drawFaceNormals);
-		ImGui::Text("Vertices: %d", mesh->GetMesh()->verticesSize);
-		if(mesh->GetMaterial() != nullptr) ImGui::Text("Material: %s", mesh->GetMaterial()->name.c_str());
-		else ImGui::Text("Material: -");
+			ImGui::Text("Texture");
+			ImGui::SameLine();
+			ImGui::Checkbox("##textActive", &mesh->drawTexture);
+
+			if (mesh->GetMesh() != nullptr)
+			{
+				ImGui::Text("Name: %s", mesh->GetMesh()->name.c_str());
+				ImGui::Text("Vertex normals");
+				ImGui::SameLine();
+				ImGui::Checkbox("##DrawVNormal", &mesh->drawVertexNormals);
+				ImGui::Text("Face normals");
+				ImGui::SameLine();
+				ImGui::Checkbox("##DrawFNormal", &mesh->drawFaceNormals);
+				ImGui::Text("Vertices: %d", mesh->GetMesh()->verticesSize);
+				if (mesh->GetMaterial() != nullptr) ImGui::Text("Material: %s", mesh->GetMaterial()->name.c_str());
+				else ImGui::Text("Material: -");				
+			}
+		}
 		ImGui::Separator();
 		if (ImGui::Button("Delete component")) go->DeleteGOComponent(MESH_COMP);
-	}
+	}	
 }
 
 void InspectorWindow::MaterialSection(GameObject* go)
@@ -224,8 +224,9 @@ void InspectorWindow::MaterialSection(GameObject* go)
 			ImGui::Separator();
 			ImGui::Image((ImTextureID)mat->textureID, ImVec2(200, 200), ImVec2(0, 1), ImVec2(1, 0));
 			ImGui::Separator();
-			if (ImGui::Button("Delete component")) go->DeleteGOComponent(MATERIAL_COMP);
 		}
+		ImGui::Separator();
+		if (ImGui::Button("Delete component")) go->DeleteGOComponent(MATERIAL_COMP);
 	}	
 }
 

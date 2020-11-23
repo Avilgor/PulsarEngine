@@ -1,6 +1,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ConfigWindow.h"
+#include "EngineResource.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
 
@@ -74,6 +75,27 @@ update_status ConfigWindow::Draw()
         if (ImGui::Button("Dark")) ImGui::StyleColorsDark();
         ImGui::SameLine();
         if (ImGui::Button("Light")) ImGui::StyleColorsLight();
+    }
+
+    if (ImGui::CollapsingHeader("Loaded resources"))
+    {
+        std::map<std::string, EngineResource*> res = App->resourceManager->GetLoadedResources();
+        if (!res.empty())
+        {
+            ImGui::Text("Name/");
+            ImGui::SameLine();
+            ImGui::Text("References");
+            for (std::map<std::string, EngineResource*>::iterator it = res.begin(); it != res.end(); it++)
+            {
+                ImGui::Text((*it).second->name.c_str());
+                ImGui::SameLine();
+                ImGui::Text("%d", (*it).second->references);
+            }
+        }
+        else
+        {
+            ImGui::Text("No resources loaded.");
+        }      
     }
 
     ImGui::End();

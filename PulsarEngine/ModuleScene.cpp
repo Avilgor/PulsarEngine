@@ -34,7 +34,11 @@ bool ModuleScene::Start()
 	if (lastSceneID.compare("0") != 0)
 	{
 		EngineResource* temp = App->resourceManager->GetResource(lastSceneID);
-		if(temp != nullptr) activeScene = temp->AsScene();
+		if (temp != nullptr)
+		{
+			activeScene = temp->AsScene();
+			activeScene->references++;
+		}
 		else
 		{
 			activeScene = new Scene("NewScene");

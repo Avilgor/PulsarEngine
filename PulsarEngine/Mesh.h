@@ -30,10 +30,6 @@ public:
 	void Render();
 	void SetMaterial(RES_Material* mat);
 
-	void CreateCube();
-	void CreatePyramid();
-	void CreatePlane(float size);
-
 	void SaveComponent(JSonHandler* file);
 	void LoadComponent(JSonHandler* file);
 

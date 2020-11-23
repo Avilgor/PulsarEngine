@@ -25,10 +25,10 @@ Mesh::~Mesh()
 
 void Mesh::UpdateComponent()
 {
-	if (mesh != nullptr)
+	if (resMesh != nullptr)
 	{
 		if (drawAABB) App->renderer3D->RenderAABB(aabb);		
-		Render();
+		if(active) Render();
 	}
 }
 
@@ -169,53 +169,6 @@ void Mesh::DrawFaceNormals()
 	glEnd();
 }
 
-void Mesh::CreateCube()
-{
-	/*resMesh = new RES_Mesh();
-	GLuint index[] = { 0,1,2, 0,2,3, 1,4,5, 1,5,2, 6,0,3, 6,3,7, 3,2,5, 3,5,7, 6,4,1, 6,1,0, 4,6,7, 4,7,5 };
-	GLfloat vertices[] = { 0.0f,0.0f,0.0f, 1.0f,0.0f,0.0f, 1.0f,1.0f,0.0f, 0.0f,1.0f,0.0f,
-		1.0f,0.0f,-1.0f, 1.0f,1.0f,-1.0f, 0.0f,0.0f,-1.0f, 0.0f,1.0f,-1.0f };
-
-	resMesh->verticesSize = (sizeof(vertices) / sizeof(*vertices)) / 3;
-	resMesh->verticesArray = new float[resMesh->verticesSize * 3];
-	memcpy(resMesh->verticesArray, vertices, sizeof(float) * resMesh->verticesSize * 3);
-
-	resMesh->indexSize = sizeof(index) / sizeof(*index);
-	resMesh->indicesArray = new uint[resMesh->indexSize];
-	memcpy(resMesh->indicesArray, index, sizeof(uint) * resMesh->indexSize);
-	App->resourceManager->GenerateMeshBuffer(resMesh);*/
-}
-
-void Mesh::CreatePyramid()
-{
-	/*resMesh = new RES_Mesh();
-	GLuint index[] = { 3,2,1, 3,1,0, 0,1,4, 1,2,4, 2,3,4, 3,0,4 };
-	GLfloat vertices[] = { 0.0f,0.0f,0.0f, 1.0f,0.0f,0.0f, 1.0f,0.0f,-1.0f, 0.0f,0.0f,-1.0f, 0.5f,1.0f,-0.5f };
-	resMesh->verticesSize = (sizeof(vertices) / sizeof(*vertices)) / 3;
-	resMesh->verticesArray = new float[resMesh->verticesSize * 3];
-	memcpy(resMesh->verticesArray, vertices, sizeof(float) * resMesh->verticesSize * 3);
-
-	resMesh->indexSize = sizeof(index) / sizeof(*index);
-	resMesh->indicesArray = new uint[resMesh->indexSize];
-	memcpy(resMesh->indicesArray, index, sizeof(uint) * resMesh->indexSize);
-	App->resourceManager->GenerateMeshBuffer(resMesh);*/
-}
-
-void Mesh::CreatePlane(float size)
-{
-	/*resMesh = new RES_Mesh();
-	GLuint index[] = { 0,1,2,	0,2,3 };
-	GLfloat vertices[] = { 0.0f,0.0f,0.0f,  size,0.0f,0.0f, size,0.0f,size,  0.0f,0.0f,size };
-	resMesh->verticesSize = (sizeof(vertices) / sizeof(*vertices)) / 3;
-	resMesh->verticesArray = new float[resMesh->verticesSize * 3];
-	memcpy(resMesh->verticesArray, vertices, sizeof(float) * resMesh->verticesSize * 3);
-
-	resMesh->indexSize = sizeof(index) / sizeof(*index);
-	resMesh->indicesArray = new uint[resMesh->indexSize];
-	memcpy(resMesh->indicesArray, index, sizeof(uint) * resMesh->indexSize);
-	App->resourceManager->GenerateMeshBuffer(resMesh);*/
-}
-
 void Mesh::SaveComponent(JSonHandler* file)
 {
 	JSonHandler node = file->InsertNodeArray("Components");
@@ -224,7 +177,6 @@ void Mesh::SaveComponent(JSonHandler* file)
 	node.SaveBool("Active",active);
 	node.SaveBool("DrawTexture",drawTexture);
 	node.SaveString("MeshUUID", resMesh->UUID.c_str());
-	//node.SaveString("MaterialUUID", resMat->UUID.c_str());
 }
 
 void Mesh::LoadComponent(JSonHandler* file)
@@ -233,6 +185,10 @@ void Mesh::LoadComponent(JSonHandler* file)
 	active = file->GetBool("Active");
 	drawTexture = file->GetBool("DrawTexture");
 	EngineResource* res = App->resourceManager->GetResource(file->GetString("MeshUUID"));
-	if(res != nullptr) resMesh = res->AsMesh();
+	if (res != nullptr)
+	{
+		resMesh = res->AsMesh();
+		resMesh->references++;
+	}
 	UpdateAABB();
 }

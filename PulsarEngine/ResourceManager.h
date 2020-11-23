@@ -44,6 +44,7 @@ public:
 	void ImportFBXFromMeta(std::string id,GameObject* go);
 	EngineResource* GetResource(std::string uuid);
 	EngineResource* GetMetaResource(std::string id);
+	std::map<std::string, EngineResource*> GetLoadedResources() { return loadedResources; }
 
 	bool CheckMetaFile(std::string name);
 	bool CheckMetaPath(std::string path,std::string name);

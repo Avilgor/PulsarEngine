@@ -17,7 +17,7 @@ public:
 	void NodeInput(GameObject* go);
 
 private:
-	bool selectionItem;
+	bool dragItem;
 	GameObject* objHovered;
 	bool windowHovered;
 

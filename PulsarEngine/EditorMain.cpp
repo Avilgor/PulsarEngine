@@ -207,6 +207,11 @@ update_status EditorMain::Update(float dt)
         }
     }  
 
+    //Process inputs
+    if (deleteKey == KEY_DOWN) DeleteSelected();
+    if (leftMouse == KEY_REPEAT) mouseDrag = true;
+    if (leftMouse == KEY_UP) mouseDrag = false;
+
     //Update editor windows
     if (!WindowsList.empty())
     {
@@ -224,10 +229,7 @@ update_status EditorMain::Update(float dt)
         }
     }   
 
-    //Process inputs
-    if (deleteKey == KEY_DOWN) DeleteSelected();
-    if (leftMouse == KEY_REPEAT) mouseDrag = true;
-    if (leftMouse == KEY_UP) mouseDrag = false;
+
 	return status;
 }
 
