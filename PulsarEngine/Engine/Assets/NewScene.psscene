@@ -16,16 +16,16 @@
             "Components": [
                 {
                     "CompType": 1,
-                    "UUID": "8a484c73-edf4-490d-9b18-7b1bdc4f5767",
+                    "UUID": "9dfaf439-de7a-4bab-8d0d-cc5da5275da6",
                     "Position": [
                         0,
                         0,
                         0
                     ],
                     "Rotation": [
+                        -0,
                         0,
-                        0,
-                        0
+                        -0
                     ],
                     "Scale": [
                         1,
@@ -80,7 +80,7 @@
             "UUID": "437dc29b-df77-4f33-88d5-269fdca6347b",
             "Parent_UUID": "0",
             "name": "BakerHouse",
-            "active": false,
+            "active": true,
             "Childs": [
                 "53ca5e2e-6a17-4e30-b62b-d58e975e0420",
                 "93ff2018-5bdc-4eb0-95ed-19d81eeec973"
@@ -111,7 +111,7 @@
             "UUID": "53ca5e2e-6a17-4e30-b62b-d58e975e0420",
             "Parent_UUID": "437dc29b-df77-4f33-88d5-269fdca6347b",
             "name": "Child",
-            "active": false,
+            "active": true,
             "Childs": [],
             "Components": [
                 {
@@ -152,7 +152,7 @@
             "UUID": "93ff2018-5bdc-4eb0-95ed-19d81eeec973",
             "Parent_UUID": "437dc29b-df77-4f33-88d5-269fdca6347b",
             "name": "Child",
-            "active": false,
+            "active": true,
             "Childs": [],
             "Components": [
                 {
@@ -193,7 +193,7 @@
             "UUID": "b43827d7-56ee-41c7-9c73-f025dc3f6276",
             "Parent_UUID": "0",
             "name": "Cock",
-            "active": false,
+            "active": true,
             "Childs": [
                 "9a1fcdc7-4ffa-4564-b5be-b89c861adae4"
             ],
@@ -202,8 +202,8 @@
                     "CompType": 1,
                     "UUID": "25f6e443-fec8-4fe2-b6ff-c47234130801",
                     "Position": [
-                        0,
-                        0,
+                        -3.609224796295166,
+                        -0.0060298442840576172,
                         0
                     ],
                     "Rotation": [
@@ -212,9 +212,9 @@
                         -0
                     ],
                     "Scale": [
-                        1,
-                        1,
-                        1
+                        0.05000000074505806,
+                        0.05000000074505806,
+                        0.05000000074505806
                     ]
                 }
             ]
@@ -223,15 +223,15 @@
             "UUID": "9a1fcdc7-4ffa-4564-b5be-b89c861adae4",
             "Parent_UUID": "b43827d7-56ee-41c7-9c73-f025dc3f6276",
             "name": "Child",
-            "active": false,
+            "active": true,
             "Childs": [],
             "Components": [
                 {
                     "CompType": 1,
                     "UUID": "ca32e6bc-3b9a-4f90-a33d-bf62773a9c96",
                     "Position": [
-                        0,
-                        0,
+                        -0.2975127100944519,
+                        0.69805824756622314,
                         0
                     ],
                     "Rotation": [

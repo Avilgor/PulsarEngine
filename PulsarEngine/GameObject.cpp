@@ -295,28 +295,12 @@ void GameObject::DrawMesh()
 				}
 			}
 		}
-		/*if (hasAABB)
-		{
-			AABBCheck temp = App->camera->CheckAABB(Gaabb);
-			if (temp == AABB_IN || temp == AABB_INTERSECT)
-			{
-				if (!Components.empty())
-				{
-					for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)
-					{
-						if ((*it)->active && (*it)->compType == MESH_COMP) (*it)->UpdateComponent();
-					}
-				}
-			}
-			//else LOG("Gameobject %s out of frustum.", name.c_str());
-		}*/
 		
-
 		if (!Childs.empty())
 		{
 			for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
 			{
-				if ((*it)->active) (*it)->DrawMesh();
+				(*it)->DrawMesh();
 			}
 		}
 	}	
