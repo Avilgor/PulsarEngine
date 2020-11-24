@@ -43,8 +43,8 @@ update_status SceneWindow::Draw()
 	//if (ImGui::Button("Step", ImVec2(75.0f, 25.0f))) App->scene->state = SCENE_STEP;
 	ImGui::Unindent();	
 	ImGui::SetCursorPos(ImVec2(0,-10));
-	corners.x = ImGui::GetWindowPos().x + ImGui::GetCursorScreenPos().x;//ImGui::GetWindowContentRegionMin().x;
-	corners.y = ImGui::GetWindowPos().y + ImGui::GetCursorScreenPos().y;//ImGui::GetWindowContentRegionMin().y;
+	corners.x = ImGui::GetWindowPos().x;// +ImGui::GetCursorScreenPos().x;//ImGui::GetWindowContentRegionMin().x;
+	corners.y = ImGui::GetWindowPos().y;// +ImGui::GetCursorScreenPos().y;//ImGui::GetWindowContentRegionMin().y;
 	if (windowSize.x != winSize.x || windowSize.y != winSize.y) SetNewSize(winSize.x, winSize.y);
 	
 	ImGui::Image((ImTextureID)App->renderer3D->renderTexture, winSize);		
@@ -186,20 +186,15 @@ void SceneWindow::HandleGuizmo()
 	float4x4 viewMatrix = App->camera->camera->frustum.ViewMatrix();
 	viewMatrix.Transpose();
 	float4x4 projectionMatrix = App->camera->camera->frustum.ProjectionMatrix().Transposed();
-	float4x4 modelProjection = gameObject->transform->GetGlobalTransformTransposed();
-	float4x4 modelChangeMat = gameObject->transform->GetTransformTransposed();
+	float4x4 globalMat = gameObject->transform->GetGlobalTransformTransposed();
 
 	ImGuizmo::SetDrawlist();
-	ImGuizmo::SetRect(corners.x, corners.y,windowSize.x, windowSize.y);
+	ImGuizmo::SetRect(0, 0,App->window->width, App->window->height);
 
-	float modelPtr[16];
-	memcpy(modelPtr, modelChangeMat.ptr(), 16 * sizeof(float));
-	ImGuizmo::Manipulate(viewMatrix.ptr(), projectionMatrix.ptr(), gizmoOperation, gizmoMode, modelPtr,modelProjection.ptr());
+	ImGuizmo::Manipulate(viewMatrix.ptr(), projectionMatrix.ptr(), gizmoOperation, gizmoMode, globalMat.ptr());
 
 	if (ImGuizmo::IsUsing())
 	{
-		float4x4 newMatrix;
-		newMatrix.Set(modelPtr);
-		gameObject->transform->SetLocalTransform(newMatrix.Transposed());
+		gameObject->transform->SetGlobalTransform(globalMat.Transposed());
 	}
 }

@@ -201,9 +201,8 @@ void Transform::SetGlobalTransform()
 }
 
 void Transform::SetGlobalTransform(float4x4 t)
-{
-	if (gameobject->GetParent() != nullptr)transform = gameobject->GetParent()->transform->GetGlobalTransform().Inverted() * t;
-
+{	
+	if (gameobject->GetParent() != nullptr)transform = t * gameobject->GetParent()->transform->GetGlobalTransform().Inverted();
 	transformGlobal = t;
 	updateTransform = true;
 }
