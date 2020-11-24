@@ -33,7 +33,7 @@ update_status SceneWindow::Draw()
 	update_status ret = UPDATE_CONTINUE;
     ImGui::Begin(name.c_str(), &active,flags);
 	App->editor->mouse_in_scene = ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
-	ImVec2 winSize = ImGui::GetContentRegionAvail();
+	ImVec2 winSize = ImGui::GetWindowSize();
 
 	ImGui::Indent((winSize.x/2) -(75 *2));
 	if(ImGui::Button("Play",ImVec2(75.0f,25.0f))) App->scene->state = SCENE_PLAY;
@@ -44,10 +44,11 @@ update_status SceneWindow::Draw()
 	//ImGui::SameLine();
 	//if (ImGui::Button("Step", ImVec2(75.0f, 25.0f))) App->scene->state = SCENE_STEP;
 	ImGui::Unindent();	
-		
-	ImGui::SetCursorPos(ImVec2(offsets.x, offsets.y));
-	corners.x = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMin().x;
-	corners.y = ImGui::GetWindowPos().y + ImGui::GetWindowContentRegionMin().y;
+	ImGui::SetCursorPos(ImVec2(0,0));
+	offsets.x = ImGui::GetCursorScreenPos().x;
+	offsets.y = ImGui::GetCursorScreenPos().y;
+	corners.x = ImGui::GetWindowPos().x + ImGui::GetCursorScreenPos().x;//ImGui::GetWindowContentRegionMin().x;
+	corners.y = ImGui::GetWindowPos().y + ImGui::GetCursorScreenPos().y;//ImGui::GetWindowContentRegionMin().y;
 	if (windowSize.x != winSize.x || windowSize.y != winSize.y) SetNewSize(winSize.x, winSize.y);
 	
 	ImGui::Image((ImTextureID)App->renderer3D->renderTexture, winSize);		
@@ -66,6 +67,21 @@ update_status SceneWindow::Draw()
 	}
 
 	ImGui::End();
+
+	/*LineSegment ray1 = App->camera->CastRay(1.0f, 1.0f);
+	LineSegment ray2 = App->camera->CastRay(-1.0f, -1.0f);
+	LineSegment ray3 = App->camera->CastRay(-1.0f, 1.0f);
+	LineSegment ray4 = App->camera->CastRay(1.0f, -1.0f);
+
+	LineSegment ray5 = App->camera->CastRay(1.0f, 0.0f);
+	LineSegment ray6 = App->camera->CastRay(-1.0f, 0.0f);
+	LineSegment ray7 = App->camera->CastRay(0.0f, 1.0f);
+	LineSegment ray8 = App->camera->CastRay(0.0f, -1.0f);
+
+	App->renderer3D->RenderLine(float3(ray1.a), float3(ray2.a));
+	App->renderer3D->RenderLine(float3(ray3.a), float3(ray4.a));
+	App->renderer3D->RenderLine(float3(ray5.a), float3(ray6.a));
+	App->renderer3D->RenderLine(float3(ray7.a), float3(ray8.a));*/
 
 	App->renderer3D->RenderLine(nearClick,farClick);
 
@@ -103,20 +119,45 @@ float2 SceneWindow::WindowToScene(float2 p)
 
 void SceneWindow::HandleClick()
 {
+	float halfwidth = App->window->width / 2;
+	float halfheight = App->window->height / 2;
+	mousePos.x = App->input->GetMouseX();
+	mousePos.y = App->window->height - App->input->GetMouseY();
+	float mouseNY = 0;
+	float mouseNX = 0;
+	if (mousePos.x >= halfwidth) //+
+	{
+		mousePos.x -= halfwidth;
+		mouseNX = mousePos.x / halfwidth;	
+	}
+	else//-
+	{
+		mouseNX = -1 + (mousePos.x / halfwidth);
+	}
 
-	mousePos.x = App->input->GetMouseX() - corners.x;
-	mousePos.y = App->input->GetMouseY() - corners.y;
-	float mouseNX = ((mousePos.x / windowSize.x) - 0.5f) * 2.0f;
-	float mouseNY = -((mousePos.y / windowSize.y) - 0.5f) * 2.0f;
-	LOG("Corners X:%f/Y:%f", corners.x, corners.y);
-	LOG("MousePos X:%f/Y:%f",mousePos.x,mousePos.y);
-	LOG("WindowSize X:%f/Y:%f", windowSize.x, windowSize.y);
-	LOG("Normals X:%f/Y:%f", mouseNX, mouseNY);
+	if (mousePos.y >= halfheight) //+
+	{
+		mousePos.y -= halfheight;
+		mouseNY = mousePos.y / halfheight;
+	}
+	else//-
+	{
+		mouseNY = -1 + (mousePos.y / halfheight);
+	}	
+
+	//LOG("Corners X:%f/Y:%f", corners.x, corners.y);
+	//LOG("Screen size X:%d/Y:%d",App->window->width,App->window->height);
+	//LOG("Screen half X:%f/Y:%f", halfwidth, halfheight);
+	//LOG("Mouse click X:%d/Y:%d", App->input->GetMouseX(), App->input->GetMouseY());
+	//LOG("MousePos X:%f/Y:%f",mousePos.x,mousePos.y);
+	//LOG("Offsets X:%f/Y:%f", offsets.x, offsets.y);
+	//LOG("WindowSize X:%f/Y:%f", windowSize.x, windowSize.y);
+	//LOG("Normals X:%f/Y:%f\n", mouseNX, mouseNY);
 
 	std::vector<GameObject*> gameobjects = App->camera->GetDrawnObjects();
 	//LOG("Drawn objects %d",gameobjects.size());
 	
-	LineSegment ray = App->camera->CastRay(mouseNX, mouseNY);
+	LineSegment ray = App->camera->CastRay(mouseNX, mouseNY);	
 	nearClick = ray.a;
 	farClick = ray.b;
 	//Check AABB intersections
