@@ -18,8 +18,6 @@ SceneWindow::SceneWindow(std::string name) : EditorWindow(name)
 	corners.y = 0;
 	windowSize.x = 0;
 	windowSize.y = 0;
-	offsets.x = 0;
-	offsets.y = 0;
 }
 
 SceneWindow::~SceneWindow()
@@ -44,9 +42,7 @@ update_status SceneWindow::Draw()
 	//ImGui::SameLine();
 	//if (ImGui::Button("Step", ImVec2(75.0f, 25.0f))) App->scene->state = SCENE_STEP;
 	ImGui::Unindent();	
-	ImGui::SetCursorPos(ImVec2(0,0));
-	offsets.x = ImGui::GetCursorScreenPos().x;
-	offsets.y = ImGui::GetCursorScreenPos().y;
+	ImGui::SetCursorPos(ImVec2(0,-10));
 	corners.x = ImGui::GetWindowPos().x + ImGui::GetCursorScreenPos().x;//ImGui::GetWindowContentRegionMin().x;
 	corners.y = ImGui::GetWindowPos().y + ImGui::GetCursorScreenPos().y;//ImGui::GetWindowContentRegionMin().y;
 	if (windowSize.x != winSize.x || windowSize.y != winSize.y) SetNewSize(winSize.x, winSize.y);
@@ -68,22 +64,7 @@ update_status SceneWindow::Draw()
 
 	ImGui::End();
 
-	/*LineSegment ray1 = App->camera->CastRay(1.0f, 1.0f);
-	LineSegment ray2 = App->camera->CastRay(-1.0f, -1.0f);
-	LineSegment ray3 = App->camera->CastRay(-1.0f, 1.0f);
-	LineSegment ray4 = App->camera->CastRay(1.0f, -1.0f);
-
-	LineSegment ray5 = App->camera->CastRay(1.0f, 0.0f);
-	LineSegment ray6 = App->camera->CastRay(-1.0f, 0.0f);
-	LineSegment ray7 = App->camera->CastRay(0.0f, 1.0f);
-	LineSegment ray8 = App->camera->CastRay(0.0f, -1.0f);
-
-	App->renderer3D->RenderLine(float3(ray1.a), float3(ray2.a));
-	App->renderer3D->RenderLine(float3(ray3.a), float3(ray4.a));
-	App->renderer3D->RenderLine(float3(ray5.a), float3(ray6.a));
-	App->renderer3D->RenderLine(float3(ray7.a), float3(ray8.a));*/
-
-	App->renderer3D->RenderLine(nearClick,farClick);
+	//App->renderer3D->RenderLine(nearClick,farClick);
 
 	return ret;
 }
@@ -94,28 +75,8 @@ void SceneWindow::SetNewSize(float x, float y)
 	windowSize.y = y;
 
 	App->renderer3D->OnResize(windowSize.x, -windowSize.y);
-	//App->camera->ResizeView(windowSize.x, windowSize.y);
 }
 
-
-float2 SceneWindow::SceneToWindow(float2 p) 
-{
-	float2 ret;
-	ret.x = p.x - corners.x;
-	ret.y = p.y - corners.y;
-	ret.x = ret.x / windowSize.x * App->window->width;
-	ret.y = ret.y / windowSize.y * App->window->height;
-	return ret;
-}
-
-
-float2 SceneWindow::WindowToScene(float2 p) 
-{
-	float2 ret; 
-	ret.x = (p.x / App->window->width * windowSize.x) + corners.x;
-	ret.y = (p.y / App->window->height * windowSize.y) + corners.y;
-	return ret;
-}
 
 void SceneWindow::HandleClick()
 {
@@ -130,7 +91,7 @@ void SceneWindow::HandleClick()
 		mousePos.x -= halfwidth;
 		mouseNX = mousePos.x / halfwidth;	
 	}
-	else//-
+	else //-
 	{
 		mouseNX = -1 + (mousePos.x / halfwidth);
 	}
@@ -140,26 +101,15 @@ void SceneWindow::HandleClick()
 		mousePos.y -= halfheight;
 		mouseNY = mousePos.y / halfheight;
 	}
-	else//-
+	else //-
 	{
 		mouseNY = -1 + (mousePos.y / halfheight);
 	}	
 
-	//LOG("Corners X:%f/Y:%f", corners.x, corners.y);
-	//LOG("Screen size X:%d/Y:%d",App->window->width,App->window->height);
-	//LOG("Screen half X:%f/Y:%f", halfwidth, halfheight);
-	//LOG("Mouse click X:%d/Y:%d", App->input->GetMouseX(), App->input->GetMouseY());
-	//LOG("MousePos X:%f/Y:%f",mousePos.x,mousePos.y);
-	//LOG("Offsets X:%f/Y:%f", offsets.x, offsets.y);
-	//LOG("WindowSize X:%f/Y:%f", windowSize.x, windowSize.y);
-	//LOG("Normals X:%f/Y:%f\n", mouseNX, mouseNY);
-
-	std::vector<GameObject*> gameobjects = App->camera->GetDrawnObjects();
-	//LOG("Drawn objects %d",gameobjects.size());
-	
+	std::vector<GameObject*> gameobjects = App->camera->GetDrawnObjects();	
 	LineSegment ray = App->camera->CastRay(mouseNX, mouseNY);	
-	nearClick = ray.a;
-	farClick = ray.b;
+	//nearClick = ray.a;
+	//farClick = ray.b;
 	//Check AABB intersections
 	std::vector<GameObject*> intersections;
 	for (std::vector<GameObject*>::iterator it = gameobjects.begin(); it != gameobjects.end(); it++)
@@ -173,8 +123,10 @@ void SceneWindow::HandleClick()
 	//Check mesh intersections
 	if (!intersections.empty())
 	{
+		float minDist = 999999;
+		GameObject* first = nullptr;
 		for (std::vector<GameObject*>::iterator it = intersections.begin(); it != intersections.end(); it++)
-		{		
+		{
 			Component* comp = (*it)->GetFirstComponentType(MESH_COMP);
 			if (comp != nullptr)
 			{
@@ -183,39 +135,50 @@ void SceneWindow::HandleClick()
 				{
 					LineSegment temp = ray;
 					temp.Transform((*it)->transform->GetGlobalTransform().Inverted());
-					int bufferSize = mesh->GetMesh()->verticesSize;
+					int bufferSize = mesh->GetMesh()->indexSize;
 					uint* buffer = mesh->GetMesh()->indicesArray;
 					float* vertices = mesh->GetMesh()->verticesArray;
 					for (int i = 0; i < bufferSize; i += 3)
 					{
-						if (((i + 2) * 3) + 2 < bufferSize)
+						//if (((i + 2) * 3) + 2 < bufferSize)
+						//{
+						float3 v1(vertices[buffer[i] * 3], vertices[buffer[i] * 3 + 1],
+							vertices[buffer[i] * 3 + 2]);
+
+						float3 v2(vertices[buffer[i + 1] * 3], vertices[buffer[i + 1] * 3 + 1],
+							vertices[buffer[i + 1] * 3 + 2]);
+
+						float3 v3(vertices[buffer[i + 2] * 3], vertices[buffer[i + 2] * 3 + 1],
+							vertices[buffer[i + 2] * 3 + 2]);
+
+						Triangle triangle(v1, v2, v3);
+
+						float distance;
+						float3 intersectionPoint;
+						if (temp.Intersects(triangle, &distance, &intersectionPoint))
 						{
-							float3 v1(vertices[buffer[i] * 3], vertices[buffer[i] * 3 + 1],
-								vertices[buffer[i] * 3 + 2]);
-
-							float3 v2(vertices[buffer[i + 1] * 3], vertices[buffer[i + 1] * 3 + 1],
-								vertices[buffer[i + 1] * 3 + 2]);
-
-							float3 v3(vertices[buffer[i + 2] * 3], vertices[buffer[i + 2] * 3 + 1],
-								vertices[buffer[i + 2] * 3 + 2]);
-
-							Triangle triangle(v1, v2, v3);
-
-							float distance;
-							float3 intersectionPoint;
-							if (temp.Intersects(triangle, &distance, &intersectionPoint))
+							//App->editor->SelectOne((*it));
+							//gotGo = true;
+							if (distance < minDist)
 							{
-								App->editor->SelectOne((*it));
-								gotGo = true;
-								break;
+								LOG("New distance %f",distance);
+								minDist = distance;
+								first = (*it);
 							}
+							break;
 						}
+						//}
 					}
-					if (gotGo) break;
+					//if (gotGo) break;
 				}
-			}			
+			}
 		}
-		if (!gotGo) App->editor->EmptySelected();
+
+		if (first != nullptr)
+		{
+			App->editor->SelectOne(first);
+		}
+		else App->editor->EmptySelected();
 	}
 	else
 	{

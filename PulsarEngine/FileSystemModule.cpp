@@ -650,7 +650,7 @@ std::string FileSystemModule::GetPathAndFile(const char* p)
 
 void FileSystemModule::GetDroppedFile(const char* path,GameObject* go)
 {
-	LOG("Got dropped file");
+	//LOG("Got dropped file");
 	std::string extension = GetFileExtension(path);
 	if (extension.compare("fbx") == 0)//Mesh
 	{
@@ -707,7 +707,7 @@ void FileSystemModule::GetDroppedFile(const char* path,GameObject* go)
 
 			if (mat != nullptr)
 			{
-				LOG("Set png mat");
+				//LOG("Set png mat");
 				std::vector<GameObject*> selected = App->editor->selectedGameObjects;
 				for (std::vector<GameObject*>::iterator it = selected.begin(); it != selected.end(); ++it)
 				{
