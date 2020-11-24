@@ -126,39 +126,42 @@ void GameObject::UpdateTransform()
 
 void GameObject::UpdateGameObject()
 {	
-	if (!toDelete)
+	if (active)
 	{
-		if (!toDeleteChilds.empty())
-		{
-			for (std::vector<GameObject*>::iterator it = toDeleteChilds.begin(); it != toDeleteChilds.end(); ++it)
+		if (!toDelete)
+		{			
+			if (camera != nullptr) camera->UpdateComponent();
+
+			if (!Components.empty())
 			{
-				(*it)->Delete();
+				for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)
+				{
+					if ((*it)->active && (*it)->compType != MESH_COMP) (*it)->UpdateComponent();
+				}
 			}
-			toDeleteChilds.clear();
-		}
-	
-		if (!toAddChilds.empty())
-		{
-			AddPendingChilds();			
-		}
 
-		if (camera != nullptr) camera->UpdateComponent();
-
-		if (!Components.empty())
-		{
-			for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)
+			if (!Childs.empty())
 			{
-				if ((*it)->active && (*it)->compType != MESH_COMP) (*it)->UpdateComponent();				
+				for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
+				{
+					(*it)->UpdateGameObject();
+				}
 			}
 		}
+	}
 
-		if (!Childs.empty())
+	if (!toDeleteChilds.empty())
+	{
+		for (std::vector<GameObject*>::iterator it = toDeleteChilds.begin(); it != toDeleteChilds.end(); ++it)
 		{
-			for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
-			{
-				if ((*it)->active) (*it)->UpdateGameObject();
-			}
+			(*it)->Delete();
 		}
+		toDeleteChilds.clear();
+	}
+
+	if (!toAddChilds.empty())
+	{
+		AddPendingChilds();
 	}
 }
 
@@ -275,17 +278,20 @@ void GameObject::DrawMesh()
 			App->renderer3D->RenderAABB(Gaabb);
 		}
 
-		Component* temp = GetFirstComponentType(MESH_COMP);
-		if (temp != nullptr)
+		if (hasAABB)
 		{
-			Mesh* mesh = temp->AsMesh();
-			if (mesh != nullptr)
+			Component* temp = GetFirstComponentType(MESH_COMP);
+			if (temp != nullptr)
 			{
-				AABBCheck temp = App->camera->CheckAABB(Gaabb);
-				if (temp == AABB_IN || temp == AABB_INTERSECT)
-				{					
-					App->camera->AddDrawnGameobject(this);
-					mesh->UpdateComponent();
+				Mesh* mesh = temp->AsMesh();
+				if (mesh != nullptr)
+				{
+					AABBCheck temp = App->camera->CheckAABB(Gaabb);
+					if (temp == AABB_IN || temp == AABB_INTERSECT)
+					{
+						App->camera->AddDrawnGameobject(this);
+						mesh->UpdateComponent();
+					}
 				}
 			}
 		}
@@ -393,12 +399,14 @@ void GameObject::UpdateAABB()
 		if (mesh != nullptr)
 		{
 			Gobb = mesh->GetMeshAABB();
-			Gobb.Transform(transform->GetGlobalTransform());			
+			Gobb.Transform(transform->GetGlobalTransform());
 			Gaabb.SetNegativeInfinity();
 			Gaabb.Enclose(Gobb);
 			hasAABB = true;
 		}
-	}	
+		else hasAABB = false;
+	}
+	else hasAABB = false;
 }
 
 AABB GameObject::GetGlobalAABB()
@@ -496,6 +504,7 @@ void GameObject::DeleteGOComponent(ComponentTypes type)
 			Components.clear();
 			Components = temp;
 			temp.clear();
+			UpdateAABB();
 		}
 	}	
 }

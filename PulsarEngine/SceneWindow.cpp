@@ -140,34 +140,31 @@ void SceneWindow::HandleClick()
 					float* vertices = mesh->GetMesh()->verticesArray;
 					for (int i = 0; i < bufferSize; i += 3)
 					{
-						//if (((i + 2) * 3) + 2 < bufferSize)
-						//{
-						float3 v1(vertices[buffer[i] * 3], vertices[buffer[i] * 3 + 1],
-							vertices[buffer[i] * 3 + 2]);
+							float3 v1(vertices[buffer[i] * 3], vertices[buffer[i] * 3 + 1],
+								vertices[buffer[i] * 3 + 2]);
 
-						float3 v2(vertices[buffer[i + 1] * 3], vertices[buffer[i + 1] * 3 + 1],
-							vertices[buffer[i + 1] * 3 + 2]);
+							float3 v2(vertices[buffer[i + 1] * 3], vertices[buffer[i + 1] * 3 + 1],
+								vertices[buffer[i + 1] * 3 + 2]);
 
-						float3 v3(vertices[buffer[i + 2] * 3], vertices[buffer[i + 2] * 3 + 1],
-							vertices[buffer[i + 2] * 3 + 2]);
+							float3 v3(vertices[buffer[i + 2] * 3], vertices[buffer[i + 2] * 3 + 1],
+								vertices[buffer[i + 2] * 3 + 2]);
 
-						Triangle triangle(v1, v2, v3);
+							Triangle triangle(v1, v2, v3);
 
-						float distance;
-						float3 intersectionPoint;
-						if (temp.Intersects(triangle, &distance, &intersectionPoint))
-						{
-							//App->editor->SelectOne((*it));
-							//gotGo = true;
-							if (distance < minDist)
+							float distance;
+							float3 intersectionPoint;
+							if (temp.Intersects(triangle, &distance, &intersectionPoint))
 							{
-								LOG("New distance %f",distance);
-								minDist = distance;
-								first = (*it);
+								//App->editor->SelectOne((*it));
+								//gotGo = true;
+								if (distance < minDist)
+								{
+									LOG("New distance %f",distance);
+									minDist = distance;
+									first = (*it);
+								}
+								break;
 							}
-							break;
-						}
-						//}
 					}
 					//if (gotGo) break;
 				}

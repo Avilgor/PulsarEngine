@@ -67,23 +67,6 @@ void HierarchyWindow::DrawGameObject(GameObject* go)
 
 	NodeInput(go);
 
-	/*if (ImGui::BeginPopup(go->name.c_str()))
-	{
-		if (ImGui::Button("Create child"))
-		{
-			go->CreateChild();
-			ImGui::CloseCurrentPopup();
-		}
-
-		if (ImGui::Button("Delete"))
-		{
-			go->DeleteGameobject();
-			//App->editor->DeleteSelected();
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::EndPopup();
-	}*/
-
 	if (go->showHierarchy && go->HasChilds())
 	{		
 		std::vector<GameObject*> goChilds = go->GetAllChilds();
@@ -112,11 +95,6 @@ void HierarchyWindow::NodeInput(GameObject* go)
 				else App->editor->AddSelection(go);//go->selected = true;
 			}
 			else App->editor->SelectOne(go);
-		}	
+		}
 	}
-
-	/*if (ImGui::IsItemHovered() && rightMouse == KEY_DOWN)
-	{
-		ImGui::OpenPopup(go->name.c_str());
-	}*/
 }

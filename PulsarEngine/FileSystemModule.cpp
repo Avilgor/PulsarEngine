@@ -8,6 +8,7 @@
 #include "Material.h"
 #include "RES_Material.h"
 #include "RES_Mesh.h"
+#include "Transform.h"
 #include "JSonHandler.h"
 
 
@@ -990,7 +991,11 @@ bool FileSystemModule::ImportFBX(const char* path, GameObject* parent)
 							newMesh->name = scene->mMeshes[i]->mName.C_Str();
 							newMesh->name.append(std::to_string(i));
 							newMesh->assetPath = path;
-
+							if (scene->mMeshes[i]->HasPositions())
+							{
+								//scene->mMeshes[i].
+								//gameobject->transform
+							}
 							//Vertex
 							newMesh->verticesSize = scene->mMeshes[i]->mNumVertices;
 							newMesh->verticesArray = new float[newMesh->verticesSize * 3];
@@ -1067,9 +1072,6 @@ bool FileSystemModule::ImportFBX(const char* path, GameObject* parent)
 					}
 
 				}
-				//Save asset
-				//std::string assetID = App->GenerateUUID_V4();
-				//CreatePulsarAsset(&file, assetID, parent->name);
 
 				//Create meta file
 				file.SaveString("Name", parent->name.c_str());
@@ -1118,22 +1120,6 @@ void FileSystemModule::Create_MetaFile(std::string file, JSonHandler* node)
 }
 
 
-/*void FileSystemModule::CreatePulsarAsset(JSonHandler* node, std::string uuid,std::string name)
-{
-	node->SaveString("UUID",uuid.c_str());
-	node->SaveString("FileName",name.c_str());
-
-	//Write to file
-	char* buffer = nullptr;
-	uint size = node->Serialize(&buffer);
-	std::string fileName = ASSETS_PATH;
-	fileName.append(uuid.c_str());
-	fileName.append(".psasset");
-	App->fileSystem->Save(fileName.c_str(), buffer, size);
-	RELEASE_ARRAY(buffer);
-}*/
-
-
 RES_Material* FileSystemModule::ImportMaterialFBX(aiMaterial* material, GameObject* go,const char* fbxPath)
 {
 	RES_Material* matInfo = nullptr;
@@ -1154,9 +1140,6 @@ RES_Material* FileSystemModule::ImportMaterialFBX(aiMaterial* material, GameObje
 				if (mat != nullptr)
 				{
 					JSonHandler file;
-					//file.CreateArray("Objects");
-					//JSonHandler node = file.InsertNodeArray("Objects");
-					//node.CreateArray("Resources");
 					matInfo = new RES_Material();
 					matInfo->texturesNum = material->GetTextureCount(aiTextureType_DIFFUSE);
 					std::string dir = GetFilePath(fbxPath);
@@ -1176,13 +1159,7 @@ RES_Material* FileSystemModule::ImportMaterialFBX(aiMaterial* material, GameObje
 						//Save material resource
 						App->resourceManager->PlaceResource(matInfo->resource);
 						App->resourceManager->SaveResource(matInfo->UUID, GetFilePath(fbxPath));
-						
-
-						//Create asset file
-						//std::string tempId = App->GenerateUUID_V4();
-						//node.InsertStringArray("Resources", mat->UUID.c_str());
-						//CreatePulsarAsset(&file, tempId, GetFileName(dir.c_str()));
-
+					
 						//Create meta file
 						file.SaveString("Name", matInfo->name.c_str());
 						file.SaveString("ResourceID", matInfo->UUID.c_str());
