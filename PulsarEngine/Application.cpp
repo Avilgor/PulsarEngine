@@ -92,16 +92,19 @@ update_status Application::Update()
 	
 	for (std::list<Module*>::const_iterator it = modulesList.begin(); it != modulesList.end(); ++it)
 	{ 
+		//LOG("Module %s preupdate",(*it)->name.c_str());
 		if(ret == UPDATE_CONTINUE) ret = (*it)->PreUpdate(dt);
 	}
 
 	for (std::list<Module*>::const_iterator it = modulesList.begin(); it != modulesList.end(); ++it)
 	{
+		//LOG("Module %s update", (*it)->name.c_str());
 		if(ret == UPDATE_CONTINUE) ret = (*it)->Update(dt);
 	}
 
 	for (std::list<Module*>::const_iterator it = modulesList.begin(); it != modulesList.end(); ++it)
 	{
+		//LOG("Module %s postupdate", (*it)->name.c_str());
 		if(ret == UPDATE_CONTINUE) ret = (*it)->PostUpdate(dt);
 	}
 
@@ -112,6 +115,7 @@ update_status Application::Update()
 bool Application::CleanUp()
 {
 	bool ret = true;
+	if (scene->GetActiveScene() != nullptr) resourceManager->SaveResource(scene->GetActiveSceneUUID());
 	SaveSettings();
 	for (std::list<Module*>::const_iterator it = modulesList.begin(); it != modulesList.end(); ++it)
 	{ 
@@ -162,7 +166,7 @@ void Application::LoadSettings()
 
 	if (size > 0)
 	{
-		LOG("Size ok");
+		//LOG("Size ok");
 		JSonHandler file(buffer);
 		JSonHandler settings = file.GetNode("EngineSettings");
 

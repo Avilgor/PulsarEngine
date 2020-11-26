@@ -126,6 +126,7 @@ void GameObject::UpdateTransform()
 
 void GameObject::UpdateGameObject()
 {	
+	//LOG("Update go %s",name.c_str());
 	if (active)
 	{
 		if (!toDelete)

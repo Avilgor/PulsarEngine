@@ -75,9 +75,12 @@ void Mesh::RemoveMesh()
 
 void Mesh::SetMaterial(RES_Material* m)
 {
-	if (resMat != nullptr) App->resourceManager->FreeResource(resMat->UUID);
-	resMat = m;
-	m->references++;
+	if (m != nullptr)
+	{
+		if (resMat != nullptr) App->resourceManager->FreeResource(resMat->UUID);
+		resMat = m;
+		m->references++;
+	}
 }
 
 

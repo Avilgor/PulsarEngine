@@ -18,6 +18,7 @@ class RES_Material;
 class Mesh;
 class Material;
 struct aiScene;
+struct aiNode;
 struct aiMaterial;
 class RES_Mesh;
 
@@ -99,6 +100,7 @@ public:
 
 private:
 	bool SearchFolder(PathNode node,std::string name, std::string* path);
+	bool ImportNode(aiNode* node,const aiScene* scene,JSonHandler* file, GameObject* parent,const char* path);
 };
 
 #endif //__FileSystemModule_H__

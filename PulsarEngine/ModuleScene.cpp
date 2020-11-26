@@ -69,7 +69,6 @@ bool ModuleScene::Start()
 bool ModuleScene::CleanUp()
 {
 	LOG("Unloading current scene...");
-
 	return true;
 }
 

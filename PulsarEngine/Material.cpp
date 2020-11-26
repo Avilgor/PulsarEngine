@@ -33,18 +33,21 @@ void Material::DeleteComponent()
 
 void Material::SetMaterial(RES_Material* mat)
 {
-	if (material != nullptr) App->resourceManager->FreeResource(material->UUID);
-	resMaterial = mat;
-	mat->references++;
-	if (gameobject != nullptr)
+	if (mat != nullptr)
 	{
-		Component* comp = gameobject->GetFirstComponentType(MESH_COMP);
-		if (comp != nullptr)
+		if (material != nullptr) App->resourceManager->FreeResource(material->UUID);
+		resMaterial = mat;
+		mat->references++;
+		if (gameobject != nullptr)
 		{
-			Mesh* mesh = comp->AsMesh();
-			if (mesh != nullptr)
+			Component* comp = gameobject->GetFirstComponentType(MESH_COMP);
+			if (comp != nullptr)
 			{
-				mesh->SetMaterial(mat);
+				Mesh* mesh = comp->AsMesh();
+				if (mesh != nullptr)
+				{
+					mesh->SetMaterial(mat);
+				}
 			}
 		}
 	}

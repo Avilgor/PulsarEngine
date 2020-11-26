@@ -102,21 +102,21 @@ void ResourceManager::SaveEngineResource(PathNode n)
 					mesh->LoadResource(node);
 					mesh->SetFullPath(n.path);
 					resourcesMap.emplace(mesh->UUID,mesh->resource);
-					LOG("Saved mesh res");
+					//LOG("Saved mesh res");
 					break;
 				case MATERIAL_RES:
 					mat = new RES_Material();
 					mat->LoadResource(node);
 					mat->SetFullPath(n.path);
 					resourcesMap.emplace(mat->UUID,mat->resource);
-					LOG("Saved material res");
+					//LOG("Saved material res");
 					break;
 				case SCENE_RES: 				
 					scene = new Scene();
 					scene->LoadResource(node);
 					scene->SetFullPath(n.path);
 					resourcesMap.emplace(scene->UUID, scene->resource);
-					LOG("Saved scene res");
+					//LOG("Saved scene res");
 					break;
 			}
 			delete node;

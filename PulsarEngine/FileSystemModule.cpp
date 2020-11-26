@@ -549,10 +549,6 @@ std::string FileSystemModule::GetUniqueName(const char* path, const char* name) 
 
 bool FileSystemModule::LoadTexture(const char* path, RES_Material* mat)
 {
-	/*
-	* There is an error when a texture load failed,
-	* making that any later load can't open texture file
-	*/
 	bool ret = true;
 	uint imageID = 0;
 	ilGenImages(1, &imageID);
@@ -665,9 +661,9 @@ void FileSystemModule::GetDroppedFile(const char* path,GameObject* go)
 		else LOG("Cannot import files while scenne is running");
 	}
 
-	if (extension.compare("png") == 0 || extension.compare("dds") == 0)//Texture
+	if (extension.compare("png") == 0 || extension.compare("dds") == 0 /*|| extension.compare("tga") == 0*/)//Texture
 	{
-		//LOG("Drop png");
+//		LOG("Drop png");
 		if (App->editor->HasSelection())
 		{
 			RES_Material* mat = nullptr;
@@ -701,7 +697,7 @@ void FileSystemModule::GetDroppedFile(const char* path,GameObject* go)
 			}
 			else
 			{
-				LOG("png meta found");
+				//LOG("file meta found");
 				EngineResource* res = App->resourceManager->GetMetaResource(GetFileAndExtension(path));
 				if (res != nullptr) mat = res->AsMaterial();
 			}
@@ -727,7 +723,7 @@ void FileSystemModule::GetDroppedFile(const char* path,GameObject* go)
 								Component* comp2 = (*it)->GetFirstComponentType(MESH_COMP);
 								if (comp2 != nullptr)//If has mesh, add material to mesh
 								{
-									comp2->AsMesh()->SetMaterial(comp->AsMaterial()->GetMaterial());
+									if(comp2->AsMesh() != nullptr)comp2->AsMesh()->SetMaterial(comp->AsMaterial()->GetMaterial());
 								}
 							}
 						}
@@ -975,108 +971,13 @@ bool FileSystemModule::ImportFBX(const char* path, GameObject* parent)
 			if (scene != nullptr && scene->HasMeshes())
 			{
 				JSonHandler file;
-				file.CreateArray("Objects");
-				for (int i = 0; i < scene->mNumMeshes; i++)
-				{
-					GameObject* gameobject = parent->CreateChild();
-					Component* temp = gameobject->AddComponent(MESH_COMP);
-					if (temp != nullptr)
-					{
-						Mesh* meshcomp = temp->AsMesh();
-						if (meshcomp != nullptr)
-						{
-							JSonHandler node = file.InsertNodeArray("Objects");
-							node.CreateArray("Resources");
-							RES_Mesh* newMesh = new RES_Mesh();
-							newMesh->name = scene->mMeshes[i]->mName.C_Str();
-							newMesh->name.append(std::to_string(i));
-							newMesh->assetPath = path;
-							if (scene->mMeshes[i]->HasPositions())
-							{
-								//scene->mMeshes[i].
-								//gameobject->transform
-							}
-							//Vertex
-							newMesh->verticesSize = scene->mMeshes[i]->mNumVertices;
-							newMesh->verticesArray = new float[newMesh->verticesSize * 3];
-							memcpy(newMesh->verticesArray, scene->mMeshes[i]->mVertices, sizeof(float) * newMesh->verticesSize * 3);
-
-							//Indices
-							if (scene->mMeshes[i]->HasFaces())
-							{
-								newMesh->indexSize = scene->mMeshes[i]->mNumFaces * 3;
-								newMesh->indicesArray = new uint[newMesh->indexSize];
-
-								for (uint a = 0; a < scene->mMeshes[i]->mNumFaces; a++)
-								{
-									if (scene->mMeshes[i]->mFaces[a].mNumIndices != 3)
-									{
-										LOG("Geometry face with != 3 indices!");
-									}
-									else memcpy(&newMesh->indicesArray[a * 3], scene->mMeshes[i]->mFaces[a].mIndices, 3 * sizeof(uint));
-								}
-							}
-
-							//Normals
-							if (scene->mMeshes[i]->HasNormals())
-							{
-								newMesh->normalsSize = newMesh->verticesSize;
-								newMesh->normalsArray = new float[newMesh->normalsSize * 3];
-								memcpy(newMesh->normalsArray, scene->mMeshes[i]->mNormals, sizeof(float) * newMesh->normalsSize * 3);
-							}
-
-							//Texture coords
-							if (scene->mMeshes[i]->HasTextureCoords(0))
-							{
-								newMesh->textSize = newMesh->verticesSize;
-								newMesh->texturesArray = new float[newMesh->verticesSize * 2];
-
-								for (int a = 0; a < newMesh->textSize; a++)
-								{
-									newMesh->texturesArray[a * 2] = scene->mMeshes[i]->mTextureCoords[0][a].x;
-									newMesh->texturesArray[a * 2 + 1] = scene->mMeshes[i]->mTextureCoords[0][a].y;
-								}
-							}
-
-							//Save mesh info
-							SaveMeshBufferInfo(newMesh);
-
-							//Set pulsar asset info
-							node.InsertStringArray("Resources", newMesh->UUID.c_str());
-
-							//Save mesh resource file
-							App->resourceManager->PlaceResource(newMesh->resource);
-							App->resourceManager->SaveResource(newMesh->UUID, GetFilePath(path));
-
-							//Load resource
-							App->resourceManager->LoadResource(newMesh->UUID);
-
-							if (scene->HasMaterials())
-							{
-								RES_Material* tempMat = ImportMaterialFBX(scene->mMaterials[scene->mMeshes[i]->mMaterialIndex], gameobject, path);
-								meshcomp->SetMaterial(tempMat);
-								node.InsertStringArray("Resources", tempMat->UUID.c_str());
-							}
-							meshcomp->SetMesh(newMesh);
-						}
-						else
-						{
-							LOG("Mesh component not found in go %s", gameobject->name.c_str());
-							ret = false;
-						}
-					}
-					else
-					{
-						LOG("Error creating mesh component");
-						ret = false;
-					}
-
-				}
+				file.CreateArray("Objects");				
+				ret = ImportNode(scene->mRootNode, scene,&file,parent,path);				
 
 				//Create meta file
 				file.SaveString("Name", parent->name.c_str());
 				Create_MetaFile(path, &file);
-
+				
 				aiReleaseImport(scene);
 			}
 			else
@@ -1096,6 +997,139 @@ bool FileSystemModule::ImportFBX(const char* path, GameObject* parent)
 	return ret;
 }
 
+bool FileSystemModule::ImportNode(aiNode* nodeAi, const aiScene* scene, JSonHandler* file, GameObject* parent,const char* path)
+{
+	bool ret = true;
+
+	if (nodeAi->mNumMeshes > 0)
+	{
+		for (int i = 0; i < nodeAi->mNumMeshes; i++)
+		{
+			GameObject* gameobject = parent->CreateChild();
+			Component* temp = gameobject->AddComponent(MESH_COMP);
+			if (temp != nullptr)
+			{
+				Mesh* meshcomp = temp->AsMesh();
+				if (meshcomp != nullptr)
+				{
+					JSonHandler node = file->InsertNodeArray("Objects");
+					node.CreateArray("Resources");
+					RES_Mesh* newMesh = new RES_Mesh();
+					newMesh->name = nodeAi->mName.C_Str();
+					newMesh->name.append(std::to_string(i));
+					newMesh->assetPath = path;
+					if (scene->mMeshes[nodeAi->mMeshes[i]]->HasPositions())
+					{
+						aiVector3D posai;
+						aiVector3D scaleai;
+						aiQuaternion quatai;
+						nodeAi->mTransformation.Decompose(scaleai,quatai,posai);
+
+						/*LOG("Pos fbx X:%f/Y:%f/Z:%f",posai.x/100, posai.y/100, posai.z/100);
+						LOG("Rotation fbx X:%f/Y:%f/Z:%f", quatai.x, quatai.y, quatai.z);
+						LOG("Scale fbx X:%f/Y:%f/Z:%f", scaleai.x/100, scaleai.y/100, scaleai.z/100);*/
+
+						float3 pos(posai.x/100, posai.y/100, posai.z/100);
+						float3 scale(scaleai.x/100, scaleai.y/100, scaleai.z/100);
+						Quat rot(quatai.x, quatai.y, quatai.z, quatai.w);
+
+						gameobject->transform->SetPosition(pos);
+						gameobject->transform->SetQuatRotation(rot);
+						gameobject->transform->SetScale(scale);
+					}
+					//Vertex
+					newMesh->verticesSize = scene->mMeshes[nodeAi->mMeshes[i]]->mNumVertices;
+					newMesh->verticesArray = new float[newMesh->verticesSize * 3];
+					memcpy(newMesh->verticesArray, scene->mMeshes[nodeAi->mMeshes[i]]->mVertices, sizeof(float) * newMesh->verticesSize * 3);
+
+					//Indices
+					if (scene->mMeshes[nodeAi->mMeshes[i]]->HasFaces())
+					{
+						newMesh->indexSize = scene->mMeshes[nodeAi->mMeshes[i]]->mNumFaces * 3;
+						newMesh->indicesArray = new uint[newMesh->indexSize];
+
+						for (uint a = 0; a < scene->mMeshes[nodeAi->mMeshes[i]]->mNumFaces; a++)
+						{
+							if (scene->mMeshes[nodeAi->mMeshes[i]]->mFaces[a].mNumIndices != 3)
+							{
+								LOG("Geometry face with != 3 indices!");
+							}
+							else memcpy(&newMesh->indicesArray[a * 3], scene->mMeshes[nodeAi->mMeshes[i]]->mFaces[a].mIndices, 3 * sizeof(uint));
+						}
+					}
+
+					//Normals
+					if (scene->mMeshes[nodeAi->mMeshes[i]]->HasNormals())
+					{
+						newMesh->normalsSize = newMesh->verticesSize;
+						newMesh->normalsArray = new float[newMesh->normalsSize * 3];
+						memcpy(newMesh->normalsArray, scene->mMeshes[nodeAi->mMeshes[i]]->mNormals, sizeof(float) * newMesh->normalsSize * 3);
+					}
+
+					//Texture coords
+					if (scene->mMeshes[nodeAi->mMeshes[i]]->HasTextureCoords(0))
+					{
+						newMesh->textSize = newMesh->verticesSize;
+						newMesh->texturesArray = new float[newMesh->verticesSize * 2];
+
+						for (int a = 0; a < newMesh->textSize; a++)
+						{
+							newMesh->texturesArray[a * 2] = scene->mMeshes[nodeAi->mMeshes[i]]->mTextureCoords[0][a].x;
+							newMesh->texturesArray[a * 2 + 1] = scene->mMeshes[nodeAi->mMeshes[i]]->mTextureCoords[0][a].y;
+						}
+					}
+
+					//Save mesh info
+					SaveMeshBufferInfo(newMesh);
+
+					//Set pulsar asset info
+					node.InsertStringArray("Resources", newMesh->UUID.c_str());
+
+					//Save mesh resource file
+					App->resourceManager->PlaceResource(newMesh->resource);
+					App->resourceManager->SaveResource(newMesh->UUID, GetFilePath(path));
+
+					//Load resource
+					App->resourceManager->LoadResource(newMesh->UUID);
+					if (scene->HasMaterials())
+					{
+						RES_Material* tempMat = ImportMaterialFBX(scene->mMaterials[scene->mMeshes[nodeAi->mMeshes[i]]->mMaterialIndex], gameobject, path);
+						meshcomp->SetMaterial(tempMat);
+						node.InsertStringArray("Resources", tempMat->UUID.c_str());
+					}
+					else
+					{
+						App->editor->SelectOne(gameobject);
+						GetDroppedFile("DefaultAssets/Texture/defaultText.png", gameobject);
+					}
+					meshcomp->SetMesh(newMesh);
+				}
+				else
+				{
+					LOG("Mesh component not found in go %s", gameobject->name.c_str());
+					ret = false;
+				}
+			}
+			else
+			{
+				LOG("Error creating mesh component");
+				ret = false;
+			}
+		}
+	}
+	//else LOG("Node have no meshes.");
+
+	if (nodeAi->mNumChildren > 0 && ret)
+	{
+		//LOG("Node have %d childs.", nodeAi->mNumChildren);
+		for (int i = 0; i < nodeAi->mNumChildren;i++)
+		{
+			ImportNode(nodeAi->mChildren[i], scene, file, parent, path);
+		}
+	}
+	//else LOG("Node have no childs.");
+	return ret;
+}
 
 void FileSystemModule::UnloadTexure(uint id)
 {
@@ -1169,6 +1203,11 @@ RES_Material* FileSystemModule::ImportMaterialFBX(aiMaterial* material, GameObje
 						App->resourceManager->LoadResource(matInfo->UUID);
 
 						mat->SetMaterial(matInfo);
+					}
+					else
+					{
+						App->editor->SelectOne(go);
+						GetDroppedFile("DefaultAssets/Texture/defaultText.png", go);
 					}
 				}
 				else LOG("Material component not found in %s gameobject.", go->name.c_str());

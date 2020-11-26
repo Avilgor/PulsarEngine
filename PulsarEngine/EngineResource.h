@@ -28,17 +28,17 @@ public:
 	Scene* AsScene() { return sceneRes; }
 
 public:
-	std::string UUID = "";
+	std::string UUID = " ";
 	std::string name = "New Resource";
-	std::string extension = "";
-	std::string libPath = "";
-	std::string assetPath = "";
-	std::string currentPath = "";
+	std::string extension = " ";
+	std::string libPath = " ";
+	std::string assetPath = " ";
+	std::string currentPath = " ";
 	RESOURCE_TYPE type;
 	bool clean;
 	bool loaded = false;
-	int references;
-	EngineResource* resource;
+	int references = 0;
+	EngineResource* resource = nullptr;
 
 private:
 	void SetExtension();
