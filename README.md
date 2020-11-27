@@ -10,12 +10,13 @@ Last release [here](https://github.com/Avilgor/PulsarEngine/releases)
 * Menu bar with multiple options
   * Create/delete gameobjects 
   * Render options
+  * Edit
   * About 
   * Open editor windows
-* Config panel to adjust window settings and see hardware specs
+* Config panel to adjust window settings,see hardware specs and loaded resources
 * In editor log console
-* Drag and drop fbx mesh load
-* Drag and drop png texture to gameobjects
+* Project window with all items in assets
+* Camera frustum culling
 
 ## Controls
 
@@ -24,11 +25,27 @@ Last release [here](https://github.com/Avilgor/PulsarEngine/releases)
 * Delete key deletes all selected gameobjects
 
 ### Camera
-* Mouse wheel: camera zoom
-* Direction arrows: camera movement
-* Left shift: fast movement
-* F: focus the current or first selected gameobject
-* Left-Alt: fixed camera orbit to the selected gameobject while pressed
+* Mouse wheel: Zoom
+* RightClick: Rotate
+* Left shift: Fast movement
+* Mouse wheel button: Move
+* F: Focus the current or first selected gameobject
+
+### Project
+* Pressing delete key deletes selected asset
+* Drag and drop on scene to load selected asset
+
+### Hierarchy
+* Drag gameobjects to reparent
+* Pressing delete key deletes selected gameobjects
+* In Edit you can unparent selected gameobjects
+
+### Scene
+* W: Toggle gizmo translation mode
+* E: Toggle gizmo rotation mode
+* R: Toggle gizmo scale mode
+* Left click: Select hovered gameobject in scene
+
 
 ## Tips: 
 * By default camera rotation orbits the current point, so it's not needed to press alt key continously.

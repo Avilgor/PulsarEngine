@@ -65,7 +65,8 @@ void Material::SaveComponent(JSonHandler* file)
 	node.SaveNum("CompType", (double)compType);
 	node.SaveString("UUID", UUID.c_str());
 	node.SaveBool("Active", active);
-	node.SaveString("ResUUID", resMaterial->UUID.c_str());
+	if(resMaterial != nullptr) node.SaveString("ResUUID", resMaterial->UUID.c_str());
+	else node.SaveString("ResUUID", "-1");
 }
 
 void Material::LoadComponent(JSonHandler* file)

@@ -579,10 +579,11 @@ bool FileSystemModule::LoadTexture(const char* path, RES_Material* mat)
 
 		if (error != IL_NO_ERROR)
 		{
-			LOG("%d: %s", error, iluErrorString(error));
+			/*LOG("%d: %s", error, iluErrorString(error));
 			mat->textureID = -1;
 			mat->textData = nullptr;
-			mat->textWidth = mat->textHeight = 0;
+			mat->textWidth = mat->textHeight = 0;*/
+			LoadTexture("DefaultAssets/Texture/defaultText.png",mat);
 			do error = ilGetError();
 			while (error != IL_NO_ERROR);
 			ret = false;
@@ -1093,6 +1094,8 @@ bool FileSystemModule::ImportNode(aiNode* nodeAi, const aiScene* scene, JSonHand
 					App->resourceManager->LoadResource(newMesh->UUID);
 					if (scene->HasMaterials())
 					{
+						//App->editor->SelectOne(gameobject);
+						//GetDroppedFile("DefaultAssets/Texture/defaultText.png", gameobject);
 						RES_Material* tempMat = ImportMaterialFBX(scene->mMaterials[scene->mMeshes[nodeAi->mMeshes[i]]->mMaterialIndex], gameobject, path);
 						meshcomp->SetMaterial(tempMat);
 						node.InsertStringArray("Resources", tempMat->UUID.c_str());
@@ -1204,11 +1207,11 @@ RES_Material* FileSystemModule::ImportMaterialFBX(aiMaterial* material, GameObje
 
 						mat->SetMaterial(matInfo);
 					}
-					else
+					/*else
 					{
 						App->editor->SelectOne(go);
 						GetDroppedFile("DefaultAssets/Texture/defaultText.png", go);
-					}
+					}*/
 				}
 				else LOG("Material component not found in %s gameobject.", go->name.c_str());
 			}
