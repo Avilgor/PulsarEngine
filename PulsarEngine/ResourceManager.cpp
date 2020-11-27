@@ -5,6 +5,7 @@
 #include "Material.h"
 #include "RES_Mesh.h"
 #include "RES_Material.h"
+#include "Transform.h"
 #include "Scene.h"
 #include "Timer.h"
 #include "Glew/include/GL/glew.h"
@@ -476,6 +477,9 @@ void ResourceManager::ImportFBXFromMeta(std::string id, GameObject* go)
 										if (mesh != nullptr)
 										{
 											mesh->SetMesh(GetResource(tempV[i])->AsMesh());
+											child->transform->SetPosition(mesh->GetMesh()->importPos);
+											child->transform->SetQuatRotation(mesh->GetMesh()->importRot);
+											child->transform->SetScale(mesh->GetMesh()->importScale);
 										}
 									}
 									break;

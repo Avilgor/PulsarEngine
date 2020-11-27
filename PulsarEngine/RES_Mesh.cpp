@@ -107,6 +107,20 @@ void RES_Mesh::SaveResource(JSonHandler* file)
 	file->SaveNum("Type", (double)type);
 	file->SaveString("LibPath", libPath.c_str());
 	file->SaveString("AssetPath", assetPath.c_str());
+
+	file->CreateArray("Position");
+	file->InsertNumArray("Position",importPos.x);
+	file->InsertNumArray("Position", importPos.y);
+	file->InsertNumArray("Position", importPos.z);
+	file->CreateArray("Rotation");
+	file->InsertNumArray("Rotation", importRot.x);
+	file->InsertNumArray("Rotation", importRot.y);
+	file->InsertNumArray("Rotation", importRot.z);
+	file->InsertNumArray("Rotation", importRot.w);
+	file->CreateArray("Scale");
+	file->InsertNumArray("Scale", importScale.x);
+	file->InsertNumArray("Scale", importScale.y);
+	file->InsertNumArray("Scale", importScale.z);
 }
 
 void RES_Mesh::LoadResource(JSonHandler* file)
@@ -115,4 +129,20 @@ void RES_Mesh::LoadResource(JSonHandler* file)
 	UUID = file->GetString("UUID");
 	libPath = file->GetString("LibPath");
 	assetPath = file->GetString("AssetPath");
+	
+	file->LoadArray("Position");
+	importPos.x = (float)file->GetNumArray("Position", 0);
+	importPos.y = (float)file->GetNumArray("Position", 1);
+	importPos.z = (float)file->GetNumArray("Position", 2);
+
+	file->LoadArray("Rotation");
+	importRot.x = (float)file->GetNumArray("Rotation", 0);
+	importRot.y = (float)file->GetNumArray("Rotation", 1);
+	importRot.z = (float)file->GetNumArray("Rotation", 2);
+	importRot.w = (float)file->GetNumArray("Rotation", 3);
+
+	file->LoadArray("Scale");
+	importScale.x = (float)file->GetNumArray("Scale", 0);
+	importScale.y = (float)file->GetNumArray("Scale", 1);
+	importScale.z = (float)file->GetNumArray("Scale", 2);
 }

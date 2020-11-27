@@ -34,6 +34,10 @@ public:
 	float* verticesArray;
 	float* normalsArray;
 	float* texturesArray;
+
+	float3 importPos;
+	Quat importRot;
+	float3 importScale;
 };
 
 #endif //__RES_Mesh_H__

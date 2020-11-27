@@ -1034,6 +1034,10 @@ bool FileSystemModule::ImportNode(aiNode* nodeAi, const aiScene* scene, JSonHand
 						float3 scale(scaleai.x/100, scaleai.y/100, scaleai.z/100);
 						Quat rot(quatai.x, quatai.y, quatai.z, quatai.w);
 
+						newMesh->importPos = pos;
+						newMesh->importRot = rot;
+						newMesh->importScale = scale;
+
 						gameobject->transform->SetPosition(pos);
 						gameobject->transform->SetQuatRotation(rot);
 						gameobject->transform->SetScale(scale);
