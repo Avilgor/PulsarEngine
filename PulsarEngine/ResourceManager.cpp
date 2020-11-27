@@ -357,7 +357,7 @@ bool ResourceManager::CheckMetaPath(std::string path,std::string name)
 				App->fileSystem->MoveFileTo(metaFiles[name].filePath.c_str(), metaLoc.c_str());
 				metaFiles[name].filePath = metaLoc;
 				resourcesMap[metaFiles[name].resourceID]->currentPath = path;
-				LOG("Meta file %s moved",metaLoc.c_str());
+				//LOG("Meta file %s moved",metaLoc.c_str());
 				return true;
 			}	
 			else
