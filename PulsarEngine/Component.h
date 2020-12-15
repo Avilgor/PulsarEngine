@@ -8,6 +8,9 @@ class GameObject;
 class Mesh;
 class Material;
 class Camera;
+class BoxCollider;
+class SphereCollider;
+class RigidBody;
 class JSonHandler;
 
 class Component
@@ -24,6 +27,9 @@ public:
 	Mesh* AsMesh() { return mesh; }
 	Material* AsMaterial() { return material; }
 	Camera* AsCamera() { return camera; }
+	SphereCollider* AsSphereCollider() { return sphereCollider; }
+	BoxCollider* AsBoxCollider() { return boxCollider; }
+	//RigidBody* AsRigidbody() { return rigidbody; }
 	virtual void SaveComponent(JSonHandler* file) {}
 	virtual void LoadComponent(JSonHandler* file) {}
 
@@ -37,6 +43,9 @@ public:
 	Mesh* mesh = nullptr;
 	Material* material = nullptr;
 	Camera* camera = nullptr;
+	BoxCollider* boxCollider = nullptr;
+	SphereCollider* sphereCollider = nullptr;
+	//RigidBody* rigidbody = nullptr;
 };
 
 #endif //__Component_H__

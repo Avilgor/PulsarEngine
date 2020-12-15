@@ -54,7 +54,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>false</ExceptionHandling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PreprocessorDefinitions>WINDOWS_IGNORE_PACKING_MISMATCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -73,7 +73,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>false</ExceptionHandling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PreprocessorDefinitions>WINDOWS_IGNORE_PACKING_MISMATCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -89,6 +89,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ConfigWindow.h" />
@@ -96,6 +97,9 @@
     <ClInclude Include="EditorMain.h" />
     <ClInclude Include="EditorWindow.h" />
     <ClInclude Include="EngineResource.h" />
+    <ClInclude Include="ModulePhysics.h" />
+    <ClInclude Include="PhysBody3D.h" />
+    <ClInclude Include="Primitive.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="FileSystemModule.h" />
     <ClInclude Include="GameObject.h" />
@@ -195,12 +199,14 @@
     <ClInclude Include="RES_Mesh.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneWindow.h" />
+    <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ConfigWindow.cpp" />
@@ -208,6 +214,9 @@
     <ClCompile Include="EditorMain.cpp" />
     <ClCompile Include="EditorWindow.cpp" />
     <ClCompile Include="EngineResource.cpp" />
+    <ClCompile Include="ModulePhysics.cpp" />
+    <ClCompile Include="PhysBody3D.cpp" />
+    <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="FileSystemModule.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -276,6 +285,7 @@
     <ClCompile Include="RES_Mesh.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneWindow.cpp" />
+    <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>

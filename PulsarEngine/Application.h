@@ -12,6 +12,7 @@
 #include "EditorMain.h"
 #include "FileSystemModule.h"
 #include "ResourceManager.h"
+#include "ModulePhysics.h"
 
 #include <list> 
 #include <string>
@@ -28,6 +29,7 @@ public:
 	EditorMain* editor;
 	FileSystemModule* fileSystem;
 	ResourceManager* resourceManager;
+	ModulePhysics* physics;
 
 	float ms = 0.0f;
 	float fps = 0.0f;

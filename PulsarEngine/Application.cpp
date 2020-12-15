@@ -22,6 +22,7 @@ Application::Application()
 	scene = new ModuleScene(this);
 	editor = new EditorMain(this);
 	resourceManager = new ResourceManager(this);
+	physics = new ModulePhysics(this);
 
 	// Main Modules
 	AddModule(fileSystem);
@@ -33,7 +34,8 @@ Application::Application()
 	// Scenes
 	AddModule(editor);
 	AddModule(scene);	
-	
+	AddModule(physics);
+
 	// Renderer last!
 	AddModule(renderer3D);
 }

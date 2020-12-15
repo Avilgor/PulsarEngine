@@ -10,7 +10,8 @@
 
 class Transform;
 class Camera;
-//class RES_Material;
+class Rigidbody;
+struct PhysBody3D;
 
 class GameObject
 {
@@ -57,6 +58,7 @@ public:
 	void SetDrawAABB(bool val);
 	void CheckRayIntersect(std::vector<GameObject*> *vec,LineSegment ray);
 	GameObject* CheckRayIntersect(LineSegment ray);
+	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
 	//void SetMaterial(RES_Material* mat);
 
 private:
@@ -76,8 +78,11 @@ public:
 	bool drawAABB = false;
 	Transform* transform = nullptr;
 	Camera* camera = nullptr;
+	//Rigidbody* rigidbody = nullptr;
 	AABB Gaabb;
 	OBB Gobb;
+	GAMEOBJECT_TAG tag;
+	GAMEOBJECT_LAYERS layer;
 
 private:
 	GameObject* parent = nullptr;

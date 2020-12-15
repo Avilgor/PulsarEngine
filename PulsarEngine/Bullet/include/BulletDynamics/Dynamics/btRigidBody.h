@@ -170,7 +170,7 @@ public:
 		}
 	};
 
-	CollisionObject collType;
+	//CollisionObject collType;
 	///btRigidBody constructor using construction info
 	btRigidBody(	const btRigidBodyConstructionInfo& constructionInfo);
 

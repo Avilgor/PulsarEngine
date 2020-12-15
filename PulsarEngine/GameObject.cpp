@@ -7,6 +7,10 @@
 #include "Material.h"
 #include "Camera.h"
 #include "JSonHandler.h"
+#include "PhysBody3D.h"
+#include "RigidBody.h"
+#include "BoxCollider.h"
+#include "SphereCollider.h"
 #include "MathGeoLib/include/Geometry/AABB.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
@@ -24,6 +28,8 @@ GameObject::GameObject(const char* n, GameObject* p)
 	transformUpdate = false;
 	CreateTransform();
 	hasAABB = false;
+	tag = DEFAULT_TAG;
+	layer = DEFAULT_LAYER;
 }
 
 GameObject::GameObject(const char* n, float3 pos, Quat rotation, float3 scale, GameObject* p)
@@ -39,6 +45,8 @@ GameObject::GameObject(const char* n, float3 pos, Quat rotation, float3 scale, G
 	transformUpdate = false;
 	CreateTransform(pos,rotation,scale);
 	hasAABB = false;
+	tag = DEFAULT_TAG;
+	layer = DEFAULT_LAYER;
 }
 
 GameObject::GameObject(const char* n, float3 pos, float3 rotation, float3 scale, GameObject* p)
@@ -54,6 +62,8 @@ GameObject::GameObject(const char* n, float3 pos, float3 rotation, float3 scale,
 	transformUpdate = false;
 	CreateTransform(pos, rotation, scale);
 	hasAABB = false;
+	tag = DEFAULT_TAG;
+	layer = DEFAULT_LAYER;
 }
 
 GameObject::~GameObject()
@@ -420,6 +430,8 @@ Component* GameObject::AddComponent(ComponentTypes type)
 	Component* comp = nullptr;
 	Mesh* mesh = nullptr;
 	Material* mat = nullptr;
+	//BoxCollider* boxColl = nullptr;
+	//SphereCollider* sphereColl = nullptr;
 	switch (type)
 	{
 	case MESH_COMP:
@@ -445,6 +457,28 @@ Component* GameObject::AddComponent(ComponentTypes type)
 		return camera->component;
 		//LOG("Added component camera");
 		break;
+	/*case BOX_COLLIDER_COMP:
+		boxColl = new BoxCollider(this);
+		Components.push_back(boxColl->component);
+		return  boxColl->component;
+		//LOG("Added component box collider");
+		break;*/
+	/*case SHERE_COLLIDER_COMP:
+		sphereColl = new SphereCollider(this);
+		Components.push_back(sphereColl->component);
+		return  sphereColl->component;
+		//LOG("Added component sphere collider");
+		break;*/
+	/*case RIGIDBODY_COMP:
+		if (rigidbody != nullptr)
+		{
+			rigidbody->DeleteComponent();
+			delete rigidbody;
+			rigidbody = nullptr;
+		}
+		rigidbody = new RigidBody(this);
+		return rigidbody->component;
+		break;*/
 	default:
 		return comp;
 		break;
@@ -641,4 +675,9 @@ void GameObject::DeleteGameobject()
 		}
 		toDelete.clear();
 	}
+}
+
+void GameObject::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
+{
+
 }
