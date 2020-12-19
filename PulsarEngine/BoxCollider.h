@@ -14,21 +14,22 @@ public:
 	~BoxCollider();
 
 	void UpdateComponent();
+	void PhysicsUpdate();
 	void DeleteComponent();
 	PhysBody3D* GetBody() { return body; }
 	void SaveComponent(JSonHandler* file);
 	void LoadComponent(JSonHandler* file);
 	void UpdateTransform();
 	float* GetTransform();
-
+	void SetStatic(bool val);
 	void SetScale(float3 scale);
 	void SetPos(float3 pos);
+	float3 GetSize();
+	float3 GetPosition();
+	bool IsStatic();
 	
 public:
 	//btBoxShape* shape = nullptr;
-	float3 scale;
-	float3 pos;
-	//float4x4 transform;
 	PhysBody3D* body = nullptr;
 	bool draw;
 };

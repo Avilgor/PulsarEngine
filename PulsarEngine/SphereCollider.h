@@ -14,22 +14,23 @@ public:
 	~SphereCollider();
 
 	void UpdateComponent();
+	void PhysicsUpdate();
 	void DeleteComponent();
 	PhysBody3D* GetBody() { return body; }
 	void SaveComponent(JSonHandler* file);
 	void LoadComponent(JSonHandler* file);
 	void UpdateTransform();
 	float* GetTransform();
-
+	float3 GetSize();
+	float3 GetPosition();
+	bool IsStatic();
+	void SetStatic(bool val);
 	void SetScale(float3 scale);
 	void SetPos(float3 pos);
 
 public:
 	//btSphereShape* shape = nullptr;
 	float rad;
-	float3 scale;
-	float3 pos;
-	//float4x4 transform;
 	PhysBody3D* body = nullptr;
 	bool draw;
 };

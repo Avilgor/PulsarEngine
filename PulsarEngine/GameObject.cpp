@@ -268,6 +268,22 @@ void GameObject::LoadGameObject(JSonHandler* file)
 					if(comp->AsCamera() != nullptr) comp->AsCamera()->LoadComponent(&json);
 				}
 				break;
+			case BOX_COLLIDER_COMP:
+				//LOG("Load box collider");
+				comp = AddComponent(BOX_COLLIDER_COMP);
+				if (comp != nullptr)
+				{
+					if (comp->AsBoxCollider() != nullptr) comp->AsBoxCollider()->LoadComponent(&json);
+				}
+				break;
+			case SPHERE_COLLIDER_COMP:
+				//LOG("Load sphere collider");
+				comp = AddComponent(SPHERE_COLLIDER_COMP);
+				if (comp != nullptr)
+				{
+					if (comp->AsSphereCollider() != nullptr) comp->AsSphereCollider()->LoadComponent(&json);
+				}
+				break;
 			}	
 		}
 	}
@@ -317,6 +333,24 @@ void GameObject::DrawMesh()
 	}	
 }
 
+std::vector<Component*> GameObject::GetAllComponentsByType(ComponentTypes type)
+{
+	if (!Components.empty())
+	{
+		std::vector<Component*> temp;
+		for (int i = 0; i < Components.size(); i++)
+		{
+			if (Components[i]->compType == type)
+			{
+				temp.push_back(Components[i]);
+			}
+		}
+		//LOG("Components ammount: %d",temp.size());
+		return temp;
+	}
+	else return Components;
+}
+
 GameObject* GameObject::CheckRayIntersect(LineSegment ray)
 {
 	if (active)
@@ -329,7 +363,7 @@ GameObject* GameObject::CheckRayIntersect(LineSegment ray)
 				Mesh* mesh = temp->AsMesh();
 				if (mesh != nullptr)
 				{
-					if (ray.Intersects(mesh->GetMeshAABB()))
+					if (ray.Intersects(Gaabb))
 					{
 						//LOG("Gameobject %s mouse click intersect.", name.c_str());
 						return this;
@@ -430,8 +464,8 @@ Component* GameObject::AddComponent(ComponentTypes type)
 	Component* comp = nullptr;
 	Mesh* mesh = nullptr;
 	Material* mat = nullptr;
-	//BoxCollider* boxColl = nullptr;
-	//SphereCollider* sphereColl = nullptr;
+	BoxCollider* boxColl = nullptr;
+	SphereCollider* sphereColl = nullptr;
 	switch (type)
 	{
 	case MESH_COMP:
@@ -457,18 +491,18 @@ Component* GameObject::AddComponent(ComponentTypes type)
 		return camera->component;
 		//LOG("Added component camera");
 		break;
-	/*case BOX_COLLIDER_COMP:
+	case BOX_COLLIDER_COMP:
 		boxColl = new BoxCollider(this);
 		Components.push_back(boxColl->component);
-		return  boxColl->component;
-		//LOG("Added component box collider");
-		break;*/
-	/*case SHERE_COLLIDER_COMP:
+		LOG("Added component box collider");
+		return  boxColl->component;		
+		break;
+	case SPHERE_COLLIDER_COMP:
 		sphereColl = new SphereCollider(this);
 		Components.push_back(sphereColl->component);
-		return  sphereColl->component;
-		//LOG("Added component sphere collider");
-		break;*/
+		LOG("Added component sphere collider");
+		return  sphereColl->component;	
+		break;
 	/*case RIGIDBODY_COMP:
 		if (rigidbody != nullptr)
 		{
@@ -502,6 +536,16 @@ Component* GameObject::GetFirstComponentType(ComponentTypes type)
 	return temp;
 }
 
+float4x4 GameObject::GetGlobalTransform()
+{
+	return transform->GetGlobalTransform();
+}
+
+float4x4 GameObject::GetLocalTransform()
+{
+	return transform->GetTransform();
+}
+
 void GameObject::DeleteGOComponent(ComponentTypes type)
 {
 	if (type == CAMERA_COMP && camera != nullptr)
@@ -526,6 +570,23 @@ void GameObject::DeleteGOComponent(ComponentTypes type)
 			UpdateAABB();
 		}
 	}	
+}
+
+void GameObject::DeleteGOComponent(std::string uuid)
+{
+	if (!Components.empty())
+	{
+		std::vector<Component*> temp;
+		for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); it++)
+		{
+			if ((*it)->UUID == uuid) (*it)->DeleteComponent();
+			else temp.push_back((*it));
+		}
+		Components.clear();
+		Components = temp;
+		temp.clear();
+		UpdateAABB();
+	}
 }
 
 void GameObject::AddChild(GameObject* child)

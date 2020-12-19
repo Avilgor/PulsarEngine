@@ -29,14 +29,7 @@ SphereCollider::~SphereCollider()
 
 void SphereCollider::UpdateTransform()
 {
-	//float3 tempPos;
-	//float3 tempScale;
-	//Quat tempRot;
-	//float4x4 tempT = gameobject->transform->GetGlobalTransform();
-	//tempT.Decompose(tempPos, tempRot, tempScale);
-	//pos += tempPos;
-	//scale += tempScale;
-	//transform = float4x4::FromTRS(pos, tempRot, scale);
+	body->UpdateTransform(gameobject->GetGlobalTransform());
 }
 
 void SphereCollider::UpdateComponent()
@@ -58,6 +51,19 @@ void SphereCollider::UpdateComponent()
 	}*/
 }
 
+void SphereCollider::PhysicsUpdate()
+{
+	if (!body->isStatic)
+	{
+
+	}
+}
+
+void SphereCollider::SetStatic(bool val)
+{
+	body->SetStatic(val);
+}
+
 void SphereCollider::DeleteComponent()
 {
 	App->physics->RemoveCollider(UUID);
@@ -65,11 +71,29 @@ void SphereCollider::DeleteComponent()
 	delete this;
 }
 
+bool SphereCollider::IsStatic()
+{
+	if (body != nullptr) return body->isStatic;
+	else return true;
+}
+
+float3 SphereCollider::GetSize()
+{
+	if (body != nullptr) return body->scaleOffset;
+	else return float3::zero;
+}
+
+float3 SphereCollider::GetPosition()
+{
+	if (body != nullptr) return body->localOffset;
+	else return float3::zero;
+}
+
 void SphereCollider::SetScale(float3 s)
 {
 	if (body != nullptr)
 	{
-		body->SetScale(s.x, s.y, s.z);
+		body->scaleOffset = s;
 	}
 }
 
@@ -77,13 +101,14 @@ void SphereCollider::SetPos(float3 p)
 {
 	if (body != nullptr)
 	{
-		body->SetPos(p.x, p.y, p.z);
+		body->localOffset = p;
 	}
 }
 
 float* SphereCollider::GetTransform()
 {
-	return body->GetTransformPtr();
+	if (body != nullptr) return body->GetTransformPtr();
+	else return gameobject->GetGlobalTransform().ptr();
 }
 
 void SphereCollider::SaveComponent(JSonHandler* file)

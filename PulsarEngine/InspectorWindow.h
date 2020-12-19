@@ -5,6 +5,9 @@
 #include "Globals.h"
 #include <string>
 
+class BoxCollider;
+class SphereCollider;
+
 class InspectorWindow : public EditorWindow
 {
 public:
@@ -19,6 +22,8 @@ private:
 	void MeshSection(GameObject* go);
 	void MaterialSection(GameObject* go);
 	void CameraSection(GameObject* go);
+	void BoxColliderSection(BoxCollider* coll,int index);
+	void SphereColliderSection(SphereCollider* coll,int index);
 
 public:
 

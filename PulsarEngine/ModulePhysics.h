@@ -57,6 +57,7 @@ private:
 	std::map<std::string,PhysBody3D*> bodies;
 	std::map<std::string,btDefaultMotionState*> motions;
 	std::map<std::string,btTypedConstraint*> constraints;
+	std::map<std::string, Component*> colliderComponents;
 	//std::map<std::string, BoxCollider*> boxColliders;
 	//std::map<std::string, SphereCollider*> sphereColliders;
 };

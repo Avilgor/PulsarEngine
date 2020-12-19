@@ -31,6 +31,7 @@ public:
 	void Delete();
 	void SaveToDelete(GameObject* trash);
 	void DeleteGOComponent(ComponentTypes type);
+	void DeleteGOComponent(std::string uuid);
 
 	void AddChild(GameObject* child);
 	GameObject* CreateChild();
@@ -46,8 +47,11 @@ public:
 	std::vector<Component*> GetAllComponents() { return Components; }
 	std::vector<GameObject*> GetAllChilds() { return Childs; }
 	Component* GetFirstComponentType(ComponentTypes type);
+	std::vector<Component*> GetAllComponentsByType(ComponentTypes type);
 	GameObject* GetFirstChild() { return Childs[0]; }
 	GameObject* GetParent() { return parent; }
+	float4x4 GetGlobalTransform();
+	float4x4 GetLocalTransform();
 
 	void SaveGameobject(JSonHandler* file, const char* label);
 	void LoadGameObject(JSonHandler* file);

@@ -97,6 +97,18 @@ update_status ModulePhysics::PreUpdate(float dt)
 		}
 	}
 
+	for (std::map<std::string, Component*>::iterator it = colliderComponents.begin(); it != colliderComponents.end(); ++it)
+	{
+		if ((*it).second->AsBoxCollider() != nullptr)
+		{
+			(*it).second->AsBoxCollider()->PhysicsUpdate();
+		}
+		else if ((*it).second->AsSphereCollider() != nullptr)
+		{
+			(*it).second->AsSphereCollider()->PhysicsUpdate();
+		}
+	}
+
 	return UPDATE_CONTINUE;
 }
 
@@ -137,11 +149,15 @@ bool ModulePhysics::CleanUp()
 {
 	LOG("Unloading physics...");
 	// Remove from the world all collision bodies
-	for (int i = world->getNumCollisionObjects() - 1; i >= 0; i--)
+	for (std::map<std::string, PhysBody3D*>::iterator it = bodies.begin(); it != bodies.end(); ++it)
+	{
+		world->removeRigidBody((*it).second->body);
+	}
+	/*for (int i = world->getNumCollisionObjects() - 1; i >= 0; i--)
 	{
 		btCollisionObject* obj = world->getCollisionObjectArray()[i];
 		world->removeCollisionObject(obj);
-	}
+	}*/
 
 	for (std::map<std::string, btTypedConstraint*>::iterator it = constraints.begin(); it != constraints.end(); ++it)
 	{
@@ -185,7 +201,28 @@ void ModulePhysics::RemoveBody(btRigidBody* body)
 
 void ModulePhysics::RemoveCollider(std::string uuid)
 {
+	if (bodies.find(uuid) != bodies.end())
+	{
+		world->removeRigidBody(bodies[uuid]->body);
+	}
 
+	if (motions.find(uuid) != motions.end())
+	{
+		delete motions[uuid];
+		motions.erase(uuid);
+	}
+
+	if (shapes.find(uuid) != shapes.end())
+	{
+		delete shapes[uuid];
+		shapes.erase(uuid);
+	}
+
+	if (bodies.find(uuid) != bodies.end())
+	{
+		delete bodies[uuid];
+		bodies.erase(uuid);
+	}
 }
 
 
@@ -223,26 +260,33 @@ PhysBody3D* ModulePhysics::AddBody(SphereCollider* sphere, float mass)
 
 PhysBody3D* ModulePhysics::AddBody(BoxCollider* cube, float mass)
 {
-	btBoxShape* shape = new btBoxShape(btVector3(cube->scale.x * 0.5f, cube->scale.y * 0.5f, cube->scale.z * 0.5f));
+	btBoxShape* shape = new btBoxShape(btVector3(1 * 0.5f, 1 * 0.5f, 1 * 0.5f));
 	btCollisionShape* colShape = shape;
 	//cube->shape = shape;
 	shapes.emplace(cube->UUID,colShape);
+	LOG("Box shape emplace");
 	btTransform startTransform;
 	startTransform.setFromOpenGLMatrix(cube->GetTransform());
+	LOG("Starter transform set");
 	btVector3 localInertia(0, 0, 0);
 	if (mass != 0.f)
 		colShape->calculateLocalInertia(mass, localInertia);
 
 	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 	motions.emplace(cube->UUID,myMotionState);
+	LOG("Motion shape saved");
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
 
 	btRigidBody* body = new btRigidBody(rbInfo);
+	LOG("Rigidbody done");
 	PhysBody3D* pbody = new PhysBody3D(body);
+	LOG("Physbody created");
 
 	body->setUserPointer(pbody);
 	world->addRigidBody(body);
+	LOG("Rigidbody added to world");
 	bodies.emplace(cube->UUID,pbody);
+	LOG("Physbody saved");
 	cube->body = pbody;
 
 	return pbody;
