@@ -3,6 +3,7 @@
 #include "ModulePhysics.h"
 #include "SphereCollider.h"
 #include "PhysBody3D.h"
+#include "Transform.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
 SphereCollider::SphereCollider(GameObject* parent) : Component(parent, SPHERE_COLLIDER_COMP)
@@ -55,7 +56,9 @@ void SphereCollider::PhysicsUpdate()
 {
 	if (!body->isStatic)
 	{
-
+		//LOG("Physics update Sphere collider");
+		gameobject->transform->SetPosition(body->GetPos());
+		gameobject->transform->SetEulerRotation(body->GetRotation());
 	}
 }
 

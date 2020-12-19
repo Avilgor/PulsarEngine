@@ -5,7 +5,7 @@
 PhysBody3D::PhysBody3D(btRigidBody* body) : body(body)
 {
 	localOffset = float3::zero;
-	scaleOffset = float3::zero;
+	scaleOffset = float3::one;
 }
 
 PhysBody3D::~PhysBody3D()

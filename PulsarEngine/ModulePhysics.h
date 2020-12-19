@@ -33,13 +33,14 @@ public:
 
 	PhysBody3D* AddBody(BoxCollider* box, float mass = 1.0f);
 	PhysBody3D* AddBody(SphereCollider* sphere, float mass = 1.0f);
-    //PhysBody3D* AddBody(PhysCylinder& cylinder, float mass = 1.0f);
 	//PhysVehicle3D* AddVehicle(const VehicleInfo& info);
 
 	void AddConstraintP2P(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB, std::string id);
 	void AddConstraintHinge(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB, const vec3& axisS, const vec3& axisB, std::string id, bool disable_collision = false);
 
 	void RemoveCollider(std::string uuid);
+	void RemoveConstraint(btTypedConstraint* constraint);
+	void RemoveBody(btRigidBody* body);
 
 private:
 
@@ -58,8 +59,6 @@ private:
 	std::map<std::string,btDefaultMotionState*> motions;
 	std::map<std::string,btTypedConstraint*> constraints;
 	std::map<std::string, Component*> colliderComponents;
-	//std::map<std::string, BoxCollider*> boxColliders;
-	//std::map<std::string, SphereCollider*> sphereColliders;
 };
 
 class DebugDrawer : public btIDebugDraw

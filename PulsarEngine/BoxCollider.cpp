@@ -54,6 +54,7 @@ void BoxCollider::PhysicsUpdate()
 {
 	if (!body->isStatic)
 	{
+		//LOG("Physics update Box collider");
 		gameobject->transform->SetPosition(body->GetPos());
 		gameobject->transform->SetEulerRotation(body->GetRotation());
 	}

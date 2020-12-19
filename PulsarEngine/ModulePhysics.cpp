@@ -3,9 +3,6 @@
 #include "ModulePhysics.h"
 #include "PhysBody3D.h"
 #include "MathGeoLib/include/MathGeoLib.h"
-//#include "Bullet/src/btBulletDynamicsCommon.h"
-//#include "Bullet/src/btBulletCollisionCommon.h"
-//#include "Bullet/src/btLinearMathAll.cpp"
 #include "Bullet/include/btBulletDynamicsCommon.h"
 #include "Bullet/include/btBulletCollisionCommon.h"
 
@@ -23,7 +20,7 @@
 
 ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app, "Physics", start_enabled)
 {
-	debug = true;
+	debug = false;
 
 	collision_conf = new btDefaultCollisionConfiguration();
 	dispatcher = new btCollisionDispatcher(collision_conf);
@@ -58,7 +55,7 @@ bool ModulePhysics::Start()
 	vehicle_raycaster = new btDefaultVehicleRaycaster(world);
 
 	// Big plane as ground
-	{
+	/*{
 		btCollisionShape* colShape = new btStaticPlaneShape(btVector3(0, 1, 0), 0);
 
 		btDefaultMotionState* myMotionState = new btDefaultMotionState();
@@ -66,61 +63,77 @@ bool ModulePhysics::Start()
 
 		btRigidBody* body = new btRigidBody(rbInfo);
 		world->addRigidBody(body);
-	}
+	}*/
 
 	return ret;
 }
 
 update_status ModulePhysics::PreUpdate(float dt)
 {
-	world->stepSimulation(dt, 15);
-
-	int numManifolds = world->getDispatcher()->getNumManifolds();
-	
-	for (int i = 0; i < numManifolds; i++)
+	if (debug || App->scene->GetSceneState() == SCENE_RUNNING)
 	{
-		btPersistentManifold* contactManifold = world->getDispatcher()->getManifoldByIndexInternal(i);
-		btCollisionObject* obA = (btCollisionObject*)(contactManifold->getBody0());
-		btCollisionObject* obB = (btCollisionObject*)(contactManifold->getBody1());
+		world->stepSimulation(dt, 15);
 
-		int numContacts = contactManifold->getNumContacts();
-		if (numContacts > 0)
+		int numManifolds = world->getDispatcher()->getNumManifolds();
+
+		for (int i = 0; i < numManifolds; i++)
 		{
-			PhysBody3D* pbodyA = (PhysBody3D*)obA->getUserPointer();
-			PhysBody3D* pbodyB = (PhysBody3D*)obB->getUserPointer();
+			btPersistentManifold* contactManifold = world->getDispatcher()->getManifoldByIndexInternal(i);
+			btCollisionObject* obA = (btCollisionObject*)(contactManifold->getBody0());
+			btCollisionObject* obB = (btCollisionObject*)(contactManifold->getBody1());
 
-			if (pbodyA && pbodyB)
+			int numContacts = contactManifold->getNumContacts();
+			if (numContacts > 0)
 			{
-				if (pbodyA->listener != nullptr) pbodyA->listener->OnCollision(pbodyA,pbodyB);
-				if (pbodyB->listener != nullptr) pbodyB->listener->OnCollision(pbodyB, pbodyA);
+				PhysBody3D* pbodyA = (PhysBody3D*)obA->getUserPointer();
+				PhysBody3D* pbodyB = (PhysBody3D*)obB->getUserPointer();
+
+				if (pbodyA && pbodyB)
+				{
+					if (pbodyA->listener != nullptr) pbodyA->listener->OnCollision(pbodyA, pbodyB);
+					if (pbodyB->listener != nullptr) pbodyB->listener->OnCollision(pbodyB, pbodyA);
+				}
+			}
+		}
+
+		if(colliderComponents.size() > 0)
+		{
+			//LOG("Module physics colliders: %d",colliderComponents.size());
+			for (std::map<std::string, Component*>::iterator it = colliderComponents.begin(); it != colliderComponents.end(); ++it)
+			{
+				if ((*it).second->AsBoxCollider() != nullptr)
+				{
+					(*it).second->AsBoxCollider()->PhysicsUpdate();
+				}
+				else if ((*it).second->AsSphereCollider() != nullptr)
+				{
+					(*it).second->AsSphereCollider()->PhysicsUpdate();
+				}
 			}
 		}
 	}
-
-	for (std::map<std::string, Component*>::iterator it = colliderComponents.begin(); it != colliderComponents.end(); ++it)
-	{
-		if ((*it).second->AsBoxCollider() != nullptr)
-		{
-			(*it).second->AsBoxCollider()->PhysicsUpdate();
-		}
-		else if ((*it).second->AsSphereCollider() != nullptr)
-		{
-			(*it).second->AsSphereCollider()->PhysicsUpdate();
-		}
-	}
-
 	return UPDATE_CONTINUE;
 }
 
 update_status ModulePhysics::Update(float dt)
 {
 	if (App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
+	{
 		debug = !debug;
+		if (debug)
+		{
+			LOG("Physics debug ON");
+		}
+		else
+		{
+			LOG("Physics debug OFF");
+		}
+	}
 
 	if (debug == true)
 	{
 		world->debugDrawWorld();
-
+		//LOG("Collision objects: %d", world->getNumCollisionObjects());
 		// Render vehicles
 		/*for (int i = 0; i < vehicles.size(); i++)
 		{ 
@@ -189,7 +202,7 @@ bool ModulePhysics::CleanUp()
 	return true;
 }
 
-/*void ModulePhysics::RemoveConstraint(btTypedConstraint* constraint)
+void ModulePhysics::RemoveConstraint(btTypedConstraint* constraint)
 {
 	world->removeConstraint(constraint);
 }
@@ -197,7 +210,7 @@ bool ModulePhysics::CleanUp()
 void ModulePhysics::RemoveBody(btRigidBody* body)
 {
 	world->removeRigidBody(body);
-}*/
+}
 
 void ModulePhysics::RemoveCollider(std::string uuid)
 {
@@ -223,36 +236,37 @@ void ModulePhysics::RemoveCollider(std::string uuid)
 		delete bodies[uuid];
 		bodies.erase(uuid);
 	}
+
+	if (colliderComponents.find(uuid) != colliderComponents.end())
+	{
+		colliderComponents.erase(uuid);
+	}
 }
 
 
 PhysBody3D* ModulePhysics::AddBody(SphereCollider* sphere, float mass)
 {
 	btSphereShape* shape = new btSphereShape(btScalar(sphere->rad));
-	btCollisionShape* colShape = shape;
-	//sphere->shape = shape;
-	shapes.emplace(sphere->UUID, colShape);
+	shapes.emplace(sphere->UUID, shape);
 
 	btTransform startTransform;
 	startTransform.setFromOpenGLMatrix(sphere->GetTransform());
 
 	btVector3 localInertia(0, 0, 0);
-	if (mass != 0.f)
-		colShape->calculateLocalInertia(mass, localInertia);
+	if (mass != 0.f) shape->calculateLocalInertia(mass, localInertia);
 
 	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 	motions.emplace(sphere->UUID, myMotionState);
-	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, shape, localInertia);
 
 	btRigidBody* body = new btRigidBody(rbInfo);
 	PhysBody3D* pbody = new PhysBody3D(body);
 
-
-	//pbody->collType = coll;
 	body->setUserPointer(pbody);
 	world->addRigidBody(body);
 	bodies.emplace(sphere->UUID, pbody);
-	//sphere.body = pbody;
+	sphere->body = pbody;
+	colliderComponents.emplace(sphere->UUID, sphere->component);
 
 	return pbody;
 }
@@ -261,64 +275,35 @@ PhysBody3D* ModulePhysics::AddBody(SphereCollider* sphere, float mass)
 PhysBody3D* ModulePhysics::AddBody(BoxCollider* cube, float mass)
 {
 	btBoxShape* shape = new btBoxShape(btVector3(1 * 0.5f, 1 * 0.5f, 1 * 0.5f));
-	btCollisionShape* colShape = shape;
-	//cube->shape = shape;
-	shapes.emplace(cube->UUID,colShape);
-	LOG("Box shape emplace");
+	shapes.emplace(cube->UUID, shape);
+	//LOG("Box shape emplace");
 	btTransform startTransform;
 	startTransform.setFromOpenGLMatrix(cube->GetTransform());
-	LOG("Starter transform set");
+	//LOG("Starter transform set");
 	btVector3 localInertia(0, 0, 0);
-	if (mass != 0.f)
-		colShape->calculateLocalInertia(mass, localInertia);
+	if (mass != 0.f) shape->calculateLocalInertia(mass, localInertia);
 
 	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 	motions.emplace(cube->UUID,myMotionState);
-	LOG("Motion shape saved");
-	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
+	//LOG("Motion shape saved");
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, shape, localInertia);
 
 	btRigidBody* body = new btRigidBody(rbInfo);
-	LOG("Rigidbody done");
+	//LOG("Rigidbody done");
 	PhysBody3D* pbody = new PhysBody3D(body);
-	LOG("Physbody created");
+	//LOG("Physbody created");
 
 	body->setUserPointer(pbody);
 	world->addRigidBody(body);
-	LOG("Rigidbody added to world");
+	//LOG("Rigidbody added to world");
 	bodies.emplace(cube->UUID,pbody);
-	LOG("Physbody saved");
+	//LOG("Physbody saved");
 	cube->body = pbody;
+	colliderComponents.emplace(cube->UUID,cube->component);
 
 	return pbody;
 }
 
-/*
-PhysBody3D* ModulePhysics::AddBody(Cylinder& cylinder, float mass)
-{
-	btCollisionShape* colShape = new btCylinderShapeX(btVector3(cylinder.height * 0.5f, cylinder.radius, 0.0f));
-	shapes.push_back(colShape);
-
-	btTransform startTransform;
-	startTransform.setFromOpenGLMatrix(&cylinder.transform);
-
-	btVector3 localInertia(0, 0, 0);
-	if (mass != 0.f)
-		colShape->calculateLocalInertia(mass, localInertia);
-
-	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-	motions.push_back(myMotionState);
-	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
-
-	btRigidBody* body = new btRigidBody(rbInfo);
-	PhysBody3D* pbody = new PhysBody3D(body);
-
-	body->setUserPointer(pbody);
-	world->addRigidBody(body);
-	bodies.push_back(pbody);
-	//cylinder.body = pbody;
-
-	return pbody;
-}*/
 
 // ---------------------------------------------------------
 /*PhysVehicle3D* ModulePhysics::AddVehicle(const VehicleInfo& info)
