@@ -268,7 +268,7 @@ void GameObject::LoadGameObject(JSonHandler* file)
 					if(comp->AsCamera() != nullptr) comp->AsCamera()->LoadComponent(&json);
 				}
 				break;
-			case BOX_COLLIDER_COMP:
+			/*case BOX_COLLIDER_COMP:
 				//LOG("Load box collider");
 				comp = AddComponent(BOX_COLLIDER_COMP);
 				if (comp != nullptr)
@@ -283,7 +283,7 @@ void GameObject::LoadGameObject(JSonHandler* file)
 				{
 					if (comp->AsSphereCollider() != nullptr) comp->AsSphereCollider()->LoadComponent(&json);
 				}
-				break;
+				break;*/
 			}	
 		}
 	}
@@ -494,25 +494,15 @@ Component* GameObject::AddComponent(ComponentTypes type)
 	case BOX_COLLIDER_COMP:
 		boxColl = new BoxCollider(this);
 		Components.push_back(boxColl->component);
-		LOG("Added component box collider");
+		//LOG("Added component box collider");
 		return  boxColl->component;		
 		break;
 	case SPHERE_COLLIDER_COMP:
 		sphereColl = new SphereCollider(this);
 		Components.push_back(sphereColl->component);
-		LOG("Added component sphere collider");
+		//LOG("Added component sphere collider");
 		return  sphereColl->component;	
 		break;
-	/*case RIGIDBODY_COMP:
-		if (rigidbody != nullptr)
-		{
-			rigidbody->DeleteComponent();
-			delete rigidbody;
-			rigidbody = nullptr;
-		}
-		rigidbody = new RigidBody(this);
-		return rigidbody->component;
-		break;*/
 	default:
 		return comp;
 		break;

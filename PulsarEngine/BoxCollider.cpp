@@ -4,6 +4,7 @@
 #include "BoxCollider.h"
 #include "PhysBody3D.h"
 #include "Transform.h"
+#include "Primitive.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
 BoxCollider::BoxCollider(GameObject* parent) : Component(parent, BOX_COLLIDER_COMP)
@@ -11,6 +12,7 @@ BoxCollider::BoxCollider(GameObject* parent) : Component(parent, BOX_COLLIDER_CO
 	component->boxCollider = this;
 	App->physics->AddBody(this);
 	draw = true;
+	shape = new CubePrimitive();
 }
 
 BoxCollider::BoxCollider(GameObject* parent, float3 s) : Component(parent, BOX_COLLIDER_COMP)
@@ -19,6 +21,7 @@ BoxCollider::BoxCollider(GameObject* parent, float3 s) : Component(parent, BOX_C
 	App->physics->AddBody(this);
 	if(body != nullptr) body->scaleOffset = s;
 	draw = true;
+	shape = new CubePrimitive(s.x,s.y,s.z);
 }
 
 BoxCollider::~BoxCollider()
@@ -29,32 +32,22 @@ BoxCollider::~BoxCollider()
 
 void BoxCollider::UpdateTransform()
 {
-	body->UpdateTransform(gameobject->GetGlobalTransform());
+	if(body != nullptr) body->UpdateTransform(gameobject->GetGlobalTransform());
 }
 
 void BoxCollider::UpdateComponent()
 {
 	UpdateTransform();
-	/*if (draw && gameobject->selected)
+	if (draw && gameobject->selected)
 	{
-		float3 corners[8];
-		corners[0] = shape->getVertex();
-		corners[1] = frustum.CornerPoint(1);
-		corners[2] = frustum.CornerPoint(2);
-		corners[3] = frustum.CornerPoint(3);
-		corners[4] = frustum.CornerPoint(4);
-		corners[5] = frustum.CornerPoint(5);
-		corners[6] = frustum.CornerPoint(6);
-		corners[7] = frustum.CornerPoint(7);
-		App->renderer3D->RenderBox(corners);
-	}*/
+		if (shape != nullptr) shape->Render(body->GetTransform().Transposed());
+	}
 }
 
 void BoxCollider::PhysicsUpdate()
 {
-	if (!body->isStatic)
+	if (body != nullptr && !body->isStatic)
 	{
-		//LOG("Physics update Box collider");
 		gameobject->transform->SetPosition(body->GetPos());
 		gameobject->transform->SetEulerRotation(body->GetRotation());
 	}
@@ -62,7 +55,7 @@ void BoxCollider::PhysicsUpdate()
 
 void BoxCollider::SetStatic(bool val)
 {
-	body->SetStatic(val);
+	if (body != nullptr) body->SetStatic(val);
 }
 
 void BoxCollider::DeleteComponent()
@@ -95,6 +88,7 @@ void BoxCollider::SetScale(float3 s)
 	if (body != nullptr)
 	{
 		body->scaleOffset = s;
+		shape->size = s;
 	}
 }
 
@@ -108,7 +102,7 @@ void BoxCollider::SetPos(float3 p)
 
 float* BoxCollider::GetTransform()
 {
-	if (body != nullptr) return body->GetTransformPtr();
+	if (body != nullptr) return body->GetTransform().ptr();
 	else return gameobject->GetGlobalTransform().ptr();
 }
 

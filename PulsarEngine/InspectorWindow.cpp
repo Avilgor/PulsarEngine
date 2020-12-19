@@ -246,14 +246,9 @@ void InspectorWindow::MaterialSection(GameObject* go)
 		if (mat != nullptr)
 		{
 			bool colorChange = false;
-			//ImGui::Text("Material %d", i);		
+	
 			ImGui::Text("Name: %s", mat->name.c_str());
-			//ImGui::Text("Path: %s", mat->assetPath.c_str());
-
-			//ImGui::Separator();
-
 			ImGui::Text("Width: %d", mat->textWidth);
-			//ImGui::SameLine();
 			ImGui::Text("Height: %d", mat->textHeight);
 
 			ImGui::Separator();
@@ -297,6 +292,8 @@ void InspectorWindow::BoxColliderSection(BoxCollider* coll,int index)
 	{
 		std::string tagStatic = "##boxCollStatic";
 		tagStatic.append(std::to_string(index));
+		std::string tagDraw = "##boxCollDraw";
+		tagDraw.append(std::to_string(index));
 		std::string tagPosx = "##boxcollPosX";
 		tagPosx.append(std::to_string(index));
 		std::string tagPosy = "##boxcollPosY";
@@ -309,10 +306,15 @@ void InspectorWindow::BoxColliderSection(BoxCollider* coll,int index)
 		tagScaley.append(std::to_string(index));
 		std::string tagScalez = "##boxcollSizeZ";
 		tagScalez.append(std::to_string(index));
+
 		bool collSt = coll->IsStatic();
 		ImGui::Text("Static: ");
 		ImGui::SameLine();
 		if (ImGui::Checkbox(tagStatic.c_str(), &collSt)) coll->SetStatic(collSt);
+
+		ImGui::Text("Draw: ");
+		ImGui::SameLine();
+		ImGui::Checkbox(tagDraw.c_str(), &coll->draw);
 
 		float3 pos = coll->GetPosition();
 		float3 scale = coll->GetSize();
@@ -330,13 +332,13 @@ void InspectorWindow::BoxColliderSection(BoxCollider* coll,int index)
 
 		ImGui::Text("Size x:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagScalex.c_str(), &scale.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;
+		if (ImGui::InputFloat(tagScalex.c_str(), &scale.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;		
 		ImGui::Text("Size y:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagScaley.c_str(), &scale.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;
+		if (ImGui::InputFloat(tagScalez.c_str(), &scale.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;
 		ImGui::Text("Size z:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagScalez.c_str(), &scale.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;
+		if (ImGui::InputFloat(tagScaley.c_str(), &scale.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;
 
 		if (changePos) coll->SetPos(pos);
 		if (changeScale) coll->SetScale(scale);
@@ -351,27 +353,30 @@ void InspectorWindow::SphereColliderSection(SphereCollider* coll, int index)
 	{
 		std::string tagStatic = "##sphereCollStatic";
 		tagStatic.append(std::to_string(index));
+		std::string tagDraw = "##boxCollDraw";
+		tagDraw.append(std::to_string(index));
 		std::string tagPosx = "##spherecollPosX";
 		tagPosx.append(std::to_string(index));
 		std::string tagPosy = "##spherecollPosY";
 		tagPosy.append(std::to_string(index));
 		std::string tagPosz = "##spherecollPosZ";
 		tagPosz.append(std::to_string(index));
-		std::string tagScalex = "##spherecollSizeX";
-		tagScalex.append(std::to_string(index));
-		std::string tagScaley = "##spherecollSizeY";
-		tagScaley.append(std::to_string(index));
-		std::string tagScalez = "##spherecollSizeZ";
-		tagScalez.append(std::to_string(index));
+		std::string tagRad = "##spherecollRadius";
+		tagRad.append(std::to_string(index));
+
+
 		bool collSt = coll->IsStatic();
 		ImGui::Text("Static: ");
 		ImGui::SameLine();
 		if (ImGui::Checkbox(tagStatic.c_str(), &collSt)) coll->SetStatic(collSt);
 
+		ImGui::Text("Draw: ");
+		ImGui::SameLine();
+		ImGui::Checkbox(tagDraw.c_str(), &coll->draw);
+
 		float3 pos = coll->GetPosition();
-		float3 scale = coll->GetSize();
+		float rad = coll->GetSize().x;
 		bool changePos = false;
-		bool changeScale = false;
 		ImGui::Text("Position x:");
 		ImGui::SameLine();
 		if (ImGui::InputFloat(tagPosx.c_str(), &pos.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
@@ -382,18 +387,11 @@ void InspectorWindow::SphereColliderSection(SphereCollider* coll, int index)
 		ImGui::SameLine();
 		if (ImGui::InputFloat(tagPosz.c_str(), &pos.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
 
-		ImGui::Text("Size x:");
+		ImGui::Text("Radius:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagScalex.c_str(), &scale.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;
-		ImGui::Text("Size y:");
-		ImGui::SameLine();
-		if (ImGui::InputFloat(tagScaley.c_str(), &scale.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;
-		ImGui::Text("Size z:");
-		ImGui::SameLine();
-		if (ImGui::InputFloat(tagScalez.c_str(), &scale.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;
+		if (ImGui::InputFloat(tagRad.c_str(), &rad, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetScale(rad);
 
 		if (changePos) coll->SetPos(pos);
-		if (changeScale) coll->SetScale(scale);
 
 		if (ImGui::Button("Delete component")) coll->gameobject->DeleteGOComponent(coll->UUID);
 	}

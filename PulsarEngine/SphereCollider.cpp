@@ -4,6 +4,7 @@
 #include "SphereCollider.h"
 #include "PhysBody3D.h"
 #include "Transform.h"
+#include "Primitive.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
 SphereCollider::SphereCollider(GameObject* parent) : Component(parent, SPHERE_COLLIDER_COMP)
@@ -12,6 +13,7 @@ SphereCollider::SphereCollider(GameObject* parent) : Component(parent, SPHERE_CO
 	App->physics->AddBody(this);
 	rad = 1;
 	draw = true;
+	shape = new SpherePrimitive();
 }
 
 SphereCollider::SphereCollider(GameObject* parent, float r) : Component(parent, SPHERE_COLLIDER_COMP)
@@ -20,6 +22,7 @@ SphereCollider::SphereCollider(GameObject* parent, float r) : Component(parent, 
 	rad = r;
 	App->physics->AddBody(this);
 	draw = true;
+	shape = new SpherePrimitive(r);
 }
 
 SphereCollider::~SphereCollider()
@@ -30,33 +33,22 @@ SphereCollider::~SphereCollider()
 
 void SphereCollider::UpdateTransform()
 {
-	body->UpdateTransform(gameobject->GetGlobalTransform());
+	if (body != nullptr) body->UpdateTransform(gameobject->GetGlobalTransform());
 }
 
 void SphereCollider::UpdateComponent()
 {
 	UpdateTransform();
-	/*if (draw && gameobject->selected)
+	if (draw && gameobject->selected)
 	{
-		shape->getNumVertices();
-		float3 corners[8];
-		corners[0] = shape->getVertex();
-		corners[1] = frustum.CornerPoint(1);
-		corners[2] = frustum.CornerPoint(2);
-		corners[3] = frustum.CornerPoint(3);
-		corners[4] = frustum.CornerPoint(4);
-		corners[5] = frustum.CornerPoint(5);
-		corners[6] = frustum.CornerPoint(6);
-		corners[7] = frustum.CornerPoint(7);
-		App->renderer3D->RenderBox
-	}*/
+		if (shape != nullptr) shape->Render(body->GetTransform().Transposed());
+	}
 }
 
 void SphereCollider::PhysicsUpdate()
 {
-	if (!body->isStatic)
+	if (body != nullptr &&  !body->isStatic)
 	{
-		//LOG("Physics update Sphere collider");
 		gameobject->transform->SetPosition(body->GetPos());
 		gameobject->transform->SetEulerRotation(body->GetRotation());
 	}
@@ -64,7 +56,7 @@ void SphereCollider::PhysicsUpdate()
 
 void SphereCollider::SetStatic(bool val)
 {
-	body->SetStatic(val);
+	if (body != nullptr) body->SetStatic(val);
 }
 
 void SphereCollider::DeleteComponent()
@@ -92,11 +84,16 @@ float3 SphereCollider::GetPosition()
 	else return float3::zero;
 }
 
-void SphereCollider::SetScale(float3 s)
+void SphereCollider::SetScale(float s)
 {
 	if (body != nullptr)
 	{
-		body->scaleOffset = s;
+		float3 temp;
+		temp.x = s;
+		temp.y = s;
+		temp.z = s;
+		body->scaleOffset = temp;
+		shape->radius = s;
 	}
 }
 
@@ -110,7 +107,7 @@ void SphereCollider::SetPos(float3 p)
 
 float* SphereCollider::GetTransform()
 {
-	if (body != nullptr) return body->GetTransformPtr();
+	if (body != nullptr) return body->GetTransform().ptr();
 	else return gameobject->GetGlobalTransform().ptr();
 }
 

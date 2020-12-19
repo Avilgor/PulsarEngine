@@ -3,7 +3,9 @@
 
 #include "Globals.h"
 #include "Component.h"
+#include "Primitive.h"
 #include "MathGeoLib/include/MathGeoLib.h"
+
 
 class BoxCollider : public Component
 {
@@ -29,7 +31,7 @@ public:
 	bool IsStatic();
 	
 public:
-	//btBoxShape* shape = nullptr;
+	CubePrimitive* shape = nullptr;
 	PhysBody3D* body = nullptr;
 	bool draw;
 };

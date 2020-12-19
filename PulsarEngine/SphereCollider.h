@@ -3,6 +3,7 @@
 
 #include "Globals.h"
 #include "Component.h"
+#include "Primitive.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
 class SphereCollider : public Component
@@ -25,11 +26,11 @@ public:
 	float3 GetPosition();
 	bool IsStatic();
 	void SetStatic(bool val);
-	void SetScale(float3 scale);
+	void SetScale(float scale);
 	void SetPos(float3 pos);
 
 public:
-	//btSphereShape* shape = nullptr;
+	SpherePrimitive* shape = nullptr; 
 	float rad;
 	PhysBody3D* body = nullptr;
 	bool draw;

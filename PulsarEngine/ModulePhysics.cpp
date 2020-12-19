@@ -26,12 +26,10 @@ ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app,
 	dispatcher = new btCollisionDispatcher(collision_conf);
 	broad_phase = new btDbvtBroadphase();
 	solver = new btSequentialImpulseConstraintSolver();
-	debug_draw = new DebugDrawer();
 }
 
 ModulePhysics::~ModulePhysics()
 {
-	delete debug_draw;
 	delete solver;
 	delete broad_phase;
 	delete dispatcher;
@@ -50,7 +48,7 @@ bool ModulePhysics::Start()
 	bool ret = true;
 
 	world = new btDiscreteDynamicsWorld(dispatcher, broad_phase, solver, collision_conf);
-	world->setDebugDrawer(debug_draw);
+	//world->setDebugDrawer(debug_draw);
 	world->setGravity(GRAVITY);
 	vehicle_raycaster = new btDefaultVehicleRaycaster(world);
 
@@ -72,8 +70,8 @@ update_status ModulePhysics::PreUpdate(float dt)
 {
 	if (debug || App->scene->GetSceneState() == SCENE_RUNNING)
 	{
-		world->stepSimulation(dt, 15);
-
+		world->stepSimulation(dt, 10);
+		
 		int numManifolds = world->getDispatcher()->getNumManifolds();
 
 		for (int i = 0; i < numManifolds; i++)
@@ -130,25 +128,11 @@ update_status ModulePhysics::Update(float dt)
 		}
 	}
 
-	if (debug == true)
+	/*if (debug == true)
 	{
 		world->debugDrawWorld();
 		//LOG("Collision objects: %d", world->getNumCollisionObjects());
-		// Render vehicles
-		/*for (int i = 0; i < vehicles.size(); i++)
-		{ 
-			item->data->Render();		
-		}*/
-
-		/*if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
-		{
-			PhysSphere s(1);
-			s.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
-			float force = 30.0f;
-			AddBody(s)->Push(-(App->camera->Z.x * force), -(App->camera->Z.y * force), -(App->camera->Z.z * force));
-		}*/
-	}
-
+	}*/
 	return UPDATE_CONTINUE;
 }
 
@@ -394,43 +378,4 @@ void ModulePhysics::AddConstraintHinge(PhysBody3D& bodyA, PhysBody3D& bodyB, con
 	world->addConstraint(hinge, disable_collision);
 	constraints.emplace(id,hinge);
 	hinge->setDbgDrawSize(2.0f);
-}
-
-// =============================================
-DebugDrawer::DebugDrawer()
-{
-	line.dir = { 0, 0, 0 };
-}
-
-void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
-{
-	line.pos = { from.getX(), from.getY(), from.getZ() };
-	line.dir = {to.getX(), to.getY(), to.getZ()};
-	App->renderer3D->RenderLine(line.pos,line.dir);
-}
-
-void DebugDrawer::drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color)
-{
-	//point.transform.translate(PointOnB.getX(), PointOnB.getY(), PointOnB.getZ());
-	//point.Render();
-}
-
-void DebugDrawer::reportErrorWarning(const char* warningString)
-{
-	LOG("Bullet warning: %s", warningString);
-}
-
-void DebugDrawer::draw3dText(const btVector3& location, const char* textString)
-{
-	LOG("Bullet draw text: %s", textString);
-}
-
-void DebugDrawer::setDebugMode(int debugMode)
-{
-	mode = (DebugDrawModes)debugMode;
-}
-
-int	 DebugDrawer::getDebugMode() const
-{
-	return mode;
 }
