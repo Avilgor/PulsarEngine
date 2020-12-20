@@ -50,7 +50,7 @@ void SphereCollider::PhysicsUpdate()
 	if (body != nullptr &&  !body->isStatic)
 	{
 		gameobject->transform->SetPosition(body->GetPos());
-		//gameobject->transform->SetEulerRotation(body->GetRotation());
+		gameobject->transform->SetQuatRotation(body->GetRotation());
 	}
 }
 

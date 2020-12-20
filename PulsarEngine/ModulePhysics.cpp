@@ -272,7 +272,6 @@ PhysBody3D* ModulePhysics::AddBody(SphereCollider* sphere, float mass)
 	btRigidBody* body = new btRigidBody(rbInfo);
 	PhysBody3D* pbody = new PhysBody3D(body);
 
-	//body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CO_RIGID_BODY);
 	body->setUserPointer(pbody);
 	world->addRigidBody(body);
 	bodies.emplace(sphere->UUID, pbody);
@@ -301,7 +300,6 @@ PhysBody3D* ModulePhysics::AddBody(BoxCollider* cube, float3 size,float mass)
 	btRigidBody* body = new btRigidBody(rbInfo);
 	PhysBody3D* pbody = new PhysBody3D(body);
 
-	//body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CO_RIGID_BODY);
 	body->setUserPointer(pbody);
 	world->addRigidBody(body);
 	bodies.emplace(cube->UUID,pbody);

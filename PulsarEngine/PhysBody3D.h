@@ -24,7 +24,7 @@ public:
 	void SetRotation(Quat rot);
 	void SetStatic(bool val);
 	float3 GetPos();
-	float3 GetRotation();
+	Quat GetRotation();
 
 private:
 	void UpdateTransform();
