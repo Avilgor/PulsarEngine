@@ -12,7 +12,7 @@ BoxCollider::BoxCollider(GameObject* parent) : Component(parent, BOX_COLLIDER_CO
 	component->boxCollider = this;
 	App->physics->AddBody(this,float3::one);
 	draw = true;
-	shape = new CubePrimitive();
+	//shape = new CubePrimitive();
 }
 
 BoxCollider::BoxCollider(GameObject* parent, float3 s) : Component(parent, BOX_COLLIDER_COMP)
@@ -21,7 +21,7 @@ BoxCollider::BoxCollider(GameObject* parent, float3 s) : Component(parent, BOX_C
 	App->physics->AddBody(this,s);
 	if(body != nullptr) body->scaleOffset = s;
 	draw = true;
-	shape = new CubePrimitive(s.x,s.y,s.z);
+	//shape = new CubePrimitive(s.x,s.y,s.z);
 }
 
 BoxCollider::~BoxCollider()
@@ -87,8 +87,9 @@ void BoxCollider::SetScale(float3 s)
 {
 	if (body != nullptr)
 	{
-		body->scaleOffset = s;
-		shape->size = s;
+		body->SetScale(s.x,s.y,s.z);
+		//body->scaleOffset = s;
+		//shape->size = s;
 	}
 }
 
@@ -96,7 +97,8 @@ void BoxCollider::SetPos(float3 p)
 {
 	if (body != nullptr)
 	{
-		body->localOffset = p;
+		body->SetPos(p.x,p.y,p.z);
+		//body->localOffset = p;
 	}
 }
 

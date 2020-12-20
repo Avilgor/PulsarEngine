@@ -13,7 +13,7 @@ SphereCollider::SphereCollider(GameObject* parent) : Component(parent, SPHERE_CO
 	App->physics->AddBody(this);
 	rad = 1;
 	draw = true;
-	shape = new SpherePrimitive();
+	//shape = new SpherePrimitive();
 }
 
 SphereCollider::SphereCollider(GameObject* parent, float r) : Component(parent, SPHERE_COLLIDER_COMP)
@@ -22,7 +22,7 @@ SphereCollider::SphereCollider(GameObject* parent, float r) : Component(parent, 
 	rad = r;
 	App->physics->AddBody(this);
 	draw = true;
-	shape = new SpherePrimitive(r);
+	//shape = new SpherePrimitive(r);
 }
 
 SphereCollider::~SphereCollider()
@@ -88,12 +88,13 @@ void SphereCollider::SetScale(float s)
 {
 	if (body != nullptr)
 	{
-		float3 temp;
+		body->SetScale(s, s, s);
+		/*float3 temp;
 		temp.x = s;
 		temp.y = s;
 		temp.z = s;
-		body->scaleOffset = temp;
-		shape->radius = s;
+		body->scaleOffset = temp;*/
+		//shape->radius = s;
 	}
 }
 
@@ -101,7 +102,8 @@ void SphereCollider::SetPos(float3 p)
 {
 	if (body != nullptr)
 	{
-		body->localOffset = p;
+		body->SetPos(p.x, p.y, p.z);
+		//body->localOffset = p;
 	}
 }
 

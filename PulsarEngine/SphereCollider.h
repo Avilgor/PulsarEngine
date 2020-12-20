@@ -31,7 +31,7 @@ public:
 	void SetPos(float3 pos);
 
 public:
-	SpherePrimitive* shape = nullptr; 
+	//SpherePrimitive* shape = nullptr; 
 	float rad;
 	PhysBody3D* body = nullptr;
 	bool draw;

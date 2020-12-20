@@ -30,6 +30,7 @@ float4x4 PhysBody3D::GetTransform()
 
 void PhysBody3D::UpdateTransform(float4x4 globalMat)
 {
+	App->physics->RemoveBody(body);
 	float3 position;
 	float3 scale;
 	Quat quat;
@@ -54,6 +55,7 @@ void PhysBody3D::UpdateTransform(float4x4 globalMat)
 	//body->getMotionState()->setWorldTransform(t);
 
 	transform = float4x4::FromTRS(position, quat, scale);
+	App->physics->AddBody(body);
 }
 
 void PhysBody3D::SetPos(float x, float y, float z)

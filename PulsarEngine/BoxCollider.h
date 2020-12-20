@@ -32,7 +32,7 @@ public:
 	bool IsStatic();
 	
 public:
-	CubePrimitive* shape = nullptr;
+	//CubePrimitive* shape = nullptr;
 	PhysBody3D* body = nullptr;
 	bool draw;
 	float mass;
