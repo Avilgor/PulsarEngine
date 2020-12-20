@@ -49,45 +49,45 @@ void CubePrimitive::Render(float4x4 transformMatrix)
 	glBegin(GL_QUADS);
 	// Top face
 	glColor3f(0.0f, 1.0f, 0.0f);  // Green
-	glVertex3f(1.0f, 1.0f, -1.0f);  // Top-right of top face
-	glVertex3f(-1.0f, 1.0f, -1.0f);  // Top-left of top face
-	glVertex3f(-1.0f, 1.0f, 1.0f);  // Bottom-left of top face
-	glVertex3f(1.0f, 1.0f, 1.0f);  // Bottom-right of top face
+	glVertex3f(size.x, size.y, -size.z);  // Top-right of top face
+	glVertex3f(-size.x, size.y, -size.z);  // Top-left of top face
+	glVertex3f(-size.x, size.y, size.z);  // Bottom-left of top face
+	glVertex3f(size.x, size.y, size.z);  // Bottom-right of top face
 
 	// Bottom face
 	glColor3f(0.0f, 1.0f, 0.0f);  // Green
-	glVertex3f(1.0f, -1.0f, -1.0f); // Top-right of bottom face
-	glVertex3f(-1.0f, -1.0f, -1.0f); // Top-left of bottom face
-	glVertex3f(-1.0f, -1.0f, 1.0f); // Bottom-left of bottom face
-	glVertex3f(1.0f, -1.0f, 1.0f); // Bottom-right of bottom face
+	glVertex3f(size.x, -size.y, -size.z); // Top-right of bottom face
+	glVertex3f(-size.x, -size.y, -size.z); // Top-left of bottom face
+	glVertex3f(-size.x, -size.y, size.z); // Bottom-left of bottom face
+	glVertex3f(size.x, -size.y, size.z); // Bottom-right of bottom face
 
 	// Front face
 	glColor3f(0.0f, 1.0f, 0.0f);  // Green
-	glVertex3f(1.0f, 1.0f, 1.0f);  // Top-Right of front face
-	glVertex3f(-1.0f, 1.0f, 1.0f);  // Top-left of front face
-	glVertex3f(-1.0f, -1.0f, 1.0f);  // Bottom-left of front face
-	glVertex3f(1.0f, -1.0f, 1.0f);  // Bottom-right of front face
+	glVertex3f(size.x, size.y, size.z);  // Top-Right of front face
+	glVertex3f(-size.x, size.y, size.z);  // Top-left of front face
+	glVertex3f(-size.x, -size.y, size.z);  // Bottom-left of front face
+	glVertex3f(size.x, -size.y, size.z);  // Bottom-right of front face
 
 	// Back face
 	glColor3f(0.0f, 1.0f, 0.0f);  // Green
-	glVertex3f(1.0f, -1.0f, -1.0f); // Bottom-Left of back face
-	glVertex3f(-1.0f, -1.0f, -1.0f); // Bottom-Right of back face
-	glVertex3f(-1.0f, 1.0f, -1.0f); // Top-Right of back face
-	glVertex3f(1.0f, 1.0f, -1.0f); // Top-Left of back face
+	glVertex3f(size.x, -size.y, -size.z); // Bottom-Left of back face
+	glVertex3f(-size.x, -size.y, -size.z); // Bottom-Right of back face
+	glVertex3f(-size.x, size.y, -size.z); // Top-Right of back face
+	glVertex3f(size.x, size.y, -size.z); // Top-Left of back face
 
 	// Left face
 	glColor3f(0.0f, 1.0f, 0.0f);  // Green
-	glVertex3f(-1.0f, 1.0f, 1.0f);  // Top-Right of left face
-	glVertex3f(-1.0f, 1.0f, -1.0f);  // Top-Left of left face
-	glVertex3f(-1.0f, -1.0f, -1.0f);  // Bottom-Left of left face
-	glVertex3f(-1.0f, -1.0f, 1.0f);  // Bottom-Right of left face
+	glVertex3f(-size.x, size.y, size.z);  // Top-Right of left face
+	glVertex3f(-size.x, size.y, -size.z);  // Top-Left of left face
+	glVertex3f(-size.x, -size.y, -size.z);  // Bottom-Left of left face
+	glVertex3f(-size.x, -size.y, size.z);  // Bottom-Right of left face
 
 	// Right face
 	glColor3f(0.0f, 1.0f, 0.0f);  // Green
-	glVertex3f(1.0f, 1.0f, 1.0f);  // Top-Right of left face
-	glVertex3f(1.0f, 1.0f, -1.0f);  // Top-Left of left face
-	glVertex3f(1.0f, -1.0f, -1.0f);  // Bottom-Left of left face
-	glVertex3f(1.0f, -1.0f, 1.0f);  // Bottom-Right of left face
+	glVertex3f(size.x, size.y, size.z);  // Top-Right of left face
+	glVertex3f(size.x, size.y, -size.z);  // Top-Left of left face
+	glVertex3f(size.x, -size.y, -size.z);  // Bottom-Left of left face
+	glVertex3f(size.x, -size.y, size.z);  // Bottom-Right of left face
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glEnd();

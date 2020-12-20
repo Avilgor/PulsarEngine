@@ -22,6 +22,7 @@ public:
 	void LoadComponent(JSonHandler* file);
 	void UpdateTransform();
 	float* GetTransform();
+	float4x4 GetTransformMat();
 	float3 GetSize();
 	float3 GetPosition();
 	bool IsStatic();

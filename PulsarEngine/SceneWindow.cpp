@@ -136,31 +136,41 @@ void SceneWindow::HandleClick()
 					int bufferSize = mesh->GetMesh()->indexSize;
 					uint* buffer = mesh->GetMesh()->indicesArray;
 					float* vertices = mesh->GetMesh()->verticesArray;
+					int numVertices = mesh->GetMesh()->verticesSize * 3;
 
-					for (uint v = 0; v < bufferSize; v += 3)
+					for (uint v = 0; v < bufferSize-3; v += 3)
 					{
 						uint indexA = buffer[v] * 3;
-						vec t1(&vertices[indexA]);
-
-						uint indexB = buffer[v + 1] * 3;
-						vec t2(&vertices[indexB]);
-
-						uint indexC = buffer[v + 2] * 3;
-						vec t3(&vertices[indexC]);
-
-						Triangle triangle(t1, t2, t3);
-
-						float distance;
-						float3 intersectionPoint;
-						if (temp.Intersects(triangle, &distance, &intersectionPoint))
+						if (indexA < numVertices)
 						{
-							if (distance < minDist)
+							vec t1(&vertices[indexA]);
+
+							uint indexB = buffer[v + 1] * 3;
+							if (indexB < numVertices)
 							{
-								//LOG("New distance %f", distance);
-								minDist = distance;
-								first = (*it);
+								vec t2(&vertices[indexB]);
+
+								uint indexC = buffer[v + 2] * 3;
+								if (indexC < numVertices)
+								{
+									vec t3(&vertices[indexC]);
+
+									Triangle triangle(t1, t2, t3);
+
+									float distance;
+									float3 intersectionPoint;
+									if (temp.Intersects(triangle, &distance, &intersectionPoint))
+									{
+										if (distance < minDist)
+										{
+											//LOG("New distance %f", distance);
+											minDist = distance;
+											first = (*it);
+										}
+										break;
+									}
+								}
 							}
-							break;
 						}
 					}
 				}

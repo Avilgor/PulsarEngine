@@ -1,3 +1,4 @@
+#include "Globals.h"
 #include "PhysBody3D.h"
 #include "Bullet/include/btBulletDynamicsCommon.h"
 #include "MathGeoLib/include/MathGeoLib.h"
@@ -85,9 +86,12 @@ float3 PhysBody3D::GetRotation()
 	btQuaternion rot = body->getWorldTransform().getRotation();
 	float3 temp;
 	temp.x = rot.getX();
+	//if (temp.x < 0.001) temp.x = 0;
 	temp.y = rot.getY();	
+	//if (temp.y < 0.001) temp.y = 0;
 	temp.z = rot.getZ();
-
+	//if (temp.z < 0.001) temp.z = 0;
+	//LOG("Rotations X:%f/Y:%f/Z:%f",temp.x,temp.y,temp.z);
 	return temp;
 }
 

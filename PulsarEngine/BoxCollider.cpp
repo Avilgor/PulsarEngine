@@ -10,7 +10,7 @@
 BoxCollider::BoxCollider(GameObject* parent) : Component(parent, BOX_COLLIDER_COMP)
 {
 	component->boxCollider = this;
-	App->physics->AddBody(this);
+	App->physics->AddBody(this,float3::one);
 	draw = true;
 	shape = new CubePrimitive();
 }
@@ -18,7 +18,7 @@ BoxCollider::BoxCollider(GameObject* parent) : Component(parent, BOX_COLLIDER_CO
 BoxCollider::BoxCollider(GameObject* parent, float3 s) : Component(parent, BOX_COLLIDER_COMP)
 {
 	component->boxCollider = this;
-	App->physics->AddBody(this);
+	App->physics->AddBody(this,s);
 	if(body != nullptr) body->scaleOffset = s;
 	draw = true;
 	shape = new CubePrimitive(s.x,s.y,s.z);
@@ -49,7 +49,7 @@ void BoxCollider::PhysicsUpdate()
 	if (body != nullptr && !body->isStatic)
 	{
 		gameobject->transform->SetPosition(body->GetPos());
-		gameobject->transform->SetEulerRotation(body->GetRotation());
+		//gameobject->transform->SetEulerRotation(body->GetRotation());
 	}
 }
 
@@ -104,6 +104,12 @@ float* BoxCollider::GetTransform()
 {
 	if (body != nullptr) return body->GetTransform().ptr();
 	else return gameobject->GetGlobalTransform().ptr();
+}
+
+float4x4 BoxCollider::GetTransformMat()
+{
+	if (body != nullptr) return body->GetTransform();
+	else return gameobject->GetGlobalTransform();
 }
 
 void BoxCollider::SaveComponent(JSonHandler* file)

@@ -23,6 +23,7 @@ public:
 	void LoadComponent(JSonHandler* file);
 	void UpdateTransform();
 	float* GetTransform();
+	float4x4 GetTransformMat();
 	void SetStatic(bool val);
 	void SetScale(float3 scale);
 	void SetPos(float3 pos);

@@ -30,7 +30,7 @@ public:
 	bool CleanUp();
 	void ResetBody();
 
-	PhysBody3D* AddBody(BoxCollider* box, float mass = 1.0f);
+	PhysBody3D* AddBody(BoxCollider* box, float3 size,float mass = 1.0f);
 	PhysBody3D* AddBody(SphereCollider* sphere, float mass = 1.0f);
 	//PhysVehicle3D* AddVehicle(const VehicleInfo& info);
 

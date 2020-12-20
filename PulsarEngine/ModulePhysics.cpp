@@ -70,10 +70,9 @@ update_status ModulePhysics::PreUpdate(float dt)
 {
 	if (debug || App->scene->GetSceneState() == SCENE_RUNNING)
 	{
-		world->stepSimulation(dt, 10);
+		world->stepSimulation(dt, 15);
 		
 		int numManifolds = world->getDispatcher()->getNumManifolds();
-
 		for (int i = 0; i < numManifolds; i++)
 		{
 			btPersistentManifold* contactManifold = world->getDispatcher()->getManifoldByIndexInternal(i);
@@ -230,7 +229,7 @@ void ModulePhysics::RemoveCollider(std::string uuid)
 
 PhysBody3D* ModulePhysics::AddBody(SphereCollider* sphere, float mass)
 {
-	btSphereShape* shape = new btSphereShape(btScalar(sphere->rad));
+	btCollisionShape* shape = new btSphereShape(btScalar(sphere->rad));
 	shapes.emplace(sphere->UUID, shape);
 
 	btTransform startTransform;
@@ -256,32 +255,30 @@ PhysBody3D* ModulePhysics::AddBody(SphereCollider* sphere, float mass)
 }
 
 
-PhysBody3D* ModulePhysics::AddBody(BoxCollider* cube, float mass)
+PhysBody3D* ModulePhysics::AddBody(BoxCollider* cube, float3 size,float mass)
 {
-	btBoxShape* shape = new btBoxShape(btVector3(1 * 0.5f, 1 * 0.5f, 1 * 0.5f));
+	btCollisionShape* shape = new btBoxShape(btVector3(size.x * 0.5f, size.y * 0.5f, size.z * 0.5f));
 	shapes.emplace(cube->UUID, shape);
-	//LOG("Box shape emplace");
+
 	btTransform startTransform;
 	startTransform.setFromOpenGLMatrix(cube->GetTransform());
-	//LOG("Starter transform set");
+
 	btVector3 localInertia(0, 0, 0);
 	if (mass != 0.f) shape->calculateLocalInertia(mass, localInertia);
 
 	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 	motions.emplace(cube->UUID,myMotionState);
-	//LOG("Motion shape saved");
+
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, shape, localInertia);
 
 	btRigidBody* body = new btRigidBody(rbInfo);
-	//LOG("Rigidbody done");
 	PhysBody3D* pbody = new PhysBody3D(body);
-	//LOG("Physbody created");
+
 
 	body->setUserPointer(pbody);
 	world->addRigidBody(body);
-	//LOG("Rigidbody added to world");
 	bodies.emplace(cube->UUID,pbody);
-	//LOG("Physbody saved");
+
 	cube->body = pbody;
 	colliderComponents.emplace(cube->UUID,cube->component);
 

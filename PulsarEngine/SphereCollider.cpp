@@ -50,7 +50,7 @@ void SphereCollider::PhysicsUpdate()
 	if (body != nullptr &&  !body->isStatic)
 	{
 		gameobject->transform->SetPosition(body->GetPos());
-		gameobject->transform->SetEulerRotation(body->GetRotation());
+		//gameobject->transform->SetEulerRotation(body->GetRotation());
 	}
 }
 
@@ -109,6 +109,12 @@ float* SphereCollider::GetTransform()
 {
 	if (body != nullptr) return body->GetTransform().ptr();
 	else return gameobject->GetGlobalTransform().ptr();
+}
+
+float4x4 SphereCollider::GetTransformMat()
+{
+	if (body != nullptr) return body->GetTransform();
+	else return gameobject->GetGlobalTransform();
 }
 
 void SphereCollider::SaveComponent(JSonHandler* file)
