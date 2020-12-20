@@ -111,14 +111,16 @@ void PhysBody3D::SetStatic(bool val)
 	isStatic = val;
 	if (val)
 	{
-		body->setFlags(1);
+		body->setFlags(body->getFlags() | 1);
+		//body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CO_COLLISION_OBJECT);
 		btVector3 zeroVector(0, 0, 0);
 		body->setLinearVelocity(zeroVector);
 		body->setAngularVelocity(zeroVector);
 	}
 	else
 	{
-		body->setFlags(2);
+		body->setFlags(body->getFlags() | 2);
+		//body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CO_RIGID_BODY);
 		btVector3 zeroVector(0, 0, 0);
 		body->setLinearVelocity(zeroVector);
 		body->setAngularVelocity(zeroVector);

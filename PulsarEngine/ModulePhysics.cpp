@@ -53,10 +53,10 @@ bool ModulePhysics::Start()
 	world = new btDiscreteDynamicsWorld(dispatcher, broad_phase, solver, collision_conf);
 	world->setDebugDrawer(debug_draw);
 	world->setGravity(GRAVITY);
-	vehicle_raycaster = new btDefaultVehicleRaycaster(world);
+	//vehicle_raycaster = new btDefaultVehicleRaycaster(world);
 
 	// Big plane as ground
-	/*{
+	{
 		btCollisionShape* colShape = new btStaticPlaneShape(btVector3(0, 1, 0), 0);
 
 		btDefaultMotionState* myMotionState = new btDefaultMotionState();
@@ -64,7 +64,7 @@ bool ModulePhysics::Start()
 
 		btRigidBody* body = new btRigidBody(rbInfo);
 		world->addRigidBody(body);
-	}*/
+	}
 
 	return ret;
 }
@@ -170,11 +170,12 @@ bool ModulePhysics::CleanUp()
 	{
 		world->removeRigidBody((*it).second->body);
 	}
-	/*for (int i = world->getNumCollisionObjects() - 1; i >= 0; i--)
+
+	for (int i = world->getNumCollisionObjects() - 1; i >= 0; i--)
 	{
 		btCollisionObject* obj = world->getCollisionObjectArray()[i];
 		world->removeCollisionObject(obj);
-	}*/
+	}
 
 	for (std::map<std::string, btTypedConstraint*>::iterator it = constraints.begin(); it != constraints.end(); ++it)
 	{
@@ -271,6 +272,7 @@ PhysBody3D* ModulePhysics::AddBody(SphereCollider* sphere, float mass)
 	btRigidBody* body = new btRigidBody(rbInfo);
 	PhysBody3D* pbody = new PhysBody3D(body);
 
+	//body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CO_RIGID_BODY);
 	body->setUserPointer(pbody);
 	world->addRigidBody(body);
 	bodies.emplace(sphere->UUID, pbody);
@@ -299,13 +301,14 @@ PhysBody3D* ModulePhysics::AddBody(BoxCollider* cube, float3 size,float mass)
 	btRigidBody* body = new btRigidBody(rbInfo);
 	PhysBody3D* pbody = new PhysBody3D(body);
 
-
+	//body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CO_RIGID_BODY);
 	body->setUserPointer(pbody);
 	world->addRigidBody(body);
 	bodies.emplace(cube->UUID,pbody);
 
 	cube->body = pbody;
 	colliderComponents.emplace(cube->UUID,cube->component);
+	
 
 	return pbody;
 }

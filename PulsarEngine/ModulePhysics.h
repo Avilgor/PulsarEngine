@@ -32,8 +32,8 @@ public:
 	bool CleanUp();
 	//void ResetBody();
 
-	PhysBody3D* AddBody(BoxCollider* box, float3 size,float mass = 1.0f);
-	PhysBody3D* AddBody(SphereCollider* sphere, float mass = 1.0f);
+	PhysBody3D* AddBody(BoxCollider* box, float3 size,float mass = 10.0f);
+	PhysBody3D* AddBody(SphereCollider* sphere, float mass = 10.0f);
 	//PhysVehicle3D* AddVehicle(const VehicleInfo& info);
 
 	void AddConstraintP2P(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB, std::string id);
