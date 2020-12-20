@@ -84,9 +84,10 @@ float3 PhysBody3D::GetRotation()
 {
 	btQuaternion rot = body->getWorldTransform().getRotation();
 	float3 temp;
-	temp.x = rot.x();
-	temp.y = rot.y();
-	temp.z = rot.z();
+	temp.x = rot.getX();
+	temp.y = rot.getY();	
+	temp.z = rot.getZ();
+
 	return temp;
 }
 

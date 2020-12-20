@@ -53,4 +53,12 @@ public:
 	void Render(float4x4 transformMatrix);
 public:
 	float radius;
+
+private:
+	std::vector<GLfloat> vertices;
+	std::vector<GLfloat> normals;
+	std::vector<GLfloat> texcoords;
+	std::vector<GLushort> indices;
+	int rings = 10;
+	int sectors = 10;
 };
