@@ -35,6 +35,7 @@ public:
 	float rad;
 	PhysBody3D* body = nullptr;
 	bool draw;
+	float mass;
 };
 
 #endif //__SphereCollider_H__

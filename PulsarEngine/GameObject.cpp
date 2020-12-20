@@ -495,13 +495,13 @@ Component* GameObject::AddComponent(ComponentTypes type)
 		boxColl = new BoxCollider(this);
 		Components.push_back(boxColl->component);
 		//LOG("Added component box collider");
-		return  boxColl->component;		
+		return boxColl->component;		
 		break;
 	case SPHERE_COLLIDER_COMP:
 		sphereColl = new SphereCollider(this);
 		Components.push_back(sphereColl->component);
 		//LOG("Added component sphere collider");
-		return  sphereColl->component;	
+		return sphereColl->component;	
 		break;
 	default:
 		return comp;
@@ -569,7 +569,7 @@ void GameObject::DeleteGOComponent(std::string uuid)
 		std::vector<Component*> temp;
 		for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); it++)
 		{
-			if ((*it)->UUID == uuid) (*it)->DeleteComponent();
+			if ((*it)->UUID == uuid)(*it)->DeleteComponent();		
 			else temp.push_back((*it));
 		}
 		Components.clear();

@@ -28,14 +28,14 @@ update_status InspectorWindow::Draw()
 	ImGui::Begin(name.c_str(), &active);
 	if (!App->editor->selectedGameObjects.empty())
 	{
-		GameObject* go = App->editor->selectedGameObjects[0];
-		GameObjectSection(go);
-		if (go->transform != nullptr) TransformSection(go);
-		if (go->GetFirstComponentType(MESH_COMP)) MeshSection(go);
-		if (go->GetFirstComponentType(MATERIAL_COMP)) MaterialSection(go);
-		if (go->camera != nullptr) CameraSection(go);
+		currentGo = App->editor->selectedGameObjects[0];
+		GameObjectSection(currentGo);
+		if (currentGo->transform != nullptr) TransformSection(currentGo);
+		if (currentGo->GetFirstComponentType(MESH_COMP)) MeshSection(currentGo);
+		if (currentGo->GetFirstComponentType(MATERIAL_COMP)) MaterialSection(currentGo);
+		if (currentGo->camera != nullptr) CameraSection(currentGo);
 		std::vector<Component*> temp;
-		temp = go->GetAllComponentsByType(BOX_COLLIDER_COMP);
+		temp = currentGo->GetAllComponentsByType(BOX_COLLIDER_COMP);
 		if (temp.size() > 0)
 		{
 			for (int i = 0; i < temp.size(); i++)
@@ -43,7 +43,7 @@ update_status InspectorWindow::Draw()
 				BoxColliderSection(temp[i]->AsBoxCollider(),i);
 			}
 		}
-		temp = go->GetAllComponentsByType(SPHERE_COLLIDER_COMP);
+		temp = currentGo->GetAllComponentsByType(SPHERE_COLLIDER_COMP);
 		if (temp.size() > 0)
 		{
 			for (int i = 0; i < temp.size(); i++)
@@ -55,25 +55,25 @@ update_status InspectorWindow::Draw()
 		ImVec2 winSize = ImGui::GetContentRegionAvail();
 		ImGui::Spacing();
 		ImGui::Separator();
-		if (ImGui::Button("Add component")) ImGui::OpenPopup(go->name.c_str());
+		if (ImGui::Button("Add component")) ImGui::OpenPopup(currentGo->name.c_str());
 
-		if (ImGui::BeginPopup(go->name.c_str()))
+		if (ImGui::BeginPopup(currentGo->name.c_str()))
 		{
 			if (ImGui::Button("Mesh"))
 			{
-				go->AddComponent(MESH_COMP);
+				currentGo->AddComponent(MESH_COMP);
 				ImGui::CloseCurrentPopup();
 			}
 
 			if (ImGui::Button("Material"))
 			{
-				go->AddComponent(MATERIAL_COMP);
+				currentGo->AddComponent(MATERIAL_COMP);
 				ImGui::CloseCurrentPopup();
 			}
 
 			if (ImGui::Button("Camera"))
 			{
-				go->AddComponent(CAMERA_COMP);
+				currentGo->AddComponent(CAMERA_COMP);
 				ImGui::CloseCurrentPopup();
 			}
 
@@ -85,13 +85,13 @@ update_status InspectorWindow::Draw()
 
 			if (ImGui::Button("BoxCollider"))
 			{
-				go->AddComponent(BOX_COLLIDER_COMP);
+				currentGo->AddComponent(BOX_COLLIDER_COMP);
 				ImGui::CloseCurrentPopup();
 			}
 
 			if (ImGui::Button("SphereCollider"))
 			{
-				go->AddComponent(SPHERE_COLLIDER_COMP);
+				currentGo->AddComponent(SPHERE_COLLIDER_COMP);
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
@@ -306,6 +306,8 @@ void InspectorWindow::BoxColliderSection(BoxCollider* coll,int index)
 		tagScaley.append(std::to_string(index));
 		std::string tagScalez = "##boxcollSizeZ";
 		tagScalez.append(std::to_string(index));
+		std::string tagBtn = "Delete Component##boxColl";
+		tagBtn.append(std::to_string(index));
 
 		bool collSt = coll->IsStatic();
 		ImGui::Text("Static: ");
@@ -335,15 +337,19 @@ void InspectorWindow::BoxColliderSection(BoxCollider* coll,int index)
 		if (ImGui::InputFloat(tagScalex.c_str(), &scale.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;		
 		ImGui::Text("Size y:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagScalez.c_str(), &scale.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;
+		if (ImGui::InputFloat(tagScalez.c_str(), &scale.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;
 		ImGui::Text("Size z:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagScaley.c_str(), &scale.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;
+		if (ImGui::InputFloat(tagScaley.c_str(), &scale.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;
 
 		if (changePos) coll->SetPos(pos);
 		if (changeScale) coll->SetScale(scale);
 
-		if (ImGui::Button("Delete component")) coll->gameobject->DeleteGOComponent(coll->UUID);
+		if (ImGui::Button(tagBtn.c_str()))
+		{
+			LOG("Delete box collider btn");
+			currentGo->DeleteGOComponent(coll->UUID);
+		}
 	}
 }
 
@@ -363,6 +369,8 @@ void InspectorWindow::SphereColliderSection(SphereCollider* coll, int index)
 		tagPosz.append(std::to_string(index));
 		std::string tagRad = "##spherecollRadius";
 		tagRad.append(std::to_string(index));
+		std::string tagBtn = "Delete Component##boxColl";
+		tagBtn.append(std::to_string(index));
 
 
 		bool collSt = coll->IsStatic();
@@ -393,6 +401,10 @@ void InspectorWindow::SphereColliderSection(SphereCollider* coll, int index)
 
 		if (changePos) coll->SetPos(pos);
 
-		if (ImGui::Button("Delete component")) coll->gameobject->DeleteGOComponent(coll->UUID);
+		if (ImGui::Button(tagBtn.c_str()))
+		{
+			LOG("Delete sphere collider btn");
+			currentGo->DeleteGOComponent(coll->UUID);
+		}
 	}
 }

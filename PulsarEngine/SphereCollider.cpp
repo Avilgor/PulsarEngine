@@ -41,7 +41,7 @@ void SphereCollider::UpdateComponent()
 	UpdateTransform();
 	if (draw && gameobject->selected)
 	{
-		if (shape != nullptr) shape->Render(body->GetTransform().Transposed());
+		if (body != nullptr) App->physics->DebugDrawBody(body->body);
 	}
 }
 

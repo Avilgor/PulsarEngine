@@ -98,6 +98,9 @@ update_status ConfigWindow::Draw()
         }      
     }
 
+    bool debugPhys = App->physics->debug;
+    if (ImGui::Checkbox("Physics Debug", &debugPhys)) App->physics->ToggleDebug(debugPhys);
+
     ImGui::End();
 
     width = App->window->width;

@@ -2,21 +2,22 @@
 #include "Application.h"
 #include "ModulePhysics.h"
 #include "PhysBody3D.h"
+#include "Primitive.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 #include "Bullet/include/btBulletDynamicsCommon.h"
 #include "Bullet/include/btBulletCollisionCommon.h"
 
 #include <vector>
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 #pragma comment (lib, "Bullet/libx86/BulletDynamics_debug.lib")
 #pragma comment (lib, "Bullet/libx86/BulletCollision_debug.lib")
 #pragma comment (lib, "Bullet/libx86/LinearMath_debug.lib")
-#else
+/*#else
 #pragma comment (lib, "Bullet/libx86/BulletDynamics.lib")
 #pragma comment (lib, "Bullet/libx86/BulletCollision.lib")
 #pragma comment (lib, "Bullet/libx86/LinearMath.lib")
-#endif
+#endif*/
 
 ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app, "Physics", start_enabled)
 {
@@ -26,10 +27,12 @@ ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app,
 	dispatcher = new btCollisionDispatcher(collision_conf);
 	broad_phase = new btDbvtBroadphase();
 	solver = new btSequentialImpulseConstraintSolver();
+	debug_draw = new DebugDrawer();
 }
 
 ModulePhysics::~ModulePhysics()
 {
+	delete debug_draw;
 	delete solver;
 	delete broad_phase;
 	delete dispatcher;
@@ -48,7 +51,7 @@ bool ModulePhysics::Start()
 	bool ret = true;
 
 	world = new btDiscreteDynamicsWorld(dispatcher, broad_phase, solver, collision_conf);
-	//world->setDebugDrawer(debug_draw);
+	world->setDebugDrawer(debug_draw);
 	world->setGravity(GRAVITY);
 	vehicle_raycaster = new btDefaultVehicleRaycaster(world);
 
@@ -114,9 +117,9 @@ update_status ModulePhysics::PreUpdate(float dt)
 
 update_status ModulePhysics::Update(float dt)
 {
-	if (App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
+	/*if (App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 	{
-		debug = !debug;
+		debug = !debug;	
 		if (debug)
 		{
 			LOG("Physics debug ON");
@@ -125,14 +128,32 @@ update_status ModulePhysics::Update(float dt)
 		{
 			LOG("Physics debug OFF");
 		}
-	}
+	}*/
 
 	/*if (debug == true)
 	{
-		world->debugDrawWorld();
+		world->debugDrawWorld();		
 		//LOG("Collision objects: %d", world->getNumCollisionObjects());
 	}*/
 	return UPDATE_CONTINUE;
+}
+
+void ModulePhysics::ToggleDebug(bool val)
+{
+	debug = val;
+	if (debug)
+	{
+		LOG("Physics debug ON");
+	}
+	else
+	{
+		LOG("Physics debug OFF");
+	}
+}
+
+void ModulePhysics::DebugDrawBody(btRigidBody* body)
+{
+	world->debugDrawObject(body->getWorldTransform(),body->getCollisionShape(),btVector3(0.0f,1.0f,0.0f));
 }
 
 update_status ModulePhysics::PostUpdate(float dt)
@@ -195,6 +216,11 @@ void ModulePhysics::RemoveBody(btRigidBody* body)
 	world->removeRigidBody(body);
 }
 
+void ModulePhysics::AddBody(btRigidBody* body)
+{
+	world->addRigidBody(body);
+}
+
 void ModulePhysics::RemoveCollider(std::string uuid)
 {
 	if (bodies.find(uuid) != bodies.end())
@@ -229,11 +255,11 @@ void ModulePhysics::RemoveCollider(std::string uuid)
 
 PhysBody3D* ModulePhysics::AddBody(SphereCollider* sphere, float mass)
 {
-	btCollisionShape* shape = new btSphereShape(btScalar(sphere->rad));
+	btCollisionShape* shape = new btSphereShape(btScalar(1.0f));
 	shapes.emplace(sphere->UUID, shape);
 
 	btTransform startTransform;
-	startTransform.setFromOpenGLMatrix(sphere->GetTransform());
+	startTransform.setFromOpenGLMatrix(sphere->GetTransformMat().Transposed().ptr());
 
 	btVector3 localInertia(0, 0, 0);
 	if (mass != 0.f) shape->calculateLocalInertia(mass, localInertia);
@@ -254,14 +280,13 @@ PhysBody3D* ModulePhysics::AddBody(SphereCollider* sphere, float mass)
 	return pbody;
 }
 
-
 PhysBody3D* ModulePhysics::AddBody(BoxCollider* cube, float3 size,float mass)
 {
 	btCollisionShape* shape = new btBoxShape(btVector3(size.x * 0.5f, size.y * 0.5f, size.z * 0.5f));
 	shapes.emplace(cube->UUID, shape);
 
 	btTransform startTransform;
-	startTransform.setFromOpenGLMatrix(cube->GetTransform());
+	startTransform.setFromOpenGLMatrix(cube->GetTransformMat().Transposed().ptr());
 
 	btVector3 localInertia(0, 0, 0);
 	if (mass != 0.f) shape->calculateLocalInertia(mass, localInertia);
@@ -284,7 +309,6 @@ PhysBody3D* ModulePhysics::AddBody(BoxCollider* cube, float3 size,float mass)
 
 	return pbody;
 }
-
 
 // ---------------------------------------------------------
 /*PhysVehicle3D* ModulePhysics::AddVehicle(const VehicleInfo& info)
@@ -375,4 +399,41 @@ void ModulePhysics::AddConstraintHinge(PhysBody3D& bodyA, PhysBody3D& bodyB, con
 	world->addConstraint(hinge, disable_collision);
 	constraints.emplace(id,hinge);
 	hinge->setDbgDrawSize(2.0f);
+}
+
+
+// =============================================
+void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
+{
+	line.origin.Set(from.getX(), from.getY(), from.getZ());
+	line.destination.Set(to.getX(), to.getY(), to.getZ());
+	line.color.Set(color.getX(), color.getY(), color.getZ());
+	line.Render();
+}
+
+void DebugDrawer::drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color)
+{
+	point.transform.translate(PointOnB.getX(), PointOnB.getY(), PointOnB.getZ());
+	point.color.Set(color.getX(), color.getY(), color.getZ());
+	point.Render();
+}
+
+void DebugDrawer::reportErrorWarning(const char* warningString)
+{
+	LOG("Bullet warning: %s", warningString);
+}
+
+void DebugDrawer::draw3dText(const btVector3& location, const char* textString)
+{
+	LOG("Bullet draw text: %s", textString);
+}
+
+void DebugDrawer::setDebugMode(int debugMode)
+{
+	mode = (DebugDrawModes)debugMode;
+}
+
+int	 DebugDrawer::getDebugMode() const
+{
+	return mode;
 }

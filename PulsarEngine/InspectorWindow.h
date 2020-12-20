@@ -29,6 +29,7 @@ public:
 
 private:
 	ImGuiInputTextFlags name_input_flags = ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue;
+	GameObject* currentGo = nullptr;
 };
 
 #endif //__InspectorWindow_H__

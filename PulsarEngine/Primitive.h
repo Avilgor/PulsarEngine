@@ -8,19 +8,22 @@
 enum PrimitiveTypes
 {
 	Primitive_Cube,
-	Primitive_Sphere
+	Primitive_Sphere,
+	Primitive_Point,
+	Primitive_Line
 };
 
 class Primitive
 {
 public:
 
-	Primitive(PrimitiveTypes t);
+	Primitive();
 
-	virtual void Render(float4x4 transformMatrix) {}
-	/*void SetPos(float3 position);
-	void SetRotation(float3 euler);
-	void SetScale(float3 scale);*/
+	virtual void Render();
+	virtual void InnerRender();
+	void SetPos(float x, float y, float z);
+	void SetRotation(float angle, const vec3& u);
+	void Scale(float x, float y, float z);
 	PrimitiveTypes GetType();
 
 public:
@@ -28,6 +31,7 @@ public:
 	Color color;
 	bool axis,wire;
 	PhysBody3D* body;
+	mat4x4 transform;
 
 protected:
 	PrimitiveTypes type;
@@ -39,7 +43,7 @@ class CubePrimitive : public Primitive
 public:
 	CubePrimitive();
 	CubePrimitive(float sizeX, float sizeY, float sizeZ);
-	void Render(float4x4 transformMatrix);
+	void InnerRender(/*float4x4 transformMatrix*/);
 public:
 	float3 size;
 };
@@ -50,7 +54,7 @@ class SpherePrimitive : public Primitive
 public:
 	SpherePrimitive();
 	SpherePrimitive(float radius);
-	void Render(float4x4 transformMatrix);
+	void InnerRender(/*float4x4 transformMatrix*/);
 public:
 	float radius;
 
@@ -61,4 +65,16 @@ private:
 	std::vector<GLushort> indices;
 	int rings = 10;
 	int sectors = 10;
+};
+
+// ============================================
+class LinePrimitive : public Primitive
+{
+public:
+	LinePrimitive();
+	LinePrimitive(float x, float y, float z);
+	void InnerRender();
+public:
+	vec3 origin;
+	vec3 destination;
 };

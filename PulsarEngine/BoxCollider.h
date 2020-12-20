@@ -35,6 +35,7 @@ public:
 	CubePrimitive* shape = nullptr;
 	PhysBody3D* body = nullptr;
 	bool draw;
+	float mass;
 };
 
 #endif //__BoxCollider_H__

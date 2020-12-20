@@ -4,6 +4,7 @@
 #include "Module.h"
 #include "BoxCollider.h"
 #include "SphereCollider.h"
+#include "Primitive.h"
 #include "Bullet/include/btBulletDynamicsCommon.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
@@ -12,6 +13,7 @@
 
 #define GRAVITY btVector3(0.0f, -9.81f, 0.0f) 
 
+class DebugDrawer;
 class PhysBody3D;
 //struct PhysVehicle3D;
 //struct VehicleInfo;
@@ -28,7 +30,7 @@ public:
 	update_status Update(float dt);
 	update_status PostUpdate(float dt);
 	bool CleanUp();
-	void ResetBody();
+	//void ResetBody();
 
 	PhysBody3D* AddBody(BoxCollider* box, float3 size,float mass = 1.0f);
 	PhysBody3D* AddBody(SphereCollider* sphere, float mass = 1.0f);
@@ -40,10 +42,15 @@ public:
 	void RemoveCollider(std::string uuid);
 	void RemoveConstraint(btTypedConstraint* constraint);
 	void RemoveBody(btRigidBody* body);
+	void AddBody(btRigidBody* body);
+
+	void DebugDrawBody(btRigidBody* body);
+	void ToggleDebug(bool val);
+
+public:
+	bool debug;
 
 private:
-
-	bool debug;
 
 	btDefaultCollisionConfiguration* collision_conf;
 	btCollisionDispatcher* dispatcher;
@@ -51,12 +58,31 @@ private:
 	btSequentialImpulseConstraintSolver* solver;
 	btDiscreteDynamicsWorld* world;
 	btDefaultVehicleRaycaster* vehicle_raycaster;
+	DebugDrawer* debug_draw;
 
 	std::map<std::string,btCollisionShape*> shapes;
 	std::map<std::string,PhysBody3D*> bodies;
 	std::map<std::string,btDefaultMotionState*> motions;
 	std::map<std::string,btTypedConstraint*> constraints;
 	std::map<std::string, Component*> colliderComponents;
+};
+
+class DebugDrawer : public btIDebugDraw
+{
+public:
+	DebugDrawer() : line(0, 0, 0) 
+	{}
+
+	void drawLine(const btVector3& from, const btVector3& to, const btVector3& color);
+	void drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color);
+	void reportErrorWarning(const char* warningString);
+	void draw3dText(const btVector3& location, const char* textString);
+	void setDebugMode(int debugMode);
+	int	 getDebugMode() const;
+
+	DebugDrawModes mode;
+	LinePrimitive line;
+	Primitive point;
 };
 
 #endif //__ModulePhysic_H__

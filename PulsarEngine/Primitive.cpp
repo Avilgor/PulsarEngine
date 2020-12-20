@@ -7,7 +7,7 @@
 #include "SDL/include/SDL_opengl.h"
 
 
-Primitive::Primitive(PrimitiveTypes t) : color(White), wire(false), axis(false), type(t)
+Primitive::Primitive() : color(White), wire(false), axis(false), type(Primitive_Point)
 {
 }
 
@@ -16,37 +16,99 @@ PrimitiveTypes Primitive::GetType()
 	return type;
 }
 
+void Primitive::Render()
+{
+	glPushMatrix();
+	glMultMatrixf(transform.M);
 
-/*void Primitive::SetPos(float3 pos)
+	/*if (axis == true)
+	{
+		// Draw Axis Grid
+		glLineWidth(2.0f);
+
+		glBegin(GL_LINES);
+
+		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+
+		glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(1.0f, 0.0f, 0.0f);
+		glVertex3f(1.0f, 0.1f, 0.0f); glVertex3f(1.1f, -0.1f, 0.0f);
+		glVertex3f(1.1f, 0.1f, 0.0f); glVertex3f(1.0f, -0.1f, 0.0f);
+
+		glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+
+		glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 1.0f, 0.0f);
+		glVertex3f(-0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
+		glVertex3f(0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
+		glVertex3f(0.0f, 1.15f, 0.0f); glVertex3f(0.0f, 1.05f, 0.0f);
+
+		glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+
+		glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 0.0f, 1.0f);
+		glVertex3f(-0.05f, 0.1f, 1.05f); glVertex3f(0.05f, 0.1f, 1.05f);
+		glVertex3f(0.05f, 0.1f, 1.05f); glVertex3f(-0.05f, -0.1f, 1.05f);
+		glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
+
+		glEnd();
+
+		glLineWidth(1.0f);
+	}*/
+
+	glColor3f(color.r, color.g, color.b);
+
+	if (wire)
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	else
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	InnerRender();
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glPopMatrix();
+}
+
+void Primitive::InnerRender()
+{
+	glPointSize(5.0f);
+
+	glBegin(GL_POINTS);
+
+	glVertex3f(0.0f, 0.0f, 0.0f);
+
+	glEnd();
+
+	glPointSize(1.0f);
+}
+
+
+void Primitive::SetPos(float x, float y, float z)
 {
 	transform.translate(x, y, z);
 }
 
-void Primitive::SetRotation(float3 rot)
+void Primitive::SetRotation(float angle, const vec3& u)
 {
-
+	transform.rotate(angle, u);
 }
 
-void Primitive::SetScale(float3 scale)
+void Primitive::Scale(float x, float y, float z)
 {
 	transform.scale(x, y, z);
-}*/
+}
 
 // CUBE ============================================
-CubePrimitive::CubePrimitive() : Primitive(Primitive_Cube), size(1.0f, 1.0f, 1.0f)
-{}
+CubePrimitive::CubePrimitive() : Primitive(), size(1.0f, 1.0f, 1.0f)
+{
+	type = PrimitiveTypes::Primitive_Sphere;
+}
 
-CubePrimitive::CubePrimitive(float sizeX, float sizeY, float sizeZ) : Primitive(Primitive_Cube), size(sizeX, sizeY, sizeZ)
+CubePrimitive::CubePrimitive(float sizeX, float sizeY, float sizeZ) : Primitive(), size(sizeX, sizeY, sizeZ)
 {
 	type = PrimitiveTypes::Primitive_Cube;
 }
 
-void CubePrimitive::Render(float4x4 transformMatrix)
+void CubePrimitive::InnerRender()
 {	
 	// Render a cube
-	glPushMatrix();
-	glMultMatrixf((float*)&transformMatrix);
-	glBegin(GL_QUADS);
+	/*glBegin(GL_QUADS);
 	// Top face
 	glColor3f(0.0f, 1.0f, 0.0f);  // Green
 	glVertex3f(size.x, size.y, -size.z);  // Top-right of top face
@@ -89,16 +151,14 @@ void CubePrimitive::Render(float4x4 transformMatrix)
 	glVertex3f(size.x, -size.y, -size.z);  // Bottom-Left of left face
 	glVertex3f(size.x, -size.y, size.z);  // Bottom-Right of left face
 
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glEnd();
-	glPopMatrix();
+	glEnd();*/
 }
 
 // SPHERE ============================================
-SpherePrimitive::SpherePrimitive() : Primitive(Primitive_Sphere), radius(1.0f)
+SpherePrimitive::SpherePrimitive() : Primitive(), radius(1.0f)
 {
 	type = PrimitiveTypes::Primitive_Sphere;
-	float const R = 1. / (float)(rings - 1);
+	/*float const R = 1. / (float)(rings - 1);
 	float const S = 1. / (float)(sectors - 1);
 	int r, s;
 
@@ -134,14 +194,14 @@ SpherePrimitive::SpherePrimitive() : Primitive(Primitive_Sphere), radius(1.0f)
 		*i++ = r * sectors + (s + 1);
 		*i++ = (r + 1) * sectors + (s + 1);
 		*i++ = (r + 1) * sectors + s;
-	}
+	}*/
 }
 
-SpherePrimitive::SpherePrimitive(float radius) : Primitive(Primitive_Sphere), radius(radius)
+SpherePrimitive::SpherePrimitive(float radius) : Primitive(), radius(radius)
 {
 	type = PrimitiveTypes::Primitive_Sphere;
 
-	float const R = 1. / (float)(rings - 1);
+	/*float const R = 1. / (float)(rings - 1);
 	float const S = 1. / (float)(sectors - 1);
 	int r, s;
 
@@ -177,15 +237,12 @@ SpherePrimitive::SpherePrimitive(float radius) : Primitive(Primitive_Sphere), ra
 		*i++ = r * sectors + (s + 1);
 		*i++ = (r + 1) * sectors + (s + 1);
 		*i++ = (r + 1) * sectors + s;
-	}
+	}*/
 }
 
-void SpherePrimitive::Render(float4x4 transformMatrix)
+void SpherePrimitive::InnerRender()
 {
-	glPushMatrix();
-	glMultMatrixf((float*)&transformMatrix);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
+	/*glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
@@ -194,8 +251,30 @@ void SpherePrimitive::Render(float4x4 transformMatrix)
 	glNormalPointer(GL_FLOAT, 0, &normals[0]);
 	glTexCoordPointer(2, GL_FLOAT, 0, &texcoords[0]);
 	glDrawElements(GL_QUADS, indices.size(), GL_UNSIGNED_SHORT, &indices[0]);
-	glColor3f(1.0f, 1.0f, 1.0f);
+
+	glEnd();*/
+}
+
+// LINE ==================================================
+LinePrimitive::LinePrimitive() : Primitive(), origin(0, 0, 0), destination(1, 1, 1)
+{
+	type = PrimitiveTypes::Primitive_Line;
+}
+
+LinePrimitive::LinePrimitive(float x, float y, float z) : Primitive(), origin(0, 0, 0), destination(x, y, z)
+{
+	type = PrimitiveTypes::Primitive_Line;
+}
+
+void LinePrimitive::InnerRender()
+{
+	glLineWidth(2.0f);
+
+	glBegin(GL_LINES);
+
+	glVertex3f(origin.x, origin.y, origin.z);
+	glVertex3f(destination.x, destination.y, destination.z);
 
 	glEnd();
-	glPopMatrix();
+	glLineWidth(1.0f);
 }

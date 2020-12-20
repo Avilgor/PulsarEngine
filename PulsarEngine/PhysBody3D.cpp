@@ -1,5 +1,6 @@
 #include "Globals.h"
 #include "PhysBody3D.h"
+#include "Application.h"
 #include "Bullet/include/btBulletDynamicsCommon.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
@@ -8,6 +9,7 @@ PhysBody3D::PhysBody3D(btRigidBody* body) : body(body)
 	localOffset = float3::zero;
 	scaleOffset = float3::one;
 	transform = float4x4::zero;
+	isStatic = false;
 }
 
 PhysBody3D::~PhysBody3D()
@@ -38,8 +40,13 @@ void PhysBody3D::UpdateTransform(float4x4 globalMat)
 	btTransform t = body->getWorldTransform();
 	t.setOrigin(btVector3(position.x, position.y, position.z));	
 	body->getCollisionShape()->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
-	float3 euler = quat.ToEulerZYX();
-	t.setRotation(btQuaternion(euler.z, euler.y, euler.x));
+
+	btQuaternion quatB;
+	quatB.setX(quat.x);
+	quatB.setY(quat.y);
+	quatB.setZ(quat.z);
+	quatB.setW(quat.w);
+	t.setRotation(quatB);
 	body->setWorldTransform(t);
 
 	transform = float4x4::FromTRS(position, quat, scale);
@@ -66,8 +73,12 @@ void PhysBody3D::SetScale(float x, float y, float z)
 void PhysBody3D::SetRotation(Quat rot)
 {
 	btTransform t = body->getWorldTransform();
-	float3 euler = rot.ToEulerZYX();
-	t.setRotation(btQuaternion(euler.z, euler.y, euler.x));
+	btQuaternion quatB;
+	quatB.setX(rot.x);
+	quatB.setY(rot.y);
+	quatB.setZ(rot.z);
+	quatB.setW(rot.w);
+	t.setRotation(quatB);
 	body->setWorldTransform(t);
 }
 
@@ -101,7 +112,6 @@ void PhysBody3D::SetStatic(bool val)
 	if (val)
 	{
 		body->setFlags(1);
-		body->clearForces();
 		btVector3 zeroVector(0, 0, 0);
 		body->setLinearVelocity(zeroVector);
 		body->setAngularVelocity(zeroVector);
@@ -109,7 +119,6 @@ void PhysBody3D::SetStatic(bool val)
 	else
 	{
 		body->setFlags(2);
-		body->clearForces();
 		btVector3 zeroVector(0, 0, 0);
 		body->setLinearVelocity(zeroVector);
 		body->setAngularVelocity(zeroVector);
