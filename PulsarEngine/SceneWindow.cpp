@@ -210,5 +210,6 @@ void SceneWindow::HandleGuizmo()
 	if (ImGuizmo::IsUsing())
 	{
 		gameObject->transform->SetGlobalTransform(globalMat.Transposed());
+		gameObject->SetTransformUpdate(true);
 	}
 }

@@ -40,6 +40,7 @@ update_status ConfigWindow::Draw()
 
     ImGui::SetNextWindowBgAlpha(1.0f);
     ImGui::Begin(name.c_str(), &active);
+    //SYSTEM INFO//
     if (ImGui::CollapsingHeader("System info"))
     {        
         ImGui::Text("Platform:");
@@ -55,6 +56,7 @@ update_status ConfigWindow::Draw()
         ImGui::PlotLines("MS", ms, IM_ARRAYSIZE(ms), 0, NULL, 0.0f, 40.0f, ImVec2(0, 80));
     }
 
+    //WINDOW OPTIONS//
     if (ImGui::CollapsingHeader("Window options"))
     {
         if(ImGui::Checkbox("Fullscreen", &fullscreen)) App->window->SetFullscreen(fullscreen);
@@ -77,6 +79,7 @@ update_status ConfigWindow::Draw()
         if (ImGui::Button("Light")) ImGui::StyleColorsLight();
     }
 
+    //LOADED RESOURCES//
     if (ImGui::CollapsingHeader("Loaded resources"))
     {
         std::map<std::string, EngineResource*> res = App->resourceManager->GetLoadedResources();
@@ -98,8 +101,47 @@ update_status ConfigWindow::Draw()
         }      
     }
 
-    bool debugPhys = App->physics->debug;
-    if (ImGui::Checkbox("Physics Debug", &debugPhys)) App->physics->ToggleDebug(debugPhys);
+    //PHYSICS OPTIONS//
+    if (ImGui::CollapsingHeader("Physics options"))
+    {
+        bool debugPhys = App->physics->runningSimulation;
+        if (ImGui::Checkbox("Start simulation", &debugPhys)) App->physics->ToggleSimulation(debugPhys);
+
+        bool pausePhys = App->physics->simulationPause;
+        if (ImGui::Checkbox("Pause simulation", &pausePhys)) App->physics->ToggleSimulationPause(pausePhys);
+
+        int steps = App->physics->GetSteps();
+        ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.30f);
+        ImGui::Text("Simulation Steps");
+        ImGui::SameLine();
+        if (ImGui::InputInt("##simSteps", &steps, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue))
+        {
+            if(steps > 0 && steps < 101) App->physics->SetSimulationSteps(steps);
+        }
+        ImGui::PopItemWidth();
+
+        bool newGrav = false;
+        float3 grav = App->physics->GetGravity();
+        ImGui::Text("Gravity");
+        ImGui::Text("X:");
+        ImGui::SameLine();
+        ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.32f);
+        if (ImGui::InputFloat("##gravX", &grav.x, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) newGrav = true;
+        ImGui::PopItemWidth();
+        ImGui::Text("Y:");
+        ImGui::SameLine();
+        ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.32f);
+        if (ImGui::InputFloat("##gravY", &grav.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) newGrav = true;
+        ImGui::PopItemWidth();
+        ImGui::Text("Z:");
+        ImGui::SameLine();
+        ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.32f);
+        if (ImGui::InputFloat("##gravZ", &grav.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) newGrav = true;
+        ImGui::PopItemWidth();
+
+        if (newGrav) App->physics->SetGravity(grav);
+    }
+   
 
     ImGui::End();
 

@@ -12,7 +12,7 @@ BoxCollider::BoxCollider(GameObject* parent) : Component(parent, BOX_COLLIDER_CO
 	component->boxCollider = this;
 	App->physics->AddBody(this,float3::one);
 	draw = true;
-	//shape = new CubePrimitive();
+	body->UpdateTransform(gameobject->GetGlobalTransform());
 }
 
 BoxCollider::BoxCollider(GameObject* parent, float3 s) : Component(parent, BOX_COLLIDER_COMP)
@@ -21,7 +21,7 @@ BoxCollider::BoxCollider(GameObject* parent, float3 s) : Component(parent, BOX_C
 	App->physics->AddBody(this,s);
 	if(body != nullptr) body->scaleOffset = s;
 	draw = true;
-	//shape = new CubePrimitive(s.x,s.y,s.z);
+	body->UpdateTransform(gameobject->GetGlobalTransform());
 }
 
 BoxCollider::~BoxCollider()
@@ -32,12 +32,12 @@ BoxCollider::~BoxCollider()
 
 void BoxCollider::UpdateTransform()
 {
-	if(body != nullptr) body->UpdateTransform(gameobject->GetGlobalTransform());
+	if(body != nullptr && gameobject->transformUpdate) body->UpdateTransform(gameobject->GetGlobalTransform());
 }
 
 void BoxCollider::UpdateComponent()
 {
-	if(App->physics->debug == false && App->scene->GetSceneState() == SCENE_STOP) UpdateTransform();
+	//if(App->physics->runningSimulation == false) UpdateTransform();
 	if (draw && gameobject->selected)
 	{
 		if (body != nullptr) App->physics->DebugDrawBody(body->body);

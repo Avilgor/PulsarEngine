@@ -4,14 +4,13 @@
 #include "Module.h"
 #include "BoxCollider.h"
 #include "SphereCollider.h"
+#include "CapsuleCollider.h"
 #include "Primitive.h"
 #include "Bullet/include/btBulletDynamicsCommon.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
 #include <map>
 #include <string>
-
-#define GRAVITY btVector3(0.0f, -9.81f, 0.0f) 
 
 class DebugDrawer;
 class PhysBody3D;
@@ -30,10 +29,13 @@ public:
 	update_status Update(float dt);
 	update_status PostUpdate(float dt);
 	bool CleanUp();
+	void SetGravity(float3 val);
+	void SetSimulationSteps(int val);
 	//void ResetBody();
 
 	PhysBody3D* AddBody(BoxCollider* box, float3 size,float mass = 10.0f);
 	PhysBody3D* AddBody(SphereCollider* sphere, float mass = 10.0f);
+	PhysBody3D* AddBody(CapsuleCollider* sphere, float mass = 10.0f);
 	//PhysVehicle3D* AddVehicle(const VehicleInfo& info);
 
 	void AddConstraintP2P(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB, std::string id);
@@ -45,10 +47,14 @@ public:
 	void AddBody(btRigidBody* body);
 
 	void DebugDrawBody(btRigidBody* body);
-	void ToggleDebug(bool val);
+	void ToggleSimulation(bool val);
+	void ToggleSimulationPause(bool val);
+	int GetSteps() { return steps; }
+	float3 GetGravity();
 
 public:
-	bool debug;
+	bool runningSimulation;
+	bool simulationPause;
 
 private:
 
@@ -65,6 +71,9 @@ private:
 	std::map<std::string,btDefaultMotionState*> motions;
 	std::map<std::string,btTypedConstraint*> constraints;
 	std::map<std::string, Component*> colliderComponents;
+
+	btVector3 gravity;
+	int steps;
 };
 
 class DebugDrawer : public btIDebugDraw

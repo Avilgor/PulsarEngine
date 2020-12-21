@@ -10,7 +10,7 @@ class Material;
 class Camera;
 class BoxCollider;
 class SphereCollider;
-class RigidBody;
+class CapsuleCollider;
 class JSonHandler;
 
 class Component
@@ -29,6 +29,7 @@ public:
 	Camera* AsCamera() { return camera; }
 	SphereCollider* AsSphereCollider() { return sphereCollider; }
 	BoxCollider* AsBoxCollider() { return boxCollider; }
+	CapsuleCollider* AsCapsuleCollider() { return capsuleCollider; }
 	//RigidBody* AsRigidbody() { return rigidbody; }
 	virtual void SaveComponent(JSonHandler* file) {}
 	virtual void LoadComponent(JSonHandler* file) {}
@@ -44,7 +45,8 @@ public:
 	Material* material = nullptr;
 	Camera* camera = nullptr;
 	BoxCollider* boxCollider = nullptr;
-	SphereCollider* sphereCollider = nullptr;
+	SphereCollider* sphereCollider = nullptr; 
+	CapsuleCollider* capsuleCollider = nullptr;
 	//RigidBody* rigidbody = nullptr;
 };
 

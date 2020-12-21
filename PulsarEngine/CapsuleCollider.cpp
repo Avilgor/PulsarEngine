@@ -1,42 +1,44 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModulePhysics.h"
-#include "SphereCollider.h"
+#include "CapsuleCollider.h"
 #include "PhysBody3D.h"
 #include "Transform.h"
 #include "Primitive.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
-SphereCollider::SphereCollider(GameObject* parent) : Component(parent, SPHERE_COLLIDER_COMP)
+CapsuleCollider::CapsuleCollider(GameObject* parent) : Component(parent, CAPSULE_COLLIDER_COMP)
 {
-	component->sphereCollider = this;
+	component->capsuleCollider = this;
 	App->physics->AddBody(this);
-	rad = 1;
+	rad = 0.5f;
+	height = 2.0f;
 	draw = true;
 	body->UpdateTransform(gameobject->GetGlobalTransform());
 }
 
-SphereCollider::SphereCollider(GameObject* parent, float r) : Component(parent, SPHERE_COLLIDER_COMP)
+CapsuleCollider::CapsuleCollider(GameObject* parent, float r, float h) : Component(parent, CAPSULE_COLLIDER_COMP)
 {
-	component->sphereCollider = this;
+	component->capsuleCollider = this;
 	rad = r;
+	height = h;
 	App->physics->AddBody(this);
 	draw = true;
 	body->UpdateTransform(gameobject->GetGlobalTransform());
 }
 
-SphereCollider::~SphereCollider()
+CapsuleCollider::~CapsuleCollider()
 {
 	App->physics->RemoveCollider(UUID);
 	body = nullptr;
 }
 
-void SphereCollider::UpdateTransform()
+void CapsuleCollider::UpdateTransform()
 {
 	if (body != nullptr && gameobject->transformUpdate) body->UpdateTransform(gameobject->GetGlobalTransform());
 }
 
-void SphereCollider::UpdateComponent()
+void CapsuleCollider::UpdateComponent()
 {
 	//if (App->physics->runningSimulation == false) UpdateTransform();
 	if (draw && gameobject->selected)
@@ -45,50 +47,50 @@ void SphereCollider::UpdateComponent()
 	}
 }
 
-void SphereCollider::PhysicsUpdate()
+void CapsuleCollider::PhysicsUpdate()
 {
-	if (body != nullptr &&  !body->isStatic)
+	if (body != nullptr && !body->isStatic)
 	{
 		gameobject->transform->SetPosition(body->GetPos());
 		gameobject->transform->SetQuatRotation(body->GetRotation());
 	}
 }
 
-void SphereCollider::SetStatic(bool val)
+void CapsuleCollider::SetStatic(bool val)
 {
 	if (body != nullptr) body->SetStatic(val);
 }
 
-void SphereCollider::DeleteComponent()
+void CapsuleCollider::DeleteComponent()
 {
 	App->physics->RemoveCollider(UUID);
 	body = nullptr;
 	delete this;
 }
 
-bool SphereCollider::IsStatic()
+bool CapsuleCollider::IsStatic()
 {
 	if (body != nullptr) return body->isStatic;
 	else return true;
 }
 
-float3 SphereCollider::GetSize()
+float3 CapsuleCollider::GetSize()
 {
 	if (body != nullptr) return body->scaleOffset;
 	else return float3::zero;
 }
 
-float3 SphereCollider::GetPosition()
+float3 CapsuleCollider::GetPosition()
 {
 	if (body != nullptr) return body->localOffset;
 	else return float3::zero;
 }
 
-void SphereCollider::SetScale(float s)
+void CapsuleCollider::SetScale(float s, float h)
 {
 	if (body != nullptr)
 	{
-		body->SetScale(s, s, s);
+		body->SetScale(s, h, s);
 		/*float3 temp;
 		temp.x = s;
 		temp.y = s;
@@ -98,7 +100,7 @@ void SphereCollider::SetScale(float s)
 	}
 }
 
-void SphereCollider::SetPos(float3 p)
+void CapsuleCollider::SetPos(float3 p)
 {
 	if (body != nullptr)
 	{
@@ -107,19 +109,19 @@ void SphereCollider::SetPos(float3 p)
 	}
 }
 
-float* SphereCollider::GetTransform()
+float* CapsuleCollider::GetTransform()
 {
 	if (body != nullptr) return body->GetTransform().ptr();
 	else return gameobject->GetGlobalTransform().ptr();
 }
 
-float4x4 SphereCollider::GetTransformMat()
+float4x4 CapsuleCollider::GetTransformMat()
 {
 	if (body != nullptr) return body->GetTransform();
 	else return gameobject->GetGlobalTransform();
 }
 
-void SphereCollider::SaveComponent(JSonHandler* file)
+void CapsuleCollider::SaveComponent(JSonHandler* file)
 {
 	JSonHandler node = file->InsertNodeArray("Components");
 	node.SaveNum("CompType", (double)compType);
@@ -129,7 +131,7 @@ void SphereCollider::SaveComponent(JSonHandler* file)
 	//else node.SaveString("ResUUID", "-1");
 }
 
-void SphereCollider::LoadComponent(JSonHandler* file)
+void CapsuleCollider::LoadComponent(JSonHandler* file)
 {
 	/*Mesh* meshComp = nullptr;
 	if (gameobject->GetFirstComponentType(MESH_COMP) != nullptr) meshComp = gameobject->GetFirstComponentType(MESH_COMP)->AsMesh();

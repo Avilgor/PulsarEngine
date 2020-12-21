@@ -30,7 +30,8 @@ float4x4 PhysBody3D::GetTransform()
 
 void PhysBody3D::UpdateTransform(float4x4 globalMat)
 {
-	App->physics->RemoveBody(body);
+	if (!body->isActive()) body->activate(true);
+		
 	float3 position;
 	float3 scale;
 	Quat quat;
@@ -39,9 +40,8 @@ void PhysBody3D::UpdateTransform(float4x4 globalMat)
 	scale += scaleOffset;
 
 	btTransform t = body->getWorldTransform();
-	//body->getMotionState()->getWorldTransform(t);
-	
-	t.setOrigin(btVector3(position.x, position.y, position.z));	
+
+	t.setOrigin(btVector3(position.x, position.y, position.z));
 	body->getCollisionShape()->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
 
 	btQuaternion quatB;
@@ -51,16 +51,14 @@ void PhysBody3D::UpdateTransform(float4x4 globalMat)
 	quatB.setW(quat.w);
 	t.setRotation(quatB);
 	body->setWorldTransform(t);
-	//body->clearForces();
-	//body->getMotionState()->setWorldTransform(t);
+	body->getMotionState()->setWorldTransform(t);
 
 	transform = float4x4::FromTRS(position, quat, scale);
-	App->physics->AddBody(body);
 }
 
 void PhysBody3D::SetPos(float x, float y, float z)
 {
-	if (App->physics->debug != true && App->scene->GetSceneState() == SCENE_STOP)
+	if (App->physics->runningSimulation == false)
 	{
 		btTransform t = body->getWorldTransform();
 		t.setOrigin(btVector3(x, y, z));
@@ -74,7 +72,7 @@ void PhysBody3D::SetPos(float x, float y, float z)
 
 void PhysBody3D::SetScale(float x, float y, float z)
 {
-	if (App->physics->debug != true && App->scene->GetSceneState() == SCENE_STOP)
+	if (App->physics->runningSimulation == false)
 	{
 		body->getCollisionShape()->setLocalScaling(btVector3(x, y, z));
 		scaleOffset.x = x;
@@ -85,7 +83,7 @@ void PhysBody3D::SetScale(float x, float y, float z)
 
 void PhysBody3D::SetRotation(Quat rot)
 {
-	if (App->physics->debug != true && App->scene->GetSceneState() == SCENE_STOP)
+	if (App->physics->runningSimulation == false)
 	{
 		btTransform t = body->getWorldTransform();
 		btQuaternion quatB;

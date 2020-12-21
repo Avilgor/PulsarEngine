@@ -7,6 +7,7 @@
 
 class BoxCollider;
 class SphereCollider;
+class CapsuleCollider;
 
 class InspectorWindow : public EditorWindow
 {
@@ -24,6 +25,7 @@ private:
 	void CameraSection(GameObject* go);
 	void BoxColliderSection(BoxCollider* coll,int index);
 	void SphereColliderSection(SphereCollider* coll,int index);
+	void CapsuleColliderSection(CapsuleCollider* coll, int index);
 
 public:
 

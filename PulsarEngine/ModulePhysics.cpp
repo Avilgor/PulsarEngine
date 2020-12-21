@@ -21,8 +21,9 @@
 
 ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app, "Physics", start_enabled)
 {
-	debug = false;
-
+	runningSimulation = false;
+	simulationPause = false;
+	steps = 15;
 	collision_conf = new btDefaultCollisionConfiguration();
 	dispatcher = new btCollisionDispatcher(collision_conf);
 	broad_phase = new btDbvtBroadphase();
@@ -49,11 +50,13 @@ bool ModulePhysics::Start()
 {
 	LOG("Starting module physics...");
 	bool ret = true;
-
+	gravity.setX(0.0f);
+	gravity.setY(-9.81f);
+	gravity.setZ(0.0f);
 	world = new btDiscreteDynamicsWorld(dispatcher, broad_phase, solver, collision_conf);
 	world->setDebugDrawer(debug_draw);
-	world->setGravity(GRAVITY);
-	//vehicle_raycaster = new btDefaultVehicleRaycaster(world);
+	world->setGravity(gravity);
+	vehicle_raycaster = new btDefaultVehicleRaycaster(world);
 
 	// Big plane as ground
 	{
@@ -71,9 +74,25 @@ bool ModulePhysics::Start()
 
 update_status ModulePhysics::PreUpdate(float dt)
 {
-	if (debug || App->scene->GetSceneState() == SCENE_RUNNING)
+	for (std::map<std::string, Component*>::iterator it = colliderComponents.begin(); it != colliderComponents.end(); ++it)
 	{
-		world->stepSimulation(dt, 15);
+		if ((*it).second->AsBoxCollider() != nullptr)
+		{
+			(*it).second->AsBoxCollider()->UpdateTransform();
+		}
+		else if ((*it).second->AsSphereCollider() != nullptr)
+		{
+			(*it).second->AsSphereCollider()->UpdateTransform();
+		}
+		else if ((*it).second->AsCapsuleCollider() != nullptr)
+		{
+			(*it).second->AsCapsuleCollider()->UpdateTransform();
+		}
+	}
+
+	if (runningSimulation && !simulationPause)
+	{		
+		world->stepSimulation(dt, steps);
 		
 		int numManifolds = world->getDispatcher()->getNumManifolds();
 		for (int i = 0; i < numManifolds; i++)
@@ -98,7 +117,6 @@ update_status ModulePhysics::PreUpdate(float dt)
 
 		if(colliderComponents.size() > 0)
 		{
-			//LOG("Module physics colliders: %d",colliderComponents.size());
 			for (std::map<std::string, Component*>::iterator it = colliderComponents.begin(); it != colliderComponents.end(); ++it)
 			{
 				if ((*it).second->AsBoxCollider() != nullptr)
@@ -108,6 +126,10 @@ update_status ModulePhysics::PreUpdate(float dt)
 				else if ((*it).second->AsSphereCollider() != nullptr)
 				{
 					(*it).second->AsSphereCollider()->PhysicsUpdate();
+				}
+				else if ((*it).second->AsCapsuleCollider() != nullptr)
+				{
+					(*it).second->AsCapsuleCollider()->PhysicsUpdate();
 				}
 			}
 		}
@@ -138,16 +160,66 @@ update_status ModulePhysics::Update(float dt)
 	return UPDATE_CONTINUE;
 }
 
-void ModulePhysics::ToggleDebug(bool val)
+void ModulePhysics::ToggleSimulation(bool val)
 {
-	debug = val;
-	if (debug)
+	runningSimulation = val;
+	if (runningSimulation)
 	{
-		LOG("Physics debug ON");
+		world = new btDiscreteDynamicsWorld(dispatcher, broad_phase, solver, collision_conf);
+		world->setDebugDrawer(debug_draw);
+		world->setGravity(gravity);		
+		vehicle_raycaster = new btDefaultVehicleRaycaster(world);
+		for (std::map<std::string, PhysBody3D*>::iterator it = bodies.begin(); it != bodies.end(); ++it)
+		{
+			(*it).second->body->clearForces();
+			world->addRigidBody((*it).second->body);
+		}
+
+
+		LOG("Physics simulation ON");
 	}
 	else
 	{
-		LOG("Physics debug OFF");
+		LOG("Physics simulation OFF");
+	}
+}
+
+void ModulePhysics::ToggleSimulationPause(bool val)
+{
+	if (runningSimulation)
+	{
+		simulationPause = val;
+		if (simulationPause)
+		{
+			LOG("Physics simulation PAUSED");
+		}
+		else
+		{
+			LOG("Physics simulation RESUMED");
+		}
+	}
+}
+
+void ModulePhysics::SetGravity(float3 val)
+{
+	if (!runningSimulation)
+	{
+		gravity.setX(val.x);
+		gravity.setY(val.y);
+		gravity.setZ(val.z);
+	}
+}
+
+float3 ModulePhysics::GetGravity()
+{
+	return float3(gravity.getX(),gravity.getY(),gravity.getZ());
+}
+
+void ModulePhysics::SetSimulationSteps(int val)
+{
+	if (!runningSimulation)
+	{
+		steps = val;
 	}
 }
 
@@ -307,6 +379,33 @@ PhysBody3D* ModulePhysics::AddBody(BoxCollider* cube, float3 size,float mass)
 	cube->body = pbody;
 	colliderComponents.emplace(cube->UUID,cube->component);
 	
+
+	return pbody;
+}
+
+PhysBody3D* ModulePhysics::AddBody(CapsuleCollider* capsule, float mass)
+{
+	btCollisionShape* shape = new btCapsuleShape(btScalar(0.5f),btScalar(2.0f));
+	shapes.emplace(capsule->UUID, shape);
+
+	btTransform startTransform;
+	startTransform.setFromOpenGLMatrix(capsule->GetTransformMat().Transposed().ptr());
+
+	btVector3 localInertia(0, 0, 0);
+	if (mass != 0.f) shape->calculateLocalInertia(mass, localInertia);
+
+	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
+	motions.emplace(capsule->UUID, myMotionState);
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, shape, localInertia);
+
+	btRigidBody* body = new btRigidBody(rbInfo);
+	PhysBody3D* pbody = new PhysBody3D(body);
+
+	body->setUserPointer(pbody);
+	world->addRigidBody(body);
+	bodies.emplace(capsule->UUID, pbody);
+	capsule->body = pbody;
+	colliderComponents.emplace(capsule->UUID, capsule->component);
 
 	return pbody;
 }

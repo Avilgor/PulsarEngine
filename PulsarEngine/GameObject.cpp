@@ -11,6 +11,7 @@
 #include "RigidBody.h"
 #include "BoxCollider.h"
 #include "SphereCollider.h"
+#include "CapsuleCollider.h"
 #include "MathGeoLib/include/Geometry/AABB.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
@@ -283,6 +284,14 @@ void GameObject::LoadGameObject(JSonHandler* file)
 				{
 					if (comp->AsSphereCollider() != nullptr) comp->AsSphereCollider()->LoadComponent(&json);
 				}
+				break;
+			case CAPSULE_COLLIDER_COMP:
+				//LOG("Load capsule collider");
+				comp = AddComponent(CAPSULE_COLLIDER_COMP);
+				if (comp != nullptr)
+				{
+					if (comp->AsCapsuleCollider() != nullptr) comp->AsCapsuleCollider()->LoadComponent(&json);
+				}
 				break;*/
 			}	
 		}
@@ -466,6 +475,7 @@ Component* GameObject::AddComponent(ComponentTypes type)
 	Material* mat = nullptr;
 	BoxCollider* boxColl = nullptr;
 	SphereCollider* sphereColl = nullptr;
+	CapsuleCollider* capsuleColl = nullptr;
 	switch (type)
 	{
 	case MESH_COMP:
@@ -502,6 +512,12 @@ Component* GameObject::AddComponent(ComponentTypes type)
 		Components.push_back(sphereColl->component);
 		//LOG("Added component sphere collider");
 		return sphereColl->component;	
+		break;
+	case CAPSULE_COLLIDER_COMP:
+		capsuleColl = new CapsuleCollider(this);
+		Components.push_back(capsuleColl->component);
+		//LOG("Added component capsule collider");
+		return capsuleColl->component;
 		break;
 	default:
 		return comp;

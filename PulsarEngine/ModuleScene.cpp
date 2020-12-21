@@ -169,6 +169,7 @@ update_status ModuleScene::Update(float dt)
 				sceneStartTimer.Start();
 				sceneRunTime.Start();
 				activeScene->SaveTempScene();
+				App->physics->ToggleSimulation(true);
 				state = SCENE_RUNNING;
 			}
 			break;
@@ -177,6 +178,7 @@ update_status ModuleScene::Update(float dt)
 			{
 				sceneStartTimer.Stop();
 				sceneRunTime.Stop();
+				App->physics->ToggleSimulation(false);
 				activeScene->LoadTempScene();
 			}
 			break;		
@@ -184,6 +186,7 @@ update_status ModuleScene::Update(float dt)
 			if (lastState == SCENE_RUNNING)
 			{
 				sceneRunTime.Stop();
+				App->physics->ToggleSimulationPause(true);
 			}
 			break;
 		case SCENE_RUNNING:
@@ -196,6 +199,7 @@ update_status ModuleScene::Update(float dt)
 			if (lastState == SCENE_PAUSE)
 			{
 				sceneRunTime.Resume();
+				App->physics->ToggleSimulationPause(false);
 				state = SCENE_RUNNING;
 			}
 			break;

@@ -8,6 +8,7 @@
 #include "RES_Mesh.h"
 #include "RES_Material.h"
 #include "Camera.h"
+#include "CapsuleCollider.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
 
@@ -52,6 +53,15 @@ update_status InspectorWindow::Draw()
 			}
 		}
 
+		temp = currentGo->GetAllComponentsByType(CAPSULE_COLLIDER_COMP);
+		if (temp.size() > 0)
+		{
+			for (int i = 0; i < temp.size(); i++)
+			{
+				CapsuleColliderSection(temp[i]->AsCapsuleCollider(), i);
+			}
+		}
+
 		ImVec2 winSize = ImGui::GetContentRegionAvail();
 		ImGui::Spacing();
 		ImGui::Separator();
@@ -92,6 +102,12 @@ update_status InspectorWindow::Draw()
 			if (ImGui::Button("SphereCollider"))
 			{
 				currentGo->AddComponent(SPHERE_COLLIDER_COMP);
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::Button("CapsuleCollider"))
+			{
+				currentGo->AddComponent(CAPSULE_COLLIDER_COMP);
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
@@ -347,7 +363,7 @@ void InspectorWindow::BoxColliderSection(BoxCollider* coll,int index)
 
 		if (ImGui::Button(tagBtn.c_str()))
 		{
-			LOG("Delete box collider btn");
+			//LOG("Delete box collider btn");
 			currentGo->DeleteGOComponent(coll->UUID);
 		}
 	}
@@ -359,7 +375,7 @@ void InspectorWindow::SphereColliderSection(SphereCollider* coll, int index)
 	{
 		std::string tagStatic = "##sphereCollStatic";
 		tagStatic.append(std::to_string(index));
-		std::string tagDraw = "##boxCollDraw";
+		std::string tagDraw = "##sphereCollDraw";
 		tagDraw.append(std::to_string(index));
 		std::string tagPosx = "##spherecollPosX";
 		tagPosx.append(std::to_string(index));
@@ -403,7 +419,75 @@ void InspectorWindow::SphereColliderSection(SphereCollider* coll, int index)
 
 		if (ImGui::Button(tagBtn.c_str()))
 		{
-			LOG("Delete sphere collider btn");
+			//LOG("Delete sphere collider btn");
+			currentGo->DeleteGOComponent(coll->UUID);
+		}
+	}
+}
+
+void InspectorWindow::CapsuleColliderSection(CapsuleCollider* coll, int index)
+{
+	if (ImGui::CollapsingHeader("CapsuleCollider", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		std::string tagStatic = "##capsuleCollStatic";
+		tagStatic.append(std::to_string(index));
+		std::string tagDraw = "##capsuleCollDraw";
+		tagDraw.append(std::to_string(index));
+		std::string tagPosx = "##capsulecollPosX";
+		tagPosx.append(std::to_string(index));
+		std::string tagPosy = "##capsulecollPosY";
+		tagPosy.append(std::to_string(index));
+		std::string tagPosz = "##capsulecollPosZ";
+		tagPosz.append(std::to_string(index));
+		std::string tagRad = "##capsulecollRadius";
+		tagRad.append(std::to_string(index));
+		std::string tagHeig = "##capsulecollHeight";
+		tagHeig.append(std::to_string(index));
+		std::string tagBtn = "Delete Component##capsuleColl";
+		tagBtn.append(std::to_string(index));
+
+
+		bool collSt = coll->IsStatic();
+		ImGui::Text("Static: ");
+		ImGui::SameLine();
+		if (ImGui::Checkbox(tagStatic.c_str(), &collSt)) coll->SetStatic(collSt);
+
+		ImGui::Text("Draw: ");
+		ImGui::SameLine();
+		ImGui::Checkbox(tagDraw.c_str(), &coll->draw);
+
+		float3 pos = coll->GetPosition();
+		float rad = coll->GetSize().x;
+		float height = coll->GetSize().y;
+		
+		bool changePos = false;
+		ImGui::Text("Position x:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat(tagPosx.c_str(), &pos.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		ImGui::Text("Position y:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat(tagPosy.c_str(), &pos.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		ImGui::Text("Position z:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat(tagPosz.c_str(), &pos.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+
+		bool resize = false;
+		ImGui::Text("Radius:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat(tagRad.c_str(), &rad, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) resize = true;
+		ImGui::Text("Height:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat(tagHeig.c_str(), &height, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) resize = true;
+
+		if (changePos) coll->SetPos(pos);
+		if (resize)
+		{
+			if (rad > 0 && height > 0) coll->SetScale(rad, height);
+		}
+
+		if (ImGui::Button(tagBtn.c_str()))
+		{
+			//LOG("Delete capsule collider btn");
 			currentGo->DeleteGOComponent(coll->UUID);
 		}
 	}
