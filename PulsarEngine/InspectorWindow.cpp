@@ -310,6 +310,12 @@ void InspectorWindow::BoxColliderSection(BoxCollider* coll,int index)
 		tagStatic.append(std::to_string(index));
 		std::string tagDraw = "##boxCollDraw";
 		tagDraw.append(std::to_string(index));
+		std::string tagTrigger = "##boxCollTrigger";
+		tagTrigger.append(std::to_string(index));
+		std::string tagMass = "##boxCollMass";
+		tagMass.append(std::to_string(index));
+		std::string tagFriction = "##boxCollFriction";
+		tagFriction.append(std::to_string(index));
 		std::string tagPosx = "##boxcollPosX";
 		tagPosx.append(std::to_string(index));
 		std::string tagPosy = "##boxcollPosY";
@@ -326,13 +332,30 @@ void InspectorWindow::BoxColliderSection(BoxCollider* coll,int index)
 		tagBtn.append(std::to_string(index));
 
 		bool collSt = coll->IsStatic();
-		ImGui::Text("Static: ");
+		ImGui::Text("Static:");
 		ImGui::SameLine();
 		if (ImGui::Checkbox(tagStatic.c_str(), &collSt)) coll->SetStatic(collSt);
 
-		ImGui::Text("Draw: ");
+		bool collTrigger = coll->isTrigger;
+		ImGui::Text("Trigger:");
+		ImGui::SameLine();
+		if (ImGui::Checkbox(tagTrigger.c_str(), &collTrigger)) coll->SetTrigger(collTrigger);
+
+		ImGui::Text("Draw:");
 		ImGui::SameLine();
 		ImGui::Checkbox(tagDraw.c_str(), &coll->draw);
+
+		float mass = coll->mass;
+		ImGui::Text("Mass:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat(tagMass.c_str(), &mass, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetMass(mass);
+
+		float friction = coll->friction;
+		ImGui::Text("Friction:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat(tagFriction.c_str(), &friction, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetFriction(friction);
+
+		
 
 		float3 pos = coll->GetPosition();
 		float3 scale = coll->GetSize();
@@ -377,6 +400,12 @@ void InspectorWindow::SphereColliderSection(SphereCollider* coll, int index)
 		tagStatic.append(std::to_string(index));
 		std::string tagDraw = "##sphereCollDraw";
 		tagDraw.append(std::to_string(index));
+		std::string tagTrigger = "##sphereCollTrigger";
+		tagTrigger.append(std::to_string(index));
+		std::string tagMass = "##sphereCollMass";
+		tagMass.append(std::to_string(index));
+		std::string tagFriction = "##sphereCollFriction";
+		tagFriction.append(std::to_string(index));
 		std::string tagPosx = "##spherecollPosX";
 		tagPosx.append(std::to_string(index));
 		std::string tagPosy = "##spherecollPosY";
@@ -394,9 +423,24 @@ void InspectorWindow::SphereColliderSection(SphereCollider* coll, int index)
 		ImGui::SameLine();
 		if (ImGui::Checkbox(tagStatic.c_str(), &collSt)) coll->SetStatic(collSt);
 
-		ImGui::Text("Draw: ");
+		bool collTrigger = coll->isTrigger;
+		ImGui::Text("Trigger:");
+		ImGui::SameLine();
+		if (ImGui::Checkbox(tagTrigger.c_str(), &collTrigger)) coll->SetTrigger(collTrigger);
+
+		ImGui::Text("Draw:");
 		ImGui::SameLine();
 		ImGui::Checkbox(tagDraw.c_str(), &coll->draw);
+
+		float mass = coll->mass;
+		ImGui::Text("Mass:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat(tagMass.c_str(), &mass, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetMass(mass);
+
+		float friction = coll->friction;
+		ImGui::Text("Friction:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat(tagFriction.c_str(), &friction, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetFriction(friction);
 
 		float3 pos = coll->GetPosition();
 		float rad = coll->GetSize().x;
@@ -433,6 +477,12 @@ void InspectorWindow::CapsuleColliderSection(CapsuleCollider* coll, int index)
 		tagStatic.append(std::to_string(index));
 		std::string tagDraw = "##capsuleCollDraw";
 		tagDraw.append(std::to_string(index));
+		std::string tagTrigger = "##capsuleCollTrigger";
+		tagTrigger.append(std::to_string(index));
+		std::string tagMass = "##capsuleCollMass";
+		tagMass.append(std::to_string(index));
+		std::string tagFriction = "##capsuleCollFriction";
+		tagFriction.append(std::to_string(index));
 		std::string tagPosx = "##capsulecollPosX";
 		tagPosx.append(std::to_string(index));
 		std::string tagPosy = "##capsulecollPosY";
@@ -452,9 +502,24 @@ void InspectorWindow::CapsuleColliderSection(CapsuleCollider* coll, int index)
 		ImGui::SameLine();
 		if (ImGui::Checkbox(tagStatic.c_str(), &collSt)) coll->SetStatic(collSt);
 
-		ImGui::Text("Draw: ");
+		bool collTrigger = coll->isTrigger;
+		ImGui::Text("Trigger:");
+		ImGui::SameLine();
+		if (ImGui::Checkbox(tagTrigger.c_str(), &collTrigger)) coll->SetTrigger(collTrigger);
+
+		ImGui::Text("Draw:");
 		ImGui::SameLine();
 		ImGui::Checkbox(tagDraw.c_str(), &coll->draw);
+
+		float mass = coll->mass;
+		ImGui::Text("Mass:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat(tagMass.c_str(), &mass, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetMass(mass);
+
+		float friction = coll->friction;
+		ImGui::Text("Friction:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat(tagFriction.c_str(), &friction, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetFriction(friction);
 
 		float3 pos = coll->GetPosition();
 		float rad = coll->GetSize().x;

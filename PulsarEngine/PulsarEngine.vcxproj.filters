@@ -405,6 +405,9 @@
     <ClInclude Include="CapsuleCollider.h">
       <Filter>Sources\Components</Filter>
     </ClInclude>
+    <ClInclude Include="ConstraintPoint.h">
+      <Filter>Sources\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -660,6 +663,9 @@
       <Filter>Sources\Helpers</Filter>
     </ClCompile>
     <ClCompile Include="CapsuleCollider.cpp">
+      <Filter>Sources\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstraintPoint.cpp">
       <Filter>Sources\Components</Filter>
     </ClCompile>
   </ItemGroup>

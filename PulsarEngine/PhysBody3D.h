@@ -17,17 +17,17 @@ public:
 
 	void Push(float x, float y, float z);
 	float4x4 GetTransform();
-	//void SetTransform(float* matrix);
 	void SetPos(float x, float y, float z);
 	void SetScale(float x, float y, float z);
+	bool SetMass(float val);
+	bool SetFriction(float val);
 	void UpdateTransform(float4x4 globalMat);
 	void SetRotation(Quat rot);
 	void SetStatic(bool val);
+	void SetTrigger(bool val);
 	float3 GetPos();
+	float3 GetScale() { return scaleOffset; };
 	Quat GetRotation();
-
-private:
-	void UpdateTransform();
 
 public:
 	GameObject* listener;
@@ -38,6 +38,8 @@ public:
 
 private:
 	float4x4 transform;
+	int defaultCollisionFlags;
+	int defaultFlags;
 };
 
 #endif // __PhysBody3D_H__

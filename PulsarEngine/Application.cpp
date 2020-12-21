@@ -30,11 +30,11 @@ Application::Application()
 	AddModule(window);
 	AddModule(camera);
 	AddModule(input);
+	AddModule(physics);
 
 	// Scenes
 	AddModule(editor);
 	AddModule(scene);		
-	AddModule(physics);
 
 	// Renderer last!
 	AddModule(renderer3D);

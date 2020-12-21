@@ -90,7 +90,7 @@ update_status ModulePhysics::PreUpdate(float dt)
 		}
 	}
 
-	if (runningSimulation && !simulationPause)
+	if (runningSimulation && !simulationPause && world != nullptr)
 	{		
 		world->stepSimulation(dt, steps);
 		
@@ -173,6 +173,11 @@ void ModulePhysics::ToggleSimulation(bool val)
 		{
 			(*it).second->body->clearForces();
 			world->addRigidBody((*it).second->body);
+		}
+
+		for (std::map<std::string, btTypedConstraint*>::iterator it = constraints.begin(); it != constraints.end(); ++it)
+		{
+			world->addConstraint((*it).second);
 		}
 
 
@@ -279,19 +284,37 @@ bool ModulePhysics::CleanUp()
 	return true;
 }
 
-void ModulePhysics::RemoveConstraint(btTypedConstraint* constraint)
+void ModulePhysics::RemoveConstraint(btTypedConstraint* constraint,std::string id)
 {
-	world->removeConstraint(constraint);
+	world->removeConstraint(constraint);	
+	if (constraints.find(id) != constraints.end()) constraints.erase(id);
 }
 
-void ModulePhysics::RemoveBody(btRigidBody* body)
+void ModulePhysics::RemoveConstraint(std::string id)
+{
+	if (constraints.find(id) != constraints.end())
+	{
+		world->removeConstraint(constraints[id]);
+		constraints.erase(id);
+	}
+}
+
+void ModulePhysics::RemoveBody(btRigidBody* body, std::string id)
 {
 	world->removeRigidBody(body);
+	if (bodies.find(id) != bodies.end()) bodies.erase(id);	
 }
 
-void ModulePhysics::AddBody(btRigidBody* body)
+void ModulePhysics::AddBody(PhysBody3D* body,std::string id)
 {
-	world->addRigidBody(body);
+	world->addRigidBody(body->body);
+	bodies.emplace(id,body);
+}
+
+void ModulePhysics::AddConstraint(btTypedConstraint* con, std::string id)
+{
+	world->addConstraint(con);
+	constraints.emplace(id, con);
 }
 
 void ModulePhysics::RemoveCollider(std::string uuid)
@@ -473,7 +496,7 @@ PhysBody3D* ModulePhysics::AddBody(CapsuleCollider* capsule, float mass)
 }*/
 
 // ---------------------------------------------------------
-void ModulePhysics::AddConstraintP2P(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB, std::string id)
+void ModulePhysics::AddConstraintPoint(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB, std::string id)
 {
 	btTypedConstraint* p2p = new btPoint2PointConstraint(
 		*(bodyA.body),
@@ -501,6 +524,30 @@ void ModulePhysics::AddConstraintHinge(PhysBody3D& bodyA, PhysBody3D& bodyB, con
 	hinge->setDbgDrawSize(2.0f);
 }
 
+void ModulePhysics::AddConstraintSlider(PhysBody3D& bodyA, PhysBody3D& bodyB, const btTransform& anchorA, const btTransform& anchorB, std::string id)
+{
+	btTypedConstraint* slider = new btSliderConstraint(
+		*(bodyA.body),
+		*(bodyB.body),
+		anchorA,
+		anchorB,
+		true);
+	world->addConstraint(slider);
+	constraints.emplace(id, slider);
+	slider->setDbgDrawSize(2.0f);
+}
+
+void ModulePhysics::AddConstraintCone(PhysBody3D& bodyA, PhysBody3D& bodyB, const btTransform& anchorA, const btTransform& anchorB, std::string id)
+{
+	btTypedConstraint* cone = new btConeTwistConstraint(
+		*(bodyA.body),
+		*(bodyB.body),
+		anchorA,
+		anchorB);
+	world->addConstraint(cone);
+	constraints.emplace(id, cone);
+	cone->setDbgDrawSize(2.0f);
+}
 
 // =============================================
 void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)

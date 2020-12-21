@@ -26,8 +26,10 @@ private:
 	void BoxColliderSection(BoxCollider* coll,int index);
 	void SphereColliderSection(SphereCollider* coll,int index);
 	void CapsuleColliderSection(CapsuleCollider* coll, int index);
-
-public:
+	/*void PointConstraintSection();
+	void HingeConstraintSection();
+	void SliderConstraintSection();
+	void ConeConstraintSection();*/
 
 private:
 	ImGuiInputTextFlags name_input_flags = ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue;

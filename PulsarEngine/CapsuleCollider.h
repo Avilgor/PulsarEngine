@@ -29,14 +29,16 @@ public:
 	void SetStatic(bool val);
 	void SetScale(float r,float h);
 	void SetPos(float3 pos);
+	void SetMass(float val);
+	void SetFriction(float val);
+	void SetTrigger(bool val);
 
 public:
-
-	float rad;
-	float height;
 	PhysBody3D* body = nullptr;
 	bool draw;
 	float mass;
+	float friction;
+	bool isTrigger;
 };
 
 #endif //__CapsuleCollider_H__

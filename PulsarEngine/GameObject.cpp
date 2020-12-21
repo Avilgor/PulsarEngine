@@ -69,7 +69,6 @@ GameObject::GameObject(const char* n, float3 pos, float3 rotation, float3 scale,
 
 GameObject::~GameObject()
 {
-	//delete transform;
 	if (!Components.empty())
 	{
 		for (std::vector<Component*>::const_iterator it = Components.begin(); it != Components.end(); ++it)
@@ -137,7 +136,6 @@ void GameObject::UpdateTransform()
 
 void GameObject::UpdateGameObject()
 {	
-	//LOG("Update go %s",name.c_str());
 	if (active)
 	{
 		if (!toDelete)
@@ -269,8 +267,8 @@ void GameObject::LoadGameObject(JSonHandler* file)
 					if(comp->AsCamera() != nullptr) comp->AsCamera()->LoadComponent(&json);
 				}
 				break;
-			/*case BOX_COLLIDER_COMP:
-				//LOG("Load box collider");
+			case BOX_COLLIDER_COMP:
+				LOG("Load box collider");
 				comp = AddComponent(BOX_COLLIDER_COMP);
 				if (comp != nullptr)
 				{
@@ -292,7 +290,7 @@ void GameObject::LoadGameObject(JSonHandler* file)
 				{
 					if (comp->AsCapsuleCollider() != nullptr) comp->AsCapsuleCollider()->LoadComponent(&json);
 				}
-				break;*/
+				break;
 			}	
 		}
 	}
@@ -399,7 +397,7 @@ void GameObject::CheckRayIntersect(std::vector<GameObject*>* vec, LineSegment ra
 				{
 					if (ray.Intersects(mesh->GetMeshAABB()))
 					{
-						LOG("Gameobject %s mouse click intersect.", name.c_str());
+						//LOG("Gameobject %s mouse click intersect.", name.c_str());
 						vec->push_back(this);
 					}
 				}
@@ -498,8 +496,8 @@ Component* GameObject::AddComponent(ComponentTypes type)
 			camera = nullptr;
 		}
 		camera = new Camera(this);
-		return camera->component;
 		//LOG("Added component camera");
+		return camera->component;
 		break;
 	case BOX_COLLIDER_COMP:
 		boxColl = new BoxCollider(this);

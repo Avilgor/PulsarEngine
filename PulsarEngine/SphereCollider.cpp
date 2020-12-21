@@ -11,24 +11,37 @@ SphereCollider::SphereCollider(GameObject* parent) : Component(parent, SPHERE_CO
 {
 	component->sphereCollider = this;
 	App->physics->AddBody(this);
-	rad = 1;
 	draw = true;
+	isTrigger = false;
+	friction = 0.0f;
+	mass = 10.0f;
 	body->UpdateTransform(gameobject->GetGlobalTransform());
 }
 
 SphereCollider::SphereCollider(GameObject* parent, float r) : Component(parent, SPHERE_COLLIDER_COMP)
 {
 	component->sphereCollider = this;
-	rad = r;
 	App->physics->AddBody(this);
 	draw = true;
+	isTrigger = false;
+	friction = 0.0f;
+	mass = 10.0f;
+	if (body != nullptr)
+	{
+		body->scaleOffset.x = r;
+		body->scaleOffset.y = r;
+		body->scaleOffset.z = r;
+	}
 	body->UpdateTransform(gameobject->GetGlobalTransform());
 }
 
 SphereCollider::~SphereCollider()
 {
-	App->physics->RemoveCollider(UUID);
-	body = nullptr;
+	if (body != nullptr)
+	{
+		App->physics->RemoveCollider(UUID);
+		body = nullptr;
+	}
 }
 
 void SphereCollider::UpdateTransform()
@@ -38,7 +51,6 @@ void SphereCollider::UpdateTransform()
 
 void SphereCollider::UpdateComponent()
 {
-	//if (App->physics->runningSimulation == false) UpdateTransform();
 	if (draw && gameobject->selected)
 	{
 		if (body != nullptr) App->physics->DebugDrawBody(body->body);
@@ -86,24 +98,33 @@ float3 SphereCollider::GetPosition()
 
 void SphereCollider::SetScale(float s)
 {
-	if (body != nullptr)
-	{
-		body->SetScale(s, s, s);
-		/*float3 temp;
-		temp.x = s;
-		temp.y = s;
-		temp.z = s;
-		body->scaleOffset = temp;*/
-		//shape->radius = s;
-	}
+	if (body != nullptr) body->SetScale(s, s, s);		
 }
 
 void SphereCollider::SetPos(float3 p)
 {
-	if (body != nullptr)
+	if (body != nullptr) body->SetPos(p.x, p.y, p.z);		
+}
+
+void SphereCollider::SetMass(float val)
+{
+	if (val > 0 && val < 100000000.0f)
 	{
-		body->SetPos(p.x, p.y, p.z);
-		//body->localOffset = p;
+		if (body->SetMass(val)) mass = val;
+	}
+}
+
+void SphereCollider::SetTrigger(bool val)
+{
+	isTrigger = val;
+	body->SetTrigger(val);
+}
+
+void SphereCollider::SetFriction(float val)
+{
+	if (val >= 0 && val < 100.0f)
+	{
+		if (body->SetFriction(val)) friction = val;
 	}
 }
 
@@ -124,22 +145,50 @@ void SphereCollider::SaveComponent(JSonHandler* file)
 	JSonHandler node = file->InsertNodeArray("Components");
 	node.SaveNum("CompType", (double)compType);
 	node.SaveString("UUID", UUID.c_str());
-	//node.SaveBool("Active", active);
-	//if (resMaterial != nullptr) node.SaveString("ResUUID", resMaterial->UUID.c_str());
-	//else node.SaveString("ResUUID", "-1");
+	node.SaveBool("Static", body->isStatic);
+	node.SaveBool("Trigger", isTrigger);
+	node.SaveBool("Draw", draw);
+	node.SaveNum("Mass", mass);
+	node.SaveNum("Friction", friction);
+	//Position
+	node.SaveNum("PosX", body->localOffset.x);
+	node.SaveNum("PosY", body->localOffset.y);
+	node.SaveNum("PosZ", body->localOffset.z);
+	//Scale
+	node.SaveNum("Rad", body->scaleOffset.x);
+	//Rotation
+	/*Quat rot = body->GetRotation();
+	node.SaveNum("QuatX", rot.x);
+	node.SaveNum("QuatY", rot.y);
+	node.SaveNum("QuatZ", rot.z);
+	node.SaveNum("QuatW", rot.w);*/
 }
 
 void SphereCollider::LoadComponent(JSonHandler* file)
 {
-	/*Mesh* meshComp = nullptr;
-	if (gameobject->GetFirstComponentType(MESH_COMP) != nullptr) meshComp = gameobject->GetFirstComponentType(MESH_COMP)->AsMesh();
+	App->physics->RemoveCollider(UUID);
 	UUID = file->GetString("UUID");
 	active = file->GetBool("Active");
-	EngineResource* res = App->resourceManager->GetResource(file->GetString("ResUUID"));
-	if (res != nullptr)
-	{
-		resMaterial = res->AsMaterial();
-		resMaterial->references++;
-	}
-	if (resMaterial != nullptr) meshComp->SetMaterial(resMaterial);*/
+	App->physics->AddBody(this);
+	body->UpdateTransform(gameobject->GetGlobalTransform());
+	draw = file->GetBool("Draw");
+	body->SetStatic(file->GetBool("Static"));
+	SetMass(file->GetNum("Mass"));
+	SetFriction(file->GetNum("Friction"));
+	SetTrigger(file->GetBool("Trigger"));
+	//Position
+	float3 pos;
+	pos.x = file->GetNum("PosX");
+	pos.y = file->GetNum("PosY");
+	pos.z = file->GetNum("PosZ");
+	body->SetPos(pos.x, pos.y, pos.z);
+	//Scale
+	SetScale(file->GetNum("Rad"));
+	//Rotation
+	/*Quat q;
+	q.x = file->GetNum("QuatX");
+	q.y = file->GetNum("QuatY");
+	q.z = file->GetNum("QuatZ");
+	q.w = file->GetNum("QuatW");
+	body->SetRotation(q);*/
 }

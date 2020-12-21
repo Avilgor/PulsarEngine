@@ -10,11 +10,13 @@ PhysBody3D::PhysBody3D(btRigidBody* body) : body(body)
 	scaleOffset = float3::one;
 	transform = float4x4::zero;
 	isStatic = false;
+	defaultCollisionFlags = body->getCollisionFlags();
+	defaultFlags = body->getFlags();
 }
 
 PhysBody3D::~PhysBody3D()
 {
-	delete body;
+	if(body != nullptr) delete body;
 }
 
 void PhysBody3D::Push(float x, float y, float z)
@@ -28,10 +30,34 @@ float4x4 PhysBody3D::GetTransform()
 	return float4x4::zero;
 }
 
+bool PhysBody3D::SetMass(float val)
+{
+	if (App->physics->runningSimulation == false)
+	{
+		btVector3 inertia;
+		body->getCollisionShape()->calculateLocalInertia(val, inertia);
+		body->setMassProps(val, inertia);
+		body->updateInertiaTensor();
+		return true;
+	}
+
+	return false;
+}
+
+bool PhysBody3D::SetFriction(float val)
+{
+	if (App->physics->runningSimulation == false)
+	{
+		body->setFriction(val);
+		return true;
+	}
+	return false;
+}
+
 void PhysBody3D::UpdateTransform(float4x4 globalMat)
 {
 	if (!body->isActive()) body->activate(true);
-		
+
 	float3 position;
 	float3 scale;
 	Quat quat;
@@ -123,16 +149,22 @@ void PhysBody3D::SetStatic(bool val)
 	isStatic = val;
 	if (val)
 	{
-		body->setFlags(1);
+		body->setFlags(body->CF_STATIC_OBJECT);
 		btVector3 zeroVector(0, 0, 0);
 		body->setLinearVelocity(zeroVector);
 		body->setAngularVelocity(zeroVector);
 	}
 	else
 	{
-		body->setFlags(2);
+		body->setFlags(defaultFlags);
 		btVector3 zeroVector(0, 0, 0);
 		body->setLinearVelocity(zeroVector);
 		body->setAngularVelocity(zeroVector);
 	}
+}
+
+void PhysBody3D::SetTrigger(bool val)
+{
+	if (val) body->setCollisionFlags(body->CO_GHOST_OBJECT);
+	else body->setCollisionFlags(defaultCollisionFlags);
 }

@@ -95,6 +95,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="ConfigWindow.h" />
     <ClInclude Include="ConsoleWindow.h" />
+    <ClInclude Include="ConstraintPoint.h" />
     <ClInclude Include="EditorMain.h" />
     <ClInclude Include="EditorWindow.h" />
     <ClInclude Include="EngineResource.h" />
@@ -213,6 +214,7 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ConfigWindow.cpp" />
     <ClCompile Include="ConsoleWindow.cpp" />
+    <ClCompile Include="ConstraintPoint.cpp" />
     <ClCompile Include="EditorMain.cpp" />
     <ClCompile Include="EditorWindow.cpp" />
     <ClCompile Include="EngineResource.cpp" />

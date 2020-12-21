@@ -11,6 +11,9 @@ BoxCollider::BoxCollider(GameObject* parent) : Component(parent, BOX_COLLIDER_CO
 {
 	component->boxCollider = this;
 	App->physics->AddBody(this,float3::one);
+	isTrigger = false;
+	friction = 0.0f;
+	mass = 10.0f;
 	draw = true;
 	body->UpdateTransform(gameobject->GetGlobalTransform());
 }
@@ -19,6 +22,9 @@ BoxCollider::BoxCollider(GameObject* parent, float3 s) : Component(parent, BOX_C
 {
 	component->boxCollider = this;
 	App->physics->AddBody(this,s);
+	isTrigger = false;
+	friction = 0.0f;
+	mass = 10.0f;
 	if(body != nullptr) body->scaleOffset = s;
 	draw = true;
 	body->UpdateTransform(gameobject->GetGlobalTransform());
@@ -26,8 +32,11 @@ BoxCollider::BoxCollider(GameObject* parent, float3 s) : Component(parent, BOX_C
 
 BoxCollider::~BoxCollider()
 {
-	App->physics->RemoveCollider(UUID);
-	body = nullptr;
+	if (body != nullptr)
+	{
+		App->physics->RemoveCollider(UUID);
+		body = nullptr;
+	}
 }
 
 void BoxCollider::UpdateTransform()
@@ -37,10 +46,15 @@ void BoxCollider::UpdateTransform()
 
 void BoxCollider::UpdateComponent()
 {
-	//if(App->physics->runningSimulation == false) UpdateTransform();
+	LOG("Update collider");
 	if (draw && gameobject->selected)
 	{
-		if (body != nullptr) App->physics->DebugDrawBody(body->body);
+		LOG("Draw and selected");
+		if (body != nullptr)
+		{
+			LOG("Render collider");
+			App->physics->DebugDrawBody(body->body);
+		}
 	}
 }
 
@@ -85,20 +99,33 @@ float3 BoxCollider::GetPosition()
 
 void BoxCollider::SetScale(float3 s)
 {
-	if (body != nullptr)
-	{
-		body->SetScale(s.x,s.y,s.z);
-		//body->scaleOffset = s;
-		//shape->size = s;
-	}
+	if (body != nullptr) body->SetScale(s.x,s.y,s.z);	
 }
 
 void BoxCollider::SetPos(float3 p)
 {
-	if (body != nullptr)
+	if (body != nullptr) body->SetPos(p.x,p.y,p.z);
+}
+
+void BoxCollider::SetMass(float val)
+{
+	if (val > 0 && val < 100000000.0f)
 	{
-		body->SetPos(p.x,p.y,p.z);
-		//body->localOffset = p;
+		if(body->SetMass(val)) mass = val;
+	}
+}
+
+void BoxCollider::SetTrigger(bool val)
+{
+	isTrigger = val;
+	body->SetTrigger(val);
+}
+
+void BoxCollider::SetFriction(float val)
+{
+	if (val >= 0 && val < 100.0f)
+	{
+		if (body->SetFriction(val)) friction = val;
 	}
 }
 
@@ -119,22 +146,57 @@ void BoxCollider::SaveComponent(JSonHandler* file)
 	JSonHandler node = file->InsertNodeArray("Components");
 	node.SaveNum("CompType", (double)compType);
 	node.SaveString("UUID", UUID.c_str());
-	//node.SaveBool("Active", active);
-	//if (resMaterial != nullptr) node.SaveString("ResUUID", resMaterial->UUID.c_str());
-	//else node.SaveString("ResUUID", "-1");
+	node.SaveBool("Static", body->isStatic);
+	node.SaveBool("Trigger", isTrigger);
+	node.SaveBool("Draw",draw);
+	node.SaveNum("Mass",mass);
+	node.SaveNum("Friction", friction);
+	//Position
+	node.SaveNum("PosX", body->localOffset.x);
+	node.SaveNum("PosY", body->localOffset.y);
+	node.SaveNum("PosZ", body->localOffset.z);
+	//Scale
+	node.SaveNum("ScaleX", body->scaleOffset.x);
+	node.SaveNum("ScaleY", body->scaleOffset.y);
+	node.SaveNum("ScaleZ", body->scaleOffset.z);
+	//Rotation
+	/*Quat rot = body->GetRotation();
+	node.SaveNum("QuatX", rot.x);
+	node.SaveNum("QuatY", rot.y);
+	node.SaveNum("QuatZ", rot.z);
+	node.SaveNum("QuatW", rot.w);*/
 }
 
 void BoxCollider::LoadComponent(JSonHandler* file)
 {
-	/*Mesh* meshComp = nullptr;
-	if (gameobject->GetFirstComponentType(MESH_COMP) != nullptr) meshComp = gameobject->GetFirstComponentType(MESH_COMP)->AsMesh();
+	App->physics->RemoveCollider(UUID);
 	UUID = file->GetString("UUID");
 	active = file->GetBool("Active");
-	EngineResource* res = App->resourceManager->GetResource(file->GetString("ResUUID"));
-	if (res != nullptr)
-	{
-		resMaterial = res->AsMaterial();
-		resMaterial->references++;
-	}
-	if (resMaterial != nullptr) meshComp->SetMaterial(resMaterial);*/
+	App->physics->AddBody(this, float3::one);
+	body->UpdateTransform(gameobject->GetGlobalTransform());
+	draw = file->GetBool("Draw");
+	body->SetStatic(file->GetBool("Static"));
+	SetMass(file->GetNum("Mass"));
+	SetFriction(file->GetNum("Friction"));
+	SetTrigger(file->GetBool("Trigger"));
+	
+	//Position
+	float3 pos;
+	pos.x = file->GetNum("PosX");
+	pos.y = file->GetNum("PosY");
+	pos.z = file->GetNum("PosZ");
+	body->SetPos(pos.x,pos.y,pos.z);
+	//Scale
+	float3 scale;
+	scale.x = file->GetNum("ScaleX");
+	scale.y = file->GetNum("ScaleY");
+	scale.z = file->GetNum("ScaleZ");
+	body->SetScale(scale.x,scale.y,scale.z);
+	//Rotation
+	/*Quat q;
+	q.x = file->GetNum("QuatX");
+	q.y = file->GetNum("QuatY");
+	q.z = file->GetNum("QuatZ");
+	q.w = file->GetNum("QuatW");
+	body->SetRotation(q);*/
 }

@@ -27,15 +27,20 @@ public:
 	void SetStatic(bool val);
 	void SetScale(float3 scale);
 	void SetPos(float3 pos);
+	void SetMass(float val);
+	void SetFriction(float val);
+	void SetTrigger(bool val);
 	float3 GetSize();
 	float3 GetPosition();
 	bool IsStatic();
 	
 public:
-	//CubePrimitive* shape = nullptr;
+
 	PhysBody3D* body = nullptr;
 	bool draw;
 	float mass;
+	float friction;
+	bool isTrigger;
 };
 
 #endif //__BoxCollider_H__
