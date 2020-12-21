@@ -32,6 +32,7 @@ float4x4 PhysBody3D::GetTransform()
 
 bool PhysBody3D::SetMass(float val)
 {
+	if (!body->isActive()) body->activate(true);
 	if (App->physics->runningSimulation == false)
 	{
 		btVector3 inertia;
@@ -46,6 +47,7 @@ bool PhysBody3D::SetMass(float val)
 
 bool PhysBody3D::SetFriction(float val)
 {
+	if (!body->isActive()) body->activate(true);
 	if (App->physics->runningSimulation == false)
 	{
 		body->setFriction(val);
@@ -147,12 +149,17 @@ Quat PhysBody3D::GetRotation()
 void PhysBody3D::SetStatic(bool val)
 {
 	isStatic = val;
+	if (!body->isActive()) body->activate(true);
 	if (val)
 	{
 		body->setFlags(body->CF_STATIC_OBJECT);
 		btVector3 zeroVector(0, 0, 0);
 		body->setLinearVelocity(zeroVector);
 		body->setAngularVelocity(zeroVector);
+		btVector3 inertia;
+		body->getCollisionShape()->calculateLocalInertia(0.0f, inertia);
+		body->setMassProps(0.0f, inertia);
+		body->updateInertiaTensor();
 	}
 	else
 	{
@@ -165,6 +172,7 @@ void PhysBody3D::SetStatic(bool val)
 
 void PhysBody3D::SetTrigger(bool val)
 {
+	if (!body->isActive()) body->activate(true);
 	if (val) body->setCollisionFlags(body->CO_GHOST_OBJECT);
 	else body->setCollisionFlags(defaultCollisionFlags);
 }

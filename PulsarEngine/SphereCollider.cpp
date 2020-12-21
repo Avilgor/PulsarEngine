@@ -68,7 +68,11 @@ void SphereCollider::PhysicsUpdate()
 
 void SphereCollider::SetStatic(bool val)
 {
-	if (body != nullptr) body->SetStatic(val);
+	if (body != nullptr)
+	{
+		body->SetStatic(val);
+		if (!val) SetMass(mass);
+	}
 }
 
 void SphereCollider::DeleteComponent()
@@ -108,7 +112,7 @@ void SphereCollider::SetPos(float3 p)
 
 void SphereCollider::SetMass(float val)
 {
-	if (val > 0 && val < 100000000.0f)
+	if (val > 0 && val < 100000000.0f && !body->isStatic)
 	{
 		if (body->SetMass(val)) mass = val;
 	}
@@ -145,6 +149,7 @@ void SphereCollider::SaveComponent(JSonHandler* file)
 	JSonHandler node = file->InsertNodeArray("Components");
 	node.SaveNum("CompType", (double)compType);
 	node.SaveString("UUID", UUID.c_str());
+	node.SaveBool("Active", active);
 	node.SaveBool("Static", body->isStatic);
 	node.SaveBool("Trigger", isTrigger);
 	node.SaveBool("Draw", draw);
@@ -156,12 +161,6 @@ void SphereCollider::SaveComponent(JSonHandler* file)
 	node.SaveNum("PosZ", body->localOffset.z);
 	//Scale
 	node.SaveNum("Rad", body->scaleOffset.x);
-	//Rotation
-	/*Quat rot = body->GetRotation();
-	node.SaveNum("QuatX", rot.x);
-	node.SaveNum("QuatY", rot.y);
-	node.SaveNum("QuatZ", rot.z);
-	node.SaveNum("QuatW", rot.w);*/
 }
 
 void SphereCollider::LoadComponent(JSonHandler* file)
@@ -184,11 +183,4 @@ void SphereCollider::LoadComponent(JSonHandler* file)
 	body->SetPos(pos.x, pos.y, pos.z);
 	//Scale
 	SetScale(file->GetNum("Rad"));
-	//Rotation
-	/*Quat q;
-	q.x = file->GetNum("QuatX");
-	q.y = file->GetNum("QuatY");
-	q.z = file->GetNum("QuatZ");
-	q.w = file->GetNum("QuatW");
-	body->SetRotation(q);*/
 }

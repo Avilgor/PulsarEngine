@@ -26,7 +26,7 @@ GameObject::GameObject(const char* n, GameObject* p)
 	toDelete = false;
 	parent = p;
 	if(p != nullptr) parentUUID = p->UUID;
-	transformUpdate = false;
+	transformUpdate = true;
 	CreateTransform();
 	hasAABB = false;
 	tag = DEFAULT_TAG;
@@ -268,7 +268,7 @@ void GameObject::LoadGameObject(JSonHandler* file)
 				}
 				break;
 			case BOX_COLLIDER_COMP:
-				LOG("Load box collider");
+				//LOG("Load box collider");
 				comp = AddComponent(BOX_COLLIDER_COMP);
 				if (comp != nullptr)
 				{

@@ -46,15 +46,9 @@ void BoxCollider::UpdateTransform()
 
 void BoxCollider::UpdateComponent()
 {
-	LOG("Update collider");
 	if (draw && gameobject->selected)
 	{
-		LOG("Draw and selected");
-		if (body != nullptr)
-		{
-			LOG("Render collider");
-			App->physics->DebugDrawBody(body->body);
-		}
+		if (body != nullptr) App->physics->DebugDrawBody(body->body);		
 	}
 }
 
@@ -69,7 +63,11 @@ void BoxCollider::PhysicsUpdate()
 
 void BoxCollider::SetStatic(bool val)
 {
-	if (body != nullptr) body->SetStatic(val);
+	if (body != nullptr)
+	{
+		body->SetStatic(val);
+		if (!val) SetMass(mass);
+	}
 }
 
 void BoxCollider::DeleteComponent()
@@ -109,7 +107,7 @@ void BoxCollider::SetPos(float3 p)
 
 void BoxCollider::SetMass(float val)
 {
-	if (val > 0 && val < 100000000.0f)
+	if (val >= 0 && val < 100000000.0f && !body->isStatic)
 	{
 		if(body->SetMass(val)) mass = val;
 	}
@@ -146,6 +144,7 @@ void BoxCollider::SaveComponent(JSonHandler* file)
 	JSonHandler node = file->InsertNodeArray("Components");
 	node.SaveNum("CompType", (double)compType);
 	node.SaveString("UUID", UUID.c_str());
+	node.SaveBool("Active", active);
 	node.SaveBool("Static", body->isStatic);
 	node.SaveBool("Trigger", isTrigger);
 	node.SaveBool("Draw",draw);
@@ -159,12 +158,6 @@ void BoxCollider::SaveComponent(JSonHandler* file)
 	node.SaveNum("ScaleX", body->scaleOffset.x);
 	node.SaveNum("ScaleY", body->scaleOffset.y);
 	node.SaveNum("ScaleZ", body->scaleOffset.z);
-	//Rotation
-	/*Quat rot = body->GetRotation();
-	node.SaveNum("QuatX", rot.x);
-	node.SaveNum("QuatY", rot.y);
-	node.SaveNum("QuatZ", rot.z);
-	node.SaveNum("QuatW", rot.w);*/
 }
 
 void BoxCollider::LoadComponent(JSonHandler* file)
@@ -192,11 +185,4 @@ void BoxCollider::LoadComponent(JSonHandler* file)
 	scale.y = file->GetNum("ScaleY");
 	scale.z = file->GetNum("ScaleZ");
 	body->SetScale(scale.x,scale.y,scale.z);
-	//Rotation
-	/*Quat q;
-	q.x = file->GetNum("QuatX");
-	q.y = file->GetNum("QuatY");
-	q.z = file->GetNum("QuatZ");
-	q.w = file->GetNum("QuatW");
-	body->SetRotation(q);*/
 }
