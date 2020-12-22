@@ -8,10 +8,13 @@
 #include <vector>
 #include <string>
 
+class PhysBody3D;
 class Transform;
 class Camera;
-class Rigidbody;
-struct PhysBody3D;
+class BoxCollider;
+class SphereCollider;
+class CapsuleCollider;
+class ConstraintPoint;
 
 class GameObject
 {
@@ -63,6 +66,9 @@ public:
 	void CheckRayIntersect(std::vector<GameObject*> *vec,LineSegment ray);
 	GameObject* CheckRayIntersect(LineSegment ray);
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
+	bool HasCollider();
+	Component* GetColliderComp();
+	//bool CheckIfGotParentUUID(std::string id);
 	//void SetMaterial(RES_Material* mat);
 
 private:
@@ -82,6 +88,10 @@ public:
 	bool drawAABB = false;
 	Transform* transform = nullptr;
 	Camera* camera = nullptr;
+	CapsuleCollider* capsulecollider = nullptr;
+	BoxCollider* boxcollider = nullptr;
+	SphereCollider* spherecollider = nullptr;
+	ConstraintPoint* pointconstraint = nullptr;
 	//Rigidbody* rigidbody = nullptr;
 	AABB Gaabb;
 	OBB Gobb;

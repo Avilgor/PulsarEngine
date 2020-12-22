@@ -12,6 +12,7 @@
 #include "BoxCollider.h"
 #include "SphereCollider.h"
 #include "CapsuleCollider.h"
+#include "ConstraintPoint.h"
 #include "MathGeoLib/include/Geometry/AABB.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
@@ -150,6 +151,11 @@ void GameObject::UpdateGameObject()
 				}
 			}
 
+			if (boxcollider != nullptr) boxcollider->UpdateComponent();
+			if (capsulecollider != nullptr) capsulecollider->UpdateComponent();
+			if (spherecollider != nullptr) spherecollider->UpdateComponent();
+			if (pointconstraint != nullptr) pointconstraint->UpdateComponent();
+
 			if (!Childs.empty())
 			{
 				for (std::vector<GameObject*>::iterator it = Childs.begin(); it != Childs.end(); ++it)
@@ -208,6 +214,10 @@ void GameObject::SaveGameobject(JSonHandler* file, const char* label)
 			(*it)->SaveComponent(&node);
 		}
 	}
+	if (boxcollider != nullptr) boxcollider->SaveComponent(&node);
+	if (capsulecollider != nullptr) capsulecollider->SaveComponent(&node);
+	if (spherecollider != nullptr) spherecollider->SaveComponent(&node);
+	if (pointconstraint != nullptr) pointconstraint->SaveComponent(&node);
 
 	//Call all childs save method
 	if (!Childs.empty())
@@ -236,15 +246,12 @@ void GameObject::LoadGameObject(JSonHandler* file)
 		for (int i = 0; i < num; i++)
 		{
 			JSonHandler json = file->GetNodeArray("Components", i);
-			//LOG("Comp type: %d",num);
 			switch ((int)json.GetNum("CompType"))
 			{
 			case TRANSFORM_COMP:
-				//LOG("Load transform");
 				transform->LoadComponent(&json);
 				break;
 			case MESH_COMP:
-				//LOG("Load mesh");
 				comp = AddComponent(MESH_COMP);
 				if (comp != nullptr)
 				{
@@ -252,7 +259,6 @@ void GameObject::LoadGameObject(JSonHandler* file)
 				}
 				break;
 			case MATERIAL_COMP:
-				//LOG("Load material");
 				comp = AddComponent(MATERIAL_COMP);
 				if (comp != nullptr)
 				{
@@ -260,7 +266,6 @@ void GameObject::LoadGameObject(JSonHandler* file)
 				}
 				break;
 			case CAMERA_COMP:
-				//LOG("Load camera");
 				comp = AddComponent(CAMERA_COMP);
 				if (comp != nullptr)
 				{
@@ -268,7 +273,6 @@ void GameObject::LoadGameObject(JSonHandler* file)
 				}
 				break;
 			case BOX_COLLIDER_COMP:
-				//LOG("Load box collider");
 				comp = AddComponent(BOX_COLLIDER_COMP);
 				if (comp != nullptr)
 				{
@@ -276,7 +280,6 @@ void GameObject::LoadGameObject(JSonHandler* file)
 				}
 				break;
 			case SPHERE_COLLIDER_COMP:
-				//LOG("Load sphere collider");
 				comp = AddComponent(SPHERE_COLLIDER_COMP);
 				if (comp != nullptr)
 				{
@@ -284,13 +287,40 @@ void GameObject::LoadGameObject(JSonHandler* file)
 				}
 				break;
 			case CAPSULE_COLLIDER_COMP:
-				//LOG("Load capsule collider");
 				comp = AddComponent(CAPSULE_COLLIDER_COMP);
 				if (comp != nullptr)
 				{
 					if (comp->AsCapsuleCollider() != nullptr) comp->AsCapsuleCollider()->LoadComponent(&json);
 				}
 				break;
+			case CONSTRAINT_POINT_COMP:
+				comp = AddComponent(CONSTRAINT_POINT_COMP);
+				if (comp != nullptr)
+				{
+					if (comp->AsPointConstraint() != nullptr) comp->AsPointConstraint()->LoadComponent(&json);
+				}
+				break;
+			/*case CONSTRAINT_HINGE_COMP:
+				comp = AddComponent(CONSTRAINT_HINGE_COMP);
+				if (comp != nullptr)
+				{
+					if (comp->AsCapsuleCollider() != nullptr) comp->AsCapsuleCollider()->LoadComponent(&json);
+				}
+				break;
+			case CONSTRAINT_SLIDER_COMP:
+				comp = AddComponent(CONSTRAINT_SLIDER_COMP);
+				if (comp != nullptr)
+				{
+					if (comp->AsCapsuleCollider() != nullptr) comp->AsCapsuleCollider()->LoadComponent(&json);
+				}
+				break;
+			case CONSTRAINT_CONE_COMP:
+				comp = AddComponent(CONSTRAINT_CONE_COMP);
+				if (comp != nullptr)
+				{
+					if (comp->AsCapsuleCollider() != nullptr) comp->AsCapsuleCollider()->LoadComponent(&json);
+				}
+				break;*/
 			}	
 		}
 	}
@@ -340,6 +370,15 @@ void GameObject::DrawMesh()
 	}	
 }
 
+bool GameObject::HasCollider()
+{
+	if (boxcollider != nullptr || capsulecollider != nullptr || spherecollider != nullptr)
+	{
+		return true;
+	}
+	else return false;
+}
+
 std::vector<Component*> GameObject::GetAllComponentsByType(ComponentTypes type)
 {
 	if (!Components.empty())
@@ -352,7 +391,6 @@ std::vector<Component*> GameObject::GetAllComponentsByType(ComponentTypes type)
 				temp.push_back(Components[i]);
 			}
 		}
-		//LOG("Components ammount: %d",temp.size());
 		return temp;
 	}
 	else return Components;
@@ -370,11 +408,7 @@ GameObject* GameObject::CheckRayIntersect(LineSegment ray)
 				Mesh* mesh = temp->AsMesh();
 				if (mesh != nullptr)
 				{
-					if (ray.Intersects(Gaabb))
-					{
-						//LOG("Gameobject %s mouse click intersect.", name.c_str());
-						return this;
-					}
+					if (ray.Intersects(Gaabb)) return this;				
 				}
 			}
 		}
@@ -395,11 +429,7 @@ void GameObject::CheckRayIntersect(std::vector<GameObject*>* vec, LineSegment ra
 				Mesh* mesh = temp->AsMesh();
 				if (mesh != nullptr)
 				{
-					if (ray.Intersects(mesh->GetMeshAABB()))
-					{
-						//LOG("Gameobject %s mouse click intersect.", name.c_str());
-						vec->push_back(this);
-					}
+					if (ray.Intersects(mesh->GetMeshAABB())) vec->push_back(this);				
 				}
 			}
 		}
@@ -474,18 +504,17 @@ Component* GameObject::AddComponent(ComponentTypes type)
 	BoxCollider* boxColl = nullptr;
 	SphereCollider* sphereColl = nullptr;
 	CapsuleCollider* capsuleColl = nullptr;
+	ConstraintPoint* pointconst = nullptr;
 	switch (type)
 	{
 	case MESH_COMP:
 		mesh = new Mesh(this);
 		Components.push_back(mesh->component);
-		//LOG("Added component mesh");
 		return mesh->component;
 		break;
 	case MATERIAL_COMP:
 		mat = new Material(this);
 		Components.push_back(mat->component);
-		//LOG("Added component material");
 		return mat->component;
 		break;
 	case CAMERA_COMP:
@@ -496,31 +525,84 @@ Component* GameObject::AddComponent(ComponentTypes type)
 			camera = nullptr;
 		}
 		camera = new Camera(this);
-		//LOG("Added component camera");
 		return camera->component;
 		break;
 	case BOX_COLLIDER_COMP:
+		if (spherecollider != nullptr) DeleteGOComponent(SPHERE_COLLIDER_COMP);
+		if (capsulecollider != nullptr) DeleteGOComponent(CAPSULE_COLLIDER_COMP);
 		boxColl = new BoxCollider(this);
-		Components.push_back(boxColl->component);
-		//LOG("Added component box collider");
+		boxcollider = boxColl;
+		//Components.push_back(boxColl->component);
 		return boxColl->component;		
 		break;
 	case SPHERE_COLLIDER_COMP:
+		if (boxcollider != nullptr) DeleteGOComponent(BOX_COLLIDER_COMP);
+		if (capsulecollider != nullptr) DeleteGOComponent(CAPSULE_COLLIDER_COMP);
 		sphereColl = new SphereCollider(this);
-		Components.push_back(sphereColl->component);
-		//LOG("Added component sphere collider");
+		spherecollider = sphereColl;
+		//Components.push_back(sphereColl->component);
 		return sphereColl->component;	
 		break;
 	case CAPSULE_COLLIDER_COMP:
+		if (spherecollider != nullptr) DeleteGOComponent(SPHERE_COLLIDER_COMP);
+		if (boxcollider != nullptr) DeleteGOComponent(BOX_COLLIDER_COMP);
 		capsuleColl = new CapsuleCollider(this);
-		Components.push_back(capsuleColl->component);
-		//LOG("Added component capsule collider");
+		capsulecollider = capsuleColl;
+		//Components.push_back(capsuleColl->component);
 		return capsuleColl->component;
 		break;
+	case CONSTRAINT_POINT_COMP:
+		if (HasCollider())
+		{
+			if (pointconstraint != nullptr)DeleteGOComponent(CONSTRAINT_POINT_COMP);
+			pointconst = new ConstraintPoint(this);
+			pointconstraint = pointconst;
+			return pointconst->component;
+		}
+		else return nullptr;
+		break;
+	/*case CONSTRAINT_HINGE_COMP:
+		if (HasCollider())
+		{
+			if (pointconstraint != nullptr)DeleteGOComponent(CONSTRAINT_POINT_COMP);
+			capsuleColl = new CapsuleCollider(this);
+			pointconstraint = pointconst;
+			return pointconst->component;
+		}
+		else return nullptr;
+		break;
+	case CONSTRAINT_SLIDER_COMP:
+		if (HasCollider())
+		{
+			if (pointconstraint != nullptr)DeleteGOComponent(CONSTRAINT_POINT_COMP);
+			capsuleColl = new CapsuleCollider(this);
+			pointconstraint = pointconst;
+			return pointconst->component;
+		}
+		else return nullptr;
+		break;
+	case CONSTRAINT_CONE_COMP:
+		if (HasCollider())
+		{
+			if (pointconstraint != nullptr)DeleteGOComponent(CONSTRAINT_POINT_COMP);
+			capsuleColl = new CapsuleCollider(this);
+			pointconstraint = pointconst;
+			return pointconst->component;
+		}
+		else return nullptr;
+		break;*/
 	default:
 		return comp;
 		break;
 	}
+}
+
+Component* GameObject::GetColliderComp()
+{
+	if (boxcollider != nullptr) return boxcollider;
+	else if (spherecollider != nullptr) return spherecollider;
+	else if (capsulecollider != nullptr) return capsulecollider;
+	return nullptr;
 }
 
 Component* GameObject::GetFirstComponentType(ComponentTypes type)
@@ -557,6 +639,48 @@ void GameObject::DeleteGOComponent(ComponentTypes type)
 		camera->DeleteComponent();
 		delete camera;
 		camera = nullptr;
+	}
+	else if (type == BOX_COLLIDER_COMP && boxcollider != nullptr)
+	{
+		boxcollider->DeleteComponent();
+		delete boxcollider;
+		boxcollider = nullptr;
+	}
+	else if (type == SPHERE_COLLIDER_COMP && spherecollider != nullptr)
+	{
+		spherecollider->DeleteComponent();
+		delete spherecollider;
+		spherecollider = nullptr;
+	}
+	else if (type == CAPSULE_COLLIDER_COMP && capsulecollider != nullptr)
+	{
+		capsulecollider->DeleteComponent();
+		delete capsulecollider;
+		capsulecollider = nullptr;
+	}
+	else if (type == CONSTRAINT_POINT_COMP && pointconstraint != nullptr)
+	{
+		pointconstraint->DeleteComponent();
+		delete pointconstraint;
+		pointconstraint = nullptr;
+	}
+	else if (type == CONSTRAINT_HINGE_COMP && boxcollider != nullptr)
+	{
+		capsulecollider->DeleteComponent();
+		delete capsulecollider;
+		capsulecollider = nullptr;
+	}
+	else if (type == CONSTRAINT_SLIDER_COMP && boxcollider != nullptr)
+	{
+		capsulecollider->DeleteComponent();
+		delete capsulecollider;
+		capsulecollider = nullptr;
+	}
+	else if (type == CONSTRAINT_CONE_COMP && boxcollider != nullptr)
+	{
+		capsulecollider->DeleteComponent();
+		delete capsulecollider;
+		capsulecollider = nullptr;
 	}
 	else if (type != TRANSFORM_COMP)
 	{
@@ -679,10 +803,13 @@ void GameObject::SetParent(GameObject* p)
 	{
 		if (parent != nullptr && p->UUID.compare(parent->UUID) != 0)
 		{
-			parent->RemoveChild(UUID);
-			parent = p;
-			parentUUID = p->UUID;
-			parent->AddChild(this);
+			//if (!CheckIfGotParentUUID(p->UUID))
+			//{
+				parent->RemoveChild(UUID);
+				parent = p;
+				parentUUID = p->UUID;
+				parent->AddChild(this);
+			//}
 		}
 		else
 		{
@@ -692,6 +819,27 @@ void GameObject::SetParent(GameObject* p)
 		transform->SetGlobalTransform();
 	}
 }
+
+/*bool GameObject::CheckIfGotParentUUID(std::string id)
+{
+	bool ret = false;
+	if (parent != nullptr)
+	{
+		if (parent->UUID.compare(id) != 0)
+		{
+			if (!Childs.empty())
+			{
+				for (int i = 0; i < Childs.size(); i++)
+				{
+					ret = Childs[i]->CheckIfGotParentUUID(id);
+					if (ret) break;
+				}
+			}
+		}
+		else ret = true;
+	}
+	return ret;
+}*/
 
 void GameObject::Delete()
 {
@@ -716,7 +864,6 @@ void GameObject::Delete()
 
 	transform->DeleteComponent();
 	transform = nullptr;
-//	LOG("Deleted Gameobject: %s", name.c_str());
 	delete this;
 }
 
@@ -728,7 +875,6 @@ void GameObject::SaveToDelete(GameObject* trash)
 
 void GameObject::DeleteGameobject()
 {	
-//	LOG("To delete: %s",name.c_str());
 	toDelete = true;
 	if(parent != nullptr) parent->SaveToDelete(this);
 	if (!Childs.empty())

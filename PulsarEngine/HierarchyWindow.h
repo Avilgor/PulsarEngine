@@ -18,7 +18,6 @@ public:
 
 private:
 	bool dragItem;
-	GameObject* objHovered;
 	bool windowHovered;
 
 };

@@ -139,24 +139,6 @@ update_status ModulePhysics::PreUpdate(float dt)
 
 update_status ModulePhysics::Update(float dt)
 {
-	/*if (App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
-	{
-		debug = !debug;	
-		if (debug)
-		{
-			LOG("Physics debug ON");
-		}
-		else
-		{
-			LOG("Physics debug OFF");
-		}
-	}*/
-
-	/*if (debug == true)
-	{
-		world->debugDrawWorld();		
-		//LOG("Collision objects: %d", world->getNumCollisionObjects());
-	}*/
 	return UPDATE_CONTINUE;
 }
 
@@ -315,6 +297,18 @@ void ModulePhysics::AddConstraint(btTypedConstraint* con, std::string id)
 {
 	world->addConstraint(con);
 	constraints.emplace(id, con);
+}
+
+PhysBody3D* ModulePhysics::GetBodyByUUID(std::string id)
+{
+	if (bodies.find(id) != bodies.end()) return bodies[id];	
+	else return nullptr;
+}
+
+Component* ModulePhysics::GetColliderByUUID(std::string id)
+{
+	if (colliderComponents.find(id) != colliderComponents.end()) return colliderComponents[id];
+	else return nullptr;
 }
 
 void ModulePhysics::RemoveCollider(std::string uuid)
@@ -496,7 +490,7 @@ PhysBody3D* ModulePhysics::AddBody(CapsuleCollider* capsule, float mass)
 }*/
 
 // ---------------------------------------------------------
-void ModulePhysics::AddConstraintPoint(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB, std::string id)
+btTypedConstraint* ModulePhysics::AddConstraintPoint(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB, std::string id)
 {
 	btTypedConstraint* p2p = new btPoint2PointConstraint(
 		*(bodyA.body),
@@ -506,10 +500,11 @@ void ModulePhysics::AddConstraintPoint(PhysBody3D& bodyA, PhysBody3D& bodyB, con
 	world->addConstraint(p2p);
 	constraints.emplace(id,p2p);
 	p2p->setDbgDrawSize(2.0f);
+	return p2p;
 }
 
 
-void ModulePhysics::AddConstraintHinge(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB, const vec3& axisA, const vec3& axisB, std::string id,bool disable_collision)
+btTypedConstraint* ModulePhysics::AddConstraintHinge(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB, const vec3& axisA, const vec3& axisB, std::string id,bool disable_collision)
 {
 	btHingeConstraint* hinge = new btHingeConstraint(
 		*(bodyA.body),
@@ -522,9 +517,10 @@ void ModulePhysics::AddConstraintHinge(PhysBody3D& bodyA, PhysBody3D& bodyB, con
 	world->addConstraint(hinge, disable_collision);
 	constraints.emplace(id,hinge);
 	hinge->setDbgDrawSize(2.0f);
+	return hinge;
 }
 
-void ModulePhysics::AddConstraintSlider(PhysBody3D& bodyA, PhysBody3D& bodyB, const btTransform& anchorA, const btTransform& anchorB, std::string id)
+btTypedConstraint* ModulePhysics::AddConstraintSlider(PhysBody3D& bodyA, PhysBody3D& bodyB, const btTransform& anchorA, const btTransform& anchorB, std::string id)
 {
 	btTypedConstraint* slider = new btSliderConstraint(
 		*(bodyA.body),
@@ -535,9 +531,10 @@ void ModulePhysics::AddConstraintSlider(PhysBody3D& bodyA, PhysBody3D& bodyB, co
 	world->addConstraint(slider);
 	constraints.emplace(id, slider);
 	slider->setDbgDrawSize(2.0f);
+	return slider;
 }
 
-void ModulePhysics::AddConstraintCone(PhysBody3D& bodyA, PhysBody3D& bodyB, const btTransform& anchorA, const btTransform& anchorB, std::string id)
+btTypedConstraint* ModulePhysics::AddConstraintCone(PhysBody3D& bodyA, PhysBody3D& bodyB, const btTransform& anchorA, const btTransform& anchorB, std::string id)
 {
 	btTypedConstraint* cone = new btConeTwistConstraint(
 		*(bodyA.body),
@@ -547,6 +544,7 @@ void ModulePhysics::AddConstraintCone(PhysBody3D& bodyA, PhysBody3D& bodyB, cons
 	world->addConstraint(cone);
 	constraints.emplace(id, cone);
 	cone->setDbgDrawSize(2.0f);
+	return cone;
 }
 
 // =============================================

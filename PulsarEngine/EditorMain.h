@@ -55,6 +55,7 @@ public:
 	KEY_STATE ctrl;
 	KEY_STATE deleteKey;
 	bool mouseDrag = false;
+	GameObject* hierarchyObjHover;
 	//bool scanProjectFiles = true;
 };
 

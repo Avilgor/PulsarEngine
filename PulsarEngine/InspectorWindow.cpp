@@ -9,6 +9,7 @@
 #include "RES_Material.h"
 #include "Camera.h"
 #include "CapsuleCollider.h"
+#include "ConstraintPoint.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
 
@@ -35,7 +36,11 @@ update_status InspectorWindow::Draw()
 		if (currentGo->GetFirstComponentType(MESH_COMP)) MeshSection(currentGo);
 		if (currentGo->GetFirstComponentType(MATERIAL_COMP)) MaterialSection(currentGo);
 		if (currentGo->camera != nullptr) CameraSection(currentGo);
-		std::vector<Component*> temp;
+		if (currentGo->boxcollider != nullptr) BoxColliderSection(currentGo->boxcollider);
+		if (currentGo->spherecollider != nullptr) SphereColliderSection(currentGo->spherecollider);
+		if (currentGo->capsulecollider != nullptr) CapsuleColliderSection(currentGo->capsulecollider);
+		if (currentGo->pointconstraint != nullptr) PointConstraintSection(currentGo->pointconstraint);
+		/*std::vector<Component*> temp;
 		temp = currentGo->GetAllComponentsByType(BOX_COLLIDER_COMP);
 		if (temp.size() > 0)
 		{
@@ -60,7 +65,7 @@ update_status InspectorWindow::Draw()
 			{
 				CapsuleColliderSection(temp[i]->AsCapsuleCollider(), i);
 			}
-		}
+		}*/
 
 		ImVec2 winSize = ImGui::GetContentRegionAvail();
 		ImGui::Spacing();
@@ -87,29 +92,48 @@ update_status InspectorWindow::Draw()
 				ImGui::CloseCurrentPopup();
 			}
 
-			/*if (ImGui::Button("Rigidbody"))
-			{
-				//go->AddComponent(CAMERA_COMP);
-				ImGui::CloseCurrentPopup();
-			}*/
-
-			if (ImGui::Button("BoxCollider"))
+			if (ImGui::Button("Box Collider"))
 			{
 				currentGo->AddComponent(BOX_COLLIDER_COMP);
 				ImGui::CloseCurrentPopup();
 			}
 
-			if (ImGui::Button("SphereCollider"))
+			if (ImGui::Button("Sphere Collider"))
 			{
 				currentGo->AddComponent(SPHERE_COLLIDER_COMP);
 				ImGui::CloseCurrentPopup();
 			}
 
-			if (ImGui::Button("CapsuleCollider"))
+			if (ImGui::Button("Capsule Collider"))
 			{
 				currentGo->AddComponent(CAPSULE_COLLIDER_COMP);
 				ImGui::CloseCurrentPopup();
 			}
+
+			if (ImGui::Button("Point constraint"))
+			{
+				currentGo->AddComponent(CONSTRAINT_POINT_COMP);
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::Button("Hinge constraint"))
+			{
+				currentGo->AddComponent(CONSTRAINT_HINGE_COMP);
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::Button("Slider constraint"))
+			{
+				currentGo->AddComponent(CONSTRAINT_SLIDER_COMP);
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::Button("Cone constraint"))
+			{
+				currentGo->AddComponent(CONSTRAINT_CONE_COMP);
+				ImGui::CloseCurrentPopup();
+			}
+
 			ImGui::EndPopup();
 		}
 	}
@@ -302,60 +326,33 @@ void InspectorWindow::CameraSection(GameObject* go)
 	}
 }
 
-void InspectorWindow::BoxColliderSection(BoxCollider* coll,int index)
+void InspectorWindow::BoxColliderSection(BoxCollider* coll/*,int index*/)
 {
 	if (ImGui::CollapsingHeader("BoxCollider", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		std::string tagStatic = "##boxCollStatic";
-		tagStatic.append(std::to_string(index));
-		std::string tagDraw = "##boxCollDraw";
-		tagDraw.append(std::to_string(index));
-		std::string tagTrigger = "##boxCollTrigger";
-		tagTrigger.append(std::to_string(index));
-		std::string tagMass = "##boxCollMass";
-		tagMass.append(std::to_string(index));
-		std::string tagFriction = "##boxCollFriction";
-		tagFriction.append(std::to_string(index));
-		std::string tagPosx = "##boxcollPosX";
-		tagPosx.append(std::to_string(index));
-		std::string tagPosy = "##boxcollPosY";
-		tagPosy.append(std::to_string(index));
-		std::string tagPosz = "##boxcollPosZ";
-		tagPosz.append(std::to_string(index));
-		std::string tagScalex = "##boxcollSizeX";
-		tagScalex.append(std::to_string(index));
-		std::string tagScaley = "##boxcollSizeY";
-		tagScaley.append(std::to_string(index));
-		std::string tagScalez = "##boxcollSizeZ";
-		tagScalez.append(std::to_string(index));
-		std::string tagBtn = "Delete Component##boxColl";
-		tagBtn.append(std::to_string(index));
-
 		bool collSt = coll->IsStatic();
 		ImGui::Text("Static:");
 		ImGui::SameLine();
-		if (ImGui::Checkbox(tagStatic.c_str(), &collSt)) coll->SetStatic(collSt);
+		if (ImGui::Checkbox("##boxCollStatic", &collSt)) coll->SetStatic(collSt);
 
 		bool collTrigger = coll->isTrigger;
 		ImGui::Text("Trigger:");
 		ImGui::SameLine();
-		if (ImGui::Checkbox(tagTrigger.c_str(), &collTrigger)) coll->SetTrigger(collTrigger);
+		if (ImGui::Checkbox("##boxCollTrigger", &collTrigger)) coll->SetTrigger(collTrigger);
 
 		ImGui::Text("Draw:");
 		ImGui::SameLine();
-		ImGui::Checkbox(tagDraw.c_str(), &coll->draw);
+		ImGui::Checkbox("##boxCollDraw", &coll->draw);
 
 		float mass = coll->mass;
 		ImGui::Text("Mass:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagMass.c_str(), &mass, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetMass(mass);
+		if (ImGui::InputFloat("##boxCollMass", &mass, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetMass(mass);
 
 		float friction = coll->friction;
 		ImGui::Text("Friction:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagFriction.c_str(), &friction, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetFriction(friction);
-
-		
+		if (ImGui::InputFloat("##boxCollFriction", &friction, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetFriction(friction);	
 
 		float3 pos = coll->GetPosition();
 		float3 scale = coll->GetSize();
@@ -363,163 +360,113 @@ void InspectorWindow::BoxColliderSection(BoxCollider* coll,int index)
 		bool changeScale = false;
 		ImGui::Text("Position x:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagPosx.c_str(), &pos.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		if (ImGui::InputFloat("##boxcollPosX", &pos.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
 		ImGui::Text("Position y:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagPosy.c_str(), &pos.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		if (ImGui::InputFloat("##boxcollPosY", &pos.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
 		ImGui::Text("Position z:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagPosz.c_str(), &pos.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		if (ImGui::InputFloat("##boxcollPosZ", &pos.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
 
 		ImGui::Text("Size x:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagScalex.c_str(), &scale.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;		
+		if (ImGui::InputFloat("##boxcollSizeX", &scale.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;
 		ImGui::Text("Size y:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagScalez.c_str(), &scale.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;
+		if (ImGui::InputFloat("##boxcollSizeY", &scale.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;
 		ImGui::Text("Size z:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagScaley.c_str(), &scale.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;
+		if (ImGui::InputFloat("##boxcollSizeZ", &scale.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changeScale = true;
 
 		if (changePos) coll->SetPos(pos);
 		if (changeScale) coll->SetScale(scale);
 
-		if (ImGui::Button(tagBtn.c_str()))
+		if (ImGui::Button("Delete Component"))
 		{
-			//LOG("Delete box collider btn");
-			currentGo->DeleteGOComponent(coll->UUID);
+			LOG("Delete box collider btn");
+			currentGo->DeleteGOComponent(BOX_COLLIDER_COMP);
 		}
 	}
 }
 
-void InspectorWindow::SphereColliderSection(SphereCollider* coll, int index)
+void InspectorWindow::SphereColliderSection(SphereCollider* coll/*, int index*/)
 {
 	if (ImGui::CollapsingHeader("SphereCollider", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		std::string tagStatic = "##sphereCollStatic";
-		tagStatic.append(std::to_string(index));
-		std::string tagDraw = "##sphereCollDraw";
-		tagDraw.append(std::to_string(index));
-		std::string tagTrigger = "##sphereCollTrigger";
-		tagTrigger.append(std::to_string(index));
-		std::string tagMass = "##sphereCollMass";
-		tagMass.append(std::to_string(index));
-		std::string tagFriction = "##sphereCollFriction";
-		tagFriction.append(std::to_string(index));
-		std::string tagPosx = "##spherecollPosX";
-		tagPosx.append(std::to_string(index));
-		std::string tagPosy = "##spherecollPosY";
-		tagPosy.append(std::to_string(index));
-		std::string tagPosz = "##spherecollPosZ";
-		tagPosz.append(std::to_string(index));
-		std::string tagRad = "##spherecollRadius";
-		tagRad.append(std::to_string(index));
-		std::string tagBtn = "Delete Component##boxColl";
-		tagBtn.append(std::to_string(index));
-
-
 		bool collSt = coll->IsStatic();
 		ImGui::Text("Static: ");
 		ImGui::SameLine();
-		if (ImGui::Checkbox(tagStatic.c_str(), &collSt)) coll->SetStatic(collSt);
+		if (ImGui::Checkbox("##sphereCollStatic", &collSt)) coll->SetStatic(collSt);
 
 		bool collTrigger = coll->isTrigger;
 		ImGui::Text("Trigger:");
 		ImGui::SameLine();
-		if (ImGui::Checkbox(tagTrigger.c_str(), &collTrigger)) coll->SetTrigger(collTrigger);
+		if (ImGui::Checkbox("##sphereCollTrigger", &collTrigger)) coll->SetTrigger(collTrigger);
 
 		ImGui::Text("Draw:");
 		ImGui::SameLine();
-		ImGui::Checkbox(tagDraw.c_str(), &coll->draw);
+		ImGui::Checkbox("##sphereCollDraw", &coll->draw);
 
 		float mass = coll->mass;
 		ImGui::Text("Mass:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagMass.c_str(), &mass, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetMass(mass);
+		if (ImGui::InputFloat("##sphereCollMass", &mass, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetMass(mass);
 
 		float friction = coll->friction;
 		ImGui::Text("Friction:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagFriction.c_str(), &friction, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetFriction(friction);
+		if (ImGui::InputFloat("##sphereCollFriction", &friction, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetFriction(friction);
 
 		float3 pos = coll->GetPosition();
 		float rad = coll->GetSize().x;
 		bool changePos = false;
 		ImGui::Text("Position x:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagPosx.c_str(), &pos.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		if (ImGui::InputFloat("##spherecollPosX", &pos.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
 		ImGui::Text("Position y:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagPosy.c_str(), &pos.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		if (ImGui::InputFloat("##spherecollPosY", &pos.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
 		ImGui::Text("Position z:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagPosz.c_str(), &pos.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		if (ImGui::InputFloat("##spherecollPosZ", &pos.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
 
 		ImGui::Text("Radius:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagRad.c_str(), &rad, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetScale(rad);
+		if (ImGui::InputFloat("##spherecollRadius", &rad, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetScale(rad);
 
 		if (changePos) coll->SetPos(pos);
 
-		if (ImGui::Button(tagBtn.c_str()))
-		{
-			//LOG("Delete sphere collider btn");
-			currentGo->DeleteGOComponent(coll->UUID);
-		}
+		if (ImGui::Button("Delete Component")) currentGo->DeleteGOComponent(SPHERE_COLLIDER_COMP);
 	}
 }
 
-void InspectorWindow::CapsuleColliderSection(CapsuleCollider* coll, int index)
+void InspectorWindow::CapsuleColliderSection(CapsuleCollider* coll/*, int index*/)
 {
 	if (ImGui::CollapsingHeader("CapsuleCollider", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		std::string tagStatic = "##capsuleCollStatic";
-		tagStatic.append(std::to_string(index));
-		std::string tagDraw = "##capsuleCollDraw";
-		tagDraw.append(std::to_string(index));
-		std::string tagTrigger = "##capsuleCollTrigger";
-		tagTrigger.append(std::to_string(index));
-		std::string tagMass = "##capsuleCollMass";
-		tagMass.append(std::to_string(index));
-		std::string tagFriction = "##capsuleCollFriction";
-		tagFriction.append(std::to_string(index));
-		std::string tagPosx = "##capsulecollPosX";
-		tagPosx.append(std::to_string(index));
-		std::string tagPosy = "##capsulecollPosY";
-		tagPosy.append(std::to_string(index));
-		std::string tagPosz = "##capsulecollPosZ";
-		tagPosz.append(std::to_string(index));
-		std::string tagRad = "##capsulecollRadius";
-		tagRad.append(std::to_string(index));
-		std::string tagHeig = "##capsulecollHeight";
-		tagHeig.append(std::to_string(index));
-		std::string tagBtn = "Delete Component##capsuleColl";
-		tagBtn.append(std::to_string(index));
-
-
 		bool collSt = coll->IsStatic();
 		ImGui::Text("Static: ");
 		ImGui::SameLine();
-		if (ImGui::Checkbox(tagStatic.c_str(), &collSt)) coll->SetStatic(collSt);
+		if (ImGui::Checkbox("##capsuleCollStatic", &collSt)) coll->SetStatic(collSt);
 
 		bool collTrigger = coll->isTrigger;
 		ImGui::Text("Trigger:");
 		ImGui::SameLine();
-		if (ImGui::Checkbox(tagTrigger.c_str(), &collTrigger)) coll->SetTrigger(collTrigger);
+		if (ImGui::Checkbox("##capsuleCollTrigger", &collTrigger)) coll->SetTrigger(collTrigger);
 
 		ImGui::Text("Draw:");
 		ImGui::SameLine();
-		ImGui::Checkbox(tagDraw.c_str(), &coll->draw);
+		ImGui::Checkbox("##capsuleCollDraw", &coll->draw);
 
 		float mass = coll->mass;
 		ImGui::Text("Mass:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagMass.c_str(), &mass, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetMass(mass);
+		if (ImGui::InputFloat("##capsuleCollMass", &mass, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetMass(mass);
 
 		float friction = coll->friction;
 		ImGui::Text("Friction:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagFriction.c_str(), &friction, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetFriction(friction);
+		if (ImGui::InputFloat("##capsuleCollFriction", &friction, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) coll->SetFriction(friction);
 
 		float3 pos = coll->GetPosition();
 		float rad = coll->GetSize().x;
@@ -528,21 +475,21 @@ void InspectorWindow::CapsuleColliderSection(CapsuleCollider* coll, int index)
 		bool changePos = false;
 		ImGui::Text("Position x:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagPosx.c_str(), &pos.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		if (ImGui::InputFloat("##capsulecollPosX", &pos.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
 		ImGui::Text("Position y:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagPosy.c_str(), &pos.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		if (ImGui::InputFloat("##capsulecollPosY", &pos.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
 		ImGui::Text("Position z:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagPosz.c_str(), &pos.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		if (ImGui::InputFloat("##capsulecollPosZ", &pos.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
 
 		bool resize = false;
 		ImGui::Text("Radius:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagRad.c_str(), &rad, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) resize = true;
+		if (ImGui::InputFloat("##capsulecollRadius", &rad, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) resize = true;
 		ImGui::Text("Height:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat(tagHeig.c_str(), &height, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) resize = true;
+		if (ImGui::InputFloat("##capsulecollHeight", &height, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) resize = true;
 
 		if (changePos) coll->SetPos(pos);
 		if (resize)
@@ -550,10 +497,58 @@ void InspectorWindow::CapsuleColliderSection(CapsuleCollider* coll, int index)
 			if (rad > 0 && height > 0) coll->SetScale(rad, height);
 		}
 
-		if (ImGui::Button(tagBtn.c_str()))
+		if (ImGui::Button("Delete Component")) currentGo->DeleteGOComponent(CAPSULE_COLLIDER_COMP);	
+	}
+}
+
+void InspectorWindow::PointConstraintSection(ConstraintPoint* point)
+{
+	if (ImGui::CollapsingHeader("Point constraint", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		char name[50];
+		if(point->bodyB != nullptr && point->bodyBComp != nullptr) strcpy_s(name, 50, point->bodyBComp->gameobject->name.c_str());
+		else strcpy_s(name, 50, " ");
+		ImGui::Text("Body B");
+		ImGui::InputText("##bodyBpoint", name, 50, ImGuiInputTextFlags_ReadOnly);
+		if (ImGui::IsItemHovered())
 		{
-			//LOG("Delete capsule collider btn");
-			currentGo->DeleteGOComponent(coll->UUID);
+
 		}
+
+		/*char name2[50];
+		if (point->bodyB != nullptr && point->bodyBComp != nullptr) strcpy_s(name, 50, point->bodyBComp->gameobject->name.c_str());
+		else strcpy_s(name2, 50, " ");
+		ImGui::Text("Body B");
+		ImGui::InputText("##bodyBpoint", name2, 50, ImGuiInputTextFlags_ReadOnly);*/
+
+		ImGui::Separator();
+
+		bool changePos = false;
+		float3 offA = point->GetOffsetB();
+		ImGui::Text("Local Offset X:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##localOffsetX", &offA.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		ImGui::Text("Local Offset Y:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##localOffsetY", &offA.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		ImGui::Text("Local Offset Z:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##localOffsetZ", &offA.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		if (changePos) point->SetOffsetA(offA);
+
+		changePos = false;
+		float3 offB = point->GetOffsetB();
+		ImGui::Text("Body Offset X:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##bodyOffsetX", &offB.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		ImGui::Text("Body Offset Y:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##bodyOffsetY", &offB.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		ImGui::Text("Body Offset Z:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##bodyOffsetZ", &offB.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		if (changePos) point->SetOffsetB(offB);
+
+		if (ImGui::Button("Delete component")) currentGo->DeleteGOComponent(CONSTRAINT_POINT_COMP);
 	}
 }

@@ -8,6 +8,7 @@
 class BoxCollider;
 class SphereCollider;
 class CapsuleCollider;
+class ConstraintPoint;
 
 class InspectorWindow : public EditorWindow
 {
@@ -23,11 +24,11 @@ private:
 	void MeshSection(GameObject* go);
 	void MaterialSection(GameObject* go);
 	void CameraSection(GameObject* go);
-	void BoxColliderSection(BoxCollider* coll,int index);
-	void SphereColliderSection(SphereCollider* coll,int index);
-	void CapsuleColliderSection(CapsuleCollider* coll, int index);
-	/*void PointConstraintSection();
-	void HingeConstraintSection();
+	void BoxColliderSection(BoxCollider* coll/*,int index*/);
+	void SphereColliderSection(SphereCollider* coll/*,int index*/);
+	void CapsuleColliderSection(CapsuleCollider* coll/*, int index*/);
+	void PointConstraintSection(ConstraintPoint* point);
+	/*void HingeConstraintSection();
 	void SliderConstraintSection();
 	void ConeConstraintSection();*/
 

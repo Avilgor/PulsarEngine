@@ -21,7 +21,7 @@ HierarchyWindow::~HierarchyWindow()
 update_status HierarchyWindow::Draw()
 {
 	update_status ret = UPDATE_CONTINUE; 
-	objHovered = nullptr;
+	App->editor->hierarchyObjHover = nullptr;
 
 	ImGui::SetNextWindowBgAlpha(1.0f);
 	ImGui::Begin(name.c_str(), &active);
@@ -31,7 +31,7 @@ update_status HierarchyWindow::Draw()
 
 	if (windowHovered && App->editor->leftMouse == KEY_UP && dragItem)
 	{
-		if (objHovered != nullptr && !objHovered->selected) App->editor->SetSelectionParent(objHovered);
+		if (App->editor->hierarchyObjHover != nullptr && !App->editor->hierarchyObjHover->selected) App->editor->SetSelectionParent(App->editor->hierarchyObjHover);
 	}
 
 	if (App->editor->leftMouse == KEY_REPEAT && windowHovered) dragItem = true;
@@ -82,7 +82,7 @@ void HierarchyWindow::NodeInput(GameObject* go)
 {
 	if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem))
 	{
-		objHovered = go;
+		App->editor->hierarchyObjHover = go;
 	}
 
 	if (App->editor->leftMouse == KEY_DOWN)

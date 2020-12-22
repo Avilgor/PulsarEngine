@@ -38,10 +38,10 @@ public:
 	PhysBody3D* AddBody(CapsuleCollider* sphere, float mass = 10.0f);
 	//PhysVehicle3D* AddVehicle(const VehicleInfo& info);
 
-	void AddConstraintPoint(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB, std::string id);
-	void AddConstraintHinge(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB, const vec3& axisS, const vec3& axisB, std::string id, bool disable_collision = false);
-	void AddConstraintSlider(PhysBody3D& bodyA, PhysBody3D& bodyB, const btTransform& anchorA, const btTransform& anchorB, std::string id);
-	void AddConstraintCone(PhysBody3D& bodyA, PhysBody3D& bodyB, const btTransform& anchorA, const btTransform& anchorB, std::string id);
+	btTypedConstraint* AddConstraintPoint(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB, std::string id);
+	btTypedConstraint* AddConstraintHinge(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB, const vec3& axisS, const vec3& axisB, std::string id, bool disable_collision = false);
+	btTypedConstraint* AddConstraintSlider(PhysBody3D& bodyA, PhysBody3D& bodyB, const btTransform& anchorA, const btTransform& anchorB, std::string id);
+	btTypedConstraint* AddConstraintCone(PhysBody3D& bodyA, PhysBody3D& bodyB, const btTransform& anchorA, const btTransform& anchorB, std::string id);
 
 	void RemoveCollider(std::string uuid);
 	void RemoveConstraint(btTypedConstraint* constraint, std::string id);
@@ -49,7 +49,8 @@ public:
 	void RemoveBody(btRigidBody* body, std::string id);
 	void AddBody(PhysBody3D* body, std::string id);
 	void AddConstraint(btTypedConstraint* con, std::string id);
-
+	PhysBody3D* GetBodyByUUID(std::string id);
+	Component* GetColliderByUUID(std::string id);
 
 	void DebugDrawBody(btRigidBody* body);
 	void ToggleSimulation(bool val);

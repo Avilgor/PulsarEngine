@@ -17,14 +17,26 @@ public:
 	void DeleteComponent();
 	void SaveComponent(JSonHandler* file);
 	void LoadComponent(JSonHandler* file);
+	void SetBodyA(Component* comp);
+	void SetBodyB(Component* comp);
+	float3 GetOffsetA() { return anchorA; }
+	float3 GetOffsetB() { return anchorB; }
+	void SetOffsetA(float3 val) { anchorA = val; }
+	void SetOffsetB(float3 val) { anchorB = val; }
 
 	void SetActive(bool val);
 	bool IsActive();
 
 private:
-	btTypedConstraint* constraint;
+	btTypedConstraint* constraint = nullptr;
+	std::string loadA_id;
+	std::string loadB_id;
+	bool needtoload;
+	bool created;
 
 public:
+	Component* bodyAComp = nullptr;
+	Component* bodyBComp = nullptr;
 	PhysBody3D* bodyA = nullptr;
 	PhysBody3D* bodyB = nullptr;
 	float3 anchorA;
