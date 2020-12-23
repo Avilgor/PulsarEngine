@@ -79,7 +79,6 @@ void SphereCollider::DeleteComponent()
 {
 	App->physics->RemoveCollider(UUID);
 	body = nullptr;
-	delete this;
 }
 
 bool SphereCollider::IsStatic()

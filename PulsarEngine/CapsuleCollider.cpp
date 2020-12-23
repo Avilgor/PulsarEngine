@@ -79,7 +79,6 @@ void CapsuleCollider::DeleteComponent()
 {
 	App->physics->RemoveCollider(UUID);
 	body = nullptr;
-	delete this;
 }
 
 bool CapsuleCollider::IsStatic()

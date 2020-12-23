@@ -510,17 +510,17 @@ void InspectorWindow::PointConstraintSection(ConstraintPoint* point)
 		else strcpy_s(name, 50, " ");
 		ImGui::Text("Body B");
 		ImGui::InputText("##bodyBpoint", name, 50, ImGuiInputTextFlags_ReadOnly);
-		if (ImGui::IsItemHovered())
+		ImGui::SameLine();
+		if (ImGui::Button("Set body"))
 		{
-
+			if (App->editor->HasSelection())
+			{
+				if (App->editor->selectedGameObjects[0]->HasCollider())
+				{
+					point->SetBodyB(App->editor->selectedGameObjects[0]->GetColliderComp());
+				}
+			}
 		}
-
-		/*char name2[50];
-		if (point->bodyB != nullptr && point->bodyBComp != nullptr) strcpy_s(name, 50, point->bodyBComp->gameobject->name.c_str());
-		else strcpy_s(name2, 50, " ");
-		ImGui::Text("Body B");
-		ImGui::InputText("##bodyBpoint", name2, 50, ImGuiInputTextFlags_ReadOnly);*/
-
 		ImGui::Separator();
 
 		bool changePos = false;

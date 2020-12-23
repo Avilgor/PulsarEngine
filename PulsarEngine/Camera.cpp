@@ -52,7 +52,6 @@ void Camera::UpdateCamera(const float4x4& global)
 
 void Camera::DeleteComponent()
 {
-
 }
 
 void Camera::SaveComponent(JSonHandler* file)

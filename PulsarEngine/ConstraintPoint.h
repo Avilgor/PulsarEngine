@@ -29,7 +29,7 @@ public:
 
 private:
 	btTypedConstraint* constraint = nullptr;
-	std::string loadA_id;
+	//std::string loadA_id;
 	std::string loadB_id;
 	bool needtoload;
 	bool created;

@@ -664,7 +664,7 @@ void GameObject::DeleteGOComponent(ComponentTypes type)
 		delete pointconstraint;
 		pointconstraint = nullptr;
 	}
-	else if (type == CONSTRAINT_HINGE_COMP && boxcollider != nullptr)
+	/*else if (type == CONSTRAINT_HINGE_COMP && boxcollider != nullptr)
 	{
 		capsulecollider->DeleteComponent();
 		delete capsulecollider;
@@ -673,7 +673,7 @@ void GameObject::DeleteGOComponent(ComponentTypes type)
 	else if (type == CONSTRAINT_SLIDER_COMP && boxcollider != nullptr)
 	{
 		capsulecollider->DeleteComponent();
-		delete capsulecollider;
+		delete boxcolcapsulecolliderlider;
 		capsulecollider = nullptr;
 	}
 	else if (type == CONSTRAINT_CONE_COMP && boxcollider != nullptr)
@@ -681,7 +681,7 @@ void GameObject::DeleteGOComponent(ComponentTypes type)
 		capsulecollider->DeleteComponent();
 		delete capsulecollider;
 		capsulecollider = nullptr;
-	}
+	}*/
 	else if (type != TRANSFORM_COMP)
 	{
 		if (!Components.empty())
@@ -689,8 +689,13 @@ void GameObject::DeleteGOComponent(ComponentTypes type)
 			std::vector<Component*> temp;
 			for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); it++)
 			{
-				if ((*it)->compType == type) (*it)->DeleteComponent();
+				if ((*it)->compType == type)
+				{
+					(*it)->DeleteComponent();
+					delete (*it);
+				}
 				else temp.push_back((*it));
+				
 			}
 			Components.clear();
 			Components = temp;

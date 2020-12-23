@@ -74,7 +74,6 @@ void BoxCollider::DeleteComponent()
 {
 	App->physics->RemoveCollider(UUID);	
 	body = nullptr;
-	delete this;
 }
 
 bool BoxCollider::IsStatic()

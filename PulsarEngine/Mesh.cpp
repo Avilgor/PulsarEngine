@@ -44,8 +44,6 @@ void Mesh::DeleteComponent()
 		App->resourceManager->FreeResource(resMat->UUID);
 		resMat = nullptr;
 	}
-	
-	delete this;
 }
 
 void Mesh::UpdateAABB()

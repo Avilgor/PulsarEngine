@@ -27,7 +27,6 @@ void Material::DeleteComponent()
 {
 	if (material != nullptr) App->resourceManager->FreeResource(material->UUID);
 	material = nullptr;
-	delete this;
 }
 
 

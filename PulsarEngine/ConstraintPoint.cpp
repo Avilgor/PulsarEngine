@@ -11,7 +11,6 @@ ConstraintPoint::ConstraintPoint(GameObject* parent) : Component(parent, CONSTRA
 	anchorA = float3::zero;
 	anchorB = float3::zero;
 	created = false;
-	SetBodyA(component);
 }
 
 
@@ -42,13 +41,14 @@ void ConstraintPoint::UpdateComponent()
 {
 	if (needtoload)
 	{
-		if (loadA_id.compare("0") != 0)
+		SetBodyA(gameobject->GetColliderComp());
+		/*if (loadA_id.compare("0") != 0)
 		{
 			bodyAComp = App->physics->GetColliderByUUID(loadA_id);
 			bodyA = App->physics->GetBodyByUUID(loadA_id);
 
-		}
-		if (loadA_id.compare("0") != 0)
+		}*/
+		if (loadB_id.compare("0") != 0)
 		{
 			bodyBComp = App->physics->GetColliderByUUID(loadB_id);
 			bodyB = App->physics->GetBodyByUUID(loadB_id);
@@ -80,17 +80,47 @@ bool ConstraintPoint::IsActive()
 }
 
 void ConstraintPoint::SetBodyA(Component* comp)
-{
-	bodyAComp = comp;
-	bodyA = App->physics->GetBodyByUUID(comp->UUID);
-	created = true;
+{	
+	if (comp != nullptr)
+	{	
+		if (bodyBComp != nullptr)
+		{
+			if (comp->UUID.compare(bodyBComp->UUID) != 0)
+			{
+				bodyAComp = comp;
+				bodyA = App->physics->GetBodyByUUID(comp->UUID);
+				created = true;
+			}
+		}
+		else
+		{
+			bodyAComp = comp;
+			bodyA = App->physics->GetBodyByUUID(comp->UUID);
+			created = true;
+		}
+	}
 }
 
 void ConstraintPoint::SetBodyB(Component* comp)
 {
-	bodyBComp = comp;
-	bodyB = App->physics->GetBodyByUUID(comp->UUID);
-	created = true;
+	if (comp != nullptr)
+	{
+		if (bodyAComp != nullptr)
+		{
+			if (comp->UUID.compare(bodyAComp->UUID) != 0)
+			{
+				bodyBComp = comp;
+				bodyB = App->physics->GetBodyByUUID(comp->UUID);
+				created = true;
+			}
+		}
+		else
+		{
+			bodyBComp = comp;
+			bodyB = App->physics->GetBodyByUUID(comp->UUID);
+			created = true;
+		}
+	}
 }
 
 void ConstraintPoint::SaveComponent(JSonHandler* file)
@@ -99,8 +129,8 @@ void ConstraintPoint::SaveComponent(JSonHandler* file)
 	node.SaveNum("CompType", (double)compType);
 	node.SaveString("UUID", UUID.c_str());
 	node.SaveBool("Active",active);
-	if (bodyAComp != nullptr) node.SaveString("BodyA",bodyAComp->UUID.c_str());
-	else node.SaveString("BodyA", "0");
+	//if (bodyAComp != nullptr) node.SaveString("BodyA",bodyAComp->UUID.c_str());
+	//else node.SaveString("BodyA", "0");
 	if(bodyBComp!= nullptr) node.SaveString("BodyB",bodyBComp->UUID.c_str());
 	else  node.SaveString("BodyB", "0");
 	//AnchorA
@@ -118,7 +148,7 @@ void ConstraintPoint::LoadComponent(JSonHandler* file)
 	needtoload = true;
 	UUID = file->GetString("UUID");
 	active = file->GetBool("Active");
-	loadA_id = file->GetString("BodyA");
+	//loadA_id = file->GetString("BodyA");
 	loadB_id = file->GetString("BodyB");
 	//AnchorA
 	anchorA.x = file->GetNum("AnchorAx");

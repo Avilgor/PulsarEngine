@@ -345,7 +345,7 @@ void ModulePhysics::RemoveCollider(std::string uuid)
 
 PhysBody3D* ModulePhysics::AddBody(SphereCollider* sphere, float mass)
 {
-	btCollisionShape* shape = new btSphereShape(btScalar(1.0f));
+	btCollisionShape* shape = new btSphereShape(btScalar(0.5f));
 	shapes.emplace(sphere->UUID, shape);
 
 	btTransform startTransform;
