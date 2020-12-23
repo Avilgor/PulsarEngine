@@ -188,7 +188,6 @@ update_status EditorMain::Update(float dt)
     leftMouse = App->input->GetMouseButton(SDL_BUTTON_LEFT);
     rightMouse = App->input->GetMouseButton(SDL_BUTTON_RIGHT);
 
-    //if (mouse_in_scene && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) EmptySelected();//Temp
     if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT)
     {
         if (!selectedGameObjects.empty())
@@ -229,6 +228,7 @@ update_status EditorMain::Update(float dt)
         }
     }   
 
+    //if (leftMouse == KEY_UP && dragObject != nullptr) dragObject = nullptr;
 
 	return status;
 }
@@ -241,6 +241,14 @@ void EditorMain::SetSelectionParent(GameObject* go)
         {
             (*it)->SetParent(go);
         }
+    }
+}
+
+void EditorMain::SetParent(GameObject* parent, GameObject* child)
+{
+    if (parent != nullptr && child != nullptr)
+    {
+        if(parent->UUID.compare(child->UUID) != 0) child->SetParent(parent);
     }
 }
 

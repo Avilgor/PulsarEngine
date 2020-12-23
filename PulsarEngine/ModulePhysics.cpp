@@ -154,6 +154,9 @@ void ModulePhysics::ToggleSimulation(bool val)
 		for (std::map<std::string, PhysBody3D*>::iterator it = bodies.begin(); it != bodies.end(); ++it)
 		{
 			(*it).second->body->clearForces();
+			btVector3 zeroVector(0, 0, 0);
+			(*it).second->body->setLinearVelocity(zeroVector);
+			(*it).second->body->setAngularVelocity(zeroVector);
 			world->addRigidBody((*it).second->body);
 		}
 
@@ -161,9 +164,9 @@ void ModulePhysics::ToggleSimulation(bool val)
 		{
 			world->addConstraint((*it).second);
 		}
-
-
 		LOG("Physics simulation ON");
+		LOG("Total bodies: %d", bodies.size()); 
+		LOG("Total constraints: %d",constraints.size());
 	}
 	else
 	{
@@ -268,16 +271,23 @@ bool ModulePhysics::CleanUp()
 
 void ModulePhysics::RemoveConstraint(btTypedConstraint* constraint,std::string id)
 {
-	world->removeConstraint(constraint);	
-	if (constraints.find(id) != constraints.end()) constraints.erase(id);
+	LOG("Constraint id: %s",id.c_str());
+	world->removeConstraint(constraint);
+	if (!constraints.empty())
+	{
+		if (constraints.find(id) != constraints.end()) constraints.erase(id);
+	}
 }
 
 void ModulePhysics::RemoveConstraint(std::string id)
 {
-	if (constraints.find(id) != constraints.end())
+	if (!constraints.empty())
 	{
-		world->removeConstraint(constraints[id]);
-		constraints.erase(id);
+		if (constraints.find(id) != constraints.end())
+		{
+			world->removeConstraint(constraints[id]);
+			constraints.erase(id);
+		}
 	}
 }
 

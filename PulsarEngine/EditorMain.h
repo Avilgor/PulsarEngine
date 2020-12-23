@@ -38,6 +38,7 @@ public:
 	void EmptySelected();
 	bool HasSelection();
 	void SetSelectionParent(GameObject* go);
+	void SetParent(GameObject* parent,GameObject* child);
 
 private:
 	std::vector<EditorWindow*> WindowsList;
@@ -56,6 +57,7 @@ public:
 	KEY_STATE deleteKey;
 	bool mouseDrag = false;
 	GameObject* hierarchyObjHover;
+	GameObject* dragObject;
 	//bool scanProjectFiles = true;
 };
 

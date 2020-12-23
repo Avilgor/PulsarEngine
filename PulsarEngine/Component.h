@@ -22,7 +22,7 @@ public:
 	~Component();
 
 	virtual void UpdateComponent() {}
-	virtual void DeleteComponent() { delete this; }
+	virtual void DeleteComponent() {}
 	void SetActive(bool val);
 	Component* GetComponent() { return component; }
 	Mesh* AsMesh() { return mesh; }

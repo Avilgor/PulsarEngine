@@ -23,7 +23,7 @@ BoxCollider::BoxCollider(GameObject* parent, float3 s) : Component(parent, BOX_C
 	component->boxCollider = this;
 	App->physics->AddBody(this,s);
 	isTrigger = false;
-	friction = 0.0f;
+	friction = 1.0f;
 	mass = 10.0f;
 	if(body != nullptr) body->scaleOffset = s;
 	draw = true;

@@ -29,13 +29,13 @@ update_status HierarchyWindow::Draw()
 	DrawSceneGameObjects();
 	ImGui::End();
 
-	if (windowHovered && App->editor->leftMouse == KEY_UP && dragItem)
+	if (App->editor->leftMouse == KEY_UP && App->editor->dragObject != nullptr)
 	{
-		if (App->editor->hierarchyObjHover != nullptr && !App->editor->hierarchyObjHover->selected) App->editor->SetSelectionParent(App->editor->hierarchyObjHover);
+		App->editor->dragObject = nullptr;
 	}
 
-	if (App->editor->leftMouse == KEY_REPEAT && windowHovered) dragItem = true;
-	else dragItem = false;
+	//if (App->editor->leftMouse == KEY_REPEAT && windowHovered) dragItem = true;
+	//else dragItem = false;
 
 	return ret;
 }
@@ -80,19 +80,25 @@ void HierarchyWindow::DrawGameObject(GameObject* go)
 
 void HierarchyWindow::NodeInput(GameObject* go)
 {
-	if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem))
-	{
-		App->editor->hierarchyObjHover = go;
-	}
-
 	if (App->editor->leftMouse == KEY_DOWN)
 	{
-		if (ImGui::IsItemHovered())
+		if (ImGui::IsItemHovered()) App->editor->dragObject = go;		
+	}
+
+	if (App->editor->leftMouse == KEY_UP)
+	{
+		if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem))
 		{
+			if (App->editor->dragObject != nullptr)
+			{
+				App->editor->SetParent(go,App->editor->dragObject);
+				App->editor->dragObject = nullptr;
+			}
+
 			if (App->editor->ctrl == KEY_REPEAT)
 			{
-				if (go->selected) App->editor->RemoveSelection(go);//go->selected = false;
-				else App->editor->AddSelection(go);//go->selected = true;
+				if (go->selected) App->editor->RemoveSelection(go);
+				else App->editor->AddSelection(go);
 			}
 			else App->editor->SelectOne(go);
 		}

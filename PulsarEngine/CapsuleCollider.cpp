@@ -12,7 +12,7 @@ CapsuleCollider::CapsuleCollider(GameObject* parent) : Component(parent, CAPSULE
 	component->capsuleCollider = this;
 	App->physics->AddBody(this);
 	isTrigger = false;
-	friction = 0.0f;
+	friction = 1.0f;
 	mass = 10.0f;
 	draw = true;
 	body->UpdateTransform(gameobject->GetGlobalTransform());

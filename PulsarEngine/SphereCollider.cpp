@@ -13,7 +13,7 @@ SphereCollider::SphereCollider(GameObject* parent) : Component(parent, SPHERE_CO
 	App->physics->AddBody(this);
 	draw = true;
 	isTrigger = false;
-	friction = 0.0f;
+	friction = 1.0f;
 	mass = 10.0f;
 	body->UpdateTransform(gameobject->GetGlobalTransform());
 }

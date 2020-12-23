@@ -40,32 +40,6 @@ update_status InspectorWindow::Draw()
 		if (currentGo->spherecollider != nullptr) SphereColliderSection(currentGo->spherecollider);
 		if (currentGo->capsulecollider != nullptr) CapsuleColliderSection(currentGo->capsulecollider);
 		if (currentGo->pointconstraint != nullptr) PointConstraintSection(currentGo->pointconstraint);
-		/*std::vector<Component*> temp;
-		temp = currentGo->GetAllComponentsByType(BOX_COLLIDER_COMP);
-		if (temp.size() > 0)
-		{
-			for (int i = 0; i < temp.size(); i++)
-			{
-				BoxColliderSection(temp[i]->AsBoxCollider(),i);
-			}
-		}
-		temp = currentGo->GetAllComponentsByType(SPHERE_COLLIDER_COMP);
-		if (temp.size() > 0)
-		{
-			for (int i = 0; i < temp.size(); i++)
-			{
-				SphereColliderSection(temp[i]->AsSphereCollider(),i);
-			}
-		}
-
-		temp = currentGo->GetAllComponentsByType(CAPSULE_COLLIDER_COMP);
-		if (temp.size() > 0)
-		{
-			for (int i = 0; i < temp.size(); i++)
-			{
-				CapsuleColliderSection(temp[i]->AsCapsuleCollider(), i);
-			}
-		}*/
 
 		ImVec2 winSize = ImGui::GetContentRegionAvail();
 		ImGui::Spacing();
@@ -272,7 +246,7 @@ void InspectorWindow::MeshSection(GameObject* go)
 			}
 		}
 		ImGui::Separator();
-		if (ImGui::Button("Delete component")) go->DeleteGOComponent(MESH_COMP);
+		if (ImGui::Button("Delete component##delmesh")) go->DeleteGOComponent(MESH_COMP);
 	}	
 }
 
@@ -296,7 +270,7 @@ void InspectorWindow::MaterialSection(GameObject* go)
 			ImGui::Separator();
 		}
 		ImGui::Separator();
-		if (ImGui::Button("Delete component")) go->DeleteGOComponent(MATERIAL_COMP);
+		if (ImGui::Button("Delete component##delmaterial")) go->DeleteGOComponent(MATERIAL_COMP);
 	}	
 }
 
@@ -322,7 +296,7 @@ void InspectorWindow::CameraSection(GameObject* go)
 		ImGui::Text("Aspect ratio");
 		if (ImGui::InputFloat("##camaspect", &aspect, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) cam->SetAspectRatio(aspect);		
 		ImGui::Separator();
-		if (ImGui::Button("Delete component")) go->DeleteGOComponent(CAMERA_COMP);
+		if (ImGui::Button("Delete component##delcamera")) go->DeleteGOComponent(CAMERA_COMP);
 	}
 }
 
@@ -381,11 +355,7 @@ void InspectorWindow::BoxColliderSection(BoxCollider* coll/*,int index*/)
 		if (changePos) coll->SetPos(pos);
 		if (changeScale) coll->SetScale(scale);
 
-		if (ImGui::Button("Delete Component"))
-		{
-			LOG("Delete box collider btn");
-			currentGo->DeleteGOComponent(BOX_COLLIDER_COMP);
-		}
+		if (ImGui::Button("Delete Component##delboxcoll")) currentGo->DeleteGOComponent(BOX_COLLIDER_COMP);		
 	}
 }
 
@@ -436,7 +406,7 @@ void InspectorWindow::SphereColliderSection(SphereCollider* coll/*, int index*/)
 
 		if (changePos) coll->SetPos(pos);
 
-		if (ImGui::Button("Delete Component")) currentGo->DeleteGOComponent(SPHERE_COLLIDER_COMP);
+		if (ImGui::Button("Delete Component##delspherecoll")) currentGo->DeleteGOComponent(SPHERE_COLLIDER_COMP);
 	}
 }
 
@@ -497,7 +467,7 @@ void InspectorWindow::CapsuleColliderSection(CapsuleCollider* coll/*, int index*
 			if (rad > 0 && height > 0) coll->SetScale(rad, height);
 		}
 
-		if (ImGui::Button("Delete Component")) currentGo->DeleteGOComponent(CAPSULE_COLLIDER_COMP);	
+		if (ImGui::Button("Delete Componen##delcapsulecoll")) currentGo->DeleteGOComponent(CAPSULE_COLLIDER_COMP);	
 	}
 }
 
@@ -506,25 +476,35 @@ void InspectorWindow::PointConstraintSection(ConstraintPoint* point)
 	if (ImGui::CollapsingHeader("Point constraint", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		char name[50];
-		if(point->bodyB != nullptr && point->bodyBComp != nullptr) strcpy_s(name, 50, point->bodyBComp->gameobject->name.c_str());
+		if (point->bodyB != nullptr)
+		{
+			if (point->bodyBComp != nullptr) strcpy_s(name, 50, point->bodyBComp->gameobject->name.c_str());
+		}
 		else strcpy_s(name, 50, " ");
 		ImGui::Text("Body B");
 		ImGui::InputText("##bodyBpoint", name, 50, ImGuiInputTextFlags_ReadOnly);
-		ImGui::SameLine();
-		if (ImGui::Button("Set body"))
+		if (App->editor->leftMouse == KEY_UP)
 		{
-			if (App->editor->HasSelection())
+			if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem))
 			{
-				if (App->editor->selectedGameObjects[0]->HasCollider())
+				if (App->editor->dragObject != nullptr)
 				{
-					point->SetBodyB(App->editor->selectedGameObjects[0]->GetColliderComp());
+					if (App->editor->dragObject->HasCollider())
+					{
+						point->SetBodyB(App->editor->dragObject->GetColliderComp());
+					}
 				}
 			}
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Clear##clearpointconst"))
+		{
+			point->ClearBodyB();
 		}
 		ImGui::Separator();
 
 		bool changePos = false;
-		float3 offA = point->GetOffsetB();
+		float3 offA = point->GetOffsetA();
 		ImGui::Text("Local Offset X:");
 		ImGui::SameLine();
 		if (ImGui::InputFloat("##localOffsetX", &offA.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
@@ -549,6 +529,6 @@ void InspectorWindow::PointConstraintSection(ConstraintPoint* point)
 		if (ImGui::InputFloat("##bodyOffsetZ", &offB.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
 		if (changePos) point->SetOffsetB(offB);
 
-		if (ImGui::Button("Delete component")) currentGo->DeleteGOComponent(CONSTRAINT_POINT_COMP);
+		if (ImGui::Button("Delete Component##delpointconst")) currentGo->DeleteGOComponent(CONSTRAINT_POINT_COMP);
 	}
 }

@@ -19,7 +19,6 @@ public:
 	~Transform();
 
 	void UpdateComponent();
-	void DeleteComponent();
 	void ResetTransform();
 	void UpdateEuler();
 	float4x4 GetTransform() { return transform; }

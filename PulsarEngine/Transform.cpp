@@ -114,10 +114,6 @@ void Transform::UpdateLocal()
 	updateTransform = true;
 }
 
-void Transform::DeleteComponent()
-{
-	delete this;
-}
 
 float3 Transform::GetGlobalPosition()
 {

@@ -642,21 +642,30 @@ void GameObject::DeleteGOComponent(ComponentTypes type)
 	}
 	else if (type == BOX_COLLIDER_COMP && boxcollider != nullptr)
 	{
-		boxcollider->DeleteComponent();
-		delete boxcollider;
-		boxcollider = nullptr;
+		if (pointconstraint == nullptr)
+		{
+			boxcollider->DeleteComponent();
+			delete boxcollider;
+			boxcollider = nullptr;
+		}
 	}
 	else if (type == SPHERE_COLLIDER_COMP && spherecollider != nullptr)
 	{
-		spherecollider->DeleteComponent();
-		delete spherecollider;
-		spherecollider = nullptr;
+		if (pointconstraint == nullptr)
+		{
+			spherecollider->DeleteComponent();
+			delete spherecollider;
+			spherecollider = nullptr;
+		}
 	}
 	else if (type == CAPSULE_COLLIDER_COMP && capsulecollider != nullptr)
 	{
-		capsulecollider->DeleteComponent();
-		delete capsulecollider;
-		capsulecollider = nullptr;
+		if (pointconstraint == nullptr)
+		{
+			capsulecollider->DeleteComponent();
+			delete capsulecollider;
+			capsulecollider = nullptr;
+		}
 	}
 	else if (type == CONSTRAINT_POINT_COMP && pointconstraint != nullptr)
 	{
@@ -712,7 +721,11 @@ void GameObject::DeleteGOComponent(std::string uuid)
 		std::vector<Component*> temp;
 		for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); it++)
 		{
-			if ((*it)->UUID == uuid)(*it)->DeleteComponent();		
+			if ((*it)->UUID == uuid)
+			{
+				(*it)->DeleteComponent();
+				delete (*it);
+			}
 			else temp.push_back((*it));
 		}
 		Components.clear();
@@ -867,7 +880,42 @@ void GameObject::Delete()
 		Components.clear();
 	}
 
-	transform->DeleteComponent();
+	if (camera != nullptr)
+	{
+		camera->DeleteComponent();
+		delete camera;
+		camera = nullptr;
+	}
+
+	if (boxcollider != nullptr)
+	{
+		boxcollider->DeleteComponent();
+		delete boxcollider;
+		boxcollider = nullptr;
+	}
+
+	if (capsulecollider != nullptr)
+	{
+		capsulecollider->DeleteComponent();
+		delete capsulecollider;
+		capsulecollider = nullptr;
+	}
+
+	if (spherecollider != nullptr)
+	{
+		spherecollider->DeleteComponent();
+		delete spherecollider;
+		spherecollider = nullptr;
+	}
+
+	if(pointconstraint != nullptr)
+	{
+		pointconstraint->DeleteComponent();
+		delete pointconstraint;
+		pointconstraint = nullptr;
+	}
+
+	delete transform;
 	transform = nullptr;
 	delete this;
 }
