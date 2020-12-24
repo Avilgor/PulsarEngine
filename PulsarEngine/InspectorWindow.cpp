@@ -10,6 +10,9 @@
 #include "Camera.h"
 #include "CapsuleCollider.h"
 #include "ConstraintPoint.h"
+#include "ConstraintHinge.h"
+#include "ConstraintSlider.h"
+#include "ConstraintCone.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
 
@@ -40,6 +43,9 @@ update_status InspectorWindow::Draw()
 		if (currentGo->spherecollider != nullptr) SphereColliderSection(currentGo->spherecollider);
 		if (currentGo->capsulecollider != nullptr) CapsuleColliderSection(currentGo->capsulecollider);
 		if (currentGo->pointconstraint != nullptr) PointConstraintSection(currentGo->pointconstraint);
+		if (currentGo->hingeconstraint != nullptr) HingeConstraintSection(currentGo->hingeconstraint);
+		if (currentGo->sliderconstraint != nullptr) SliderConstraintSection(currentGo->sliderconstraint);
+		if (currentGo->coneconstraint != nullptr) ConeConstraintSection(currentGo->coneconstraint);
 
 		ImVec2 winSize = ImGui::GetContentRegionAvail();
 		ImGui::Spacing();
@@ -300,7 +306,7 @@ void InspectorWindow::CameraSection(GameObject* go)
 	}
 }
 
-void InspectorWindow::BoxColliderSection(BoxCollider* coll/*,int index*/)
+void InspectorWindow::BoxColliderSection(BoxCollider* coll)
 {
 	if (ImGui::CollapsingHeader("BoxCollider", ImGuiTreeNodeFlags_DefaultOpen))
 	{
@@ -359,7 +365,7 @@ void InspectorWindow::BoxColliderSection(BoxCollider* coll/*,int index*/)
 	}
 }
 
-void InspectorWindow::SphereColliderSection(SphereCollider* coll/*, int index*/)
+void InspectorWindow::SphereColliderSection(SphereCollider* coll)
 {
 	if (ImGui::CollapsingHeader("SphereCollider", ImGuiTreeNodeFlags_DefaultOpen))
 	{
@@ -410,7 +416,7 @@ void InspectorWindow::SphereColliderSection(SphereCollider* coll/*, int index*/)
 	}
 }
 
-void InspectorWindow::CapsuleColliderSection(CapsuleCollider* coll/*, int index*/)
+void InspectorWindow::CapsuleColliderSection(CapsuleCollider* coll)
 {
 	if (ImGui::CollapsingHeader("CapsuleCollider", ImGuiTreeNodeFlags_DefaultOpen))
 	{
@@ -507,28 +513,240 @@ void InspectorWindow::PointConstraintSection(ConstraintPoint* point)
 		float3 offA = point->GetOffsetA();
 		ImGui::Text("Local Offset X:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##localOffsetX", &offA.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		if (ImGui::InputFloat("##localOffsetXpoint", &offA.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
 		ImGui::Text("Local Offset Y:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##localOffsetY", &offA.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		if (ImGui::InputFloat("##localOffsetYpoint", &offA.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
 		ImGui::Text("Local Offset Z:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##localOffsetZ", &offA.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		if (ImGui::InputFloat("##localOffsetZpoint", &offA.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
 		if (changePos) point->SetOffsetA(offA);
 
 		changePos = false;
 		float3 offB = point->GetOffsetB();
 		ImGui::Text("Body Offset X:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##bodyOffsetX", &offB.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		if (ImGui::InputFloat("##bodyOffsetXpoint", &offB.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
 		ImGui::Text("Body Offset Y:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##bodyOffsetY", &offB.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		if (ImGui::InputFloat("##bodyOffsetYpoint", &offB.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
 		ImGui::Text("Body Offset Z:");
 		ImGui::SameLine();
-		if (ImGui::InputFloat("##bodyOffsetZ", &offB.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
+		if (ImGui::InputFloat("##bodyOffsetZpoint", &offB.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) changePos = true;
 		if (changePos) point->SetOffsetB(offB);
 
 		if (ImGui::Button("Delete Component##delpointconst")) currentGo->DeleteGOComponent(CONSTRAINT_POINT_COMP);
+	}
+}
+
+void InspectorWindow::HingeConstraintSection(ConstraintHinge* hinge)
+{
+	if (ImGui::CollapsingHeader("Hinge constraint", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		char name[50];
+		if (hinge->bodyB != nullptr)
+		{
+			if (hinge->bodyBComp != nullptr) strcpy_s(name, 50, hinge->bodyBComp->gameobject->name.c_str());
+		}
+		else strcpy_s(name, 50, " ");
+		ImGui::Text("Body B");
+		ImGui::InputText("##bodyBhinge", name, 50, ImGuiInputTextFlags_ReadOnly);
+		if (App->editor->leftMouse == KEY_UP)
+		{
+			if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem))
+			{
+				if (App->editor->dragObject != nullptr)
+				{
+					if (App->editor->dragObject->HasCollider())
+					{
+						hinge->SetBodyB(App->editor->dragObject->GetColliderComp());
+					}
+				}
+			}
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Clear##clearhingeconst"))
+		{
+			hinge->ClearBodyB();
+		}
+		ImGui::Separator();
+
+		bool change = false;
+		float3 offA = hinge->GetOffsetA();
+		ImGui::Text("Local Offset X:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##localOffsetXhinge", &offA.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		ImGui::Text("Local Offset Y:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##localOffsetYhinge", &offA.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		ImGui::Text("Local Offset Z:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##localOffsetZhinge", &offA.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		if (change) hinge->SetOffsetA(offA);
+
+		change = false;
+		float3 offB = hinge->GetOffsetB();
+		ImGui::Text("Body Offset X:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##bodyOffsetXhinge", &offB.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		ImGui::Text("Body Offset Y:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##bodyOffsetYhinge", &offB.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		ImGui::Text("Body Offset Z:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##bodyOffsetZhinge", &offB.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		if (change) hinge->SetOffsetB(offB);
+
+		change = false;
+		float3 axisA = hinge->GetAxisA();
+		ImGui::Text("Axis A-X:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##axisAXhinge", &axisA.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		ImGui::Text("Axis A-Y:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##axisAYhinge", &axisA.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		ImGui::Text("Axis A-Z:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##axisAZhinge", &axisA.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		if (change) hinge->SetAxisA(axisA);
+
+		change = false;
+		float3 axisB = hinge->GetAxisB();
+		ImGui::Text("Axis B-X:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##axisBXhinge", &axisB.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		ImGui::Text("Axis B-Y:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##axisBYhinge", &axisB.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		ImGui::Text("Axis B-Z:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##axisBZhinge", &axisB.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		if (change) hinge->SetAxisB(axisB);
+
+		if (ImGui::Button("Delete Component##delhingeconst")) currentGo->DeleteGOComponent(CONSTRAINT_HINGE_COMP);
+	}
+}
+
+void InspectorWindow::SliderConstraintSection(ConstraintSlider* slider)
+{
+	if (ImGui::CollapsingHeader("Slider constraint", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		char name[50];
+		if (slider->bodyB != nullptr)
+		{
+			if (slider->bodyBComp != nullptr) strcpy_s(name, 50, slider->bodyBComp->gameobject->name.c_str());
+		}
+		else strcpy_s(name, 50, " ");
+		ImGui::Text("Body B");
+		ImGui::InputText("##bodyBslider", name, 50, ImGuiInputTextFlags_ReadOnly);
+		if (App->editor->leftMouse == KEY_UP)
+		{
+			if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem))
+			{
+				if (App->editor->dragObject != nullptr)
+				{
+					if (App->editor->dragObject->HasCollider())
+					{
+						slider->SetBodyB(App->editor->dragObject->GetColliderComp());
+					}
+				}
+			}
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Clear##clearsliderconst"))
+		{
+			slider->ClearBodyB();
+		}
+		ImGui::Separator();
+
+		/*bool change = false;
+		float3 offA = slider->GetOffsetA();
+		ImGui::Text("Local Offset X:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##localOffsetXslider", &offA.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		ImGui::Text("Local Offset Y:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##localOffsetYslider", &offA.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		ImGui::Text("Local Offset Z:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##localOffsetZslider", &offA.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		if (change) slider->SetOffsetA(offA);
+
+		change = false;
+		float3 offB = slider->GetOffsetB();
+		ImGui::Text("Body Offset X:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##bodyOffsetXslider", &offB.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		ImGui::Text("Body Offset Y:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##bodyOffsetYslider", &offB.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		ImGui::Text("Body Offset Z:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##bodyOffsetZslider", &offB.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		if (change) slider->SetOffsetB(offB);*/
+
+		if (ImGui::Button("Delete Component##delsliderconst")) currentGo->DeleteGOComponent(CONSTRAINT_SLIDER_COMP);
+	}
+}
+
+void InspectorWindow::ConeConstraintSection(ConstraintCone* cone)
+{
+	if (ImGui::CollapsingHeader("Cone constraint", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		char name[50];
+		if (cone->bodyB != nullptr)
+		{
+			if (cone->bodyBComp != nullptr) strcpy_s(name, 50, cone->bodyBComp->gameobject->name.c_str());
+		}
+		else strcpy_s(name, 50, " ");
+		ImGui::Text("Body B");
+		ImGui::InputText("##bodyBcone", name, 50, ImGuiInputTextFlags_ReadOnly);
+		if (App->editor->leftMouse == KEY_UP)
+		{
+			if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem))
+			{
+				if (App->editor->dragObject != nullptr)
+				{
+					if (App->editor->dragObject->HasCollider())
+					{
+						cone->SetBodyB(App->editor->dragObject->GetColliderComp());
+					}
+				}
+			}
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Clear##clearconeconst"))
+		{
+			cone->ClearBodyB();
+		}
+		ImGui::Separator();
+
+		/*bool change = false;
+		float3 offA = cone->GetOffsetA();
+		ImGui::Text("Local Offset X:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##localOffsetXcone", &offA.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		ImGui::Text("Local Offset Y:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##localOffsetYcone", &offA.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		ImGui::Text("Local Offset Z:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##localOffsetZcone", &offA.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		if (change) cone->SetOffsetA(offA);
+
+		change = false;
+		float3 offB = cone->GetOffsetB();
+		ImGui::Text("Body Offset X:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##bodyOffsetXcone", &offB.x, 0, 0, 2, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		ImGui::Text("Body Offset Y:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##bodyOffsetYcone", &offB.y, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		ImGui::Text("Body Offset Z:");
+		ImGui::SameLine();
+		if (ImGui::InputFloat("##bodyOffsetZcone", &offB.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
+		if (change) cone->SetOffsetB(offB);*/
+
+		if (ImGui::Button("Delete Component##delconeconst")) currentGo->DeleteGOComponent(CONSTRAINT_CONE_COMP);
 	}
 }

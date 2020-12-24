@@ -3,6 +3,7 @@
 #include "ModulePhysics.h"
 #include "PhysBody3D.h"
 #include "Primitive.h"
+#include "PhysVehicle3D.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 #include "Bullet/include/btBulletDynamicsCommon.h"
 #include "Bullet/include/btBulletCollisionCommon.h"
@@ -164,9 +165,16 @@ void ModulePhysics::ToggleSimulation(bool val)
 		{
 			world->addConstraint((*it).second);
 		}
+
+		for (std::map<std::string, PhysVehicle3D*>::iterator it = vehicles.begin(); it != vehicles.end(); ++it)
+		{
+			world->addVehicle((*it).second->vehicle);
+		}
+
 		LOG("Physics simulation ON");
 		LOG("Total bodies: %d", bodies.size()); 
 		LOG("Total constraints: %d",constraints.size());
+		LOG("Total vehicles: %d", vehicles.size());
 	}
 	else
 	{
@@ -250,19 +258,26 @@ bool ModulePhysics::CleanUp()
 	{
 		delete (*it).second;
 	}
+	motions.clear();
 
 	for (std::map<std::string, btCollisionShape*>::iterator it = shapes.begin(); it != shapes.end(); ++it)
 	{
 		delete (*it).second;
 	}
+	shapes.clear();
 
 	for (std::map<std::string, PhysBody3D*>::iterator it = bodies.begin(); it != bodies.end(); ++it)
 	{
 		delete (*it).second;
 	}
+	bodies.clear();
 
-	//for (int i = 0; i < vehicles.size(); i++) delete vehicles[i];
-	//vehicles.clear();
+	for (std::map<std::string, PhysVehicle3D*>::iterator it = vehicles.begin(); it != vehicles.end(); ++it)
+	{
+		delete (*it).second;
+	}
+	vehicles.clear();
+
 
 	delete vehicle_raycaster;
 	delete world;
@@ -437,14 +452,13 @@ PhysBody3D* ModulePhysics::AddBody(CapsuleCollider* capsule, float mass)
 	return pbody;
 }
 
-// ---------------------------------------------------------
-/*PhysVehicle3D* ModulePhysics::AddVehicle(const VehicleInfo& info)
+PhysVehicle3D* ModulePhysics::AddVehicle(const VehicleInfo& info)
 {
 	btCompoundShape* comShape = new btCompoundShape();
-	shapes.push_back(comShape);
+	shapes.emplace(info.uuid,comShape);
 
 	btCollisionShape* colShape = new btBoxShape(btVector3(info.chassis_size.x * 0.5f, info.chassis_size.y * 0.5f, info.chassis_size.z * 0.5f));
-	shapes.push_back(colShape);
+	shapes.emplace(info.uuid,colShape);
 
 	btTransform trans;
 	trans.setIdentity();
@@ -466,7 +480,6 @@ PhysBody3D* ModulePhysics::AddBody(CapsuleCollider* capsule, float mass)
 	_body->setActivationState(DISABLE_DEACTIVATION);
 
 	world->addRigidBody(_body);
-	_body->collType = CAR;
 
 	btRaycastVehicle::btVehicleTuning tuning;
 	tuning.m_frictionSlip = info.frictionSlip;
@@ -488,16 +501,14 @@ PhysBody3D* ModulePhysics::AddBody(CapsuleCollider* capsule, float mass)
 
 		vehicle->addWheel(conn, dir, axis, info.wheels[i].suspensionRestLength, info.wheels[i].radius, tuning, info.wheels[i].front);
 	}
-	// ---------------------
 	
 	PhysVehicle3D* pvehicle = new PhysVehicle3D(_body, vehicle, info);
 	_body->setUserPointer(pvehicle);
-	//pvehicle->body = _body;
 	world->addVehicle(vehicle);
-	vehicles.push_back(pvehicle);
+	vehicles.emplace(info.uuid,pvehicle);
 	
 	return pvehicle;
-}*/
+}
 
 // ---------------------------------------------------------
 btTypedConstraint* ModulePhysics::AddConstraintPoint(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB, std::string id)

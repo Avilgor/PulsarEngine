@@ -13,6 +13,9 @@ class SphereCollider;
 class CapsuleCollider;
 class JSonHandler;
 class ConstraintPoint;
+class ConstraintCone;
+class ConstraintSlider;
+class ConstraintHinge;
 
 class Component
 {
@@ -32,7 +35,10 @@ public:
 	BoxCollider* AsBoxCollider() { return boxCollider; }
 	CapsuleCollider* AsCapsuleCollider() { return capsuleCollider; }
 	ConstraintPoint* AsPointConstraint() { return pointConstraint; }
-	//RigidBody* AsRigidbody() { return rigidbody; }
+	ConstraintSlider* AsSliderConstraint() { return sliderConstraint; }
+	ConstraintHinge* AsHingeConstraint() { return hingeConstraint; }
+	ConstraintCone* AsConeConstraint() { return coneConstraint; }
+
 	virtual void SaveComponent(JSonHandler* file) {}
 	virtual void LoadComponent(JSonHandler* file) {}
 
@@ -50,7 +56,9 @@ public:
 	SphereCollider* sphereCollider = nullptr; 
 	CapsuleCollider* capsuleCollider = nullptr;
 	ConstraintPoint* pointConstraint = nullptr;
-
+	ConstraintCone* coneConstraint = nullptr;
+	ConstraintSlider* sliderConstraint = nullptr;
+	ConstraintHinge* hingeConstraint = nullptr;
 };
 
 #endif //__Component_H__

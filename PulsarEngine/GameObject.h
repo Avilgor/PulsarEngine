@@ -15,6 +15,9 @@ class BoxCollider;
 class SphereCollider;
 class CapsuleCollider;
 class ConstraintPoint;
+class ConstraintHinge;
+class ConstraintSlider;
+class ConstraintCone;
 
 class GameObject
 {
@@ -92,6 +95,9 @@ public:
 	BoxCollider* boxcollider = nullptr;
 	SphereCollider* spherecollider = nullptr;
 	ConstraintPoint* pointconstraint = nullptr;
+	ConstraintSlider* sliderconstraint = nullptr;
+	ConstraintHinge* hingeconstraint = nullptr;
+	ConstraintCone* coneconstraint = nullptr;
 	//Rigidbody* rigidbody = nullptr;
 	AABB Gaabb;
 	OBB Gobb;

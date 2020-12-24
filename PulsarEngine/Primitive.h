@@ -9,6 +9,7 @@ enum PrimitiveTypes
 {
 	Primitive_Cube,
 	Primitive_Sphere,
+	Primitive_Cylinder,
 	Primitive_Point,
 	Primitive_Line
 };
@@ -59,13 +60,26 @@ public:
 	float radius;
 
 private:
-	std::vector<GLfloat> vertices;
+	/*std::vector<GLfloat> vertices;
 	std::vector<GLfloat> normals;
 	std::vector<GLfloat> texcoords;
-	std::vector<GLushort> indices;
+	std::vector<GLushort> indices;*/
 	int rings = 10;
 	int sectors = 10;
 };
+
+// ============================================
+class CylinderPrimitive : public Primitive
+{
+public:
+	CylinderPrimitive();
+	CylinderPrimitive(float radius, float height);
+	void InnerRender() const;
+public:
+	float radius;
+	float height;
+};
+
 
 // ============================================
 class LinePrimitive : public Primitive

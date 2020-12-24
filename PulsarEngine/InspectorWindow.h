@@ -9,6 +9,9 @@ class BoxCollider;
 class SphereCollider;
 class CapsuleCollider;
 class ConstraintPoint;
+class ConstraintHinge;
+class ConstraintSlider;
+class ConstraintCone;
 
 class InspectorWindow : public EditorWindow
 {
@@ -24,13 +27,13 @@ private:
 	void MeshSection(GameObject* go);
 	void MaterialSection(GameObject* go);
 	void CameraSection(GameObject* go);
-	void BoxColliderSection(BoxCollider* coll/*,int index*/);
-	void SphereColliderSection(SphereCollider* coll/*,int index*/);
-	void CapsuleColliderSection(CapsuleCollider* coll/*, int index*/);
+	void BoxColliderSection(BoxCollider* coll);
+	void SphereColliderSection(SphereCollider* coll);
+	void CapsuleColliderSection(CapsuleCollider* coll);
 	void PointConstraintSection(ConstraintPoint* point);
-	/*void HingeConstraintSection();
-	void SliderConstraintSection();
-	void ConeConstraintSection();*/
+	void HingeConstraintSection(ConstraintHinge* hinge);
+	void SliderConstraintSection(ConstraintSlider* slider);
+	void ConeConstraintSection(ConstraintCone* cone);
 
 private:
 	ImGuiInputTextFlags name_input_flags = ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue;
