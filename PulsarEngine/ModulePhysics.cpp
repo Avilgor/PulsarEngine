@@ -148,6 +148,7 @@ void ModulePhysics::ToggleSimulation(bool val)
 	runningSimulation = val;
 	if (runningSimulation)
 	{
+		delete world;
 		world = new btDiscreteDynamicsWorld(dispatcher, broad_phase, solver, collision_conf);
 		world->setDebugDrawer(debug_draw);
 		world->setGravity(gravity);		

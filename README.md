@@ -17,6 +17,8 @@ Last release [here](https://github.com/Avilgor/PulsarEngine/releases)
 * In editor log console
 * Project window with all items in assets
 * Camera frustum culling
+* Physics engine with colliders and constraints
+* Physic car sample
 
 ## Controls
 
@@ -30,6 +32,7 @@ Last release [here](https://github.com/Avilgor/PulsarEngine/releases)
 * Left shift: Fast movement
 * Mouse wheel button: Move
 * F: Focus the current or first selected gameobject
+* Space: Throw physic ball in looking direction
 
 ### Project
 * Pressing delete key deletes selected asset
@@ -46,10 +49,13 @@ Last release [here](https://github.com/Avilgor/PulsarEngine/releases)
 * R: Toggle gizmo scale mode
 * Left click: Select hovered gameobject in scene
 
+### Vehicle
+* Arrow keys: Car movement (Forward, left, right and backwards)
+* X: Card Brake
 
 ## Tips: 
 * By default camera rotation orbits the current point, so it's not needed to press alt key continously.
-* Zoom and camera movement change orbit reference, to avoid keeping alt key pressed just press F key again to re-center.
+* Physic simulation only working when scene is running or toggled in the physics options window
 
 ## Done by
 * Adrià Avila: [Avilgor](https://github.com/Avilgor)

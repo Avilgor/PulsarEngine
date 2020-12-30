@@ -44,7 +44,7 @@ class CubePrimitive : public Primitive
 public:
 	CubePrimitive();
 	CubePrimitive(float sizeX, float sizeY, float sizeZ);
-	void InnerRender(/*float4x4 transformMatrix*/);
+	void InnerRender();
 public:
 	float3 size;
 };
@@ -55,15 +55,15 @@ class SpherePrimitive : public Primitive
 public:
 	SpherePrimitive();
 	SpherePrimitive(float radius);
-	void InnerRender(/*float4x4 transformMatrix*/);
+	void InnerRender();
 public:
 	float radius;
 
 private:
-	/*std::vector<GLfloat> vertices;
+	std::vector<GLfloat> vertices;
 	std::vector<GLfloat> normals;
 	std::vector<GLfloat> texcoords;
-	std::vector<GLushort> indices;*/
+	std::vector<GLushort> indices;
 	int rings = 10;
 	int sectors = 10;
 };
@@ -74,7 +74,7 @@ class CylinderPrimitive : public Primitive
 public:
 	CylinderPrimitive();
 	CylinderPrimitive(float radius, float height);
-	void InnerRender() const;
+	void InnerRender();
 public:
 	float radius;
 	float height;

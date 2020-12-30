@@ -163,7 +163,7 @@ CylinderPrimitive::CylinderPrimitive(float radius, float height) : Primitive(), 
 	type = PrimitiveTypes::Primitive_Cylinder;
 }
 
-void CylinderPrimitive::InnerRender() const
+void CylinderPrimitive::InnerRender()
 {
 	int n = 30;
 
@@ -204,7 +204,7 @@ void CylinderPrimitive::InnerRender() const
 SpherePrimitive::SpherePrimitive() : Primitive(), radius(1.0f)
 {
 	type = PrimitiveTypes::Primitive_Sphere;
-	/*float const R = 1. / (float)(rings - 1);
+	float const R = 1. / (float)(rings - 1);
 	float const S = 1. / (float)(sectors - 1);
 	int r, s;
 
@@ -234,20 +234,20 @@ SpherePrimitive::SpherePrimitive() : Primitive(), radius(1.0f)
 
 	indices.resize(rings * sectors * 4);
 	std::vector<GLushort>::iterator i = indices.begin();
-	for (r = 0; r < rings; r++) for (s = 0; s < sectors; s++)
+	for (r = 0; r < rings - 1; r++) for (s = 0; s < sectors - 1; s++)
 	{
 		*i++ = r * sectors + s;
 		*i++ = r * sectors + (s + 1);
 		*i++ = (r + 1) * sectors + (s + 1);
 		*i++ = (r + 1) * sectors + s;
-	}*/
+	}
 }
 
 SpherePrimitive::SpherePrimitive(float radius) : Primitive(), radius(radius)
 {
 	type = PrimitiveTypes::Primitive_Sphere;
 
-	/*float const R = 1. / (float)(rings - 1);
+	float const R = 1. / (float)(rings - 1);
 	float const S = 1. / (float)(sectors - 1);
 	int r, s;
 
@@ -277,18 +277,18 @@ SpherePrimitive::SpherePrimitive(float radius) : Primitive(), radius(radius)
 
 	indices.resize(rings * sectors * 4);
 	std::vector<GLushort>::iterator i = indices.begin();
-	for (r = 0; r < rings; r++) for (s = 0; s < sectors; s++) 
+	for (r = 0; r < rings - 1; r++) for (s = 0; s < sectors - 1; s++) 
 	{
 		*i++ = r * sectors + s;
 		*i++ = r * sectors + (s + 1);
 		*i++ = (r + 1) * sectors + (s + 1);
 		*i++ = (r + 1) * sectors + s;
-	}*/
+	}
 }
 
 void SpherePrimitive::InnerRender()
 {
-	/*glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
@@ -298,7 +298,7 @@ void SpherePrimitive::InnerRender()
 	glTexCoordPointer(2, GL_FLOAT, 0, &texcoords[0]);
 	glDrawElements(GL_QUADS, indices.size(), GL_UNSIGNED_SHORT, &indices[0]);
 
-	glEnd();*/
+	glEnd();
 }
 
 // LINE ==================================================

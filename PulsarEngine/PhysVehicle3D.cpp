@@ -38,6 +38,7 @@ void PhysVehicle3D::Render()
 		vehicle->getWheelInfo(i).m_worldTransform.getOpenGLMatrix(&wheel.transform);
 
 		wheel.Render();
+		wheel.InnerRender();
 	}
 
 	CubePrimitive chassis(info.chassis_size.x, info.chassis_size.y, info.chassis_size.z);
@@ -59,12 +60,12 @@ void PhysVehicle3D::Render()
 	btVector3 offsetRear(info.rear_chassis_offset.x, info.rear_chassis_offset.y, info.rear_chassis_offset.z);
 	offsetRear = offsetRear.rotate(q.getAxis(), q.getAngle());
 
-	/*Sphere cabine(info.cabine_radius);
+	SpherePrimitive cabine(info.cabine_radius);
 	cabine.color = Red;
 	vehicle->getChassisWorldTransform().getOpenGLMatrix(&cabine.transform);
 	q = vehicle->getChassisWorldTransform().getRotation();
 	btVector3 offsetCabine(info.cabine_offset.x, info.cabine_offset.y, info.cabine_offset.z);
-	offsetCabine = offsetCabine.rotate(q.getAxis(), q.getAngle());*/
+	offsetCabine = offsetCabine.rotate(q.getAxis(), q.getAngle());
 
 	chassis.transform.M[12] += offset.getX();
 	chassis.transform.M[13] += offset.getY();
@@ -78,15 +79,15 @@ void PhysVehicle3D::Render()
 	RearChassis.transform.M[13] += offsetRear.getY();
 	RearChassis.transform.M[14] += offsetRear.getZ();
 	
-	//cabine.transform.M[12] += offsetCabine.getX();
-	//cabine.transform.M[13] += offsetCabine.getY();
-	//cabine.transform.M[14] += offsetCabine.getZ();
+	cabine.transform.M[12] += offsetCabine.getX();
+	cabine.transform.M[13] += offsetCabine.getY();
+	cabine.transform.M[14] += offsetCabine.getZ();
 
 	
 	chassis.Render();
 	FrontChassis.Render();
 	RearChassis.Render();
-	//cabine.Render();
+	cabine.Render();
 	//jointPrimitive.Render();
 }
 
