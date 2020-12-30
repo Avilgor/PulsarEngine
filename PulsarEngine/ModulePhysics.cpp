@@ -95,23 +95,26 @@ update_status ModulePhysics::PreUpdate(float dt)
 	{		
 		world->stepSimulation(dt, steps);
 		
-		int numManifolds = world->getDispatcher()->getNumManifolds();
-		for (int i = 0; i < numManifolds; i++)
+		if (world->getDispatcher() != nullptr)
 		{
-			btPersistentManifold* contactManifold = world->getDispatcher()->getManifoldByIndexInternal(i);
-			btCollisionObject* obA = (btCollisionObject*)(contactManifold->getBody0());
-			btCollisionObject* obB = (btCollisionObject*)(contactManifold->getBody1());
-
-			int numContacts = contactManifold->getNumContacts();
-			if (numContacts > 0)
+			int numManifolds = world->getDispatcher()->getNumManifolds();
+			for (int i = 0; i < numManifolds; i++)
 			{
-				PhysBody3D* pbodyA = (PhysBody3D*)obA->getUserPointer();
-				PhysBody3D* pbodyB = (PhysBody3D*)obB->getUserPointer();
+				btPersistentManifold* contactManifold = world->getDispatcher()->getManifoldByIndexInternal(i);
+				btCollisionObject* obA = (btCollisionObject*)(contactManifold->getBody0());
+				btCollisionObject* obB = (btCollisionObject*)(contactManifold->getBody1());
 
-				if (pbodyA && pbodyB)
+				int numContacts = contactManifold->getNumContacts();
+				if (numContacts > 0)
 				{
-					if (pbodyA->listener != nullptr) pbodyA->listener->OnCollision(pbodyA, pbodyB);
-					if (pbodyB->listener != nullptr) pbodyB->listener->OnCollision(pbodyB, pbodyA);
+					PhysBody3D* pbodyA = (PhysBody3D*)obA->getUserPointer();
+					PhysBody3D* pbodyB = (PhysBody3D*)obB->getUserPointer();
+
+					if (pbodyA && pbodyB)
+					{
+						if (pbodyA->listener != nullptr) pbodyA->listener->OnCollision(pbodyA, pbodyB);
+						if (pbodyB->listener != nullptr) pbodyB->listener->OnCollision(pbodyB, pbodyA);
+					}
 				}
 			}
 		}
@@ -148,20 +151,22 @@ void ModulePhysics::ToggleSimulation(bool val)
 	runningSimulation = val;
 	if (runningSimulation)
 	{
-		delete world;
+		/*delete world;
+		delete vehicle_raycaster;
 		world = new btDiscreteDynamicsWorld(dispatcher, broad_phase, solver, collision_conf);
 		world->setDebugDrawer(debug_draw);
 		world->setGravity(gravity);		
 		vehicle_raycaster = new btDefaultVehicleRaycaster(world);
+		*/
 		for (std::map<std::string, PhysBody3D*>::iterator it = bodies.begin(); it != bodies.end(); ++it)
 		{
 			(*it).second->body->clearForces();
 			btVector3 zeroVector(0, 0, 0);
 			(*it).second->body->setLinearVelocity(zeroVector);
 			(*it).second->body->setAngularVelocity(zeroVector);
-			world->addRigidBody((*it).second->body);
+			//world->addRigidBody((*it).second->body);
 		}
-
+		/*
 		for (std::map<std::string, btTypedConstraint*>::iterator it = constraints.begin(); it != constraints.end(); ++it)
 		{
 			world->addConstraint((*it).second);
@@ -170,7 +175,7 @@ void ModulePhysics::ToggleSimulation(bool val)
 		for (std::map<std::string, PhysVehicle3D*>::iterator it = vehicles.begin(); it != vehicles.end(); ++it)
 		{
 			world->addVehicle((*it).second->vehicle);
-		}
+		}*/
 
 		LOG("Physics simulation ON");
 		LOG("Total bodies: %d", bodies.size()); 
@@ -287,7 +292,7 @@ bool ModulePhysics::CleanUp()
 
 void ModulePhysics::RemoveConstraint(btTypedConstraint* constraint,std::string id)
 {
-	LOG("Constraint id: %s",id.c_str());
+	//LOG("Constraint id: %s",id.c_str());
 	world->removeConstraint(constraint);
 	if (!constraints.empty())
 	{
@@ -459,7 +464,7 @@ PhysVehicle3D* ModulePhysics::AddVehicle(const VehicleInfo& info)
 	shapes.emplace(info.uuid,comShape);
 
 	btCollisionShape* colShape = new btBoxShape(btVector3(info.chassis_size.x * 0.5f, info.chassis_size.y * 0.5f, info.chassis_size.z * 0.5f));
-	shapes.emplace(info.uuid,colShape);
+	//shapes.emplace(info.uuid,colShape);
 
 	btTransform trans;
 	trans.setIdentity();

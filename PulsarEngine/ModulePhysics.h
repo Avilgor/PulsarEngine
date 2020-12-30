@@ -63,13 +63,13 @@ public:
 
 private:
 
-	btDefaultCollisionConfiguration* collision_conf;
-	btCollisionDispatcher* dispatcher;
-	btBroadphaseInterface* broad_phase;
-	btSequentialImpulseConstraintSolver* solver;
-	btDiscreteDynamicsWorld* world;
-	btDefaultVehicleRaycaster* vehicle_raycaster;
-	DebugDrawer* debug_draw;
+	btDefaultCollisionConfiguration* collision_conf = nullptr;
+	btCollisionDispatcher* dispatcher = nullptr;
+	btBroadphaseInterface* broad_phase = nullptr;
+	btSequentialImpulseConstraintSolver* solver = nullptr;
+	btDiscreteDynamicsWorld* world = nullptr;
+	btDefaultVehicleRaycaster* vehicle_raycaster = nullptr;
+	DebugDrawer* debug_draw = nullptr;
 
 	std::map<std::string,btCollisionShape*> shapes;
 	std::map<std::string,PhysBody3D*> bodies;

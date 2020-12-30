@@ -91,7 +91,7 @@ void FileSystemModule::CreateLibraryDirectories()
 	//CreateDir(ANIMATIONS_PATH);
 	//CreateDir(PARTICLES_PATH);
 	//CreateDir(SHADERS_PATH);
-	//CreateDir(SCENES_PATH);
+	CreateDir(SCENES_PATH);
 }
 
 // Add a new zip file or folder
@@ -445,7 +445,7 @@ uint FileSystemModule::Save(const char* file, const void* buffer, unsigned int s
 	unsigned int ret = 0;
 
 	bool overwrite = PHYSFS_exists(file) != 0;
-	PHYSFS_file* fs_file = (append) ? PHYSFS_openAppend(file) : PHYSFS_openWrite(file);
+	PHYSFS_File* fs_file = (append) ? PHYSFS_openAppend(file) : PHYSFS_openWrite(file);
 
 	if (fs_file != nullptr)
 	{

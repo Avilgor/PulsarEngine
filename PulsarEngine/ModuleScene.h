@@ -7,7 +7,6 @@
 
 
 class Scene; 
-struct PhysVehicle3D;
 
 class ModuleScene : public Module
 {
@@ -52,12 +51,7 @@ private:
 	SceneState lastState;
 	Timer sceneStartTimer; //No stop
 	Timer sceneRunTime; //Stop when paused
-	std::string lastSceneID = "0";
-
-	PhysVehicle3D* vehicle;
-	float turn;
-	float acceleration;
-	float brake;
+	std::string lastSceneID = "0";	
 };
 
 #endif //__ModuleScene_H__

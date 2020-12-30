@@ -38,7 +38,7 @@ void PhysVehicle3D::Render()
 		vehicle->getWheelInfo(i).m_worldTransform.getOpenGLMatrix(&wheel.transform);
 
 		wheel.Render();
-		wheel.InnerRender();
+		//wheel.InnerRender();
 	}
 
 	CubePrimitive chassis(info.chassis_size.x, info.chassis_size.y, info.chassis_size.z);
@@ -94,11 +94,14 @@ void PhysVehicle3D::Render()
 // ----------------------------------------------------------------------------
 void PhysVehicle3D::ApplyEngineForce(float force)
 {
-	for(int i = 0; i < vehicle->getNumWheels(); ++i)
+	if (vehicle != nullptr)
 	{
-		if(info.wheels[i].drive == true)
+		for (int i = 0; i < vehicle->getNumWheels(); ++i)
 		{
-			vehicle->applyEngineForce(force, i);
+			if (info.wheels[i].drive == true)
+			{
+				vehicle->applyEngineForce(force, i);
+			}
 		}
 	}
 }
@@ -106,11 +109,14 @@ void PhysVehicle3D::ApplyEngineForce(float force)
 // ----------------------------------------------------------------------------
 void PhysVehicle3D::Brake(float force)
 {
-	for(int i = 0; i < vehicle->getNumWheels(); ++i)
+	if (vehicle != nullptr)
 	{
-		if(info.wheels[i].brake == true)
+		for (int i = 0; i < vehicle->getNumWheels(); ++i)
 		{
-			vehicle->setBrake(force, i);
+			if (info.wheels[i].brake == true)
+			{
+				vehicle->setBrake(force, i);
+			}
 		}
 	}
 }
@@ -118,11 +124,14 @@ void PhysVehicle3D::Brake(float force)
 // ----------------------------------------------------------------------------
 void PhysVehicle3D::Turn(float degrees)
 {
-	for(int i = 0; i < vehicle->getNumWheels(); ++i)
+	if (vehicle != nullptr)
 	{
-		if(info.wheels[i].steering == true)
+		for (int i = 0; i < vehicle->getNumWheels(); ++i)
 		{
-			vehicle->setSteeringValue(degrees, i);
+			if (info.wheels[i].steering == true)
+			{
+				vehicle->setSteeringValue(degrees, i);
+			}
 		}
 	}
 }
@@ -130,5 +139,6 @@ void PhysVehicle3D::Turn(float degrees)
 // ----------------------------------------------------------------------------
 float PhysVehicle3D::GetKmh() const
 {
-	return vehicle->getCurrentSpeedKmHour();
+	if (vehicle != nullptr) return vehicle->getCurrentSpeedKmHour();
+	else return 0;
 }

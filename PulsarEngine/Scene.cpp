@@ -5,9 +5,15 @@
 #include "Transform.h"
 #include "Mesh.h"
 #include "JSonHandler.h"
+#include "PhysVehicle3D.h"
+#include "PhysBody3D.h"
 #include "ResourceManager.h"
 
 #include <map>
+
+#define MAX_ACCELERATION 1000.0f
+#define TURN_DEGREES 30.0f * DEGTORAD
+#define BRAKE_POWER 1000.0f
 
 Scene::Scene() : EngineResource(SCENE_RES)
 {
@@ -51,74 +57,97 @@ Scene::~Scene()
 void Scene::StartScene()
 {	
 	LOG("Starting scene %s",name.c_str());
+	//VEHICLE
 
-	//App->camera->Move(vec(0.0f, 10.0f, 5.0f));
-	//App->camera->Look(float3(0, 0, 0));
-	
-	/*GameObject* trump = new GameObject("Trump", float3(3.0f, 0.0f, 0.0f), float3(-90.0f, 0.0f, 0.0f), float3(0.02f, 0.02f, 0.02f));
-	root->AddChild(trump);
-	App->resourceManager->ImportFBX("Assets/3D/Trump/trump.fbx",trump);*/
+	VehicleInfo car;
 
-	/*GameObject* go2 = new GameObject("Baker House", float3(-1.0f, 0.0f, 0.0f), float3::zero, float3::one);
-	root->AddChild(go2);
-	App->resourceManager->ImportFBX("Assets/3D/Baker/BakerHouse.fbx",go2);
+	// Car properties ----------------------------------------
+	car.chassis_size.Set(2, 1, 4);
+	car.chassis_offset.Set(0, 0.5, 0);
+	car.front_chassis_size.Set(3, 0.5, 1);
+	car.front_chassis_offset.Set(0, 0.3, 2);
+	car.rear_chassis_size.Set(3.5, 0.3, 1);
+	car.rear_chassis_offset.Set(0, 1, -2);
+	car.cabine_radius = 0.8f;
+	car.cabine_offset.Set(0, 0.9, 1);
+	car.antenaOffset.Set(0, 4, -5);
+	car.mass = 500.0f;
+	car.suspensionStiffness = 15.0f;
+	car.suspensionCompression = 2.0f;
+	car.suspensionDamping = 1.0f;
+	car.maxSuspensionTravelCm = 100.0f;
+	car.frictionSlip = 50.5f;
+	car.maxSuspensionForce = 10000.0f;
 
+	// Wheel properties ---------------------------------------
+	float connection_height = 1.0f;
+	float wheel_radius = 0.6f;
+	float wheel_width = 0.5f;
+	float suspensionRestLength = 1.2f;
 
-	GameObject* go3 = new GameObject("Chiken", float3(-4.0f, 0.0f, 0.0f), float3::zero, float3(0.01f, 0.01f, 0.01f));
-	root->AddChild(go3);
-	App->resourceManager->ImportFBX("Assets/3D/Chiken/cock.fbx",go3);*/
+	// Don't change anything below this line ------------------
 
-	/*Component* comp = trump->GetFirstComponentType(MESH_COMP);
-	if (comp != nullptr)
-	{
-		if (comp->AsMesh() != nullptr) App->fileSystem->ImportMesh(comp->AsMesh(), "Assets/3D/Trump/trump.FBX");
-	}
+	float half_width = car.chassis_size.x * 0.65f;
+	float half_length = car.chassis_size.z * 0.5f;
 
-	comp = trump->GetFirstComponentType(MATERIAL_COMP);
-	if (comp != nullptr)
-	{
-		if (comp->AsMaterial() != nullptr)
-		{
-			comp->AsMaterial()->LoadTextureNewMaterial("Assets/3D/Trump/tumpLPcolors.png");
-			trump->GetFirstComponentType(MESH_COMP)->AsMesh()->SetAllMeshesMaterial(comp->AsMaterial()->GetMaterial(0));
-		}
-	}
+	vec3 direction(0, -1, 0);
+	vec3 axis(-1, 0, 0);
 
-	Component* comp2 = go2->GetFirstComponentType(MESH_COMP);
-	if (comp2 != nullptr)
-	{
-		if (comp2->AsMesh() != nullptr) App->fileSystem->ImportMesh(comp2->AsMesh(), "Assets/3D/Baker/BakerHouse.fbx");
-	}
+	car.num_wheels = 4;
+	car.wheels = new Wheel[4];
 
-	comp2 = go2->GetFirstComponentType(MATERIAL_COMP);
-	if (comp2 != nullptr)
-	{
-		if (comp2->AsMaterial() != nullptr)
-		{
-			comp2->AsMaterial()->LoadTextureNewMaterial("Assets/3D/Baker/Baker_house.png");
-			go2->GetFirstComponentType(MESH_COMP)->AsMesh()->SetAllMeshesMaterial(comp2->AsMaterial()->GetMaterial(0));
-		}
-	}
+	// FRONT-LEFT ------------------------
+	car.wheels[0].connection.Set(half_width - 0.3f * wheel_width, connection_height, half_length - wheel_radius);
+	car.wheels[0].direction = direction;
+	car.wheels[0].axis = axis;
+	car.wheels[0].suspensionRestLength = suspensionRestLength;
+	car.wheels[0].radius = wheel_radius;
+	car.wheels[0].width = wheel_width;
+	car.wheels[0].front = true;
+	car.wheels[0].drive = true;
+	car.wheels[0].brake = false;
+	car.wheels[0].steering = true;
 
-	Component* comp3 = go3->GetFirstComponentType(MESH_COMP);
-	if (comp3 != nullptr)
-	{
-		if (comp3->AsMesh() != nullptr) App->fileSystem->ImportMesh(comp3->AsMesh(), "Assets/3D/Chiken/cock.fbx");
-	}
+	// FRONT-RIGHT ------------------------
+	car.wheels[1].connection.Set(-half_width + 0.3f * wheel_width, connection_height, half_length - wheel_radius);
+	car.wheels[1].direction = direction;
+	car.wheels[1].axis = axis;
+	car.wheels[1].suspensionRestLength = suspensionRestLength;
+	car.wheels[1].radius = wheel_radius;
+	car.wheels[1].width = wheel_width;
+	car.wheels[1].front = true;
+	car.wheels[1].drive = true;
+	car.wheels[1].brake = false;
+	car.wheels[1].steering = true;
 
-	comp3 = go3->GetFirstComponentType(MATERIAL_COMP);
-	if (comp3 != nullptr)
-	{
-		comp3 = comp3->AsMaterial();
-		if (comp3 != nullptr)
-		{
-			Mesh* meshComp = go3->GetFirstComponentType(MESH_COMP)->AsMesh();
-			RES_Material* tempMat = nullptr;
-			comp3->AsMaterial()->LoadTextureNewMaterial("Assets/3D/Chiken/textures/rooster_color.png");
-			tempMat = comp3->AsMaterial()->GetLastMaterial();
-			if (tempMat != nullptr) meshComp->SetMeshMaterial(tempMat, 0);
-		}
-	}*/
+	// REAR-LEFT ------------------------
+	car.wheels[2].connection.Set(half_width - 0.3f * wheel_width, connection_height, -half_length + wheel_radius);
+	car.wheels[2].direction = direction;
+	car.wheels[2].axis = axis;
+	car.wheels[2].suspensionRestLength = suspensionRestLength;
+	car.wheels[2].radius = wheel_radius;
+	car.wheels[2].width = wheel_width;
+	car.wheels[2].front = false;
+	car.wheels[2].drive = false;
+	car.wheels[2].brake = true;
+	car.wheels[2].steering = false;
+
+	// REAR-RIGHT ------------------------
+	car.wheels[3].connection.Set(-half_width + 0.3f * wheel_width, connection_height, -half_length + wheel_radius);
+	car.wheels[3].direction = direction;
+	car.wheels[3].axis = axis;
+	car.wheels[3].suspensionRestLength = suspensionRestLength;
+	car.wheels[3].radius = wheel_radius;
+	car.wheels[3].width = wheel_width;
+	car.wheels[3].front = false;
+	car.wheels[3].drive = false;
+	car.wheels[3].brake = true;
+	car.wheels[3].steering = false;
+
+	vehicle = App->physics->AddVehicle(car);
+	vehicle->SetPos(0, 2, 0);
+	//vehicle->collision_listeners.add(this);
+	//
 }
 
 update_status Scene::UpdateScene(float dt)
@@ -130,11 +159,53 @@ update_status Scene::UpdateScene(float dt)
 	if (root != nullptr)
 	{
 		root->UpdateTransform();
-		//Temp
-		/*if(App->scene->state == SCENE_RUNNING)*/ root->UpdateGameObject();
+		root->UpdateGameObject();
 
 		root->DrawMesh();
 	}
+
+	///VEHICLE CONTROL
+
+	turn = acceleration = brake = 0.0f;
+	if (App->physics->runningSimulation)
+	{
+		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+		{
+			acceleration = MAX_ACCELERATION * 2;
+		}
+
+		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+		{
+			if (turn < TURN_DEGREES)
+				turn += TURN_DEGREES;
+		}
+
+		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+		{
+			if (turn > -TURN_DEGREES)
+				turn -= TURN_DEGREES;
+		}
+
+		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+		{
+			acceleration = -MAX_ACCELERATION * 2;
+		}
+
+		if (App->input->GetKey(SDL_SCANCODE_X) == KEY_REPEAT)
+		{
+			brake = BRAKE_POWER;
+		}
+
+		vehicle->ApplyEngineForce(acceleration);
+		vehicle->Turn(turn);
+		vehicle->Brake(brake);
+	}
+
+
+	
+	vehicle->Render();
+
+	/// 
 
 	return ret;
 }
@@ -240,11 +311,11 @@ void Scene::SaveTempScene()
 	uint size = settings.Serialize(&buffer);
 	std::string fileName = SCENES_PATH;
 	fileName.append(name);
-	fileName.append("temp.psscene");
+	fileName.append("_temp.psscene");
 	App->fileSystem->Save(fileName.c_str(), buffer, size);
 	RELEASE_ARRAY(buffer);
 
-	LOG("Recover scene created", name.c_str());
+	//LOG("Recover scene created", name.c_str());
 }
 
 void Scene::LoadTempScene()
@@ -253,13 +324,13 @@ void Scene::LoadTempScene()
 	root->DeleteAllChilds();
 	char* buffer = nullptr;
 	std::string path = SCENES_PATH;
-	path.append(name.c_str());
-	path.append("temp.JSON");
+	path.append(name);
+	path.append("_temp.psscene");
 	uint size = App->fileSystem->Load(path.c_str(), &buffer);
 	if (size > 0)
 	{
 		JSonHandler* node = new JSonHandler(buffer);		
-		LoadResource(node);
+		LoadScene(node);
 
 		delete node;
 		RELEASE_ARRAY(buffer);

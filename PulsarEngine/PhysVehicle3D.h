@@ -65,5 +65,5 @@ public:
 
 	VehicleInfo info;
 	//btRigidBody* Body;
-	btRaycastVehicle* vehicle;
+	btRaycastVehicle* vehicle = nullptr;
 };

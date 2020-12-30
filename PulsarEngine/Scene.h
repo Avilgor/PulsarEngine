@@ -9,6 +9,8 @@ class GameObject;
 class Mesh;
 class Material;
 class JSonHandler;
+struct PhysVehicle3D;
+
 
 class Scene : public EngineResource
 {
@@ -42,6 +44,10 @@ public:
 
 private:
 	GameObject* root = nullptr;
+	PhysVehicle3D* vehicle;
+	float turn;
+	float acceleration;
+	float brake;
 };
 
 #endif //__Scene_H__
