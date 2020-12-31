@@ -55,6 +55,7 @@ private:
 
 public:
 	bool updateTransform;
+	bool loadedTransform;
 
 private:
 	float4x4 transform;
@@ -67,7 +68,7 @@ private:
 	float3 loadPos;
 	float3 loadRot;
 	float3 loadScale;
-	bool loadedTransform;
+	
 };
 
 #endif //__Transform_H__

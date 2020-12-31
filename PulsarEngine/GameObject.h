@@ -54,7 +54,7 @@ public:
 	std::vector<GameObject*> GetAllChilds() { return Childs; }
 	Component* GetFirstComponentType(ComponentTypes type);
 	std::vector<Component*> GetAllComponentsByType(ComponentTypes type);
-	GameObject* GetFirstChild() { return Childs[0]; }
+	GameObject* GetFirstChild();
 	GameObject* GetParent() { return parent; }
 	float4x4 GetGlobalTransform();
 	float4x4 GetLocalTransform();

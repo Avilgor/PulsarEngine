@@ -230,20 +230,29 @@ void Scene::Clean()
 
 void Scene::ThrowPhysBall()
 {
-	GameObject* ball = new GameObject("Ball");
-	root->AddChild(ball);
-	App->resourceManager->ImportFBX("DefaultAssets/Models/sphere.fbx", ball);
-	Component* coll = ball->AddComponent(SPHERE_COLLIDER_COMP);
-	if (coll != nullptr)
+	GameObject* go = new GameObject("Ball"); //, App->camera->GetPos(), float3::zero, float3::one);
+	//root->AddChild(go);
+	App->resourceManager->ImportFBX("DefaultAssets/Models/sphere.fbx", go);
+	GameObject* ball = go->GetFirstChild();
+	if (ball != nullptr)
 	{
-		ball->transform->SetPosition(App->camera->GetPos());
-		coll->AsSphereCollider()->ApplyForce(App->camera->GetEditorDirection(),10);
-		balls.push_back(ball);
+		ball->name = "Ball";
+		ball->SetParent(root);
+		Component* coll = ball->AddComponent(SPHERE_COLLIDER_COMP);
+		if (coll != nullptr)
+		{
+			//float3 pos = App->camera->GetPos();
+			//LOG("Ball pos X:%f/Y:%f/Z:%f", pos.x, pos.y, pos.z);
+			ball->transform->SetPosition(App->camera->GetPos());
+			float3 dir = App->camera->GetEditorDirection();
+			//LOG("Ball dir X:%f/Y:%f/Z:%f", dir.x, dir.y, dir.z);
+			coll->AsSphereCollider()->ApplyForce(float3(0.0f,0.0f,1.0f), 100);			
+			balls.push_back(ball);
+		}
+		else ball->DeleteGameobject();
 	}
-	else
-	{
-		ball->DeleteGameobject();
-	}
+
+	go->DeleteGameobject();
 }
 
 void Scene::ClearBalls()

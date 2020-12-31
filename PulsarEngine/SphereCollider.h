@@ -36,8 +36,11 @@ public:
 
 	void ApplyForce(float3 dir, float force);
 
-public:
+private:
+	std::vector<float3> toapplyForcesDir;
+	std::vector<float> toapplyForcesImpulse;
 
+public:
 	PhysBody3D* body = nullptr;
 	bool draw;
 	float mass;

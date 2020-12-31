@@ -726,6 +726,20 @@ void GameObject::DeleteGOComponent(ComponentTypes type)
 	}	
 }
 
+GameObject* GameObject::GetFirstChild()
+{
+	if (!Childs.empty())
+	{
+		return Childs[0];
+	}
+	else if (!toAddChilds.empty())
+	{
+		return toAddChilds[0];
+	}
+	else return nullptr;
+}
+
+
 void GameObject::DeleteGOComponent(std::string uuid)
 {
 	if (!Components.empty())
@@ -831,22 +845,30 @@ void GameObject::SetParent(GameObject* p)
 {
 	if (p != nullptr)
 	{
-		if (parent != nullptr && p->UUID.compare(parent->UUID) != 0)
+		if (parent != nullptr)
 		{
-			//if (!CheckIfGotParentUUID(p->UUID))
-			//{
+			if (p->UUID.compare(parent->UUID) != 0)
+			{
 				parent->RemoveChild(UUID);
 				parent = p;
 				parentUUID = p->UUID;
 				parent->AddChild(this);
-			//}
+			}
+			else
+			{
+				parentUUID = p->UUID;
+				parent = p;
+				//parent->AddChild(this);
+			}
+			transform->SetGlobalTransform();
 		}
-		else
+		/*else
 		{
-			parentUUID = p->UUID;
 			parent = p;
-		}
-		transform->SetGlobalTransform();
+			parentUUID = p->UUID;
+			//parent->AddChild(this);
+			transform->SetGlobalTransform();
+		}*/
 	}
 }
 
@@ -961,8 +983,9 @@ void GameObject::SaveToDelete(GameObject* trash)
 
 void GameObject::DeleteGameobject()
 {	
-	toDelete = true;
-	if(parent != nullptr) parent->SaveToDelete(this);
+	toDelete = true;	
+	if (parent != nullptr) parent->SaveToDelete(this);
+
 	if (!Childs.empty())
 	{
 		std::vector<GameObject*> toDelete = Childs;

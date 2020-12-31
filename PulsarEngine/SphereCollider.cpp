@@ -59,10 +59,21 @@ void SphereCollider::UpdateComponent()
 
 void SphereCollider::PhysicsUpdate()
 {
-	if (body != nullptr &&  !body->isStatic)
+	if (body != nullptr &&  !body->isStatic && !gameobject->transform->updateTransform)
 	{
 		gameobject->transform->SetPosition(body->GetPos());
 		gameobject->transform->SetQuatRotation(body->GetRotation());
+		if (!toapplyForcesDir.empty() && !toapplyForcesImpulse.empty())
+		{
+			for (int i = 0; i < toapplyForcesDir.size(); i++)
+				body->body->applyCentralImpulse(btVector3(
+					toapplyForcesDir[i].x * toapplyForcesImpulse[i],
+					toapplyForcesDir[i].y * toapplyForcesImpulse[i],
+					toapplyForcesDir[i].z * toapplyForcesImpulse[i]));
+
+			toapplyForcesDir.clear();
+			toapplyForcesImpulse.clear();
+		}
 	}
 }
 
@@ -89,11 +100,8 @@ bool SphereCollider::IsStatic()
 
 void SphereCollider::ApplyForce(float3 dir, float force)
 {
-	btVector3 f;
-	f.setX(dir.x * force);
-	f.setY(dir.y * force);
-	f.setZ(dir.z * force);
-	body->body->applyCentralForce(f);
+	toapplyForcesDir.push_back(dir);
+	toapplyForcesImpulse.push_back(force);
 }
 
 float3 SphereCollider::GetSize()

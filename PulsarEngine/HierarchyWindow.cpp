@@ -45,7 +45,7 @@ void HierarchyWindow::DrawSceneGameObjects()
 	std::vector<GameObject*> sceneObjects = App->scene->GetActiveScene()->GetRoot()->GetAllChilds();
 	for (std::vector<GameObject*>::iterator it = sceneObjects.begin(); it != sceneObjects.end(); ++it)
 	{
-		DrawGameObject((*it));
+		if(!(*it)->toDelete) DrawGameObject((*it));
 	}
 }
 
