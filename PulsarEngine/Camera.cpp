@@ -97,11 +97,8 @@ void Camera::LookAt(float3 pos)
 
 float3 Camera::GetDirection()
 {
-	/*float3 dir;
-	dir.x = frustum.Front().x;
-	dir.y = frustum.Front().y;
-	dir.z = frustum.Front().z;*/
-	return -float3(frustum.NearPlane().normal.x, frustum.NearPlane().normal.y, frustum.NearPlane().normal.z);
+	vec dir = frustum.FarPlane().PointOnPlane() - frustum.NearPlane().PointOnPlane();
+	return float3(dir.x,dir.y,dir.z).Normalized();
 }
 
 void Camera::AdaptFOV(float width, float height)

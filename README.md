@@ -1,7 +1,7 @@
 # PulsarEngine
 Game Engine developed as a project for CITM-UPC. 
 [Pulsar engine](https://github.com/Avilgor/PulsarEngine)
-Last release [here](https://github.com/Avilgor/PulsarEngine/releases)
+Latest release [here](https://github.com/Avilgor/PulsarEngine/releases)
 
 ## Features
 
@@ -23,7 +23,7 @@ Last release [here](https://github.com/Avilgor/PulsarEngine/releases)
 ## Controls
 
 ### Selection
-* While pressing control you can select multiple objects
+* While pressing control you can select multiple objects in hierarchy
 * Delete key deletes all selected gameobjects
 
 ### Camera
@@ -32,7 +32,7 @@ Last release [here](https://github.com/Avilgor/PulsarEngine/releases)
 * Left shift: Fast movement
 * Mouse wheel button: Move
 * F: Focus the current or first selected gameobject
-* Space: Throw physic ball in looking direction
+* Space: Throw physic ball in looking direction (only if scene is running)
 
 ### Project
 * Pressing delete key deletes selected asset
