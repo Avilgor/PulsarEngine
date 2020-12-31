@@ -4,6 +4,7 @@
 #include "Globals.h"
 #include "EngineResource.h"
 #include <string>
+#include <vector>
 
 class GameObject;
 class Mesh;
@@ -41,6 +42,9 @@ public:
 	void CreateTorus();
 	void CreatePlane();
 
+private:
+	void ThrowPhysBall();
+	void ClearBalls();
 
 private:
 	GameObject* root = nullptr;
@@ -48,6 +52,7 @@ private:
 	float turn;
 	float acceleration;
 	float brake;
+	std::vector<GameObject*> balls;
 };
 
 #endif //__Scene_H__

@@ -33,6 +33,9 @@ public:
 	void SetFriction(float val);
 	void SetTrigger(bool val);
 
+
+	void ApplyForce(float3 dir, float force);
+
 public:
 
 	PhysBody3D* body = nullptr;

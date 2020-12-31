@@ -35,6 +35,8 @@ public:
 	std::vector<GameObject*> GetDrawnObjects() { return drawnGameobjects; }
 	void ResizeView(int w, int h);
 	void SetMainCamera(Camera* cam);
+	float3 GetEditorDirection() { return camera->GetDirection(); }
+	float3 GetMainrDirection() { return mainCamera->GetDirection(); }
 
 public:
 	Camera* camera = nullptr;

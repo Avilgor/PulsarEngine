@@ -68,6 +68,8 @@ void ResourceManager::GetEngineFiles()
 	PathNode engineassets;
 	engineassets = App->fileSystem->GetAllFiles("Assets", &ext, nullptr);
 	SaveEngineResource(engineassets);
+	engineassets = App->fileSystem->GetAllFiles("DefaultAssets", &ext, nullptr);
+	SaveEngineResource(engineassets);
 	LOG("Engine resources loaded.");
 }
 
@@ -540,17 +542,17 @@ void ResourceManager::FreeResource(std::string uuid)
 
 GameObject* ResourceManager::ImportFBX(const char* path)
 {
-	if (App->scene->state == SCENE_STOP)
-	{
+	//if (App->scene->state == SCENE_STOP)
+	//{
 		GameObject* go = App->scene->GetActiveScene()->CreateEmptyGameobject();
 		App->fileSystem->ImportFBX(path,go);
 		return go;
-	}
+	//}
 }
 
 void ResourceManager::ImportFBX(const char* path, GameObject* go)
 {
-	if (App->scene->state == SCENE_STOP) App->fileSystem->ImportFBX(path, go);
+	/*if (App->scene->state == SCENE_STOP)*/ App->fileSystem->ImportFBX(path, go);
 }
 
 bool ResourceManager::GenerateMeshBuffer(RES_Mesh* mesh)

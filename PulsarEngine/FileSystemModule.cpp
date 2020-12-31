@@ -962,7 +962,7 @@ bool FileSystemModule::ImportFBX(const char* path, GameObject* parent)
 	bool ret = true;
 	std::string metaPath = GetFileAndExtension(path);
 
-	if (App->resourceManager->CheckMetaFile(metaPath.c_str()) == false) //Meta file not found
+	if (App->resourceManager->CheckMetaFile(metaPath.c_str()) == false && App->scene->state == SCENE_STOP) //Meta file not found
 	{
 		if (App->scene->state == SCENE_STOP)
 		{

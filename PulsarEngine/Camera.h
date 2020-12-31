@@ -36,6 +36,7 @@ public:
 	float GetFarPlane() { return frustum.FarPlaneDistance(); }
 	float GetFOV() { return frustum.VerticalFov() * RADTODEG; }
 	float GetAspectRatio() { return frustum.AspectRatio(); }
+	float3 GetDirection();
 
 public:
 	Frustum frustum;

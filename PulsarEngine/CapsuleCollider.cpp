@@ -87,6 +87,15 @@ bool CapsuleCollider::IsStatic()
 	else return true;
 }
 
+void CapsuleCollider::ApplyForce(float3 dir, float force)
+{
+	btVector3 f;
+	f.setX(dir.x * force);
+	f.setY(dir.y * force);
+	f.setZ(dir.z * force);
+	body->body->applyCentralForce(f);
+}
+
 float3 CapsuleCollider::GetSize()
 {
 	if (body != nullptr) return body->scaleOffset;

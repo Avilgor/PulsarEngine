@@ -33,6 +33,8 @@ public:
 	float3 GetSize();
 	float3 GetPosition();
 	bool IsStatic();
+
+	void ApplyForce(float3 dir,float force);
 	
 public:
 

@@ -37,7 +37,7 @@ update_status MenuBar::Draw()
 		if (ImGui::MenuItem("Sphere")) App->scene->GetActiveScene()->CreateSphere();
 		if (ImGui::MenuItem("Cylinder")) App->scene->GetActiveScene()->CreateCylinder();
 		if (ImGui::MenuItem("Torus")) App->scene->GetActiveScene()->CreateTorus();
-		//if (ImGui::MenuItem("Plane")) App->scene->GetActiveScene()->CreatePlane();
+		if (ImGui::MenuItem("Plane")) App->scene->GetActiveScene()->CreatePlane();
 
 		ImGui::EndMenu();
 	}

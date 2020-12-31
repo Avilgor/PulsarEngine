@@ -196,13 +196,15 @@ update_status Scene::UpdateScene(float dt)
 			brake = BRAKE_POWER;
 		}
 
+		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		{
+			ThrowPhysBall();
+		}
+
 		vehicle->ApplyEngineForce(acceleration);
 		vehicle->Turn(turn);
 		vehicle->Brake(brake);
-	}
-
-
-	
+	}	
 	vehicle->Render();
 
 	/// 
@@ -224,6 +226,33 @@ void Scene::Clean()
 	root->Delete();
 	root = nullptr;
 	delete this;
+}
+
+void Scene::ThrowPhysBall()
+{
+	GameObject* ball = new GameObject("Ball");
+	root->AddChild(ball);
+	App->resourceManager->ImportFBX("DefaultAssets/Models/sphere.fbx", ball);
+	Component* coll = ball->AddComponent(SPHERE_COLLIDER_COMP);
+	if (coll != nullptr)
+	{
+		ball->transform->SetPosition(App->camera->GetPos());
+		coll->AsSphereCollider()->ApplyForce(App->camera->GetEditorDirection(),10);
+		balls.push_back(ball);
+	}
+	else
+	{
+		ball->DeleteGameobject();
+	}
+}
+
+void Scene::ClearBalls()
+{
+	if (!balls.empty())
+	{
+		for (int i = 0; i < balls.size(); i++) balls[i]->DeleteGameobject();
+		balls.clear();
+	}
 }
 
 
@@ -322,6 +351,7 @@ void Scene::LoadTempScene()
 {
 	App->editor->EmptySelected();
 	root->DeleteAllChilds();
+	balls.clear();
 	char* buffer = nullptr;
 	std::string path = SCENES_PATH;
 	path.append(name);
