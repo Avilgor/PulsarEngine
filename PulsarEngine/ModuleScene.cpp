@@ -157,6 +157,11 @@ update_status ModuleScene::PreUpdate(float dt)
 	return UPDATE_CONTINUE;
 }
 
+void ModuleScene::ClearPhysBalls()
+{
+	if (activeScene != nullptr) activeScene->ClearBalls();
+}
+
 // Update
 update_status ModuleScene::Update(float dt)
 {
@@ -182,7 +187,7 @@ update_status ModuleScene::Update(float dt)
 				sceneStartTimer.Stop();
 				sceneRunTime.Stop();
 				App->physics->ToggleSimulation(false);
-				activeScene->LoadTempScene();
+				activeScene->StartRecoveringScene();
 			}
 			break;		
 		case SCENE_PAUSE:

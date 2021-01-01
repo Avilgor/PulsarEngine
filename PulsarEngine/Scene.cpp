@@ -58,7 +58,21 @@ void Scene::StartScene()
 {	
 	LOG("Starting scene %s",name.c_str());
 	//VEHICLE
+	AddCar();
+	//
 
+	cameraCollider = new GameObject("Camera");
+	Component* coll = cameraCollider->AddComponent(SPHERE_COLLIDER_COMP);
+	if (coll != nullptr)
+	{
+		cameraCollider->transform->ForceGlobalPos(App->camera->GetPos());
+		coll->AsSphereCollider()->SetStatic(true);
+	}
+	else cameraCollider->DeleteGameobject();
+}
+
+void Scene::AddCar()
+{
 	VehicleInfo car;
 
 	// Car properties ----------------------------------------
@@ -146,16 +160,6 @@ void Scene::StartScene()
 
 	vehicle = App->physics->AddVehicle(car);
 	vehicle->SetPos(0, 2, 0);
-	//
-
-	cameraCollider = new GameObject("Camera");
-	Component* coll = cameraCollider->AddComponent(SPHERE_COLLIDER_COMP);
-	if (coll != nullptr)
-	{
-		cameraCollider->transform->ForceGlobalPos(App->camera->GetPos());
-		coll->AsSphereCollider()->SetStatic(true);
-	}
-	else cameraCollider->DeleteGameobject();
 }
 
 update_status Scene::PreUpdateScene(float dt)
@@ -170,11 +174,23 @@ update_status Scene::PreUpdateScene(float dt)
 	return ret;
 }
 
+void Scene::StartRecoveringScene()
+{
+	recoveringScene = true;
+	recoverSteps = 0;
+}
+
 update_status Scene::UpdateScene(float dt)
 {
 	update_status ret = UPDATE_CONTINUE;
 	//LOG("Scene update");
 	App->renderer3D->RenderGroundGrid(10);
+
+	if (recoveringScene)
+	{
+		LoadTempScene();
+		recoverSteps++;
+	}
 
 	if (root != nullptr)
 	{
@@ -186,48 +202,52 @@ update_status Scene::UpdateScene(float dt)
 	
 	///VEHICLE CONTROL
 	/// 
-
-	turn = acceleration = brake = 0.0f;
-	if (App->physics->runningSimulation)
+	if (!recoveringScene)
 	{
-		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+		turn = acceleration = brake = 0.0f;
+		if (App->physics->runningSimulation)
 		{
-			acceleration = MAX_ACCELERATION * 2;
+			if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+			{
+				acceleration = MAX_ACCELERATION * 2;
+			}
+
+			if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+			{
+				if (turn < TURN_DEGREES)
+					turn += TURN_DEGREES;
+			}
+
+			if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+			{
+				if (turn > -TURN_DEGREES)
+					turn -= TURN_DEGREES;
+			}
+
+			if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+			{
+				acceleration = -MAX_ACCELERATION * 2;
+			}
+
+			if (App->input->GetKey(SDL_SCANCODE_X) == KEY_REPEAT)
+			{
+				brake = BRAKE_POWER;
+			}
+
+			if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+			{
+				ThrowPhysBall();
+			}
+
+			if (vehicle != nullptr)
+			{
+				vehicle->ApplyEngineForce(acceleration);
+				vehicle->Turn(turn);
+				vehicle->Brake(brake);
+			}
 		}
-
-		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-		{
-			if (turn < TURN_DEGREES)
-				turn += TURN_DEGREES;
-		}
-
-		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-		{
-			if (turn > -TURN_DEGREES)
-				turn -= TURN_DEGREES;
-		}
-
-		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-		{
-			acceleration = -MAX_ACCELERATION * 2;
-		}
-
-		if (App->input->GetKey(SDL_SCANCODE_X) == KEY_REPEAT)
-		{
-			brake = BRAKE_POWER;
-		}
-
-		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
-		{
-			ThrowPhysBall();
-		}
-
-		vehicle->ApplyEngineForce(acceleration);
-		vehicle->Turn(turn);
-		vehicle->Brake(brake);
-	}	
-	vehicle->Render();
-
+		if (vehicle != nullptr) vehicle->Render();
+	}
 	/// 
 
 	return ret;
@@ -371,31 +391,46 @@ void Scene::SaveTempScene()
 
 void Scene::LoadTempScene()
 {
-	App->editor->EmptySelected();
-	root->DeleteAllChilds();
-	balls.clear();
-	char* buffer = nullptr;
-	std::string path = SCENES_PATH;
-	path.append(name);
-	path.append("_temp.psscene");
-	uint size = App->fileSystem->Load(path.c_str(), &buffer);
-	if (size > 0)
+	Component* coll = nullptr;
+	switch (recoverSteps)
 	{
-		JSonHandler* node = new JSonHandler(buffer);		
-		LoadScene(node);
+	case 0:
+		App->editor->EmptySelected();
+		root->DeleteAllChilds();
+		if (cameraCollider != nullptr) cameraCollider->DeleteGameobject();
+		break;
+	case 1:
+		App->physics->ResetPhysics();
+		break;
+	case 2:
+		AddCar();
 		if (cameraCollider != nullptr) cameraCollider->DeleteGameobject();
 		cameraCollider = new GameObject("Camera");
-		Component* coll = cameraCollider->AddComponent(SPHERE_COLLIDER_COMP);
+		coll = cameraCollider->AddComponent(SPHERE_COLLIDER_COMP);
 		if (coll != nullptr)
 		{
 			cameraCollider->transform->SetPosition(App->camera->GetPos());
 			coll->AsSphereCollider()->SetStatic(true);
 		}
 		else cameraCollider->DeleteGameobject();
-		delete node;
-		RELEASE_ARRAY(buffer);
-	}
-	else LOG("Error recovering scene.");
+		break;
+	case 3:
+		char* buffer = nullptr;
+		std::string path = SCENES_PATH;
+		path.append(name);
+		path.append("_temp.psscene");
+		uint size = App->fileSystem->Load(path.c_str(), &buffer);
+		if (size > 0)
+		{
+			JSonHandler* node = new JSonHandler(buffer);
+			LoadScene(node);
+			delete node;
+			RELEASE_ARRAY(buffer);
+		}
+		else LOG("Error recovering scene.");
+		recoveringScene = false;
+		break;
+	}	
 }
 
 GameObject* Scene::CreateEmptyGameobject()

@@ -34,6 +34,7 @@ public:
 	void SetScene(Scene* scene);
 	void SaveSettings(JSonHandler node);
 	void LoadSettings(JSonHandler node);
+	void ClearPhysBalls();
 
 private:
 	void SaveScene();

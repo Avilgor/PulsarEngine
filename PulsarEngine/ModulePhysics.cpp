@@ -77,17 +77,20 @@ update_status ModulePhysics::PreUpdate(float dt)
 {
 	for (std::map<std::string, Component*>::iterator it = colliderComponents.begin(); it != colliderComponents.end(); ++it)
 	{
-		if ((*it).second->AsBoxCollider() != nullptr)
+		if (!(*it).second->gameobject->toDelete)
 		{
-			(*it).second->AsBoxCollider()->UpdateTransform();
-		}
-		else if ((*it).second->AsSphereCollider() != nullptr)
-		{
-			(*it).second->AsSphereCollider()->UpdateTransform();
-		}
-		else if ((*it).second->AsCapsuleCollider() != nullptr)
-		{
-			(*it).second->AsCapsuleCollider()->UpdateTransform();
+			if ((*it).second->AsBoxCollider() != nullptr)
+			{
+				(*it).second->AsBoxCollider()->UpdateTransform();
+			}
+			else if ((*it).second->AsSphereCollider() != nullptr)
+			{
+				(*it).second->AsSphereCollider()->UpdateTransform();
+			}
+			else if ((*it).second->AsCapsuleCollider() != nullptr)
+			{
+				(*it).second->AsCapsuleCollider()->UpdateTransform();
+			}
 		}
 	}
 
@@ -123,17 +126,20 @@ update_status ModulePhysics::PreUpdate(float dt)
 		{
 			for (std::map<std::string, Component*>::iterator it = colliderComponents.begin(); it != colliderComponents.end(); ++it)
 			{
-				if ((*it).second->AsBoxCollider() != nullptr)
+				if (!(*it).second->gameobject->toDelete)
 				{
-					(*it).second->AsBoxCollider()->PhysicsUpdate();
-				}
-				else if ((*it).second->AsSphereCollider() != nullptr)
-				{
-					(*it).second->AsSphereCollider()->PhysicsUpdate();
-				}
-				else if ((*it).second->AsCapsuleCollider() != nullptr)
-				{
-					(*it).second->AsCapsuleCollider()->PhysicsUpdate();
+					if ((*it).second->AsBoxCollider() != nullptr)
+					{
+						(*it).second->AsBoxCollider()->PhysicsUpdate();
+					}
+					else if ((*it).second->AsSphereCollider() != nullptr)
+					{
+						(*it).second->AsSphereCollider()->PhysicsUpdate();
+					}
+					else if ((*it).second->AsCapsuleCollider() != nullptr)
+					{
+						(*it).second->AsCapsuleCollider()->PhysicsUpdate();
+					}
 				}
 			}
 		}
@@ -184,6 +190,7 @@ void ModulePhysics::ToggleSimulation(bool val)
 	}
 	else
 	{
+		App->scene->ClearPhysBalls();
 		simulationPause = false;
 		for (std::map<std::string, PhysBody3D*>::iterator it = bodies.begin(); it != bodies.end(); ++it)
 		{
@@ -235,9 +242,12 @@ void ModulePhysics::SetSimulationSteps(int val)
 	}
 }
 
-void ModulePhysics::ResetModule()
+void ModulePhysics::ResetPhysics()
 {
-
+	App->scene->ClearPhysBalls();
+	CleanUp();
+	LOG("Restarting scene");
+	Start();
 }
 
 void ModulePhysics::DebugDrawBody(btRigidBody* body)
@@ -297,6 +307,7 @@ bool ModulePhysics::CleanUp()
 	}
 	vehicles.clear();
 
+	colliderComponents.clear();
 
 	delete vehicle_raycaster;
 	delete world;
@@ -357,6 +368,7 @@ Component* ModulePhysics::GetColliderByUUID(std::string id)
 
 void ModulePhysics::RemoveCollider(std::string uuid)
 {
+	LOG("Remove Collider: %s",uuid.c_str());
 	if (bodies.find(uuid) != bodies.end())
 	{
 		world->removeRigidBody(bodies[uuid]->body);

@@ -31,7 +31,7 @@ public:
 	bool CleanUp();
 	void SetGravity(float3 val);
 	void SetSimulationSteps(int val);
-	void ResetModule();
+	void ResetPhysics();
 
 	PhysBody3D* AddBody(BoxCollider* box, float3 size,float mass = 10.0f);
 	PhysBody3D* AddBody(SphereCollider* sphere, float mass = 10.0f);

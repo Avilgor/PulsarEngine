@@ -42,11 +42,13 @@ public:
 	void CreateCylinder();
 	void CreateTorus();
 	void CreatePlane();
+	void ClearBalls();
+	void StartRecoveringScene();
 	//void SetName(std::string n);
 
 private:
-	void ThrowPhysBall();
-	void ClearBalls();
+	void ThrowPhysBall();	
+	void AddCar();
 
 private:
 	GameObject* root = nullptr;
@@ -56,6 +58,8 @@ private:
 	float brake;
 	std::vector<GameObject*> balls;
 	GameObject* cameraCollider = nullptr;
+	bool recoveringScene = false;
+	int recoverSteps = 0;
 };
 
 #endif //__Scene_H__

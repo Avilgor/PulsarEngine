@@ -30,8 +30,8 @@ public:
 	Quat GetRotation();
 
 public:
-	GameObject* listener;
-	btRigidBody* body;
+	GameObject* listener = nullptr;
+	btRigidBody* body = nullptr;
 	bool isStatic;
 	float3 localOffset;
 	float3 scaleOffset;

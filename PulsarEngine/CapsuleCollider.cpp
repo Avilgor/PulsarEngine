@@ -15,7 +15,11 @@ CapsuleCollider::CapsuleCollider(GameObject* parent) : Component(parent, CAPSULE
 	friction = 1.0f;
 	mass = 10.0f;
 	draw = true;
-	body->UpdateTransform(gameobject->GetGlobalTransform());
+	if (body != nullptr)
+	{
+		body->UpdateTransform(gameobject->GetGlobalTransform());
+		body->listener = gameobject;
+	}
 	SetFriction(friction);
 }
 
@@ -32,8 +36,10 @@ CapsuleCollider::CapsuleCollider(GameObject* parent, float r, float h) : Compone
 		body->scaleOffset.x = r;
 		body->scaleOffset.y = h;
 		body->scaleOffset.z = r;
+
+		body->UpdateTransform(gameobject->GetGlobalTransform());
+		body->listener = gameobject;
 	}
-	body->UpdateTransform(gameobject->GetGlobalTransform());
 	SetFriction(friction);
 }
 

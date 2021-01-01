@@ -16,6 +16,8 @@ SphereCollider::SphereCollider(GameObject* parent) : Component(parent, SPHERE_CO
 	friction = 1.0f;
 	mass = 10.0f;
 	body->UpdateTransform(gameobject->GetGlobalTransform());
+	if (body != nullptr) body->listener = gameobject;
+	
 	SetFriction(friction);
 }
 
@@ -32,8 +34,9 @@ SphereCollider::SphereCollider(GameObject* parent, float r) : Component(parent, 
 		body->scaleOffset.x = r;
 		body->scaleOffset.y = r;
 		body->scaleOffset.z = r;
+		body->UpdateTransform(gameobject->GetGlobalTransform());
+		body->listener = gameobject;
 	}
-	body->UpdateTransform(gameobject->GetGlobalTransform());
 	SetFriction(friction);
 }
 
