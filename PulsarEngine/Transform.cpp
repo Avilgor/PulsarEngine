@@ -102,6 +102,13 @@ void Transform::ResetTransform()
 	updateTransform = true;
 }
 
+void Transform::ForceGlobalPos(float3 p)
+{
+	position = p;
+	UpdateLocal();
+	transformGlobal = transform;
+}
+
 void Transform::UpdateEuler()
 {
 	eulerRotation = quaternionRotation.ToEulerXYZ();

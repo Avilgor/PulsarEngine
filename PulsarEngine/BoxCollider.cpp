@@ -12,10 +12,11 @@ BoxCollider::BoxCollider(GameObject* parent) : Component(parent, BOX_COLLIDER_CO
 	component->boxCollider = this;
 	App->physics->AddBody(this,float3::one);
 	isTrigger = false;
-	friction = 0.0f;
+	friction = 1.0f;
 	mass = 10.0f;
 	draw = true;
 	body->UpdateTransform(gameobject->GetGlobalTransform());
+	SetFriction(friction);
 }
 
 BoxCollider::BoxCollider(GameObject* parent, float3 s) : Component(parent, BOX_COLLIDER_COMP)
@@ -28,6 +29,7 @@ BoxCollider::BoxCollider(GameObject* parent, float3 s) : Component(parent, BOX_C
 	if(body != nullptr) body->scaleOffset = s;
 	draw = true;
 	body->UpdateTransform(gameobject->GetGlobalTransform());
+	SetFriction(friction);
 }
 
 BoxCollider::~BoxCollider()
@@ -54,7 +56,7 @@ void BoxCollider::UpdateComponent()
 
 void BoxCollider::PhysicsUpdate()
 {
-	if (body != nullptr && !body->isStatic && !gameobject->transform->updateTransform)
+	if (body != nullptr && !body->isStatic /*&& !gameobject->transform->updateTransform*/)
 	{
 		gameobject->transform->SetPosition(body->GetPos());
 		gameobject->transform->SetQuatRotation(body->GetRotation());

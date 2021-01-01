@@ -41,6 +41,13 @@ void EngineResource::SetAssetsPath(std::string path)
 	currentPath = currentPath.append(extension);
 }
 
+void EngineResource::UpdatePath()
+{
+	currentPath = App->fileSystem->GetFilePath(currentPath.c_str());
+	currentPath = currentPath.append(name);
+	currentPath = currentPath.append(extension);
+}
+
 void EngineResource::SetExtension()
 {
 	switch (type)

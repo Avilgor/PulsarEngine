@@ -705,10 +705,10 @@ void ResourceManager::CreateResourceMeta(std::string uuid)
 
 EngineResource* ResourceManager::GetResourceByName(std::string name)
 {
+	resourcesMap;
 	for (std::map<std::string, EngineResource*>::iterator it = resourcesMap.begin(); it != resourcesMap.end(); ++it)
 	{
-		//LOG("Res name: %s",(*it).second->name.c_str());
-		//LOG("Search name: %s",name.c_str());
+		LOG("Resource name: %s/compare name: %s",(*it).second->name.c_str(),name.c_str());
 		if ((*it).second->name.compare(name) == 0)
 		{
 			return (*it).second;

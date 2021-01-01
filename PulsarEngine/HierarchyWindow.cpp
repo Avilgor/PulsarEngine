@@ -26,6 +26,12 @@ update_status HierarchyWindow::Draw()
 	ImGui::SetNextWindowBgAlpha(1.0f);
 	ImGui::Begin(name.c_str(), &active);
 	windowHovered = ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
+	/*ImGui::Text("Scene name:");
+	ImGui::SameLine();
+	char name[50];
+	strcpy_s(name, 50, App->scene->GetActiveScene()->name.c_str());
+	if (ImGui::InputText("###", name, 50, name_input_flags)) App->scene->GetActiveScene()->SetName(name);
+	ImGui::Separator();*/
 	DrawSceneGameObjects();
 	ImGui::End();
 

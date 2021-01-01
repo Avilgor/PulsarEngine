@@ -24,6 +24,7 @@ public:
 	~Scene();
 
 	void StartScene();
+	update_status PreUpdateScene(float dt);
 	update_status UpdateScene(float dt);
 	update_status PostUpdateScene(float dt);
 	void Clean();
@@ -41,6 +42,7 @@ public:
 	void CreateCylinder();
 	void CreateTorus();
 	void CreatePlane();
+	//void SetName(std::string n);
 
 private:
 	void ThrowPhysBall();
@@ -48,11 +50,12 @@ private:
 
 private:
 	GameObject* root = nullptr;
-	PhysVehicle3D* vehicle;
+	PhysVehicle3D* vehicle = nullptr;
 	float turn;
 	float acceleration;
 	float brake;
 	std::vector<GameObject*> balls;
+	GameObject* cameraCollider = nullptr;
 };
 
 #endif //__Scene_H__

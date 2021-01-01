@@ -29,8 +29,7 @@ private:
 	ImGuizmo::OPERATION gizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
 	ImGuizmo::MODE gizmoMode = ImGuizmo::MODE::LOCAL;
 	
-	//float3 nearClick;
-	//float3 farClick;
+	ImVec4 pressColor{ 0.0f, 0.5f, 0.0f, 1.0f };
 };
 
 #endif //__SceneWindow_H__

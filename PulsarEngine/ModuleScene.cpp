@@ -153,6 +153,7 @@ void ModuleScene::CreateNewScene()
 // PreUpdate
 update_status ModuleScene::PreUpdate(float dt)
 {	
+	if (activeScene != nullptr) return activeScene->PreUpdateScene(dt);
 	return UPDATE_CONTINUE;
 }
 

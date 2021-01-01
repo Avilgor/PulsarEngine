@@ -19,7 +19,7 @@ public:
 private:
 	bool dragItem;
 	bool windowHovered;
-
+	//ImGuiInputTextFlags name_input_flags = ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue;
 };
 
 #endif //__HierarchyWindow_H__

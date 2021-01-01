@@ -36,6 +36,7 @@ public:
 	Quat RotationToQuaternion() { return quaternionRotation; }
 	float4x4 GetGlobalTransform() { return transformGlobal; }
 	float4x4 GetGlobalTransformTransposed();
+	void ForceGlobalPos(float3 p);
 
 	void Rotate(float3 rot);
 	void SetPosition(float3 pos);

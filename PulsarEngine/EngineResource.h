@@ -22,6 +22,7 @@ public:
 	virtual void LoadResource(JSonHandler* file) {}
 	void SetAssetsPath(std::string path);
 	void SetFullPath(std::string path);
+	void UpdatePath();
 
 	RES_Mesh* AsMesh() { return meshRes; }
 	RES_Material* AsMaterial() { return matRes; }

@@ -184,6 +184,14 @@ void ModulePhysics::ToggleSimulation(bool val)
 	}
 	else
 	{
+		simulationPause = false;
+		for (std::map<std::string, PhysBody3D*>::iterator it = bodies.begin(); it != bodies.end(); ++it)
+		{
+			(*it).second->body->clearForces();
+			btVector3 zeroVector(0, 0, 0);
+			(*it).second->body->setLinearVelocity(zeroVector);
+			(*it).second->body->setAngularVelocity(zeroVector);
+		}
 		LOG("Physics simulation OFF");
 	}
 }
@@ -227,9 +235,14 @@ void ModulePhysics::SetSimulationSteps(int val)
 	}
 }
 
+void ModulePhysics::ResetModule()
+{
+
+}
+
 void ModulePhysics::DebugDrawBody(btRigidBody* body)
 {
-	world->debugDrawObject(body->getWorldTransform(),body->getCollisionShape(),btVector3(0.0f,1.0f,0.0f));
+	if (body != nullptr) world->debugDrawObject(body->getWorldTransform(), body->getCollisionShape(), btVector3(0.0f, 1.0f, 0.0f));
 }
 
 update_status ModulePhysics::PostUpdate(float dt)

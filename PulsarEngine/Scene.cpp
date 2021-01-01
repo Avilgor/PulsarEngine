@@ -146,8 +146,28 @@ void Scene::StartScene()
 
 	vehicle = App->physics->AddVehicle(car);
 	vehicle->SetPos(0, 2, 0);
-	//vehicle->collision_listeners.add(this);
 	//
+
+	cameraCollider = new GameObject("Camera");
+	Component* coll = cameraCollider->AddComponent(SPHERE_COLLIDER_COMP);
+	if (coll != nullptr)
+	{
+		cameraCollider->transform->ForceGlobalPos(App->camera->GetPos());
+		coll->AsSphereCollider()->SetStatic(true);
+	}
+	else cameraCollider->DeleteGameobject();
+}
+
+update_status Scene::PreUpdateScene(float dt)
+{
+	update_status ret = UPDATE_CONTINUE;
+
+	if (cameraCollider != nullptr) cameraCollider->transform->ForceGlobalPos(App->camera->GetPos());
+	/*LOG("Collider cam pos: %f/%f/%f", 
+		cameraCollider->transform->GetGlobalPosition().x, 
+		cameraCollider->transform->GetGlobalPosition().y,
+		cameraCollider->transform->GetGlobalPosition().z);*/
+	return ret;
 }
 
 update_status Scene::UpdateScene(float dt)
@@ -163,8 +183,9 @@ update_status Scene::UpdateScene(float dt)
 
 		root->DrawMesh();
 	}
-
+	
 	///VEHICLE CONTROL
+	/// 
 
 	turn = acceleration = brake = 0.0f;
 	if (App->physics->runningSimulation)
@@ -293,18 +314,16 @@ bool Scene::LoadScene(JSonHandler* file)
 					go->LoadGameObject(&temp);
 					gameobjectsLoaded.emplace(go->UUID, go);
 				}
-				//LOG("Scene gameobjects loaded...");
 
 				//Set gameobjects hierarchy
 				for (std::map<std::string, GameObject*>::iterator it = gameobjectsLoaded.begin(); it != gameobjectsLoaded.end(); it++)
 				{
-					if ((*it).second->UUID.compare("0") != 0)
+					if ((*it).second->UUID.compare("0") != 0 && (*it).second->parentUUID.compare("") != 0)
 					{
 						gameobjectsLoaded[(*it).second->parentUUID]->AddChild((*it).second);
 						(*it).second->SetParent(gameobjectsLoaded[(*it).second->parentUUID]);
 					}
 				}
-				//LOG("Gameobjects childs set");
 			}
 			gameobjectsLoaded.clear();
 			LOG("Scene %s loaded!", name.c_str());
@@ -364,7 +383,15 @@ void Scene::LoadTempScene()
 	{
 		JSonHandler* node = new JSonHandler(buffer);		
 		LoadScene(node);
-
+		if (cameraCollider != nullptr) cameraCollider->DeleteGameobject();
+		cameraCollider = new GameObject("Camera");
+		Component* coll = cameraCollider->AddComponent(SPHERE_COLLIDER_COMP);
+		if (coll != nullptr)
+		{
+			cameraCollider->transform->SetPosition(App->camera->GetPos());
+			coll->AsSphereCollider()->SetStatic(true);
+		}
+		else cameraCollider->DeleteGameobject();
 		delete node;
 		RELEASE_ARRAY(buffer);
 	}

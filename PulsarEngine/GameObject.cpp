@@ -763,8 +763,11 @@ void GameObject::DeleteGOComponent(std::string uuid)
 
 void GameObject::AddChild(GameObject* child)
 {	
-	toAddChilds.push_back(child);
-	child->SetParent(this);
+	if (child != nullptr)
+	{
+		toAddChilds.push_back(child);
+		child->SetParent(this);
+	}
 }
 
 GameObject* GameObject::CreateChild()
@@ -854,21 +857,21 @@ void GameObject::SetParent(GameObject* p)
 				parentUUID = p->UUID;
 				parent->AddChild(this);
 			}
-			else
+			/*else
 			{
 				parentUUID = p->UUID;
 				parent = p;
 				//parent->AddChild(this);
-			}
+			}*/
 			transform->SetGlobalTransform();
 		}
-		/*else
+		else
 		{
 			parent = p;
 			parentUUID = p->UUID;
 			//parent->AddChild(this);
 			transform->SetGlobalTransform();
-		}*/
+		}
 	}
 }
 
