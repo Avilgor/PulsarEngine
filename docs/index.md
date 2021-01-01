@@ -1,10 +1,54 @@
-## Welcome to GitHub Pages
+# PulsarEngine
+Game Engine developed as a project for CITM-UPC. It has 3D rendering, engine and gameobjects configuration windows, 
+resource managment system and a physics engine based on Bullet. 
 
-You can use the [editor on GitHub](https://github.com/Avilgor/PulsarEngine/edit/master/docs/index.md) to maintain and preview the content for your website in Markdown files.
+* Latest release [here](https://github.com/Avilgor/PulsarEngine/releases)
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Done by
 
-### Markdown
+All of it was done by myself, you can find my Github here: [Avilgor](https://github.com/Avilgor)
+
+![](https://github.com/Avilgor/PulsarEngine/blob/master/docs/Foto.jpg)
+
+## Features
+
+* Inspector window with multiple interactable and editable options.
+* Hierarchy window with sacene objects.
+* Menu bar with multiple options
+  * Create/delete gameobjects 
+  * Render options
+  * Edit
+  * About 
+  * Open editor windows
+* Config panel to adjust window settings,see hardware specs and loaded resources
+* In editor log console
+* Project window with all items in assets
+* Camera frustum culling
+* Physics engine with colliders and constraints
+* Physic car sample
+
+
+
+## Physics engine
+Physics were made using Bullet. It has a total of three types of colliders (box, sphere and capsule) and 4 constraints (point, slider, hinge and cone). 
+All of them are configurable from the editor. Bullet works woth rigidbodies in colliders, for this reason, easch gameobject can only have one collider at a time and one type of each constraint. To made it to work with the gameobject movement, rigidbodies have to be updated before the world simulation steps, 
+if not there will be weird physics behaviours. Looking in optimization, this update is only done if the gameobject transform has to be updated. After the simulation,
+gameobjects positions are updated acording to the rigidbody.
+
+![](https://github.com/Avilgor/PulsarEngine/blob/master/docs/PhysicsEditor.gif)
+
+Colliders can be setted as static or dynamic and trigger or not. That will change how they behave with the world and it's collisions.
+
+
+## License
+
+[GNU General Public License v3.0](https://github.com/Avilgor/PulsarEngine/blob/master/LICENSE)
+
+
+
+
+
+
 
 Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
 
@@ -26,12 +70,3 @@ Syntax highlighted code block
 [Link](url) and ![Image](src)
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Avilgor/PulsarEngine/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
