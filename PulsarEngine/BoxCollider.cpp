@@ -64,9 +64,9 @@ void BoxCollider::UpdateComponent()
 
 void BoxCollider::PhysicsUpdate()
 {
-	if (body != nullptr && !body->isStatic /*&& !gameobject->transform->updateTransform*/)
+	if (body != nullptr && !body->isStatic)
 	{
-		gameobject->transform->SetPosition(body->GetPos());
+		gameobject->transform->SetPosition(body->GetPos() - body->localOffset);
 		gameobject->transform->SetQuatRotation(body->GetRotation());
 
 		if (!toapplyForcesDir.empty() && !toapplyForcesImpulse.empty())

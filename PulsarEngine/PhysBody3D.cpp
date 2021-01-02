@@ -66,9 +66,8 @@ void PhysBody3D::UpdateTransform(float4x4 globalMat)
 	globalMat.Decompose(position, quat, scale);
 	position += localOffset;
 	scale += scaleOffset;
-
+	//LOG("Position %f/%f/%f", position.x, position.y, position.z);
 	btTransform t = body->getWorldTransform();
-
 	t.setOrigin(btVector3(position.x, position.y, position.z));
 	body->getCollisionShape()->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
 
@@ -80,7 +79,7 @@ void PhysBody3D::UpdateTransform(float4x4 globalMat)
 	t.setRotation(quatB);
 	body->setWorldTransform(t);
 	body->getMotionState()->setWorldTransform(t);
-
+	//body->translate(btVector3(localOffset.x, localOffset.y, localOffset.z));
 	transform = float4x4::FromTRS(position, quat, scale);
 }
 
@@ -88,7 +87,7 @@ void PhysBody3D::SetPos(float x, float y, float z)
 {
 	if (App->physics->runningSimulation == false)
 	{
-		btTransform t = body->getWorldTransform();
+		btTransform t = body->getWorldTransform();		
 		t.setOrigin(btVector3(x, y, z));
 		body->setWorldTransform(t);
 		body->getMotionState()->setWorldTransform(t);
