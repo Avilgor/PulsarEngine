@@ -8,7 +8,7 @@ resource managment system and a physics engine based on Bullet.
 
 All of it was done by myself, you can find my Github here: [Avilgor](https://github.com/Avilgor)
 
-![](https://github.com/Avilgor/PulsarEngine/blob/master/docs/Foto.jpg)
+![foto](https://github.com/Avilgor/PulsarEngine/blob/master/docs/Foto.jpg)
 
 ## Features
 
@@ -38,11 +38,11 @@ All of them are configurable from the editor. Bullet works woth rigidbodies in c
 if not there will be weird physics behaviours. Looking in optimization, this update is only done if the gameobject transform has to be updated. After the simulation,
 gameobjects positions are updated acording to the rigidbody.
 
-![](https://github.com/Avilgor/PulsarEngine/blob/master/docs/PhysicsEditor.gif)
+![gif1](https://github.com/Avilgor/PulsarEngine/blob/master/docs/PhysicsEditor.gif)
 
 Colliders can be setted as static or dynamic and trigger or not. That will change how they behave with the world and it's collisions. They also have options to change it's size, and local offset. All this options are locked while the simulation is running to avoid bad behaviours.
 
-![](https://github.com/Avilgor/PulsarEngine/blob/master/docs/PhysicsWorking.gif)
+![gif2](https://github.com/Avilgor/PulsarEngine/blob/master/docs/PhysicsWorking.gif)
 
 As seen above, there is also a car in the scene which can be controlled. Camera can't go inside physics gameobjects in runtime because it has a sphere collider.
 
