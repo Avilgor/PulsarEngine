@@ -323,7 +323,6 @@ void ModuleRenderer3D::OnResize(int width, int height, int offsetX, int offsetY)
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();*/
-
 	glViewport(0, 0, width, height);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
