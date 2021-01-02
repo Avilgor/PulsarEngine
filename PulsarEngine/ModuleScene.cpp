@@ -169,6 +169,7 @@ update_status ModuleScene::Update(float dt)
 
 	if (state != lastState)
 	{
+		//LOG("Entry state %d",state);
 		switch (state)
 		{
 		case SCENE_PLAY:
@@ -178,6 +179,7 @@ update_status ModuleScene::Update(float dt)
 				sceneRunTime.Start();
 				activeScene->SaveTempScene();
 				App->physics->ToggleSimulation(true);
+				lastState = state;
 				state = SCENE_RUNNING;
 			}
 			break;
@@ -188,6 +190,7 @@ update_status ModuleScene::Update(float dt)
 				sceneRunTime.Stop();
 				App->physics->ToggleSimulation(false);
 				activeScene->StartRecoveringScene();
+				lastState = state;
 			}
 			break;		
 		case SCENE_PAUSE:
@@ -195,12 +198,13 @@ update_status ModuleScene::Update(float dt)
 			{
 				sceneRunTime.Stop();
 				App->physics->ToggleSimulationPause(true);
+				lastState = state;
 			}
 			break;
 		case SCENE_RUNNING:
 			if (lastState == SCENE_UNPAUSE || lastState == SCENE_PLAY)
 			{
-
+				lastState = state;
 			}
 			break;
 		case SCENE_UNPAUSE:
@@ -208,30 +212,34 @@ update_status ModuleScene::Update(float dt)
 			{
 				sceneRunTime.Resume();
 				App->physics->ToggleSimulationPause(false);
+				lastState = state;
 				state = SCENE_RUNNING;
 			}
 			break;
-		case SCENE_STEP:
+		/*case SCENE_STEP:
 			if (lastState == SCENE_PAUSE)
 			{
 				sceneRunTime.Resume();
+				lastState = state;
 				state = SCENE_ENDSTEP;
 			}
 			break;
 		case SCENE_ENDSTEP:
 			if (lastState == SCENE_STEP)
 			{
+				lastState = state;
 				state = SCENE_PAUSE;
 			}
-			break;
-		}				
+			break;*/
+		}	
+		//LOG("Current state: %d",lastState);
 	}
 
 	ret = activeScene->UpdateScene(dt);
 
 	if (save) SaveScene();
 
-	if (state != lastState) lastState = state;
+	//if (state != lastState) lastState = state;
 	lastDT = dt;
 
 	return ret;

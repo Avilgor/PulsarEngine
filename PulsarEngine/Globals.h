@@ -47,9 +47,7 @@ enum SceneState
 	SCENE_PAUSE,
 	SCENE_STOP,
 	SCENE_RUNNING,
-	SCENE_UNPAUSE,
-	SCENE_STEP,
-	SCENE_ENDSTEP
+	SCENE_UNPAUSE
 };
 
 enum update_status

@@ -34,25 +34,30 @@ update_status SceneWindow::Draw()
 	ImVec2 winSize = ImGui::GetWindowSize();
 
 	ImGui::Indent((winSize.x / 2) - (75 * 2));
+	bool changeColor = false;
 	
-	
-	//if(App->scene->GetSceneState() == SCENE_PLAY) ImGui::PushStyleColor(ImGuiCol_Button, pressColor);
+	if (App->scene->GetSceneState() == SCENE_RUNNING) changeColor = true; 
+	if(changeColor) ImGui::PushStyleColor(ImGuiCol_Button, pressColor);
 	if (ImGui::Button("Play", ImVec2(75.0f, 25.0f))) App->scene->state = SCENE_PLAY;
-	//if (App->scene->GetSceneState() == SCENE_PLAY) ImGui::PopStyleColor();
+	if (changeColor) ImGui::PopStyleColor();
+	changeColor = false;
 
 	ImGui::SameLine();
-	//if (App->scene->GetSceneState() == SCENE_PAUSE) ImGui::PushStyleColor(ImGuiCol_Button, pressColor);
+	if (App->scene->GetSceneState() == SCENE_PAUSE) changeColor = true;
+	if (changeColor) ImGui::PushStyleColor(ImGuiCol_Button, pressColor);
 	if (ImGui::Button("Pause", ImVec2(75.0f, 25.0f)))
 	{
-		if (App->scene->GetSceneState() == SCENE_PLAY) App->scene->state = SCENE_PAUSE;
-		if (App->scene->GetSceneState() == SCENE_PAUSE) App->scene->state = SCENE_UNPAUSE;
+		if (App->scene->GetSceneState() == SCENE_RUNNING) App->scene->state = SCENE_PAUSE;
+		else if (App->scene->GetSceneState() == SCENE_PAUSE) App->scene->state = SCENE_UNPAUSE;
 	}
-	//if (App->scene->GetSceneState() == SCENE_PAUSE) ImGui::PopStyleColor();
+	if (changeColor) ImGui::PopStyleColor();
+	changeColor = false;
 
 	ImGui::SameLine();
-	//if (App->scene->GetSceneState() == SCENE_STOP) ImGui::PushStyleColor(ImGuiCol_Button, pressColor);
+	if (App->scene->GetSceneState() == SCENE_STOP) changeColor = true;
+	if (changeColor) ImGui::PushStyleColor(ImGuiCol_Button, pressColor);
 	if (ImGui::Button("Stop", ImVec2(75.0f, 25.0f))) App->scene->state = SCENE_STOP;
-	//if (App->scene->GetSceneState() == SCENE_STOP) ImGui::PopStyleColor();
+	if (changeColor) ImGui::PopStyleColor();
 
 	ImGui::Unindent();
 	ImGui::SetCursorPos(ImVec2(0, -10));
