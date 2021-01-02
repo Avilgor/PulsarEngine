@@ -69,7 +69,7 @@ void CapsuleCollider::PhysicsUpdate()
 {
 	if (body != nullptr && !body->isStatic && !gameobject->transform->updateTransform)
 	{
-		gameobject->transform->SetPosition(body->GetPos());
+		gameobject->transform->SetPosition(body->GetPos() - body->localOffset);
 		gameobject->transform->SetQuatRotation(body->GetRotation());
 
 		if (!toapplyForcesDir.empty() && !toapplyForcesImpulse.empty())
