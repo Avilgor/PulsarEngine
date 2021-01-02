@@ -9,13 +9,14 @@
             "name": "Root",
             "active": true,
             "Childs": [
+                "26bd51b4-571e-4a44-877d-d72ddd9d2a6a",
                 "6759a7cb-0713-4a76-8048-13caddee40c6",
                 "8f3138b9-950a-43ca-8a7f-cec9aee9bf35"
             ],
             "Components": [
                 {
                     "CompType": 1,
-                    "UUID": "4dab5f36-70aa-41e2-8c1f-043c178fef0e",
+                    "UUID": "57cf3fb8-17a1-4d3c-b3db-751c448b3410",
                     "Position": [
                         0,
                         0,
@@ -31,6 +32,69 @@
                         1,
                         1
                     ]
+                }
+            ]
+        },
+        {
+            "UUID": "26bd51b4-571e-4a44-877d-d72ddd9d2a6a",
+            "Parent_UUID": "0",
+            "name": "Cube",
+            "active": true,
+            "Childs": [],
+            "Components": [
+                {
+                    "CompType": 1,
+                    "UUID": "bd6058a3-2845-4327-a2fd-75c6bf0371a7",
+                    "Position": [
+                        -8.7329235076904297,
+                        9.6360130310058594,
+                        -1.1487023812151165e-06
+                    ],
+                    "Rotation": [
+                        -90.000007629394531,
+                        0,
+                        0
+                    ],
+                    "Scale": [
+                        1,
+                        0.99999487400054932,
+                        0.99999487400054932
+                    ]
+                },
+                {
+                    "CompType": 4,
+                    "UUID": "1d1b77bd-67b0-45c8-abc8-4138c007a2e0",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": 0,
+                    "PosY": 0,
+                    "PosZ": 0,
+                    "ScaleX": 1,
+                    "ScaleY": 1,
+                    "ScaleZ": 1
+                },
+                {
+                    "CompType": 2,
+                    "CompUUID": "89455c9c-f4aa-4743-a347-d83c35802a40",
+                    "Active": true,
+                    "DrawTexture": true,
+                    "MeshUUID": "60a2bf33-7230-4ecd-84c5-edef1bf36bb6"
+                },
+                {
+                    "CompType": 7,
+                    "UUID": "a84240d9-537d-4be0-83cf-c1fdf57c5f26",
+                    "Active": true,
+                    "BodyB": "986236c3-bda1-4e14-a189-2d8ab473288a",
+                    "AnchorAx": 0,
+                    "AnchorAy": 0,
+                    "AnchorAz": 0,
+                    "AnchorBx": 0,
+                    "AnchorBy": 0,
+                    "AnchorBz": 0
                 }
             ]
         },
@@ -151,27 +215,14 @@
                     ],
                     "Rotation": [
                         -90.000030517578125,
-                        4.8853321561737051e-12,
+                        1.6284440159178293e-12,
                         179.99996948242188
                     ],
                     "Scale": [
                         1,
-                        0.99999344348907471,
-                        0.99999344348907471
+                        0.99999004602432251,
+                        0.99999004602432251
                     ]
-                },
-                {
-                    "CompType": 2,
-                    "CompUUID": "84e4334c-4832-4e1a-b96f-4e73489c990c",
-                    "Active": true,
-                    "DrawTexture": true,
-                    "MeshUUID": "338c4584-87eb-4826-bb9c-aac57f5f15e0"
-                },
-                {
-                    "CompType": 3,
-                    "UUID": "1f29dbc6-8e0a-4070-9e4e-9fad5e06b5ca",
-                    "Active": true,
-                    "ResUUID": "405971df-27f9-4802-b9f1-63b7ef1b652f"
                 },
                 {
                     "CompType": 4,
@@ -188,6 +239,19 @@
                     "ScaleX": 12,
                     "ScaleY": 9,
                     "ScaleZ": 7
+                },
+                {
+                    "CompType": 2,
+                    "CompUUID": "84e4334c-4832-4e1a-b96f-4e73489c990c",
+                    "Active": true,
+                    "DrawTexture": true,
+                    "MeshUUID": "338c4584-87eb-4826-bb9c-aac57f5f15e0"
+                },
+                {
+                    "CompType": 3,
+                    "UUID": "1f29dbc6-8e0a-4070-9e4e-9fad5e06b5ca",
+                    "Active": true,
+                    "ResUUID": "405971df-27f9-4802-b9f1-63b7ef1b652f"
                 }
             ]
         },
@@ -213,9 +277,25 @@
                     ],
                     "Scale": [
                         1,
-                        0.99999982118606567,
-                        0.99999982118606567
+                        0.99999642372131348,
+                        0.99999642372131348
                     ]
+                },
+                {
+                    "CompType": 4,
+                    "UUID": "f132cc6e-0362-4271-ad4b-a7c18c7fa17f",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": 0,
+                    "PosY": 4.5,
+                    "PosZ": 0.5,
+                    "ScaleX": 6,
+                    "ScaleY": 6,
+                    "ScaleZ": 8
                 },
                 {
                     "CompType": 2,
@@ -259,6 +339,22 @@
                     ]
                 },
                 {
+                    "CompType": 4,
+                    "UUID": "095c0fad-faae-42ad-a186-e95190a847c1",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": 0,
+                    "PosY": 2.5,
+                    "PosZ": 0,
+                    "ScaleX": 12,
+                    "ScaleY": 8,
+                    "ScaleZ": 4
+                },
+                {
                     "CompType": 2,
                     "CompUUID": "29b0b0ae-8fce-4c56-a97f-3e8fe36a1cdc",
                     "Active": true,
@@ -298,6 +394,22 @@
                         1,
                         1.0000001192092896
                     ]
+                },
+                {
+                    "CompType": 4,
+                    "UUID": "168b86f1-0e49-43a9-a3ee-d444d54b7eb2",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": -0.40000000596046448,
+                    "PosY": 3,
+                    "PosZ": 0,
+                    "ScaleX": 10,
+                    "ScaleY": 7,
+                    "ScaleZ": 5
                 },
                 {
                     "CompType": 2,
@@ -358,7 +470,7 @@
         {
             "UUID": "1b609b2d-72bd-4074-b54a-404414021bda",
             "Parent_UUID": "8f3138b9-950a-43ca-8a7f-cec9aee9bf35",
-            "name": "Child",
+            "name": "Ground",
             "active": true,
             "Childs": [],
             "Components": [
@@ -377,16 +489,9 @@
                     ],
                     "Scale": [
                         0.99663525819778442,
-                        0.97061628103256226,
-                        0.9966350793838501
+                        0.97061288356781006,
+                        0.9966316819190979
                     ]
-                },
-                {
-                    "CompType": 2,
-                    "CompUUID": "fabec22c-afa6-44c1-bf03-36555d63e8af",
-                    "Active": true,
-                    "DrawTexture": true,
-                    "MeshUUID": "0cea0440-74fd-4390-8fb9-3fd7d2dbb62b"
                 },
                 {
                     "CompType": 4,
@@ -403,6 +508,13 @@
                     "ScaleX": 100,
                     "ScaleY": 100,
                     "ScaleZ": 0.5
+                },
+                {
+                    "CompType": 2,
+                    "CompUUID": "fabec22c-afa6-44c1-bf03-36555d63e8af",
+                    "Active": true,
+                    "DrawTexture": true,
+                    "MeshUUID": "0cea0440-74fd-4390-8fb9-3fd7d2dbb62b"
                 }
             ]
         },
@@ -431,6 +543,22 @@
                         1,
                         1.0000001192092896
                     ]
+                },
+                {
+                    "CompType": 4,
+                    "UUID": "6f6eca5c-d9b2-42c3-8827-c9460f7ed909",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": 0,
+                    "PosY": 4.5,
+                    "PosZ": 0.5,
+                    "ScaleX": 6,
+                    "ScaleY": 6,
+                    "ScaleZ": 8
                 },
                 {
                     "CompType": 2,
@@ -474,6 +602,22 @@
                     ]
                 },
                 {
+                    "CompType": 4,
+                    "UUID": "3b29cb9e-9f01-4d7f-952d-4ad7a959f5c5",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": -0.40000000596046448,
+                    "PosY": 3,
+                    "PosZ": 0,
+                    "ScaleX": 10,
+                    "ScaleY": 7,
+                    "ScaleZ": 5
+                },
+                {
                     "CompType": 2,
                     "CompUUID": "ab20b9f8-f276-42f2-92de-8fd56c46c5d8",
                     "Active": true,
@@ -499,20 +643,36 @@
                     "CompType": 1,
                     "UUID": "81dea3e5-5770-4ff5-850b-8df35b60f967",
                     "Position": [
-                        16.049516677856445,
-                        0,
+                        16.186563491821289,
+                        0.34134072065353394,
                         16.696884155273438
                     ],
                     "Rotation": [
-                        -90.000015258789063,
-                        2.0490568203967996e-05,
-                        -90
+                        -90.000030517578125,
+                        1.366037849948043e-05,
+                        -90.000015258789063
                     ],
                     "Scale": [
-                        1,
+                        1.0000001192092896,
                         0.99999994039535522,
                         1
                     ]
+                },
+                {
+                    "CompType": 4,
+                    "UUID": "b79d0eed-9878-435a-9f4b-33ea89fdd8aa",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": 0,
+                    "PosY": 4,
+                    "PosZ": 3.5,
+                    "ScaleX": 18,
+                    "ScaleY": 10,
+                    "ScaleZ": 6
                 },
                 {
                     "CompType": 2,
@@ -532,7 +692,7 @@
         {
             "UUID": "26d42006-29d2-46fb-b9e2-6f63fed148f5",
             "Parent_UUID": "8f3138b9-950a-43ca-8a7f-cec9aee9bf35",
-            "name": "Child",
+            "name": "House1",
             "active": true,
             "Childs": [],
             "Components": [
@@ -551,9 +711,25 @@
                     ],
                     "Scale": [
                         1,
-                        0.99999982118606567,
-                        0.99999982118606567
+                        0.99999642372131348,
+                        0.99999642372131348
                     ]
+                },
+                {
+                    "CompType": 4,
+                    "UUID": "5ec1878f-d655-40a9-8ada-22dbc3c78280",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": -1,
+                    "PosY": 3,
+                    "PosZ": 0,
+                    "ScaleX": 11,
+                    "ScaleY": 11,
+                    "ScaleZ": 5
                 },
                 {
                     "CompType": 2,
@@ -587,13 +763,13 @@
                     ],
                     "Rotation": [
                         -90.000030517578125,
-                        5.6995541099225111e-12,
+                        2.4426660780868525e-12,
                         179.99998474121094
                     ],
                     "Scale": [
                         1,
-                        0.99999982118606567,
-                        0.99999982118606567
+                        0.99999642372131348,
+                        0.99999642372131348
                     ]
                 },
                 {
@@ -622,7 +798,7 @@
                     "CompType": 1,
                     "UUID": "93271baa-6764-48fd-b2bc-19ae7ae97bf8",
                     "Position": [
-                        -32.361495971679688,
+                        -32.409694671630859,
                         5.0146070407208754e-07,
                         -42.370418548583984
                     ],
@@ -633,9 +809,25 @@
                     ],
                     "Scale": [
                         1,
-                        0.99999982118606567,
-                        0.99999982118606567
+                        0.99998998641967773,
+                        0.99998998641967773
                     ]
+                },
+                {
+                    "CompType": 4,
+                    "UUID": "56b356da-4ea7-4fb6-bbfc-1b085b56256a",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": -4.3000001907348633,
+                    "PosY": 3,
+                    "PosZ": -0.40000000596046448,
+                    "ScaleX": 18.5,
+                    "ScaleY": 6.5,
+                    "ScaleZ": 5
                 },
                 {
                     "CompType": 2,
@@ -679,6 +871,22 @@
                     ]
                 },
                 {
+                    "CompType": 4,
+                    "UUID": "daaeb9c7-4ddf-4883-b5a0-aaff60b6c42a",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": 0,
+                    "PosY": 4.5,
+                    "PosZ": 0.5,
+                    "ScaleX": 6,
+                    "ScaleY": 6,
+                    "ScaleZ": 8
+                },
+                {
                     "CompType": 2,
                     "CompUUID": "8ea6ed5f-4caf-4e9f-85e8-c9e06cac923b",
                     "Active": true,
@@ -710,14 +918,30 @@
                     ],
                     "Rotation": [
                         -90.000030517578125,
-                        8.1422204048497981e-12,
+                        1.1399108219845022e-11,
                         179.99996948242188
                     ],
                     "Scale": [
                         1,
-                        0.99999982118606567,
-                        0.99999982118606567
+                        0.99999642372131348,
+                        0.99999642372131348
                     ]
+                },
+                {
+                    "CompType": 4,
+                    "UUID": "43c04e2d-b990-4d31-b6db-f2217510609f",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": 0,
+                    "PosY": 4,
+                    "PosZ": 5,
+                    "ScaleX": 12,
+                    "ScaleY": 19,
+                    "ScaleZ": 6
                 },
                 {
                     "CompType": 2,
@@ -751,14 +975,30 @@
                     ],
                     "Rotation": [
                         -90.000007629394531,
-                        2.0355550198972866e-13,
-                        -2.7329820113664027e-06
+                        7.1244426374031389e-13,
+                        -2.7329817839927273e-06
                     ],
                     "Scale": [
                         1,
-                        0.99999982118606567,
-                        0.99999982118606567
+                        0.99999642372131348,
+                        0.99999642372131348
                     ]
+                },
+                {
+                    "CompType": 4,
+                    "UUID": "12f55433-481f-4bde-b2b2-32b075f7bbd4",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": 0,
+                    "PosY": 2,
+                    "PosZ": 0,
+                    "ScaleX": 9,
+                    "ScaleY": 15,
+                    "ScaleZ": 3
                 },
                 {
                     "CompType": 2,
@@ -797,8 +1037,8 @@
                     ],
                     "Scale": [
                         1,
-                        0.99999982118606567,
-                        0.99999982118606567
+                        0.99999642372131348,
+                        0.99999642372131348
                     ]
                 },
                 {
@@ -837,6 +1077,22 @@
                     ]
                 },
                 {
+                    "CompType": 4,
+                    "UUID": "c697e0a9-f77f-483e-bc50-ccd14632af07",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": -0.5,
+                    "PosY": 4.5,
+                    "PosZ": 0,
+                    "ScaleX": 12,
+                    "ScaleY": 5,
+                    "ScaleZ": 8
+                },
+                {
                     "CompType": 2,
                     "CompUUID": "19b906cf-33a3-40e0-91a2-a40e7b6bdde6",
                     "Active": true,
@@ -868,14 +1124,30 @@
                     ],
                     "Rotation": [
                         -90.000007629394531,
-                        2.0355550198972866e-13,
-                        -2.7329820113664027e-06
+                        7.1244426374031389e-13,
+                        -2.7329817839927273e-06
                     ],
                     "Scale": [
                         1,
-                        0.99999982118606567,
-                        0.99999982118606567
+                        0.99999642372131348,
+                        0.99999642372131348
                     ]
+                },
+                {
+                    "CompType": 4,
+                    "UUID": "bff700bc-122f-45b5-8f36-c7b1507bbeaf",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": 0,
+                    "PosY": 2,
+                    "PosZ": 0,
+                    "ScaleX": 9,
+                    "ScaleY": 15,
+                    "ScaleZ": 3
                 },
                 {
                     "CompType": 2,
@@ -919,6 +1191,22 @@
                     ]
                 },
                 {
+                    "CompType": 4,
+                    "UUID": "5ac63378-0953-42df-9a44-1a78950c4eee",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": 0,
+                    "PosY": 4.5,
+                    "PosZ": 0.5,
+                    "ScaleX": 6,
+                    "ScaleY": 6,
+                    "ScaleZ": 8
+                },
+                {
                     "CompType": 2,
                     "CompUUID": "238eed86-c033-442c-bdb6-5881abf8c97b",
                     "Active": true,
@@ -960,6 +1248,22 @@
                     ]
                 },
                 {
+                    "CompType": 4,
+                    "UUID": "55a2ea23-3ae8-49dd-a536-2f7237e9f990",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": 0,
+                    "PosY": 4.5,
+                    "PosZ": 0.5,
+                    "ScaleX": 6,
+                    "ScaleY": 6,
+                    "ScaleZ": 8
+                },
+                {
                     "CompType": 2,
                     "CompUUID": "02b96e3a-b2a8-40f8-a5c3-f00a58da5967",
                     "Active": true,
@@ -996,9 +1300,25 @@
                     ],
                     "Scale": [
                         1,
-                        0.99999982118606567,
-                        0.99999982118606567
+                        0.99999642372131348,
+                        0.99999642372131348
                     ]
+                },
+                {
+                    "CompType": 4,
+                    "UUID": "db61afa6-510f-44ee-bfe1-52162da73c2c",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": 0,
+                    "PosY": 4.5,
+                    "PosZ": 0.5,
+                    "ScaleX": 6,
+                    "ScaleY": 6,
+                    "ScaleZ": 8
                 },
                 {
                     "CompType": 2,
@@ -1027,19 +1347,35 @@
                     "UUID": "d828d9a3-ed9a-48a2-a657-c1ba68f555c7",
                     "Position": [
                         -19.439706802368164,
-                        0,
+                        0.25525274872779846,
                         -32.061729431152344
                     ],
                     "Rotation": [
                         -90.000030517578125,
-                        5.6995541099225111e-12,
+                        -5.0481764601872925e-11,
                         179.99998474121094
                     ],
                     "Scale": [
                         1,
-                        0.99999982118606567,
-                        0.99999982118606567
+                        0.99997377395629883,
+                        0.99997377395629883
                     ]
+                },
+                {
+                    "CompType": 4,
+                    "UUID": "5cca8bdc-a740-466b-8022-0b36363bad0c",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": 0,
+                    "PosY": 3,
+                    "PosZ": 5.5,
+                    "ScaleX": 9,
+                    "ScaleY": 22,
+                    "ScaleZ": 5
                 },
                 {
                     "CompType": 2,
@@ -1073,14 +1409,30 @@
                     ],
                     "Rotation": [
                         -90.000007629394531,
-                        2.0355550198972866e-13,
-                        -2.7329820113664027e-06
+                        7.1244426374031389e-13,
+                        -2.7329817839927273e-06
                     ],
                     "Scale": [
                         1,
-                        0.99999982118606567,
-                        0.99999982118606567
+                        0.99999642372131348,
+                        0.99999642372131348
                     ]
+                },
+                {
+                    "CompType": 4,
+                    "UUID": "508fa394-36a8-4e07-89cf-ebc4b737ad13",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": 0,
+                    "PosY": 2,
+                    "PosZ": 0,
+                    "ScaleX": 9,
+                    "ScaleY": 15,
+                    "ScaleZ": 3
                 },
                 {
                     "CompType": 2,
@@ -1141,7 +1493,7 @@
         {
             "UUID": "b515e2a2-528c-4499-ba2f-436a21a2b158",
             "Parent_UUID": "8f3138b9-950a-43ca-8a7f-cec9aee9bf35",
-            "name": "Child",
+            "name": "House2",
             "active": true,
             "Childs": [],
             "Components": [
@@ -1149,8 +1501,8 @@
                     "CompType": 1,
                     "UUID": "2d5253ff-f494-4586-8c78-0c036c6fe218",
                     "Position": [
-                        25.154010772705078,
-                        8.5538636085402686e-07,
+                        25.101661682128906,
+                        8.4290536506159697e-07,
                         39.153720855712891
                     ],
                     "Rotation": [
@@ -1163,6 +1515,22 @@
                         1,
                         1.0000001192092896
                     ]
+                },
+                {
+                    "CompType": 4,
+                    "UUID": "95b46d74-155d-475f-b014-eae203447b4f",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": -0.5,
+                    "PosY": 4.5,
+                    "PosZ": 0,
+                    "ScaleX": 12,
+                    "ScaleY": 5,
+                    "ScaleZ": 8
                 },
                 {
                     "CompType": 2,
@@ -1182,7 +1550,7 @@
         {
             "UUID": "d48c2ab2-d0ca-4ec6-bf37-d601b164f6b4",
             "Parent_UUID": "8f3138b9-950a-43ca-8a7f-cec9aee9bf35",
-            "name": "Child",
+            "name": "House3",
             "active": true,
             "Childs": [],
             "Components": [
@@ -1196,14 +1564,30 @@
                     ],
                     "Rotation": [
                         -90.000030517578125,
-                        5.6995541099225111e-12,
+                        2.4426660780868525e-12,
                         179.99998474121094
                     ],
                     "Scale": [
                         1,
-                        0.99999982118606567,
-                        0.99999982118606567
+                        0.99999642372131348,
+                        0.99999642372131348
                     ]
+                },
+                {
+                    "CompType": 4,
+                    "UUID": "31a575ce-c15c-4df8-9946-f56cfa41b419",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": 0,
+                    "PosY": 4.5,
+                    "PosZ": 0,
+                    "ScaleX": 11.5,
+                    "ScaleY": 6,
+                    "ScaleZ": 8
                 },
                 {
                     "CompType": 2,
@@ -1237,14 +1621,30 @@
                     ],
                     "Rotation": [
                         -90.000030517578125,
-                        5.6995541099225111e-12,
+                        2.4426660780868525e-12,
                         179.99998474121094
                     ],
                     "Scale": [
                         1,
-                        0.99999982118606567,
-                        0.99999982118606567
+                        0.99999642372131348,
+                        0.99999642372131348
                     ]
+                },
+                {
+                    "CompType": 4,
+                    "UUID": "5be2f642-edc2-468d-b987-7ae389f6fc6f",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": 4.5,
+                    "PosY": 4.0999999046325684,
+                    "PosZ": 0,
+                    "ScaleX": 21,
+                    "ScaleY": 10,
+                    "ScaleZ": 7
                 },
                 {
                     "CompType": 2,
@@ -1283,9 +1683,25 @@
                     ],
                     "Scale": [
                         1,
-                        0.99999982118606567,
-                        0.99999982118606567
+                        0.99999642372131348,
+                        0.99999642372131348
                     ]
+                },
+                {
+                    "CompType": 4,
+                    "UUID": "f2300af9-6ab5-4878-a584-a7f00f1a4dc9",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": 0,
+                    "PosY": 2.5,
+                    "PosZ": 0,
+                    "ScaleX": 12,
+                    "ScaleY": 8,
+                    "ScaleZ": 4
                 },
                 {
                     "CompType": 2,
@@ -1329,6 +1745,22 @@
                     ]
                 },
                 {
+                    "CompType": 4,
+                    "UUID": "d465bad3-51a9-49b9-89fd-3ffa03b2029a",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": 4,
+                    "PosY": 4,
+                    "PosZ": 0,
+                    "ScaleX": 12,
+                    "ScaleY": 18,
+                    "ScaleZ": 7
+                },
+                {
                     "CompType": 2,
                     "CompUUID": "387e6e05-9e63-4e41-b95c-f05ac221de5c",
                     "Active": true,
@@ -1346,7 +1778,7 @@
         {
             "UUID": "f0cd9e26-82bf-4d22-ad08-b36d0ebba09c",
             "Parent_UUID": "8f3138b9-950a-43ca-8a7f-cec9aee9bf35",
-            "name": "Child",
+            "name": "House4",
             "active": true,
             "Childs": [],
             "Components": [
@@ -1365,9 +1797,25 @@
                     ],
                     "Scale": [
                         1,
-                        0.99999982118606567,
-                        0.99999982118606567
+                        0.99999642372131348,
+                        0.99999642372131348
                     ]
+                },
+                {
+                    "CompType": 4,
+                    "UUID": "fcdc465a-8abd-4f1b-8a37-9bc8c72a90a8",
+                    "Active": true,
+                    "Static": false,
+                    "Trigger": false,
+                    "Draw": true,
+                    "Mass": 10,
+                    "Friction": 1,
+                    "PosX": -1,
+                    "PosY": 3,
+                    "PosZ": 0,
+                    "ScaleX": 11,
+                    "ScaleY": 11,
+                    "ScaleZ": 5
                 },
                 {
                     "CompType": 2,

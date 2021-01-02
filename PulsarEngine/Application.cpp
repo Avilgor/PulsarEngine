@@ -26,11 +26,11 @@ Application::Application()
 
 	// Main Modules
 	AddModule(fileSystem);
+	AddModule(physics);
 	AddModule(resourceManager);
 	AddModule(window);
 	AddModule(camera);
 	AddModule(input);
-	AddModule(physics);
 
 	// Scenes
 	AddModule(editor);

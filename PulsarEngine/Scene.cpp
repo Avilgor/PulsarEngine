@@ -400,7 +400,8 @@ void Scene::LoadTempScene()
 		if (cameraCollider != nullptr) cameraCollider->DeleteGameobject();
 		break;
 	case 1:
-		App->physics->ResetPhysics();
+		App->physics->ToggleSimulation(false);
+		//App->physics->ResetPhysics();
 		break;
 	case 2:
 		AddCar();

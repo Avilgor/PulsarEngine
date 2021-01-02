@@ -187,8 +187,7 @@ update_status ModuleScene::Update(float dt)
 			if (lastState == SCENE_PAUSE || lastState == SCENE_RUNNING)
 			{
 				sceneStartTimer.Stop();
-				sceneRunTime.Stop();
-				App->physics->ToggleSimulation(false);
+				sceneRunTime.Stop();				
 				activeScene->StartRecoveringScene();
 				lastState = state;
 			}

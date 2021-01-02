@@ -28,18 +28,16 @@ public:
 	void SetAxisA(float3 val);
 	void SetAxisB(float3 val);
 	void ClearBodyB();
-	void UpdateConstraint();
 
 	void SetActive(bool val);
 	bool IsActive();
 
 private:
-	btTypedConstraint* constraint = nullptr;
 	std::string loadB_id;
 	bool needtoload;
-	bool created;
 
 public:
+	btTypedConstraint* constraint = nullptr;
 	Component* bodyAComp = nullptr;
 	Component* bodyBComp = nullptr;
 	PhysBody3D* bodyA = nullptr;

@@ -10,58 +10,38 @@ ConstraintPoint::ConstraintPoint(GameObject* parent) : Component(parent, CONSTRA
 	needtoload = false;
 	anchorA = float3::zero;
 	anchorB = float3::zero;
-	created = false;
+	App->physics->AddConstraint(component);
 }
 
 
 ConstraintPoint::~ConstraintPoint()
 {
-	if (constraint != nullptr)
-	{
-		App->physics->RemoveConstraint(constraint,UUID);
-		delete constraint;
-	}
+	App->physics->RemoveConstraint(UUID);
 }
 
 void ConstraintPoint::CreateConstraint()
 {
 	if (bodyA != nullptr && bodyB != nullptr)
 	{
-		if (constraint != nullptr)
-		{
-			App->physics->RemoveConstraint(UUID);
-			delete constraint;
-		}
-		constraint = App->physics->AddConstraintPoint(*bodyA,*bodyB, vec3(anchorA.x, anchorA.y, anchorA.z), vec3(anchorB.x, anchorB.y, anchorB.z),UUID);
-		//LOG("Constraint point created");
-		created = true;
+		float3 posA = bodyA->GetPos() + anchorA;
+		float3 posB = bodyB->GetPos() + anchorB;
+		constraint = App->physics->AddConstraintPoint(*bodyA,*bodyB, vec3(posA.x, posA.y, posA.z), vec3(posB.x, posB.y, posB.z),UUID);
 	}
 }
 
 void ConstraintPoint::UpdateComponent()
 {
-	if (bodyAComp != nullptr && bodyAComp->gameobject->toDelete == true)
+	if (bodyAComp == nullptr) SetBodyA(gameobject->GetColliderComp());
+	if (bodyAComp != nullptr && bodyAComp->gameobject->GetColliderComp() == nullptr)
 	{
-		if (constraint != nullptr)
-		{
-			App->physics->RemoveConstraint(UUID);
-			delete constraint;
-			constraint = nullptr;
-		}
 		bodyAComp = nullptr;
 		bodyA = nullptr;
 	}
 
-	if (bodyBComp != nullptr && bodyBComp->gameobject->toDelete == true)
+	if (bodyBComp != nullptr && (bodyAComp->gameobject->toDelete || bodyBComp->gameobject->GetColliderComp() == nullptr))
 	{
-		if (constraint != nullptr)
-		{
-			App->physics->RemoveConstraint(UUID);
-			delete constraint;
-			constraint = nullptr;
-		}
 		bodyBComp = nullptr;
-		bodyB = nullptr;
+		bodyB = nullptr;		
 	}
 
 	if (needtoload)
@@ -72,39 +52,15 @@ void ConstraintPoint::UpdateComponent()
 			bodyBComp = App->physics->GetColliderByUUID(loadB_id);
 			bodyB = App->physics->GetBodyByUUID(loadB_id);
 		}
-		if (bodyA != nullptr && bodyB != nullptr) CreateConstraint();
 		needtoload = false;		
 	}
-
-	if (!created && !needtoload) CreateConstraint();
 }
 
-void ConstraintPoint::UpdateConstraint()
-{
-	if (constraint != nullptr)
-	{
-		App->physics->RemoveConstraint(UUID);
-		delete constraint;
-		constraint = nullptr;
-	}
-
-	if (bodyA != nullptr && bodyB != nullptr)
-	{
-		constraint = App->physics->AddConstraintPoint(*bodyA, *bodyB, vec3(anchorA.x, anchorA.y, anchorA.z), vec3(anchorB.x, anchorB.y, anchorB.z), UUID);
-		created = true;
-	}
-}
 
 void ConstraintPoint::ClearBodyB()
 {
 	if (bodyBComp != nullptr) bodyBComp = nullptr;
 	if (bodyB != nullptr) bodyB = nullptr;
-	if (constraint != nullptr)
-	{
-		App->physics->RemoveConstraint(UUID);
-		delete constraint;
-		constraint = nullptr;
-	}
 }
 
 void ConstraintPoint::SetActive(bool val)
@@ -114,12 +70,7 @@ void ConstraintPoint::SetActive(bool val)
 
 void ConstraintPoint::DeleteComponent()
 {
-	if (constraint != nullptr)
-	{
-		App->physics->RemoveConstraint(constraint, UUID);
-		delete constraint;
-		constraint = nullptr;
-	}
+	App->physics->RemoveConstraint(UUID);
 }
 
 bool ConstraintPoint::IsActive()
@@ -137,14 +88,12 @@ void ConstraintPoint::SetBodyA(Component* comp)
 			{
 				bodyAComp = comp;
 				bodyA = App->physics->GetBodyByUUID(comp->UUID);
-				created = false;
 			}
 		}
 		else
 		{
 			bodyAComp = comp;
 			bodyA = App->physics->GetBodyByUUID(comp->UUID);
-			created = false;
 		}
 	}
 }
@@ -152,13 +101,11 @@ void ConstraintPoint::SetBodyA(Component* comp)
 void ConstraintPoint::SetOffsetA(float3 val)
 { 
 	anchorA = val;
-	UpdateConstraint();
 }
 
 void ConstraintPoint::SetOffsetB(float3 val)
 { 
 	anchorB = val;
-	UpdateConstraint();
 }
 
 void ConstraintPoint::SetBodyB(Component* comp)
@@ -171,14 +118,12 @@ void ConstraintPoint::SetBodyB(Component* comp)
 			{
 				bodyBComp = comp;
 				bodyB = App->physics->GetBodyByUUID(comp->UUID);
-				created = false;
 			}
 		}
 		else
 		{
 			bodyBComp = comp;
 			bodyB = App->physics->GetBodyByUUID(comp->UUID);
-			created = false;
 		}
 	}
 }
@@ -189,8 +134,7 @@ void ConstraintPoint::SaveComponent(JSonHandler* file)
 	node.SaveNum("CompType", (double)compType);
 	node.SaveString("UUID", UUID.c_str());
 	node.SaveBool("Active",active);
-	//if (bodyAComp != nullptr) node.SaveString("BodyA",bodyAComp->UUID.c_str());
-	//else node.SaveString("BodyA", "0");
+
 	if(bodyBComp!= nullptr) node.SaveString("BodyB",bodyBComp->UUID.c_str());
 	else  node.SaveString("BodyB", "0");
 	//AnchorA
@@ -208,7 +152,6 @@ void ConstraintPoint::LoadComponent(JSonHandler* file)
 	needtoload = true;
 	UUID = file->GetString("UUID");
 	active = file->GetBool("Active");
-	//loadA_id = file->GetString("BodyA");
 	loadB_id = file->GetString("BodyB");
 	//AnchorA
 	anchorA.x = file->GetNum("AnchorAx");

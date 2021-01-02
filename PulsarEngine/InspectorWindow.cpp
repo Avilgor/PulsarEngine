@@ -42,10 +42,31 @@ update_status InspectorWindow::Draw()
 		if (currentGo->boxcollider != nullptr) BoxColliderSection(currentGo->boxcollider);
 		if (currentGo->spherecollider != nullptr) SphereColliderSection(currentGo->spherecollider);
 		if (currentGo->capsulecollider != nullptr) CapsuleColliderSection(currentGo->capsulecollider);
-		if (currentGo->pointconstraint != nullptr) PointConstraintSection(currentGo->pointconstraint);
+		/*if (currentGo->pointconstraint != nullptr) PointConstraintSection(currentGo->pointconstraint);
 		if (currentGo->hingeconstraint != nullptr) HingeConstraintSection(currentGo->hingeconstraint);
 		if (currentGo->sliderconstraint != nullptr) SliderConstraintSection(currentGo->sliderconstraint);
-		if (currentGo->coneconstraint != nullptr) ConeConstraintSection(currentGo->coneconstraint);
+		if (currentGo->coneconstraint != nullptr) ConeConstraintSection(currentGo->coneconstraint);*/
+		std::vector<Component*> components = currentGo->GetAllComponents();
+		for (int i = 0; i < components.size(); i++)
+		{
+			ImGui::PushID(i);
+			switch (components[i]->compType)
+			{
+			case CONSTRAINT_POINT_COMP:
+				PointConstraintSection(components[i]->AsPointConstraint());
+				break;
+			case CONSTRAINT_HINGE_COMP:
+				HingeConstraintSection(components[i]->AsHingeConstraint());
+				break;
+			case CONSTRAINT_SLIDER_COMP:
+				SliderConstraintSection(components[i]->AsSliderConstraint());
+				break;
+			case CONSTRAINT_CONE_COMP:
+				ConeConstraintSection(components[i]->AsConeConstraint());
+				break;
+			}
+			ImGui::PopID();
+		}
 
 		ImVec2 winSize = ImGui::GetContentRegionAvail();
 		ImGui::Spacing();
@@ -597,7 +618,47 @@ void InspectorWindow::HingeConstraintSection(ConstraintHinge* hinge)
 		if (ImGui::InputFloat("##bodyOffsetZhinge", &offB.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
 		if (change) hinge->SetOffsetB(offB);
 
-		change = false;
+		bool ax, ay, az, bx, by, bz;
+		float3 axisA = hinge->GetAxisA();
+		float3 axisB = hinge->GetAxisB();
+		if (axisA.x > 0) ax = true;
+		else ax = false;
+		if (axisA.y > 0) ay = true;
+		else ay = false;
+		if (axisA.z > 0) az = true;
+		else az = false;
+		if (axisB.x > 0) bx = true;
+		else bx = false;
+		if (axisB.y > 0) by = true;
+		else by = false;
+		if (axisB.z > 0) bz = true;
+		else bz = false;
+		ImGui::Text("Axis A");
+		ImGui::Text("X");
+		ImGui::SameLine();
+		if (ImGui::Checkbox("##axisAXhinge", &ax)) hinge->SetAxisA(float3(1.0f,0.0f,0.0f));
+		ImGui::SameLine();
+		ImGui::Text("X");
+		ImGui::SameLine();
+		if (ImGui::Checkbox("##axisAYhinge", &ay)) hinge->SetAxisA(float3(0.0f, 1.0f, 0.0f));
+		ImGui::SameLine();
+		ImGui::Text("X");
+		ImGui::SameLine();
+		if (ImGui::Checkbox("##axisAZhinge", &az)) hinge->SetAxisA(float3(0.0f, 0.0f, 1.0f));
+
+		ImGui::Text("Axis B");
+		ImGui::Text("X");
+		ImGui::SameLine();
+		if (ImGui::Checkbox("##axisBXhinge", &bx)) hinge->SetAxisB(float3(1.0f, 0.0f, 0.0f));
+		ImGui::SameLine();
+		ImGui::Text("X");
+		ImGui::SameLine();
+		if (ImGui::Checkbox("##axisBYhinge", &by)) hinge->SetAxisB(float3(0.0f, 1.0f, 0.0f));
+		ImGui::SameLine();
+		ImGui::Text("X");
+		ImGui::SameLine();
+		if (ImGui::Checkbox("##axisBZhinge", &bz)) hinge->SetAxisB(float3(0.0f, 0.0f, 1.0f));
+		/*change = false;
 		float3 axisA = hinge->GetAxisA();
 		ImGui::Text("Axis A-X:");
 		ImGui::SameLine();
@@ -621,7 +682,7 @@ void InspectorWindow::HingeConstraintSection(ConstraintHinge* hinge)
 		ImGui::Text("Axis B-Z:");
 		ImGui::SameLine();
 		if (ImGui::InputFloat("##axisBZhinge", &axisB.z, 0, 0, 3, ImGuiInputTextFlags_EnterReturnsTrue)) change = true;
-		if (change) hinge->SetAxisB(axisB);
+		if (change) hinge->SetAxisB(axisB);*/
 
 		if (ImGui::Button("Delete Component##delhingeconst")) currentGo->DeleteGOComponent(CONSTRAINT_HINGE_COMP);
 	}

@@ -4,6 +4,10 @@
 #include "PhysBody3D.h"
 #include "Primitive.h"
 #include "PhysVehicle3D.h"
+#include "ConstraintPoint.h"
+#include "ConstraintCone.h"
+#include "ConstraintHinge.h"
+#include "ConstraintSlider.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 #include "Bullet/include/btBulletDynamicsCommon.h"
 #include "Bullet/include/btBulletCollisionCommon.h"
@@ -157,31 +161,32 @@ void ModulePhysics::ToggleSimulation(bool val)
 	runningSimulation = val;
 	if (runningSimulation)
 	{
-		/*delete world;
-		delete vehicle_raycaster;
-		world = new btDiscreteDynamicsWorld(dispatcher, broad_phase, solver, collision_conf);
-		world->setDebugDrawer(debug_draw);
-		world->setGravity(gravity);		
-		vehicle_raycaster = new btDefaultVehicleRaycaster(world);
-		*/
 		for (std::map<std::string, PhysBody3D*>::iterator it = bodies.begin(); it != bodies.end(); ++it)
 		{
 			(*it).second->body->clearForces();
 			btVector3 zeroVector(0, 0, 0);
 			(*it).second->body->setLinearVelocity(zeroVector);
 			(*it).second->body->setAngularVelocity(zeroVector);
-			//world->addRigidBody((*it).second->body);
-		}
-		/*
-		for (std::map<std::string, btTypedConstraint*>::iterator it = constraints.begin(); it != constraints.end(); ++it)
-		{
-			world->addConstraint((*it).second);
 		}
 
-		for (std::map<std::string, PhysVehicle3D*>::iterator it = vehicles.begin(); it != vehicles.end(); ++it)
+		for (std::map<std::string, Component*>::iterator it = constraints.begin(); it != constraints.end(); ++it)
 		{
-			world->addVehicle((*it).second->vehicle);
-		}*/
+			switch ((*it).second->compType)
+			{
+			case CONSTRAINT_POINT_COMP:
+				(*it).second->AsPointConstraint()->CreateConstraint();
+				break;
+			case CONSTRAINT_HINGE_COMP:
+				(*it).second->AsHingeConstraint()->CreateConstraint();
+				break;
+			case CONSTRAINT_SLIDER_COMP:
+				(*it).second->AsSliderConstraint()->CreateConstraint();
+				break;
+			case CONSTRAINT_CONE_COMP:
+				(*it).second->AsConeConstraint()->CreateConstraint();
+				break;
+			}
+		}
 
 		LOG("Physics simulation ON");
 		LOG("Total bodies: %d", bodies.size()); 
@@ -190,15 +195,7 @@ void ModulePhysics::ToggleSimulation(bool val)
 	}
 	else
 	{
-		App->scene->ClearPhysBalls();
-		simulationPause = false;
-		for (std::map<std::string, PhysBody3D*>::iterator it = bodies.begin(); it != bodies.end(); ++it)
-		{
-			(*it).second->body->clearForces();
-			btVector3 zeroVector(0, 0, 0);
-			(*it).second->body->setLinearVelocity(zeroVector);
-			(*it).second->body->setAngularVelocity(zeroVector);
-		}
+		ResetPhysics();
 		LOG("Physics simulation OFF");
 	}
 }
@@ -244,9 +241,8 @@ void ModulePhysics::SetSimulationSteps(int val)
 
 void ModulePhysics::ResetPhysics()
 {
-	App->scene->ClearPhysBalls();
+	//App->scene->ClearPhysBalls();
 	CleanUp();
-	LOG("Restarting scene");
 	Start();
 }
 
@@ -264,6 +260,51 @@ update_status ModulePhysics::PostUpdate(float dt)
 bool ModulePhysics::CleanUp()
 {
 	LOG("Unloading physics...");
+
+	if (constraints.size() > 0)
+	{
+		for (std::map<std::string, Component*>::iterator it = constraints.begin(); it != constraints.end(); ++it)
+		{
+			switch ((*it).second->compType)
+			{
+			case CONSTRAINT_POINT_COMP:
+				if ((*it).second->AsPointConstraint()->constraint != nullptr)
+				{
+					world->removeConstraint((*it).second->AsPointConstraint()->constraint);
+					delete (*it).second->AsPointConstraint()->constraint;
+					(*it).second->AsPointConstraint()->constraint = nullptr;
+				}
+				break;
+			case CONSTRAINT_HINGE_COMP:
+				if ((*it).second->AsHingeConstraint()->constraint != nullptr)
+				{
+					world->removeConstraint((*it).second->AsHingeConstraint()->constraint);
+					delete (*it).second->AsHingeConstraint()->constraint;
+					(*it).second->AsHingeConstraint()->constraint = nullptr;
+				}
+				break;
+			case CONSTRAINT_SLIDER_COMP:
+				if ((*it).second->AsHingeConstraint()->constraint != nullptr)
+				{
+					world->removeConstraint((*it).second->AsSliderConstraint()->constraint);
+					delete (*it).second->AsSliderConstraint()->constraint;
+					(*it).second->AsSliderConstraint()->constraint = nullptr;
+				}
+				break;
+			case CONSTRAINT_CONE_COMP:
+				if ((*it).second->AsHingeConstraint()->constraint != nullptr)
+				{
+					world->removeConstraint((*it).second->AsConeConstraint()->constraint);
+					delete (*it).second->AsConeConstraint()->constraint;
+					(*it).second->AsConeConstraint()->constraint = nullptr;
+				}
+				break;
+			}
+
+		}
+		constraints.clear();
+	}
+
 	// Remove from the world all collision bodies
 	for (std::map<std::string, PhysBody3D*>::iterator it = bodies.begin(); it != bodies.end(); ++it)
 	{
@@ -275,13 +316,6 @@ bool ModulePhysics::CleanUp()
 		btCollisionObject* obj = world->getCollisionObjectArray()[i];
 		world->removeCollisionObject(obj);
 	}
-
-	for (std::map<std::string, btTypedConstraint*>::iterator it = constraints.begin(); it != constraints.end(); ++it)
-	{
-		world->removeConstraint((*it).second);
-		delete (*it).second;
-	}
-	constraints.clear();
 
 	for (std::map<std::string, btDefaultMotionState*>::iterator it = motions.begin(); it != motions.end(); ++it)
 	{
@@ -314,13 +348,13 @@ bool ModulePhysics::CleanUp()
 	return true;
 }
 
-void ModulePhysics::RemoveConstraint(btTypedConstraint* constraint,std::string id)
+void ModulePhysics::AddConstraint(Component* comp)
 {
-	//LOG("Constraint id: %s",id.c_str());
-	world->removeConstraint(constraint);
-	if (!constraints.empty())
-	{
-		if (constraints.find(id) != constraints.end()) constraints.erase(id);
+	if (comp != nullptr)
+	{	
+		if(comp->compType == CONSTRAINT_POINT_COMP || comp->compType == CONSTRAINT_HINGE_COMP ||
+			comp->compType == CONSTRAINT_SLIDER_COMP || comp->compType == CONSTRAINT_CONE_COMP)
+		constraints.emplace(comp->UUID, comp);
 	}
 }
 
@@ -330,7 +364,6 @@ void ModulePhysics::RemoveConstraint(std::string id)
 	{
 		if (constraints.find(id) != constraints.end())
 		{
-			world->removeConstraint(constraints[id]);
 			constraints.erase(id);
 		}
 	}
@@ -348,12 +381,6 @@ void ModulePhysics::AddBody(PhysBody3D* body,std::string id)
 	bodies.emplace(id,body);
 }
 
-void ModulePhysics::AddConstraint(btTypedConstraint* con, std::string id)
-{
-	world->addConstraint(con);
-	constraints.emplace(id, con);
-}
-
 PhysBody3D* ModulePhysics::GetBodyByUUID(std::string id)
 {
 	if (bodies.find(id) != bodies.end()) return bodies[id];	
@@ -368,7 +395,7 @@ Component* ModulePhysics::GetColliderByUUID(std::string id)
 
 void ModulePhysics::RemoveCollider(std::string uuid)
 {
-	LOG("Remove Collider: %s",uuid.c_str());
+	//LOG("Remove Collider: %s",uuid.c_str());
 	if (bodies.find(uuid) != bodies.end())
 	{
 		world->removeRigidBody(bodies[uuid]->body);
@@ -550,7 +577,7 @@ btTypedConstraint* ModulePhysics::AddConstraintPoint(PhysBody3D& bodyA, PhysBody
 		btVector3(anchorA.x, anchorA.y, anchorA.z),
 		btVector3(anchorB.x, anchorB.y, anchorB.z));
 	world->addConstraint(p2p);
-	constraints.emplace(id,p2p);
+	//constraints.emplace(id,p2p);
 	p2p->setDbgDrawSize(2.0f);
 	return p2p;
 }
@@ -567,7 +594,7 @@ btTypedConstraint* ModulePhysics::AddConstraintHinge(PhysBody3D& bodyA, PhysBody
 		btVector3(axisB.x, axisB.y, axisB.z));
 
 	world->addConstraint(hinge, disable_collision);
-	constraints.emplace(id,hinge);
+	//constraints.emplace(id,hinge);
 	hinge->setDbgDrawSize(2.0f);
 	return hinge;
 }
@@ -581,7 +608,7 @@ btTypedConstraint* ModulePhysics::AddConstraintSlider(PhysBody3D& bodyA, PhysBod
 		anchorB,
 		true);
 	world->addConstraint(slider);
-	constraints.emplace(id, slider);
+	//constraints.emplace(id, slider);
 	slider->setDbgDrawSize(2.0f);
 	return slider;
 }
@@ -594,7 +621,7 @@ btTypedConstraint* ModulePhysics::AddConstraintCone(PhysBody3D& bodyA, PhysBody3
 		anchorA,
 		anchorB);
 	world->addConstraint(cone);
-	constraints.emplace(id, cone);
+	//constraints.emplace(id, cone);
 	cone->setDbgDrawSize(2.0f);
 	return cone;
 }

@@ -157,10 +157,10 @@ void GameObject::UpdateGameObject()
 			if (boxcollider != nullptr) boxcollider->UpdateComponent();
 			if (capsulecollider != nullptr) capsulecollider->UpdateComponent();
 			if (spherecollider != nullptr) spherecollider->UpdateComponent();
-			if (pointconstraint != nullptr) pointconstraint->UpdateComponent();
+			/*if (pointconstraint != nullptr) pointconstraint->UpdateComponent();
 			if (sliderconstraint != nullptr) sliderconstraint->UpdateComponent();
 			if (hingeconstraint != nullptr) hingeconstraint->UpdateComponent();
-			if (coneconstraint != nullptr) coneconstraint->UpdateComponent();
+			if (coneconstraint != nullptr) coneconstraint->UpdateComponent();*/
 
 			if (!Childs.empty())
 			{
@@ -213,20 +213,20 @@ void GameObject::SaveGameobject(JSonHandler* file, const char* label)
 	node.CreateArray("Components");
 	if (transform != nullptr) transform->SaveComponent(&node);
 	if (camera != nullptr) camera->SaveComponent(&node);
+	if (boxcollider != nullptr) boxcollider->SaveComponent(&node);
+	if (capsulecollider != nullptr) capsulecollider->SaveComponent(&node);
+	if (spherecollider != nullptr) spherecollider->SaveComponent(&node);
 	if (!Components.empty())
 	{
 		for (std::vector<Component*>::iterator it = Components.begin(); it != Components.end(); ++it)
 		{
 			(*it)->SaveComponent(&node);
 		}
-	}
-	if (boxcollider != nullptr) boxcollider->SaveComponent(&node);
-	if (capsulecollider != nullptr) capsulecollider->SaveComponent(&node);
-	if (spherecollider != nullptr) spherecollider->SaveComponent(&node);
-	if (pointconstraint != nullptr) pointconstraint->SaveComponent(&node);
+	}	
+	/*if (pointconstraint != nullptr) pointconstraint->SaveComponent(&node);
 	if (hingeconstraint != nullptr) hingeconstraint->SaveComponent(&node);
 	if (sliderconstraint != nullptr) sliderconstraint->SaveComponent(&node);
-	if (coneconstraint != nullptr) coneconstraint->SaveComponent(&node);
+	if (coneconstraint != nullptr) coneconstraint->SaveComponent(&node);*/
 
 	//Call all childs save method
 	if (!Childs.empty())
@@ -307,6 +307,7 @@ void GameObject::LoadGameObject(JSonHandler* file)
 				if (comp != nullptr)
 				{
 					if (comp->AsPointConstraint() != nullptr) comp->AsPointConstraint()->LoadComponent(&json);
+					
 				}
 				break;
 			case CONSTRAINT_HINGE_COMP:
@@ -544,7 +545,6 @@ Component* GameObject::AddComponent(ComponentTypes type)
 		if (capsulecollider != nullptr) DeleteGOComponent(CAPSULE_COLLIDER_COMP);
 		boxColl = new BoxCollider(this);
 		boxcollider = boxColl;
-		//Components.push_back(boxColl->component);
 		return boxColl->component;		
 		break;
 	case SPHERE_COLLIDER_COMP:
@@ -552,7 +552,6 @@ Component* GameObject::AddComponent(ComponentTypes type)
 		if (capsulecollider != nullptr) DeleteGOComponent(CAPSULE_COLLIDER_COMP);
 		sphereColl = new SphereCollider(this);
 		spherecollider = sphereColl;
-		//Components.push_back(sphereColl->component);
 		return sphereColl->component;	
 		break;
 	case CAPSULE_COLLIDER_COMP:
@@ -560,15 +559,13 @@ Component* GameObject::AddComponent(ComponentTypes type)
 		if (boxcollider != nullptr) DeleteGOComponent(BOX_COLLIDER_COMP);
 		capsuleColl = new CapsuleCollider(this);
 		capsulecollider = capsuleColl;
-		//Components.push_back(capsuleColl->component);
 		return capsuleColl->component;
 		break;
 	case CONSTRAINT_POINT_COMP:
 		if (HasCollider())
 		{
-			if (pointconstraint != nullptr) DeleteGOComponent(CONSTRAINT_POINT_COMP);
 			pointconst = new ConstraintPoint(this);
-			pointconstraint = pointconst;
+			Components.push_back(pointconst->component);
 			return pointconst->component;
 		}
 		else return nullptr;
@@ -576,9 +573,8 @@ Component* GameObject::AddComponent(ComponentTypes type)
 	case CONSTRAINT_HINGE_COMP:
 		if (HasCollider())
 		{
-			if (hingeconstraint != nullptr) DeleteGOComponent(CONSTRAINT_HINGE_COMP);
 			hingeconst = new ConstraintHinge(this);
-			hingeconstraint = hingeconst;
+			Components.push_back(hingeconst->component);
 			return hingeconst->component;
 		}
 		else return nullptr;
@@ -586,9 +582,8 @@ Component* GameObject::AddComponent(ComponentTypes type)
 	case CONSTRAINT_SLIDER_COMP:
 		if (HasCollider())
 		{
-			if (sliderconstraint != nullptr) DeleteGOComponent(CONSTRAINT_SLIDER_COMP);
 			sliderconst = new ConstraintSlider(this);
-			sliderconstraint = sliderconst;
+			Components.push_back(sliderconst->component);
 			return sliderconst->component;
 		}
 		else return nullptr;
@@ -596,9 +591,8 @@ Component* GameObject::AddComponent(ComponentTypes type)
 	case CONSTRAINT_CONE_COMP:
 		if (HasCollider())
 		{
-			if (coneconstraint != nullptr) DeleteGOComponent(CONSTRAINT_CONE_COMP);
 			coneconst = new ConstraintCone(this);
-			coneconstraint = coneconst;
+			Components.push_back(coneconst->component);
 			return coneconst->component;
 		}
 		else return nullptr;
@@ -654,32 +648,32 @@ void GameObject::DeleteGOComponent(ComponentTypes type)
 	}
 	else if (type == BOX_COLLIDER_COMP && boxcollider != nullptr)
 	{
-		if (pointconstraint == nullptr)
-		{
+		//if (pointconstraint == nullptr)
+		//{
 			boxcollider->DeleteComponent();
 			delete boxcollider;
 			boxcollider = nullptr;
-		}
+		//}
 	}
 	else if (type == SPHERE_COLLIDER_COMP && spherecollider != nullptr)
 	{
-		if (pointconstraint == nullptr)
-		{
+		//if (pointconstraint == nullptr)
+		//{
 			spherecollider->DeleteComponent();
 			delete spherecollider;
 			spherecollider = nullptr;
-		}
+		//}
 	}
 	else if (type == CAPSULE_COLLIDER_COMP && capsulecollider != nullptr)
 	{
-		if (pointconstraint == nullptr)
-		{
+		//if (pointconstraint == nullptr)
+		//{
 			capsulecollider->DeleteComponent();
 			delete capsulecollider;
 			capsulecollider = nullptr;
-		}
+		//}
 	}
-	else if (type == CONSTRAINT_POINT_COMP && pointconstraint != nullptr)
+	/*else if (type == CONSTRAINT_POINT_COMP && pointconstraint != nullptr)
 	{
 		pointconstraint->DeleteComponent();
 		delete pointconstraint;
@@ -702,7 +696,7 @@ void GameObject::DeleteGOComponent(ComponentTypes type)
 		coneconstraint->DeleteComponent();
 		delete coneconstraint;
 		coneconstraint = nullptr;
-	}
+	}*/
 	else if (type != TRANSFORM_COMP)
 	{
 		if (!Components.empty())
@@ -945,7 +939,7 @@ void GameObject::Delete()
 		spherecollider = nullptr;
 	}
 
-	if(pointconstraint != nullptr)
+	/*if(pointconstraint != nullptr)
 	{
 		pointconstraint->DeleteComponent();
 		delete pointconstraint;
@@ -971,7 +965,7 @@ void GameObject::Delete()
 		coneconstraint->DeleteComponent();
 		delete coneconstraint;
 		coneconstraint = nullptr;
-	}
+	}*/
 
 	delete transform;
 	transform = nullptr;
@@ -980,8 +974,11 @@ void GameObject::Delete()
 
 void GameObject::SaveToDelete(GameObject* trash)
 {
-	RemoveChild(trash->UUID);
-	toDeleteChilds.push_back(trash);
+	if (trash != nullptr)
+	{
+		RemoveChild(trash->UUID);
+		toDeleteChilds.push_back(trash);
+	}
 }
 
 void GameObject::DeleteGameobject()

@@ -94,10 +94,10 @@ public:
 	CapsuleCollider* capsulecollider = nullptr;
 	BoxCollider* boxcollider = nullptr;
 	SphereCollider* spherecollider = nullptr;
-	ConstraintPoint* pointconstraint = nullptr;
+	/*ConstraintPoint* pointconstraint = nullptr;
 	ConstraintSlider* sliderconstraint = nullptr;
 	ConstraintHinge* hingeconstraint = nullptr;
-	ConstraintCone* coneconstraint = nullptr;
+	ConstraintCone* coneconstraint = nullptr;*/
 	//Rigidbody* rigidbody = nullptr;
 	AABB Gaabb;
 	OBB Gobb;

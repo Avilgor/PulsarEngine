@@ -21,7 +21,7 @@ public:
 	update_status PostUpdate(float dt);
 	bool CleanUp();
 	Scene* GetActiveScene();
-	SceneState GetSceneState() { return state; }
+	SceneState GetSceneState() { return lastState; }
 	void RequestSave();
 	void SetScene(std::string uuid);
 	void CreateNewScene();

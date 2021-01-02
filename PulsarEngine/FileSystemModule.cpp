@@ -899,7 +899,7 @@ void FileSystemModule::LoadMesh(RES_Mesh* mesh, char* buffer)
 	memcpy(mesh->texturesArray, cursor, bytes);
 	cursor += bytes;
 
-	LOG("%s loaded in %.3f s", mesh->name.c_str(), timer.ReadSec());
+	//LOG("%s loaded in %.3f s", mesh->name.c_str(), timer.ReadSec());
 }
 
 void FileSystemModule::SaveMaterial(RES_Material* mat)

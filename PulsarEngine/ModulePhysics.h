@@ -12,10 +12,12 @@
 #include <map>
 #include <string>
 
+class Component;
 class DebugDrawer;
 class PhysBody3D;
 struct PhysVehicle3D;
 struct VehicleInfo;
+
 
 class ModulePhysics: public Module
 {
@@ -42,13 +44,12 @@ public:
 	btTypedConstraint* AddConstraintHinge(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB, const vec3& axisS, const vec3& axisB, std::string id, bool disable_collision = false);
 	btTypedConstraint* AddConstraintSlider(PhysBody3D& bodyA, PhysBody3D& bodyB, const btTransform& anchorA, const btTransform& anchorB, std::string id);
 	btTypedConstraint* AddConstraintCone(PhysBody3D& bodyA, PhysBody3D& bodyB, const btTransform& anchorA, const btTransform& anchorB, std::string id);
+	void AddConstraint(Component* comp);
 
 	void RemoveCollider(std::string uuid);
-	void RemoveConstraint(btTypedConstraint* constraint, std::string id);
 	void RemoveConstraint(std::string id);
 	void RemoveBody(btRigidBody* body, std::string id);
 	void AddBody(PhysBody3D* body, std::string id);
-	void AddConstraint(btTypedConstraint* con, std::string id);
 	PhysBody3D* GetBodyByUUID(std::string id);
 	Component* GetColliderByUUID(std::string id);
 
@@ -74,8 +75,8 @@ private:
 
 	std::map<std::string,btCollisionShape*> shapes;
 	std::map<std::string,PhysBody3D*> bodies;
-	std::map<std::string,btDefaultMotionState*> motions;
-	std::map<std::string,btTypedConstraint*> constraints;
+	std::map<std::string, btDefaultMotionState*> motions;
+	std::map<std::string, Component*> constraints;
 	std::map<std::string, Component*> colliderComponents;
 	std::map<std::string, PhysVehicle3D*> vehicles;
 

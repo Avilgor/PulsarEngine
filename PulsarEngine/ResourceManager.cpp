@@ -269,15 +269,14 @@ bool ResourceManager::LoadResource(std::string uuid)
 				break;
 			default:
 				ret = false;
-				LOG("Resource type error.");
+				//LOG("Resource type error.");
 				break;
-			}
-			
+			}		
 		}
 		else
 		{
 			ret = false;
-			LOG("Resource not found.");
+			//LOG("Resource not found.");
 		}
 	}
 	return ret;
@@ -598,7 +597,7 @@ bool ResourceManager::GenerateMeshBuffer(RES_Mesh* mesh)
 			glEnableVertexAttribArray(2);
 		}
 		glBindVertexArray(0);
-		LOG("Mesh buffer generated");
+		//LOG("Mesh buffer generated");
 		return true;
 	}
 	return false;
