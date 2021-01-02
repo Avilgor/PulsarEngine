@@ -46,6 +46,7 @@ Colliders can be setted as static or dynamic and trigger or not. That will chang
 
 As seen above, there is also a car in the scene which can be controlled. Camera can't go inside physics gameobjects in runtime because it has a sphere collider.
 
+* Short preview video of the egine [here](https://youtu.be/m5jjUIIsD_s)
 
 ## License
 
